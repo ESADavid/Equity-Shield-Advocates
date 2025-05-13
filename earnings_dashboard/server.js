@@ -1,26 +1,41 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const basicAuth = require('express-basic-auth');
+const morgan = require('morgan');
+const compression = require('compression');
 const WealthCreationEngine = require('../FOUR-ERA-AI/src/wealth-creation-engine-new').default;
+const winston = require('winston');
 
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 // Basic authentication setup
+const users = { [process.env.ADMIN_USER || 'admin']: process.env.ADMIN_PASS || 'securepassword' };
 app.use(basicAuth({
-  users: { 'admin': 'securepassword' },
+  users,
   challenge: true,
 }));
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://your-frontend-domain.com',
+}));
 app.use(express.json());
+app.use(morgan('combined'));
+app.use(express.static('public'));
+app.use(compression());
 
 // Instantiate WealthCreationEngine
 const wealthEngine = new WealthCreationEngine();
 
 app.get('/api/earnings', (req, res) => {
-  const report = wealthEngine.getRevenueReport();
-  res.json(report);
+  try {
+    const report = wealthEngine.getRevenueReport();
+    res.json(report);
+  } catch (error) {
+    console.error('Error fetching earnings:', error);
+    res.status(500).json({ error: 'Failed to fetch earnings data' });
+  }
 });
 
 app.get('/api/earnings/download', (req, res) => {
@@ -65,6 +80,47 @@ app.get('/', (req, res) => {
   res.send(html);
 });
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
+
 app.listen(PORT, () => {
   console.log(`Earnings dashboard running at http://localhost:${PORT}`);
+});
+
+const NODE_ENV = process.env.NODE_ENV || 'development';
+if (NODE_ENV === 'production') {
+  console.log('Running in production mode');
+}
+
+// Package.json scripts section
+{
+  "scripts": {
+    "start": "node server.js"
+  }
+}
+
+const request = require('supertest');
+const app = require('./server'); // Adjust path as needed
+
+describe('GET /api/earnings', () => {
+  it('should return earnings data', async () => {
+    const response = await request(app).get('/api/earnings').auth('admin', 'securepassword');
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('totalAnnualRevenue');
+  });
+});
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.Console(),
+  ],
+});
+app.use((req, res, next) => {
+  logger.info(`${req.method} ${req.url}`);
+  next();
 });
