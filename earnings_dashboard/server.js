@@ -1,8 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
 const basicAuth = require('express-basic-auth');
+const WealthCreationEngine = require('../FOUR-ERA-AI/src/wealth-creation-engine-new').default;
 
 const app = express();
 const PORT = 4000;
@@ -16,22 +15,20 @@ app.use(basicAuth({
 app.use(cors());
 app.use(express.json());
 
-// Resolve the directory name for ES module compatibility
-const revenueDataPath = path.resolve(__dirname, '../owlban_repos/aggregated_revenue.json');
+// Instantiate WealthCreationEngine
+const wealthEngine = new WealthCreationEngine();
 
 app.get('/api/earnings', (req, res) => {
-  if (!fs.existsSync(revenueDataPath)) {
-    return res.status(404).json({ error: 'Earnings data not found' });
-  }
-  const data = fs.readFileSync(revenueDataPath, 'utf-8');
-  res.json(JSON.parse(data));
+  const report = wealthEngine.getRevenueReport();
+  res.json(report);
 });
 
 app.get('/api/earnings/download', (req, res) => {
-  if (!fs.existsSync(revenueDataPath)) {
-    return res.status(404).json({ error: 'Earnings data not found' });
-  }
-  res.download(revenueDataPath, 'earnings_report.json');
+  const report = wealthEngine.getRevenueReport();
+  const json = JSON.stringify(report, null, 2);
+  res.setHeader('Content-Disposition', 'attachment; filename="earnings_report.json"');
+  res.setHeader('Content-Type', 'application/json');
+  res.send(json);
 });
 
 app.get('/', (req, res) => {
@@ -49,11 +46,15 @@ app.get('/', (req, res) => {
     '    return;',
     '  }',
     '  const data = await response.json();',
-    '  let html = "<h2>Total Revenue: $" + data.totalRevenue.toLocaleString() + "</h2><ul>";',
-    '  for (const [repo, revenue] of Object.entries(data.perRepository)) {',
-    '    html += "<li>" + repo + ": $" + revenue.toLocaleString() + "</li>";',
+    '  let html = "<h2>Total Annual Revenue: $" + data.totalAnnualRevenue.toLocaleString() + "</h2>";',
+    '  html += "<h3>Total Daily Revenue: $" + data.totalDailyRevenue.toLocaleString() + "</h3>";',
+    '  html += "<h4>Revenue Streams:</h4><ul>";',
+    '  for (const [key, value] of Object.entries(data.revenueStreams)) {',
+    '    html += "<li>" + key + ": $" + value.toLocaleString() + "</li>";',
     '  }',
     '  html += "</ul>";',
+    '  html += "<p>Revenue Trend: " + data.revenueTrend.toFixed(4) + "</p>";',
+    '  html += "<p>Anomalies Detected: " + data.anomalies.length + "</p>";',
     '  document.getElementById("earnings").innerHTML = html;',
     '}',
     'fetchEarnings();',
