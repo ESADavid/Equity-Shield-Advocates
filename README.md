@@ -24,17 +24,19 @@ To deploy the OSCAR-BROOME-REVENUE server, follow these steps:
    - `NODE_ENV`: Set to `production` for production mode
    - `CORS_ORIGIN`: Your frontend domain URL (e.g., <https://your-frontend-domain.com>)
 
-3. Start the server:
+3. Make sure `.env` is included in your `.gitignore` file to avoid committing sensitive information.
+
+4. Start the server:
 
    ```bash
    npm start
    ```
 
-4. The server will be accessible at [`http://localhost:<PORT>`](http://localhost:<PORT>).
+5. The server will be accessible at [`http://localhost:<PORT>`](http://localhost:<PORT>).
 
-5. Ensure your frontend domain is configured in the `CORS_ORIGIN` environment variable.
+6. Ensure your frontend domain is configured in the `CORS_ORIGIN` environment variable.
 
-6. For production deployment, consider using a process manager like PM2 or containerization with Docker.
+7. For production deployment, consider using a process manager like PM2 or containerization with Docker.
 
 ### Using PM2
 
