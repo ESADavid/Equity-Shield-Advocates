@@ -5,6 +5,7 @@ const basicAuth = require('express-basic-auth');
 const morgan = require('morgan');
 const compression = require('compression');
 const WealthCreationEngine = require('../FOUR-ERA-AI/src/wealth-creation-engine-new.cjs').default;
+const TemporalProfitAnalyzer = require('../FOUR-ERA-AI/src/temporal-profit-analyzer.cjs').default;
 const winston = require('winston');
 
 const app = express();
@@ -134,8 +135,22 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`Earnings dashboard running at http://localhost:${PORT}`);
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Earnings dashboard running at http://0.0.0.0:${PORT}`);
+  console.log('Environment Variables:', {
+    PORT,
+    ADMIN_USER: process.env.ADMIN_USER,
+    ADMIN_PASS: process.env.ADMIN_PASS,
+    NODE_ENV: process.env.NODE_ENV,
+  });
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
