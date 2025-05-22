@@ -144,9 +144,7 @@ if (NODE_ENV === 'production') {
 
 module.exports = { app, server };
 
-// Package.json scripts section
-// Removed invalid JSON block to fix syntax error
-
+// Logger setup
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.json(),
@@ -159,4 +157,3 @@ app.use((req, res, next) => {
   logger.info(`${req.method} ${req.url}`);
   next();
 });
-</create_file>
