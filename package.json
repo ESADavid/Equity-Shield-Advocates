@@ -11,5 +11,9 @@
   "devDependencies": {
     "jest": "^29.7.0",
     "supertest": "^7.1.1"
+  },
+  "scripts": {
+    "start": "node earnings_dashboard/server.js",
+    "test": "jest"
   }
 }

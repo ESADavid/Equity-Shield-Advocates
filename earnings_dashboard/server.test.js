@@ -54,7 +54,9 @@ describe('Earnings Dashboard API Tests', () => {
 
   describe('GET /', () => {
     it('should return the HTML dashboard', async () => {
-      const response = await request(app).get('/');
+      const response = await request(app)
+        .get('/')
+        .auth('admin', 'securepassword');
       expect(response.status).toBe(200);
       expect(response.text).toMatch(/OWLban Earnings Dashboard/);
     });
@@ -63,6 +65,7 @@ describe('Earnings Dashboard API Tests', () => {
   describe('Error Handling', () => {
     it('should return 500 for an internal server error', async () => {
       // Simulate error by mocking getRevenueReport to throw
+      const wealthEngine = app.locals.wealthEngine;
       const originalGetRevenueReport = wealthEngine.getRevenueReport;
       wealthEngine.getRevenueReport = () => { throw new Error('Test error'); };
       const response = await request(app)

@@ -27,6 +27,7 @@ app.use(compression());
 
 // Instantiate WealthCreationEngine
 const wealthEngine = new WealthCreationEngine();
+app.locals.wealthEngine = wealthEngine;
 
 // Account numbers mapping for revenue streams
 const accountNumbers = {
