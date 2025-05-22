@@ -85,7 +85,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Earnings dashboard running at http://localhost:${PORT}`);
 });
 
@@ -94,19 +94,10 @@ if (NODE_ENV === 'production') {
   console.log('Running in production mode');
 }
 
+module.exports = { app, server };
+
   // Package.json scripts section
   // Removed invalid JSON block to fix syntax error
-
-const request = require('supertest');
-const app = require('./server'); // Adjust path as needed
-
-describe('GET /api/earnings', () => {
-  it('should return earnings data', async () => {
-    const response = await request(app).get('/api/earnings').auth('admin', 'securepassword');
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('totalAnnualRevenue');
-  });
-});
 
 const logger = winston.createLogger({
   level: 'info',

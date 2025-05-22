@@ -1,5 +1,9 @@
 const request = require('supertest');
-const app = require('./server'); // Adjust the path if necessary
+const { app, server } = require('./server'); // Adjust the path if necessary
+
+afterAll(() => {
+  server.close();
+});
 
 describe('Earnings Dashboard API Tests', () => {
   // Test for the /api/earnings endpoint
