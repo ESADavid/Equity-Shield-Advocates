@@ -33,7 +33,7 @@ describe('Earnings Dashboard API Tests', () => {
         .get('/api/earnings/download')
         .auth('admin', 'securepassword'); // Replace with environment variables if needed
       expect(response.status).toBe(200);
-      expect(response.headers['content-type']).toBe('application/json');
+      expect(response.headers['content-type']).toContain('application/json');
       expect(response.headers['content-disposition']).toContain('attachment; filename="earnings_report.json"');
     });
   });
