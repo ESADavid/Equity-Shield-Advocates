@@ -30,6 +30,11 @@ app.use(compression());
 const wealthEngine = new WealthCreationEngine();
 app.locals.wealthEngine = wealthEngine;
 
+// Cache for revenue report
+let cachedReport = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes cache duration
+
 // Account numbers mapping for revenue streams
 const accountNumbers = {
   aiLicensing: "ACCT1001",
@@ -42,25 +47,32 @@ const accountNumbers = {
 };
 
 /**
- * Route 1001: Get earnings report
+ * Route 1001: Get earnings report with caching and performance logging
  */
-app.get('/api/earnings', (req, res) => {
+app.get('/api/earnings', async (req, res) => {
   console.log('Route 1001 accessed: GET /api/earnings');
+  const startTime = Date.now();
   try {
-    const report = wealthEngine.getRevenueReport();
+    if (!cachedReport || (Date.now() - cacheTimestamp) > CACHE_DURATION_MS) {
+      // Refresh cache
+      cachedReport = await Promise.resolve(wealthEngine.getRevenueReport());
+      cacheTimestamp = Date.now();
+    }
     // Add account numbers to revenue streams
     const revenueStreamsWithAccounts = {};
-    for (const [key, value] of Object.entries(report.revenueStreams)) {
+    for (const [key, value] of Object.entries(cachedReport.revenueStreams)) {
       revenueStreamsWithAccounts[key] = {
         amount: value,
         accountNumber: accountNumbers[key] || null,
       };
     }
     const reportWithAccounts = {
-      ...report,
+      ...cachedReport,
       revenueStreams: revenueStreamsWithAccounts,
     };
     res.status(200).json(reportWithAccounts);
+    const duration = Date.now() - startTime;
+    console.log(`GET /api/earnings processed in ${duration}ms`);
   } catch (error) {
     console.error('Error fetching earnings:', error);
     res.status(500).json({ error: 'Failed to fetch earnings data' });
