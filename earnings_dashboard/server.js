@@ -28,17 +28,37 @@ app.use(compression());
 // Instantiate WealthCreationEngine
 const wealthEngine = new WealthCreationEngine();
 
+/**
+ * Route 1001: Get earnings report
+ */
 app.get('/api/earnings', (req, res) => {
+  console.log('Route 1001 accessed: GET /api/earnings');
   try {
     const report = wealthEngine.getRevenueReport();
-    res.json(report);
+    // Add account numbers to revenue streams
+    const revenueStreamsWithAccounts = {};
+    for (const [key, value] of Object.entries(report.revenueStreams)) {
+      revenueStreamsWithAccounts[key] = {
+        amount: value,
+        accountNumber: accountNumbers[key] || null,
+      };
+    }
+    const reportWithAccounts = {
+      ...report,
+      revenueStreams: revenueStreamsWithAccounts,
+    };
+    res.json(reportWithAccounts);
   } catch (error) {
     console.error('Error fetching earnings:', error);
     res.status(500).json({ error: 'Failed to fetch earnings data' });
   }
 });
 
+/**
+ * Route 1002: Download earnings report JSON
+ */
 app.get('/api/earnings/download', (req, res) => {
+  console.log('Route 1002 accessed: GET /api/earnings/download');
   const report = wealthEngine.getRevenueReport();
   const json = JSON.stringify(report, null, 2);
   res.setHeader('Content-Disposition', 'attachment; filename="earnings_report.json"');
