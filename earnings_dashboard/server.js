@@ -28,6 +28,17 @@ app.use(compression());
 // Instantiate WealthCreationEngine
 const wealthEngine = new WealthCreationEngine();
 
+// Account numbers mapping for revenue streams
+const accountNumbers = {
+  aiLicensing: "ACCT1001",
+  autonomousSecurity: "ACCT1002",
+  medicalDiagnostics: "ACCT1003",
+  climateModeling: "ACCT1004",
+  militaryAI: "ACCT1005",
+  dataStorage: "ACCT1006",
+  strategicConsulting: "ACCT1007",
+};
+
 /**
  * Route 1001: Get earnings report
  */
@@ -47,7 +58,7 @@ app.get('/api/earnings', (req, res) => {
       ...report,
       revenueStreams: revenueStreamsWithAccounts,
     };
-    res.json(reportWithAccounts);
+    res.status(200).json(reportWithAccounts);
   } catch (error) {
     console.error('Error fetching earnings:', error);
     res.status(500).json({ error: 'Failed to fetch earnings data' });
@@ -59,11 +70,28 @@ app.get('/api/earnings', (req, res) => {
  */
 app.get('/api/earnings/download', (req, res) => {
   console.log('Route 1002 accessed: GET /api/earnings/download');
-  const report = wealthEngine.getRevenueReport();
-  const json = JSON.stringify(report, null, 2);
-  res.setHeader('Content-Disposition', 'attachment; filename="earnings_report.json"');
-  res.setHeader('Content-Type', 'application/json');
-  res.send(json);
+  try {
+    const report = wealthEngine.getRevenueReport();
+    // Add account numbers to revenue streams
+    const revenueStreamsWithAccounts = {};
+    for (const [key, value] of Object.entries(report.revenueStreams)) {
+      revenueStreamsWithAccounts[key] = {
+        amount: value,
+        accountNumber: accountNumbers[key] || null,
+      };
+    }
+    const reportWithAccounts = {
+      ...report,
+      revenueStreams: revenueStreamsWithAccounts,
+    };
+    const json = JSON.stringify(reportWithAccounts, null, 2);
+    res.setHeader('Content-Disposition', 'attachment; filename="earnings_report.json"');
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(json);
+  } catch (error) {
+    console.error('Error fetching earnings for download:', error);
+    res.status(500).json({ error: 'Failed to fetch earnings data for download' });
+  }
 });
 
 app.get('/', (req, res) => {
@@ -85,7 +113,7 @@ app.get('/', (req, res) => {
     '  html += "<h3>Total Daily Revenue: $" + data.totalDailyRevenue.toLocaleString() + "</h3>";',
     '  html += "<h4>Revenue Streams:</h4><ul>";',
     '  for (const [key, value] of Object.entries(data.revenueStreams)) {',
-    '    html += "<li>" + key + ": $" + value.toLocaleString() + "</li>";',
+    '    html += "<li>" + key + ": $" + value.amount.toLocaleString() + " (Account: " + value.accountNumber + ")</li>";',
     '  }',
     '  html += "</ul>";',
     '  html += "<p>Revenue Trend: " + data.revenueTrend.toFixed(4) + "</p>";',
@@ -97,7 +125,7 @@ app.get('/', (req, res) => {
     '</body>',
     '</html>'
   ].join("");
-  res.send(html);
+  res.status(200).send(html);
 });
 
 app.use((err, req, res, next) => {
@@ -116,8 +144,8 @@ if (NODE_ENV === 'production') {
 
 module.exports = { app, server };
 
-  // Package.json scripts section
-  // Removed invalid JSON block to fix syntax error
+// Package.json scripts section
+// Removed invalid JSON block to fix syntax error
 
 const logger = winston.createLogger({
   level: 'info',
@@ -131,3 +159,4 @@ app.use((req, res, next) => {
   logger.info(`${req.method} ${req.url}`);
   next();
 });
+</create_file>
