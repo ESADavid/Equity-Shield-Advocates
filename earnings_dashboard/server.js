@@ -7,6 +7,7 @@ const compression = require('compression');
 const WealthCreationEngine = require('../FOUR-ERA-AI/src/wealth-creation-engine-new.cjs').default;
 const TemporalProfitAnalyzer = require('../FOUR-ERA-AI/src/temporal-profit-analyzer.cjs').default;
 const winston = require('winston');
+const PayrollIntegration = require('../payroll_integration').default;
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -17,6 +18,12 @@ app.use(basicAuth({
   users,
   challenge: true,
 }));
+
+// Initialize PayrollIntegration
+const payrollIntegration = new PayrollIntegration(
+  process.env.DYNAMICS365_BASE_URL || 'https://your-dynamics365-instance.api.crm.dynamics.com/api/data/v9.1',
+  process.env.DYNAMICS365_ACCESS_TOKEN || 'your_access_token'
+);
 
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'https://your-frontend-domain.com',
@@ -140,6 +147,36 @@ app.get('/', (req, res) => {
     '</html>'
   ].join("");
   res.status(200).send(html);
+});
+
+// Payroll API endpoints
+
+app.post('/api/payroll/employee', async (req, res) => {
+  try {
+    const employee = req.body;
+    const result = await payrollIntegration.addOrUpdateEmployeePayroll(employee);
+    if (result.success) {
+      res.status(200).json({ message: result.message, data: result.data });
+    } else {
+      res.status(500).json({ error: result.message, details: result.data });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error', details: error.message });
+  }
+});
+
+app.get('/api/payroll/employee/:id', async (req, res) => {
+  try {
+    const employeeId = req.params.id;
+    const result = await payrollIntegration.getEmployeePayroll(employeeId);
+    if (result.success) {
+      res.status(200).json({ message: result.message, data: result.data });
+    } else {
+      res.status(500).json({ error: result.message, details: result.data });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error', details: error.message });
+  }
 });
 
 app.use((err, req, res, next) => {
