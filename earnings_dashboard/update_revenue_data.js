@@ -1,4 +1,6 @@
-const readline = require('readline');
+console.log('Update Revenue Streams');
+console.log('Current Revenue Streams:', JSON.stringify(revenueStreams, null, 2));
+askNext();const readline = require('readline');
 
 const revenueStreams = {
   aiLicensing: 500000000,
