@@ -1,5 +1,4 @@
 const request = require('supertest');
-const express = require('express');
 const app = require('./server'); // Adjust the path if necessary
 
 describe('Earnings Dashboard API Tests', () => {
@@ -60,21 +59,8 @@ describe('Earnings Dashboard API Tests', () => {
       const response = await request(app)
         .get('/api/earnings')
         .auth('admin', 'securepassword');
-      expect(response.status).toBe(500); // Semicolon added
-      expect(response.body).toHaveProperty('error', 'Failed to fetch earnings data'); // Semicolon added
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty('error', 'Failed to fetch earnings data');
     });
   });
 });
-
-"scripts": {
-  "test": "jest"
-}
-
-app.listen(PORT, () => {
-  console.log(`Earnings dashboard running at http://localhost:${PORT}`);
-}); // Semicolon added
-
-const NODE_ENV = process.env.NODE_ENV || 'development';
-if (NODE_ENV === 'production') {
-  console.log('Running in production mode');
-} // Semicolon added

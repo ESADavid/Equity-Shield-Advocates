@@ -94,12 +94,8 @@ if (NODE_ENV === 'production') {
   console.log('Running in production mode');
 }
 
-// Package.json scripts section
-{
-  "scripts": {
-    "start": "node server.js"
-  }
-}
+  // Package.json scripts section
+  // Removed invalid JSON block to fix syntax error
 
 const request = require('supertest');
 const app = require('./server'); // Adjust path as needed
