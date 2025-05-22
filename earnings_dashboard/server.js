@@ -4,7 +4,7 @@ const cors = require('cors');
 const basicAuth = require('express-basic-auth');
 const morgan = require('morgan');
 const compression = require('compression');
-const WealthCreationEngine = require('../FOUR-ERA-AI/src/wealth-creation-engine-new').default;
+const WealthCreationEngine = require('../FOUR-ERA-AI/src/wealth-creation-engine-new.cjs').default;
 const winston = require('winston');
 
 const app = express();
@@ -18,7 +18,7 @@ app.use(basicAuth({
 }));
 
 app.use(cors({
-  origin: 'https://your-frontend-domain.com',
+  origin: process.env.CORS_ORIGIN || 'https://your-frontend-domain.com',
 }));
 app.use(express.json());
 app.use(morgan('combined'));

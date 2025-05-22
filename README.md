@@ -12,7 +12,8 @@ Please see the [PATENTS.md](PATENTS.md) file for detailed patent summaries and c
 To deploy the OSCAR-BROOME-REVENUE server, follow these steps:
 
 1. Install dependencies:
-   ```
+
+   ```bash
    npm install
    ```
 
@@ -21,15 +22,60 @@ To deploy the OSCAR-BROOME-REVENUE server, follow these steps:
    - `ADMIN_USER`: Basic auth username
    - `ADMIN_PASS`: Basic auth password
    - `NODE_ENV`: Set to `production` for production mode
+   - `CORS_ORIGIN`: Your frontend domain URL (e.g., <https://your-frontend-domain.com>)
 
 3. Start the server:
-   ```
+
+   ```bash
    npm start
    ```
 
-4. The server will be accessible at `http://localhost:<PORT>`.
+4. The server will be accessible at [`http://localhost:<PORT>`](http://localhost:<PORT>).
 
-5. Ensure your frontend domain is configured in `earnings_dashboard/server.js` CORS settings.
+5. Ensure your frontend domain is configured in the `CORS_ORIGIN` environment variable.
 
 6. For production deployment, consider using a process manager like PM2 or containerization with Docker.
 
+### Using PM2
+
+- Install PM2 globally if not installed:
+
+  ```bash
+  npm install -g pm2
+  ```
+
+- Start the app with PM2 using the ecosystem config:
+
+  ```bash
+  pm2 start ecosystem.config.js --env production
+  ```
+
+- To view logs:
+
+  ```bash
+  pm2 logs oscar-broome-revenue
+  ```
+
+- To stop the app:
+
+  ```bash
+  pm2 stop oscar-broome-revenue
+  ```
+
+### Using Docker
+
+- Build the Docker image:
+
+  ```bash
+  docker build -t oscar-broome-revenue .
+  ```
+
+- Run the Docker container:
+
+  ```bash
+  docker run -d -p 4000:4000 --env-file .env oscar-broome-revenue
+  ```
+
+- The app will be accessible at `http://localhost:4000`.
+
+pm2 stop oscar-broome-revenue
