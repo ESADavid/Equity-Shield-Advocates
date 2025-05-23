@@ -2,7 +2,6 @@ module.exports = {
   preset: 'ts-jest',
   testTimeout: 30000,
   verbose: true,
-  testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['./jest.setup.js'],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
