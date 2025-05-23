@@ -1,3 +1,4 @@
+/** @jest-environment node */
 const request = require('supertest');
 const { app, server } = require('./server'); // Adjust the path if necessary
 

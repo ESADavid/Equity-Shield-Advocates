@@ -5,7 +5,7 @@ const basicAuth = require('express-basic-auth');
 const morgan = require('morgan');
 const compression = require('compression');
 const WealthCreationEngine = require('../FOUR-ERA-AI/src/wealth-creation-engine-new.cjs').default;
-const TemporalProfitAnalyzer = require('../FOUR-ERA-AI/src/temporal-profit-analyzer.cjs').default;
+const TemporalProfitAnalyzer = require('../FOUR-ERA-AI/src/temporal-profit-analyzer.js').default;
 const winston = require('winston');
 const PayrollIntegration = require('../payroll_integration').default;
 const PerformanceTracker = require('../FOUR-ERA-AI/performance-tracker');
@@ -138,27 +138,29 @@ app.get('/', (req, res) => {
     '<body>',
     '<h1>OWLban Earnings Dashboard</h1>',
     '<div id="earnings"></div>',
-    '<script>',
-    'async function fetchEarnings() {',
-    '  const response = await fetch("/api/earnings", { headers: { "Authorization": "Basic " + btoa("admin:securepassword") } });',
-    '  if (!response.ok) {',
-    '    document.getElementById("earnings").innerText = "Failed to load earnings data";',
-    '    return;',
-    '  }',
-    '  const data = await response.json();',
-    '  let html = "<h2>Total Annual Revenue: $" + data.totalAnnualRevenue.toLocaleString() + "</h2>";',
-    '  html += "<h3>Total Daily Revenue: $" + data.totalDailyRevenue.toLocaleString() + "</h3>";',
-    '  html += "<h4>Revenue Streams:</h4><ul>";',
-    '  for (const [key, value] of Object.entries(data.revenueStreams)) {',
-    '    html += "<li>" + key + ": $" + value.amount.toLocaleString() + " (Account: " + value.accountNumber + ")</li>";',
-    '  }',
-    '  html += "</ul>";',
-    '  html += "<p>Revenue Trend: " + data.revenueTrend.toFixed(4) + "</p>";',
-    '  html += "<p>Anomalies Detected: " + data.anomalies.length + "</p>";',
-    '  document.getElementById("earnings").innerHTML = html;',
-    '}',
-    'fetchEarnings();',
-    '</script>',
+  '<script>',
+  'async function fetchEarnings() {',
+  '  const adminUser = "' + (process.env.ADMIN_USER || "admin") + '";',
+  '  const adminPass = "' + (process.env.ADMIN_PASS || "securepassword") + '";',
+  '  const response = await fetch("/api/earnings", { headers: { "Authorization": "Basic " + btoa(adminUser + ":" + adminPass) } });',
+  '  if (!response.ok) {',
+  '    document.getElementById("earnings").innerText = "Failed to load earnings data";',
+  '    return;',
+  '  }',
+  '  const data = await response.json();',
+  '  let html = "<h2>Total Annual Revenue: $" + data.totalAnnualRevenue.toLocaleString() + "</h2>";',
+  '  html += "<h3>Total Daily Revenue: $" + data.totalDailyRevenue.toLocaleString() + "</h3>";',
+  '  html += "<h4>Revenue Streams:</h4><ul>";',
+  '  for (const [key, value] of Object.entries(data.revenueStreams)) {',
+  '    html += "<li>" + key + ": $" + value.amount.toLocaleString() + " (Account: " + value.accountNumber + ")</li>";',
+  '  }',
+  '  html += "</ul>";',
+  '  html += "<p>Revenue Trend: " + data.revenueTrend.toFixed(4) + "</p>";',
+  '  html += "<p>Anomalies Detected: " + data.anomalies.length + "</p>";',
+  '  document.getElementById("earnings").innerHTML = html;',
+  '}',
+  'fetchEarnings();',
+  '</script>',
     '</body>',
     '</html>'
   ].join("");
