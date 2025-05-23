@@ -2,173 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OWLban Earnings Dashboard</title>
   <link rel="stylesheet" href="dashboard.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div id="dashboard">
-    <h1>OWLban Earnings Dashboard</h1>
-    <div id="summary">
-      <p class="loading">Loading revenue data...</p>
-    </div>
-    <table id="revenueTable" style="display:none;">
-      <thead>
-        <tr>
-          <th>Revenue Stream</th>
-          <th>Amount ($)</th>
-          <th>Account Number</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <h2>Performance Metrics</h2>
-    <canvas id="performanceChart" width="800" height="400"></canvas>
-
-    <h2>Training Progress</h2>
-    <div id="trainingStatus">
-      <p class="loading">Loading training progress...</p>
-    </div>
-    <canvas id="trainingChart" width="800" height="400"></canvas>
-  </div>
-
+  <h1>OWLban Earnings Dashboard</h1>
+  <div id="earnings"></div>
   <script>
     async function fetchEarnings() {
-      const username = prompt("Enter username:", "admin");
-      const password = prompt("Enter password:", "securepassword");
-      if (!username || !password) {
-        document.getElementById('summary').innerHTML = '<p>Authentication required to view data.</p>';
+      const response = await fetch("/api/earnings", {
+        headers: {
+          "Authorization": "Basic " + btoa("admin:securepassword")
+        }
+      });
+      if (!response.ok) {
+        document.getElementById("earnings").innerText = "Failed to load earnings data";
         return;
       }
-      const headers = new Headers();
-      headers.set('Authorization', 'Basic ' + btoa(username + ':' + password));
-      try {
-        const response = await fetch('/api/earnings', { headers });
-        if (!response.ok) {
-          document.getElementById('summary').innerHTML = '<p>Failed to load earnings data.</p>';
-          return;
-        }
-        const data = await response.json();
-        document.getElementById('summary').innerHTML = `
-          <p><strong>Total Annual Revenue:</strong> $${data.totalAnnualRevenue.toLocaleString()}</p>
-          <p><strong>Total Daily Revenue:</strong> $${data.totalDailyRevenue.toLocaleString()}</p>
-          <p><strong>Revenue Trend:</strong> ${data.revenueTrend.toFixed(4)}</p>
-          <p><strong>Anomalies Detected:</strong> ${data.anomalies.length}</p>
-        `;
-        const tbody = document.querySelector('#revenueTable tbody');
-        tbody.innerHTML = '';
-        for (const [key, value] of Object.entries(data.revenueStreams)) {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${key}</td>
-            <td>$${value.amount.toLocaleString()}</td>
-            <td>${value.accountNumber || 'N/A'}</td>
-          `;
-          tbody.appendChild(tr);
-        }
-        document.getElementById('revenueTable').style.display = 'table';
-      } catch (error) {
-        document.getElementById('summary').innerHTML = '<p>Error loading earnings data.</p>';
-        console.error(error);
+      const data = await response.json();
+      let html = "<h2>Total Annual Revenue: $" + data.totalAnnualRevenue.toLocaleString() + "</h2>";
+      html += "<h3>Total Daily Revenue: $" + data.totalDailyRevenue.toLocaleString() + "</h3>";
+      html += "<h4>Revenue Streams:</h4><ul>";
+      for (const [key, value] of Object.entries(data.revenueStreams)) {
+        html += "<li>" + key + ": $" + value.amount.toLocaleString() + " (Account: " + value.accountNumber + ")</li>";
       }
+      html += "</ul>";
+      html += "<p>Revenue Trend: " + data.revenueTrend.toFixed(4) + "</p>";
+      html += "<p>Anomalies Detected: " + data.anomalies.length + "</p>";
+      document.getElementById("earnings").innerHTML = html;
     }
-
-    async function fetchPerformance() {
-      try {
-        const response = await fetch('/api/performance');
-        if (!response.ok) {
-          document.getElementById('performanceChart').style.display = 'none';
-          return;
-        }
-        const data = await response.json();
-        renderPerformanceChart(data);
-      } catch (error) {
-        console.error('Error loading performance data:', error);
-      }
-    }
-
-    function renderPerformanceChart(data) {
-      const ctx = document.getElementById('performanceChart').getContext('2d');
-      const labels = Object.keys(data).filter(k => k !== 'combinedScore' && k !== 'trainingDuration');
-      const averages = labels.map(label => data[label]);
-      if (window.performanceChartInstance) {
-        window.performanceChartInstance.destroy();
-      }
-      window.performanceChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Average Metric Value',
-            data: averages,
-            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-          }]
-        },
-        options: {
-          scales: {
-            y: { beginAtZero: true, max: 1 }
-          }
-        }
-      });
-    }
-
-    async function fetchTrainingProgress() {
-      try {
-        const response = await fetch('/api/training-progress');
-        if (!response.ok) {
-          document.getElementById('trainingStatus').innerHTML = '<p>Failed to load training progress.</p>';
-          return;
-        }
-        const data = await response.json();
-        renderTrainingProgress(data);
-      } catch (error) {
-        document.getElementById('trainingStatus').innerHTML = '<p>Error loading training progress.</p>';
-        console.error(error);
-      }
-    }
-
-    function renderTrainingProgress(data) {
-      const statusDiv = document.getElementById('trainingStatus');
-      statusDiv.innerHTML = `
-        <p>Status: ${data.status}</p>
-        <p>Fusion Score: ${data.fusionScore.toFixed(4)}</p>
-        <p>Fusion Confidence: ${data.fusionConfidence.toFixed(4)}</p>
-        <p>Training Runs: ${data.metrics.trainingRuns}</p>
-        <p>Success Rate: ${(data.metrics.successRate * 100).toFixed(2)}%</p>
-        <p>Last Run: ${data.metrics.lastRun ? new Date(data.metrics.lastRun).toLocaleString() : 'N/A'}</p>
-      `;
-
-      const ctx = document.getElementById('trainingChart').getContext('2d');
-      const eraLabels = data.eraResults.map(r => r.era);
-      const eraScores = data.eraResults.map(r => r.score);
-      if (window.trainingChartInstance) {
-        window.trainingChartInstance.destroy();
-      }
-      window.trainingChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: eraLabels,
-          datasets: [{
-            label: 'Era Scores',
-            data: eraScores,
-            fill: false,
-            borderColor: 'rgba(255, 99, 132, 0.8)',
-            tension: 0.1
-          }]
-        },
-        options: {
-          scales: {
-            y: { beginAtZero: true, max: 1 }
-          }
-        }
-      });
-    }
-
     fetchEarnings();
-    fetchPerformance();
-    fetchTrainingProgress();
   </script>
 </body>
 </html>
