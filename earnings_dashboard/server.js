@@ -8,6 +8,8 @@ const WealthCreationEngine = require('../FOUR-ERA-AI/src/wealth-creation-engine-
 const TemporalProfitAnalyzer = require('../FOUR-ERA-AI/src/temporal-profit-analyzer.cjs').default;
 const winston = require('winston');
 const PayrollIntegration = require('../payroll_integration').default;
+const PerformanceTracker = require('../FOUR-ERA-AI/performance-tracker');
+const EnhancedBlackboxTrainer = require('../FOUR-ERA-AI/blackbox-trainer-complete').default;
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -36,6 +38,20 @@ app.use(compression());
 // Instantiate WealthCreationEngine
 const wealthEngine = new WealthCreationEngine();
 app.locals.wealthEngine = wealthEngine;
+
+// Instantiate PerformanceTracker
+const performanceTracker = new PerformanceTracker({
+  efficiency: [],
+  precision: [],
+  stability: [],
+}, {
+  efficiency: 0.7,
+  precision: 0.7,
+  stability: 0.7,
+});
+
+// Instantiate EnhancedBlackboxTrainer
+const blackboxTrainer = new EnhancedBlackboxTrainer({});
 
 // Cache for revenue report
 let cachedReport = null;
@@ -149,33 +165,30 @@ app.get('/', (req, res) => {
   res.status(200).send(html);
 });
 
-// Payroll API endpoints
-
-app.post('/api/payroll/employee', async (req, res) => {
+/**
+ * Route 1003: Get performance metrics
+ */
+app.get('/api/performance', (req, res) => {
   try {
-    const employee = req.body;
-    const result = await payrollIntegration.addOrUpdateEmployeePayroll(employee);
-    if (result.success) {
-      res.status(200).json({ message: result.message, data: result.data });
-    } else {
-      res.status(500).json({ error: result.message, details: result.data });
-    }
+    const results = performanceTracker.getResults();
+    res.status(200).json(results);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    console.error('Error fetching performance metrics:', error);
+    res.status(500).json({ error: 'Failed to fetch performance metrics' });
   }
 });
 
-app.get('/api/payroll/employee/:id', async (req, res) => {
+/**
+ * Route 1004: Get training progress
+ */
+app.get('/api/training-progress', async (req, res) => {
   try {
-    const employeeId = req.params.id;
-    const result = await payrollIntegration.getEmployeePayroll(employeeId);
-    if (result.success) {
-      res.status(200).json({ message: result.message, data: result.data });
-    } else {
-      res.status(500).json({ error: result.message, details: result.data });
-    }
+    const trainingData = await blackboxTrainer.loadTrainingData();
+    const trainResult = await blackboxTrainer.train();
+    res.status(200).json(trainResult);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    console.error('Error fetching training progress:', error);
+    res.status(500).json({ error: 'Failed to fetch training progress' });
   }
 });
 
