@@ -1,83 +1,71 @@
-# OSCAR-BROOME-REVENUE
+# OWLban Earnings Dashboard
 
-REVENUE FOR OSCAR BROOME FROM ALL THE OWLBAN GROUP REPOSITORYS
+## Overview
 
-## Patents
+This project provides a backend server and frontend dashboard to display earnings data aggregated from various repositories. The server exposes REST API endpoints secured with basic authentication and serves a simple HTML dashboard.
 
-This project includes patents related to the FOUR ERA AI & OWLBAIN Group.  
-Please see the [PATENTS.md](PATENTS.md) file for detailed patent summaries and claims.
+## Features
+
+- Secure API endpoints with basic authentication
+- Fetch earnings data from a JSON file
+- Download earnings data as JSON file
+- Simple frontend dashboard displaying total and per-stream revenue
+
+## Setup
+
+### Prerequisites
+
+- Node.js (v14 or higher recommended)
+- npm package manager
+
+### Installation
+
+1. Clone the repository
+2. Run `npm install` to install dependencies
+
+### Running the Server
+
+```bash
+node earnings_dashboard/server_rebuilt.js
+```
+
+The server will start on port 4000.
+
+### API Endpoints
+
+- `GET /api/earnings` - Returns earnings data (requires basic auth)
+- `GET /api/earnings/download` - Downloads earnings data as JSON file (requires basic auth)
+- `GET /` - Serves the earnings dashboard HTML page (requires basic auth)
+
+### Authentication
+
+Use basic authentication with username `admin` and password `securepassword`.
+
+## Testing
+
+Run the Jest test suite with:
+
+```bash
+npx jest earnings_dashboard/server.test.js --runInBand --detectOpenHandles --verbose
+```
 
 ## Deployment
 
-To deploy the OSCAR-BROOME-REVENUE server, follow these steps:
+- Dockerfile is included for containerized deployment.
+- Use `ecosystem.config.js` for PM2 process management.
 
-1. Install dependencies:
+## Data
 
-   ```bash
-   npm install
-   ```
+- Earnings data is read from `owlban_repos/sample_repo/revenue.json`.
+- Replace this file with real data as needed.
 
-2. Create a `.env` file in the root directory based on `.env.example` and set the environment variables:
-   - `PORT`: Port number for the server (default 4000)
-   - `ADMIN_USER`: Basic auth username
-   - `ADMIN_PASS`: Basic auth password
-   - `NODE_ENV`: Set to `production` for production mode
-   - `CORS_ORIGIN`: Your frontend domain URL (e.g., <https://your-frontend-domain.com>)
+## Future Improvements
 
-3. Make sure `.env` is included in your `.gitignore` file to avoid committing sensitive information.
+- Enhance frontend UI with React or similar framework
+- Add database integration for dynamic data
+- Implement user management and role-based access control
+- Add CI/CD pipeline for automated testing and deployment
 
-4. Start the server:
+## License
 
-   ```bash
-   npm start
-   ```
-
-5. The server will be accessible at [`http://localhost:<PORT>`](http://localhost:<PORT>).
-
-6. Ensure your frontend domain is configured in the `CORS_ORIGIN` environment variable.
-
-7. For production deployment, consider using a process manager like PM2 or containerization with Docker.
-
-### Using PM2
-
-- Install PM2 globally if not installed:
-
-  ```bash
-  npm install -g pm2
-  ```
-
-- Start the app with PM2 using the ecosystem config:
-
-  ```bash
-  pm2 start ecosystem.config.js --env production
-  ```
-
-- To view logs:
-
-  ```bash
-  pm2 logs oscar-broome-revenue
-  ```
-
-- To stop the app:
-
-  ```bash
-  pm2 stop oscar-broome-revenue
-  ```
-
-### Using Docker
-
-- Build the Docker image:
-
-  ```bash
-  docker build -t oscar-broome-revenue .
-  ```
-
-- Run the Docker container:
-
-  ```bash
-  docker run -d -p 4000:4000 --env-file .env oscar-broome-revenue
-  ```
-
-- The app will be accessible at `http://localhost:4000`.
-
-pm2 stop oscar-broome-revenue
+MIT License

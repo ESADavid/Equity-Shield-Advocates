@@ -1,24 +1,20 @@
 module.exports = {
   apps: [
     {
-      name: "oscar-broome-revenue",
-      script: "earnings_dashboard/server.js",
-      instances: "max",
-      exec_mode: "cluster",
+      name: "owlban-earnings-dashboard",
+      script: "./earnings_dashboard/server_rebuilt.js",
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: "200M",
       env: {
         NODE_ENV: "development",
         PORT: 4000,
-        ADMIN_USER: "admin",
-        ADMIN_PASS: "securepassword",
-        CORS_ORIGIN: "https://your-frontend-domain.com"
       },
       env_production: {
         NODE_ENV: "production",
         PORT: 4000,
-        ADMIN_USER: "admin",
-        ADMIN_PASS: "securepassword",
-        CORS_ORIGIN: "https://your-frontend-domain.com"
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
