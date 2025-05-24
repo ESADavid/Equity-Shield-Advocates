@@ -5,11 +5,18 @@ const express = require('express');
 let server;
 let app;
 
-beforeAll(() => {
+beforeAll((done) => {
   // Import the server module freshly to avoid caching issues
+  const express = require('express');
   const serverModule = require('./server_rebuilt');
   app = serverModule.app;
-  server = serverModule.server;
+
+  // Start server on random free port for testing
+  server = app.listen(0, () => {
+    // Update app's port to the actual port used
+    app.set('port', server.address().port);
+    done();
+  });
 });
 
 afterAll((done) => {

@@ -30,7 +30,9 @@ describe('API Endpoint Tests', () => {
   });
 
   test('GET / - dashboard page', async () => {
-    const res = await request(app).get('/');
+    const res = await request(app)
+      .get('/')
+      .set('Authorization', authHeader);
     expect(res.statusCode).toBe(200);
     expect(res.text).toContain('OWLban Earnings Dashboard');
   });

@@ -5,7 +5,7 @@ const path = require('path');
 const basicAuth = require('express-basic-auth');
 
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 // Basic authentication setup
 app.use(basicAuth({
@@ -85,8 +85,10 @@ app.get('/', (req, res) => {
   res.send(html);
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`Earnings dashboard running at http://localhost:${PORT}`);
+const HOST = '0.0.0.0'; // Listen on all network interfaces
+
+const server = app.listen(PORT, HOST, () => {
+  console.log(`Earnings dashboard running at http://${HOST}:${PORT}`);
 });
 
 module.exports = { app, server };
