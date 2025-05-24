@@ -51,8 +51,73 @@ npx jest earnings_dashboard/server.test.js --runInBand --detectOpenHandles --ver
 
 ## Deployment
 
-- Dockerfile is included for containerized deployment.
-- Use `ecosystem.config.js` for PM2 process management.
+This project can be deployed using Docker or PM2 process manager.
+
+### Environment Variables
+
+The following environment variables should be set in your production environment:
+
+- `PORT` - Port number the server listens on (default: 4000)
+- `ADMIN_USER` - Username for basic authentication (default: admin)
+- `ADMIN_PASS` - Password for basic authentication (default: securepassword)
+- `NODE_ENV` - Node environment (set to "production" in production)
+- `DYNAMICS365_BASE_URL` - (Optional) Base URL for Dynamics365 integration
+- `DYNAMICS365_ACCESS_TOKEN` - (Optional) Access token for Dynamics365 API
+- `CORS_ORIGIN` - (Optional) Allowed origin for CORS
+
+### Docker Deployment
+
+1. Build the Docker image:
+
+```bash
+docker build -t owlban-earnings-dashboard .
+```
+
+2. Run the Docker container (example with environment variables):
+
+```bash
+docker run -d -p 4000:4000 \
+  -e ADMIN_USER=yourusername \
+  -e ADMIN_PASS=yourpassword \
+  -e NODE_ENV=production \
+  --name owlban-dashboard-container \
+  owlban-earnings-dashboard
+```
+
+### PM2 Deployment
+
+1. Install PM2 globally if not installed:
+
+```bash
+npm install -g pm2
+```
+
+2. Start the app with PM2 using the ecosystem config:
+
+```bash
+pm2 start ecosystem.config.js --env production
+```
+
+3. To monitor logs:
+
+```bash
+pm2 logs owlban-earnings-dashboard
+```
+
+4. To restart the app:
+
+```bash
+pm2 restart owlban-earnings-dashboard
+```
+
+### Testing
+
+Run tests before deployment to ensure stability:
+
+```bash
+npm test
+```
+
 
 ## Data
 
