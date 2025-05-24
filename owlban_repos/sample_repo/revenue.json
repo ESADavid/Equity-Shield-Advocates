@@ -1,7 +1,11 @@
 {
-  "totalRevenue": 1234567890,
+  "totalRevenue": 1234181891,
   "details": {
     "source": "Sample Repository",
     "year": 2025
+  },
+  "purchases": {
+    "corporateHomes": 200000,
+    "autoFleet": 185999
   }
 }
