@@ -73,7 +73,7 @@ The following environment variables should be set in your production environment
 docker build -t owlban-earnings-dashboard .
 ```
 
-2. Run the Docker container (example with environment variables):
+1. Run the Docker container (example with environment variables):
 
 ```bash
 docker run -d -p 4000:4000 \
@@ -92,32 +92,31 @@ docker run -d -p 4000:4000 \
 npm install -g pm2
 ```
 
-2. Start the app with PM2 using the ecosystem config:
+1. Start the app with PM2 using the ecosystem config:
 
 ```bash
 pm2 start ecosystem.config.js --env production
 ```
 
-3. To monitor logs:
+1. To monitor logs:
 
 ```bash
 pm2 logs owlban-earnings-dashboard
 ```
 
-4. To restart the app:
+1. To restart the app:
 
 ```bash
 pm2 restart owlban-earnings-dashboard
 ```
 
-### Testing
+### Pre-Deployment Testing
 
 Run tests before deployment to ensure stability:
 
 ```bash
 npm test
 ```
-
 
 ## Data
 
