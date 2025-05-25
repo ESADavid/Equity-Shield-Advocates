@@ -1,8 +1,21 @@
 {
   "totalRevenue": 1234181891,
-  "details": {
-    "source": "Sample Repository",
-    "year": 2025
+  "revenueStreams": {
+    "Sample Repo": {
+      "amount": 617090945,
+      "accountNumber": "987654321",
+      "routingNumber": "123456789"
+    },
+    "Owlban Investments": {
+      "amount": 370254567,
+      "accountNumber": "123123123",
+      "routingNumber": "321321321"
+    },
+    "Corporate Ventures": {
+      "amount": 246836379,
+      "accountNumber": "456456456",
+      "routingNumber": "654654654"
+    }
   },
   "purchases": {
     "corporateHomes": 200000,

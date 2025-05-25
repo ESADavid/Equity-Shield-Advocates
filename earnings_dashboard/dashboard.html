@@ -38,7 +38,9 @@
             ": $" +
             details.amount.toLocaleString() +
             " (Account: " +
-            details.accountNumber +
+            (details.accountNumber || "N/A") +
+            ", Routing Number: " +
+            (details.routingNumber || "N/A") +
             ")</li>";
         }
         html += "</ul>";

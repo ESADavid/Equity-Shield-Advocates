@@ -41,15 +41,11 @@ function getEarningsData() {
   if (!data) {
     return null;
   }
+  // Use real revenue streams from data
   return {
     totalAnnualRevenue: data.totalRevenue,
     totalDailyRevenue: data.totalRevenue / 365,
-    revenueStreams: {
-      sampleRepo: {
-        amount: data.totalRevenue,
-        accountNumber: 'N/A',
-      },
-    },
+    revenueStreams: data.revenueStreams || {},
     purchases: data.purchases
   };
 }
@@ -146,7 +142,7 @@ app.get('/', (req, res) => {
     '  html += "<h3>Total Daily Revenue: $" + data.totalDailyRevenue.toFixed(2) + "</h3>";',
     '  html += "<ul>";',
     '  for (const [stream, details] of Object.entries(data.revenueStreams)) {',
-    '    html += "<li>" + stream + ": $" + details.amount.toLocaleString() + " (Account: " + details.accountNumber + ")</li>";',
+    '    html += "<li>" + stream + ": $" + details.amount.toLocaleString() + " (Account: " + (details.accountNumber || "N/A") + ", Routing Number: " + (details.routingNumber || "N/A") + ")</li>";',
     '  }',
     '  html += "</ul>";',
     '  html += "<h3>Purchases:</h3>";',
