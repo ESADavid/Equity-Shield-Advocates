@@ -1,15 +1,24 @@
 import fs from 'fs/promises';
 import path from 'path';
 
+interface RevenueStream {
+  name: string;
+  amount: number;
+  accountNumber?: string;
+  routingNumber?: string;
+}
+
 interface RevenueData {
   repository: string;
-  revenue: number;
+  totalRevenue: number;
+  revenueStreams: RevenueStream[];
   details?: any;
 }
 
 interface AggregatedRevenue {
   totalRevenue: number;
   perRepository: Record<string, number>;
+  revenueStreamsSummary: Record<string, number>;
 }
 
 async function loadRevenueFromRepo(repoPath: string): Promise<RevenueData | null> {
@@ -25,7 +34,8 @@ async function loadRevenueFromRepo(repoPath: string): Promise<RevenueData | null
     const revenue = JSON.parse(data);
     return {
       repository: path.basename(repoPath),
-      revenue: revenue.totalRevenue || 0,
+      totalRevenue: revenue.totalRevenue || 0,
+      revenueStreams: revenue.revenueStreams || [],
       details: revenue
     };
   } catch (error) {
@@ -36,19 +46,27 @@ async function loadRevenueFromRepo(repoPath: string): Promise<RevenueData | null
 
 async function aggregateRevenues(repoPaths: string[]): Promise<AggregatedRevenue> {
   const perRepository: Record<string, number> = {};
+  const revenueStreamsSummary: Record<string, number> = {};
   let totalRevenue = 0;
 
   const promises = repoPaths.map(async (repoPath) => {
     const revenueData = await loadRevenueFromRepo(repoPath);
     if (revenueData) {
-      perRepository[revenueData.repository] = revenueData.revenue;
-      totalRevenue += revenueData.revenue;
+      perRepository[revenueData.repository] = revenueData.totalRevenue;
+      totalRevenue += revenueData.totalRevenue;
+
+      revenueData.revenueStreams.forEach(stream => {
+        if (!revenueStreamsSummary[stream.name]) {
+          revenueStreamsSummary[stream.name] = 0;
+        }
+        revenueStreamsSummary[stream.name] += stream.amount;
+      });
     }
   });
 
   await Promise.all(promises);
 
-  return { totalRevenue, perRepository };
+  return { totalRevenue, perRepository, revenueStreamsSummary };
 }
 
 async function main() {
@@ -71,6 +89,11 @@ async function main() {
   console.log('Revenue Per Repository:');
   Object.entries(aggregated.perRepository).forEach(([repo, revenue]) => {
     console.log(`- ${repo}: $${revenue.toLocaleString()}`);
+  });
+
+  console.log('Revenue Streams Summary:');
+  Object.entries(aggregated.revenueStreamsSummary).forEach(([stream, amount]) => {
+    console.log(`- ${stream}: $${amount.toLocaleString()}`);
   });
 
   // Optionally write aggregated data to a JSON file
