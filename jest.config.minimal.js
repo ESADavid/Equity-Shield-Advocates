@@ -15,16 +15,6 @@ module.exports = {
       tsconfig: 'tsconfig.json',
     },
   },
-  projects: [
-    {
-      displayName: "backend",
-      testMatch: ["<rootDir>/earnings_dashboard/**/*.test.{ts,tsx,js,jsx}", "<rootDir>/**/*.test.{ts,tsx,js,jsx}"],
-      testEnvironment: "node"
-    },
-    {
-      displayName: "frontend",
-      testMatch: ["<rootDir>/src/**/*.test.ts", "<rootDir>/src/**/*.test.tsx"],
-      testEnvironment: "jsdom"
-    }
-  ]
+  testMatch: ["<rootDir>/earnings_dashboard/**/*.test.{ts,tsx,js,jsx}", "<rootDir>/**/*.test.{ts,tsx,js,jsx}"],
+  testEnvironment: "node"
 };

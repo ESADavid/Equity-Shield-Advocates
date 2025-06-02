@@ -6,8 +6,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["jest"],
+    "types": ["jest", "node"],
     "baseUrl": "."
   },
-  "include": ["FOUR-ERA-AI/test/**/*.ts", "FOUR-ERA-AI/src/**/*.ts"]
+  "include": ["FOUR-ERA-AI/test/**/*.ts", "FOUR-ERA-AI/src/**/*.ts", "earnings_dashboard/**/*.ts"]
 }
