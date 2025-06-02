@@ -18,7 +18,7 @@ module.exports = {
   projects: [
     {
       displayName: "backend",
-      testMatch: ["<rootDir>/earnings_dashboard/server.test.js", "<rootDir>/earnings_dashboard/server.test.ts", "<rootDir>/earnings_dashboard/api.test.js"],
+      testMatch: ["<rootDir>/earnings_dashboard/server.test.js", "<rootDir>/earnings_dashboard/server.test.ts", "<rootDir>/earnings_dashboard/api.test.js", "<rootDir>/earnings_dashboard/payroll_integration.test.ts", "<rootDir>/earnings_dashboard/payroll_integration.test.js"],
       testEnvironment: "node"
     },
     {

@@ -5,6 +5,8 @@ interface PayrollEmployee {
   name: string;
   salary: number;
   taxRate: number;
+  accountNumber?: string;
+  routingNumber?: string;
   benefits?: any;
 }
 
