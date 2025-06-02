@@ -49,7 +49,10 @@ async function fetchAndSyncPayroll() {
   console.log('Revenue data updated with payroll information.');
 }
 
+
 fetchAndSyncPayroll().catch((error) => {
   console.error('Error in fetchAndSyncPayroll:', error);
   process.exit(1);
 });
+
+export default fetchAndSyncPayroll;

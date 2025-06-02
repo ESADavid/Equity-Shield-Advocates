@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { jest } from '@jest/globals';
 import PayrollIntegration, { PayrollResponse } from '../payroll_integration';
+import fetchAndSyncPayroll from './fetch_and_sync_payroll';
 
 jest.mock('fs');
 
@@ -19,14 +20,13 @@ describe('fetch_and_sync_payroll', () => {
     const processExitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { throw new Error('process.exit'); });
 
     try {
-      const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default;
       await fetchAndSyncPayroll();
     } catch (error) {
       // Fix for "Object is of type 'unknown'" error by type guard
       if (error instanceof Error) {
         expect(error.message).toBe('process.exit');
       } else {
-        throw error;
+        throw new Error(String(error));
       }
     }
 
@@ -68,7 +68,6 @@ describe('fetch_and_sync_payroll', () => {
     // Fix for "Argument of type 'PayrollResponse' is not assignable to parameter of type 'never'" error
     jest.spyOn(ActualPayrollIntegration.prototype, 'getEmployeePayroll').mockImplementation(mockGetEmployeePayroll);
 
-    const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default;
     await fetchAndSyncPayroll();
 
     expect(mockGetEmployeePayroll).toHaveBeenCalled();
