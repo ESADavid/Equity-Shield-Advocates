@@ -54,7 +54,7 @@ describe('fetch_and_sync_payroll', () => {
     const writeFileSyncMock = jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
 
     // Import the actual PayrollIntegration class
-    const ActualPayrollIntegration = (jest.requireActual('../payroll_integration').default) as typeof PayrollIntegration;
+    const ActualPayrollIntegration = (jest.requireActual('../payroll_integration') as { default: typeof PayrollIntegration }).default;
 
     // Create a mocked instance of PayrollIntegration
     const mockGetEmployeePayroll = jest.fn(async (employeeId: string): Promise<PayrollResponse> => {
