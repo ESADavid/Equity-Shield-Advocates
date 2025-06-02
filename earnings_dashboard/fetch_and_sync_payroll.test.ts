@@ -1,9 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { jest } from '@jest/globals';
-import PayrollIntegration from '../payroll_integration';
+import PayrollIntegration, { PayrollResponse } from '../payroll_integration';
 
-jest.mock('../payroll_integration');
 jest.mock('fs');
 
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
@@ -22,8 +21,13 @@ describe('fetch_and_sync_payroll', () => {
     try {
       const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default;
       await fetchAndSyncPayroll();
-    } catch (error: any) {
-      expect(error.message).toBe('process.exit');
+    } catch (error) {
+      // Fix for "Object is of type 'unknown'" error by type guard
+      if (error instanceof Error) {
+        expect(error.message).toBe('process.exit');
+      } else {
+        throw error;
+      }
     }
 
     expect(consoleErrorSpy).toHaveBeenCalledWith('Dynamics365 base URL or access token is not set in environment variables.');
@@ -49,13 +53,20 @@ describe('fetch_and_sync_payroll', () => {
     (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify(mockRevenueData));
     const writeFileSyncMock = jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
 
-    const mockGetEmployeePayroll = jest.fn().mockResolvedValue({
-      success: true,
-      data: { salary: 50000 }
-    } as any);
-    (PayrollIntegration as jest.Mock).mockImplementation(() => ({
-      getEmployeePayroll: mockGetEmployeePayroll
-    }));
+    // Import the actual PayrollIntegration class
+    const ActualPayrollIntegration = (jest.requireActual('../payroll_integration').default) as typeof PayrollIntegration;
+
+    // Create a mocked instance of PayrollIntegration
+    const mockGetEmployeePayroll = jest.fn(async (employeeId: string): Promise<PayrollResponse> => {
+      return {
+        success: true,
+        message: 'Payroll data fetched',
+        data: { salary: 50000 }
+      };
+    });
+
+    // Fix for "Argument of type 'PayrollResponse' is not assignable to parameter of type 'never'" error
+    jest.spyOn(ActualPayrollIntegration.prototype, 'getEmployeePayroll').mockImplementation(mockGetEmployeePayroll);
 
     const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default;
     await fetchAndSyncPayroll();

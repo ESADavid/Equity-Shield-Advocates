@@ -10,7 +10,7 @@ interface PayrollEmployee {
   benefits?: any;
 }
 
-interface PayrollResponse {
+export interface PayrollResponse {
   success: boolean;
   message: string;
   data?: any;
