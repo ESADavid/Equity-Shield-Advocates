@@ -20,5 +20,6 @@
   "purchases": {
     "corporateHomes": 200000,
     "autoFleet": 185999
-  }
+  },
+  "payroll": []
 }

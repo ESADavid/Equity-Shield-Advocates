@@ -1,58 +1,78 @@
-import PayrollIntegration from '../payroll_integration';
+import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 
+interface PayrollData {
+  employeeId: string;
+  amount: number;
+  date: string;
+}
+
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 
-async function fetchAndSyncPayroll() {
+async function fetchPayrollData(employeeId: string): Promise<PayrollData | null> {
   const baseUrl = process.env.DYNAMICS365_BASE_URL;
   const accessToken = process.env.DYNAMICS365_ACCESS_TOKEN;
 
   if (!baseUrl || !accessToken) {
-    console.error('Dynamics365 base URL or access token is not set in environment variables.');
-    process.exit(1);
+    console.error('Dynamics365 base URL or access token is not set in environment variables. Please set DYNAMICS365_BASE_URL and DYNAMICS365_ACCESS_TOKEN.');
+    return null;
   }
 
-  const payrollIntegration = new PayrollIntegration(baseUrl, accessToken);
-
-  // Example: Fetch payroll data for a list of employee IDs (this list should be replaced with real IDs)
-  const employeeIds = ['emp1', 'emp2', 'emp3'];
-
-  let revenueData = null;
-  if (fs.existsSync(revenueDataPath)) {
-    revenueData = JSON.parse(fs.readFileSync(revenueDataPath, 'utf-8'));
-  } else {
-    console.error('Revenue data file not found at', revenueDataPath);
-    process.exit(1);
+  try {
+    const response = await axios.get(`${baseUrl}/payroll/${employeeId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const data = response.data;
+    return {
+      employeeId,
+      amount: data.amount,
+      date: data.date,
+    };
+  } catch (error) {
+    console.error(`Failed to fetch payroll data for employee ${employeeId}:`, error);
+    return null;
   }
+}
+
+async function fetchAndSyncPayroll(): Promise<void> {
+  // TODO: Replace with actual employee IDs
+  const employeeIds = [
+    'employee-id-1',
+    'employee-id-2',
+    'employee-id-3',
+  ];
+
+  const payrollDataList: PayrollData[] = [];
 
   for (const employeeId of employeeIds) {
-    try {
-      const response = await payrollIntegration.getEmployeePayroll(employeeId);
-      if (response.success && response.data) {
-        // Process payroll data and update revenueData as needed
-        console.log(`Payroll data for employee ${employeeId}:`, response.data);
-        // Example: Add salary to totalRevenue (this logic should be adapted to real requirements)
-        if (typeof response.data.salary === 'number') {
-          revenueData.totalRevenue += response.data.salary;
-        }
-      } else {
-        console.warn(`Failed to fetch payroll data for employee ${employeeId}:`, response.message);
-      }
-    } catch (error) {
-      console.error(`Error fetching payroll data for employee ${employeeId}:`, error);
+    const payrollData = await fetchPayrollData(employeeId);
+    if (payrollData) {
+      payrollDataList.push(payrollData);
     }
   }
 
+  // Read existing revenue data
+  let revenueData: any = {};
+  try {
+    const fileContent = fs.readFileSync(revenueDataPath, 'utf-8');
+    revenueData = JSON.parse(fileContent);
+  } catch (error) {
+    console.warn('Failed to read existing revenue data, starting with empty object.');
+  }
+
+  // Update revenue data with payroll data
+  revenueData.payroll = payrollDataList;
+
   // Write updated revenue data back to file
-  fs.writeFileSync(revenueDataPath, JSON.stringify(revenueData, null, 2), 'utf-8');
-  console.log('Revenue data updated with payroll information.');
+  try {
+    fs.writeFileSync(revenueDataPath, JSON.stringify(revenueData, null, 2), 'utf-8');
+    console.log('Revenue data updated successfully with payroll data.');
+  } catch (error) {
+    console.error('Failed to write updated revenue data:', error);
+  }
 }
 
-
-fetchAndSyncPayroll().catch((error) => {
-  console.error('Error in fetchAndSyncPayroll:', error);
-  process.exit(1);
-});
-
-export default fetchAndSyncPayroll;
+fetchAndSyncPayroll();
