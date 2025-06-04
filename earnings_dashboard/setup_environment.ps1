@@ -1,8 +1,11 @@
 # PowerShell script to set environment variables for Dynamics365 API
 
-# Replace the placeholder values with your actual values
-$env:DYNAMICS365_BASE_URL = "https://your-dynamics365-api-url"
-$env:DYNAMICS365_ACCESS_TOKEN = "your-access-token"
+# Prompt user to enter actual values for environment variables
+$baseUrl = Read-Host "Enter your Dynamics365 API base URL"
+$accessToken = Read-Host "Enter your Dynamics365 API access token"
+
+$env:DYNAMICS365_BASE_URL = $baseUrl
+$env:DYNAMICS365_ACCESS_TOKEN = $accessToken
 
 Write-Host "Environment variables DYNAMICS365_BASE_URL and DYNAMICS365_ACCESS_TOKEN have been set for this session."
 

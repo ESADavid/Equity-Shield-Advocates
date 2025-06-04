@@ -2,9 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const basicAuth = require('express-basic-auth');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+app.use(basicAuth({
+  users: { 'admin': 'securepassword' },
+  challenge: true,
+}));
 
 app.use(cors());
 app.use(express.json());

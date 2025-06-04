@@ -1,3 +1,6 @@
+const axios = require('axios');
+jest.mock('axios');
+
 const PayrollIntegration = require('../payroll_integration').default;
 
 describe('PayrollIntegration', () => {
@@ -22,7 +25,7 @@ describe('PayrollIntegration', () => {
   it('should call addOrUpdateEmployeePayroll and return success', async () => {
     // Mock axios.put to simulate API call
     const mockResponse = { data: { updated: true } };
-    payroll['axios'] = { put: jest.fn().mockResolvedValue(mockResponse) };
+    axios.put.mockResolvedValue(mockResponse);
 
     const employee = {
       id: '123',
@@ -34,36 +37,18 @@ describe('PayrollIntegration', () => {
       benefits: {}
     };
 
-    // Override axios.put temporarily
-    const originalPut = payroll['axios']?.put;
-    payroll['axios'] = { put: jest.fn().mockResolvedValue(mockResponse) };
-
     const response = await payroll.addOrUpdateEmployeePayroll(employee);
     expect(response.success).toBe(true);
     expect(response.message).toBe('Payroll data updated');
-
-    // Restore original axios.put
-    if (originalPut) {
-      payroll['axios'].put = originalPut;
-    }
   });
 
   it('should call getEmployeePayroll and return success', async () => {
     // Mock axios.get to simulate API call
     const mockResponse = { data: { id: '123', name: 'John Doe' } };
-    payroll['axios'] = { get: jest.fn().mockResolvedValue(mockResponse) };
-
-    // Override axios.get temporarily
-    const originalGet = payroll['axios']?.get;
-    payroll['axios'] = { get: jest.fn().mockResolvedValue(mockResponse) };
+    axios.get.mockResolvedValue(mockResponse);
 
     const response = await payroll.getEmployeePayroll('123');
     expect(response.success).toBe(true);
     expect(response.message).toBe('Payroll data fetched');
-
-    // Restore original axios.get
-    if (originalGet) {
-      payroll['axios'].get = originalGet;
-    }
   });
 });
