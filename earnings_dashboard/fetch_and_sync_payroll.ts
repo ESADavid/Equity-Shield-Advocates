@@ -40,9 +40,7 @@ async function fetchPayrollData(employeeId: string): Promise<PayrollData | null>
 async function fetchAndSyncPayroll(): Promise<void> {
   // TODO: Replace with actual employee IDs
   const employeeIds = [
-    'employee-id-1',
-    'employee-id-2',
-    'employee-id-3',
+    'OSCAR BROOME',
   ];
 
   const payrollDataList: PayrollData[] = [];
