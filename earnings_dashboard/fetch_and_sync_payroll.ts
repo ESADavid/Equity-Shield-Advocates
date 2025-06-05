@@ -1,6 +1,7 @@
-import axios from 'axios';
+
 import fs from 'fs';
 import path from 'path';
+import PayrollIntegration from '../payroll_integration';
 
 interface PayrollData {
   employeeId: string;
@@ -10,47 +11,37 @@ interface PayrollData {
 
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 
-async function fetchPayrollData(employeeId: string): Promise<PayrollData | null> {
+async function fetchAndSyncPayroll(): Promise<void> {
   const baseUrl = process.env.DYNAMICS365_BASE_URL;
   const accessToken = process.env.DYNAMICS365_ACCESS_TOKEN;
 
   if (!baseUrl || !accessToken) {
-    console.error('Dynamics365 base URL or access token is not set in environment variables. Please set DYNAMICS365_BASE_URL and DYNAMICS365_ACCESS_TOKEN.');
+    console.error('Dynamics365 base URL or access token is not set in environment variables.');
     process.exit(1);
   }
 
-  try {
-    const response = await axios.get(`${baseUrl}/payroll/${employeeId}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    const data = response.data;
-    return {
-      employeeId,
-      amount: data.amount,
-      date: data.date,
-    };
-  } catch (error) {
-    console.error(`Failed to fetch payroll data for employee ${employeeId}:`, error);
-    return null;
-  }
-}
-
-async function fetchAndSyncPayroll(): Promise<void> {
   // TODO: Replace with actual employee IDs or fetch dynamically
   const employeeIds = [
     'OSCAR BROOME',
     // Add more employee IDs here
   ];
 
+  const payrollIntegration = new PayrollIntegration(baseUrl, accessToken);
   const payrollDataList: PayrollData[] = [];
 
   for (const employeeId of employeeIds) {
-    const payrollData = await fetchPayrollData(employeeId);
-    if (payrollData) {
-      payrollDataList.push(payrollData);
-    } else {
+    try {
+      const response = await payrollIntegration.getEmployeePayroll(employeeId);
+      if (response.success && response.data) {
+        payrollDataList.push({
+          employeeId,
+          amount: response.data.salary,
+          date: new Date().toISOString(),
+        });
+      } else {
+        console.warn(`Payroll data for employee ${employeeId} could not be fetched and will be skipped.`);
+      }
+    } catch (error) {
       console.warn(`Payroll data for employee ${employeeId} could not be fetched and will be skipped.`);
     }
   }

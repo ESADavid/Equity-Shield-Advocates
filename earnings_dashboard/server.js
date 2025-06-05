@@ -43,11 +43,7 @@ const wealthEngine = new WealthCreationEngine();
 app.locals.wealthEngine = wealthEngine;
 
 // Instantiate PerformanceTracker
-const performanceTracker = new PerformanceTracker({
-  efficiency: [],
-  precision: [],
-  stability: [],
-}, {
+const performanceTracker = new PerformanceTracker(['efficiency', 'precision', 'stability'], {
   efficiency: 0.7,
   precision: 0.7,
   stability: 0.7,
