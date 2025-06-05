@@ -1,6 +1,4 @@
-console.log('Update Revenue Streams');
-console.log('Current Revenue Streams:', JSON.stringify(revenueStreams, null, 2));
-askNext();const readline = require('readline');
+const readline = require('readline');
 
 const revenueStreams = {
   aiLicensing: 500000000,
@@ -12,36 +10,49 @@ const revenueStreams = {
   strategicConsulting: 100000000,
 };
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+function interactiveUpdateRevenueStreams() {
+  console.log('Update Revenue Streams');
+  console.log('Current Revenue Streams:', JSON.stringify(revenueStreams, null, 2));
 
-const updatedRevenue = {};
-
-const keys = Object.keys(revenueStreams);
-let index = 0;
-
-function askNext() {
-  if (index === keys.length) {
-    console.log('Updated Revenue Data:');
-    console.log(JSON.stringify(updatedRevenue, null, 2));
-    rl.close();
-    return;
-  }
-  const key = keys[index];
-  rl.question(`Enter new value for ${key} (current: ${revenueStreams[key]}): `, (answer) => {
-    const value = Number(answer);
-    if (isNaN(value)) {
-      console.log('Please enter a valid number.');
-      askNext();
-    } else {
-      updatedRevenue[key] = value;
-      index++;
-      askNext();
-    }
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
   });
+
+  const updatedRevenue = {};
+
+  const keys = Object.keys(revenueStreams);
+  let index = 0;
+
+  function askNext() {
+    if (index === keys.length) {
+      console.log('Updated Revenue Data:');
+      console.log(JSON.stringify(updatedRevenue, null, 2));
+      rl.close();
+      return;
+    }
+    const key = keys[index];
+    rl.question(`Enter new value for ${key} (current: ${revenueStreams[key]}): `, (answer) => {
+      const value = Number(answer);
+      if (isNaN(value)) {
+        console.log('Please enter a valid number.');
+        askNext();
+      } else {
+        updatedRevenue[key] = value;
+        index++;
+        askNext();
+      }
+    });
+  }
+
+  askNext();
 }
 
-console.log('Update Revenue Streams');
-askNext();
+if (require.main === module) {
+  interactiveUpdateRevenueStreams();
+}
+
+module.exports = {
+  interactiveUpdateRevenueStreams,
+  revenueStreams,
+};

@@ -11,6 +11,9 @@ const PayrollIntegration = require('../payroll_integration').default;
 const PerformanceTracker = require('../FOUR-ERA-AI/performance-tracker');
 const EnhancedBlackboxTrainer = require('../FOUR-ERA-AI/blackbox-trainer-complete').default;
 
+const updateRevenueData = require('./update_revenue_data').default || require('./update_revenue_data');
+const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default || require('./fetch_and_sync_payroll');
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -207,6 +210,40 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     ADMIN_PASS: process.env.ADMIN_PASS,
     NODE_ENV: process.env.NODE_ENV,
   });
+});
+
+// New API endpoint to update revenue data
+app.get('/api/update/revenue', async (req, res) => {
+  try {
+    await updateRevenueData();
+    res.status(200).json({ message: 'Revenue data updated successfully' });
+  } catch (error) {
+    console.error('Error updating revenue data:', error);
+    res.status(500).json({ error: 'Failed to update revenue data' });
+  }
+});
+
+// New API endpoint to update payroll data
+app.get('/api/update/payroll', async (req, res) => {
+  try {
+    await fetchAndSyncPayroll();
+    res.status(200).json({ message: 'Payroll data updated successfully' });
+  } catch (error) {
+    console.error('Error updating payroll data:', error);
+    res.status(500).json({ error: 'Failed to update payroll data' });
+  }
+});
+
+// New API endpoint to update both revenue and payroll data sequentially
+app.get('/api/update/all', async (req, res) => {
+  try {
+    await updateRevenueData();
+    await fetchAndSyncPayroll();
+    res.status(200).json({ message: 'Revenue and payroll data updated successfully' });
+  } catch (error) {
+    console.error('Error updating all data:', error);
+    res.status(500).json({ error: 'Failed to update all data' });
+  }
 });
 
 process.on('uncaughtException', (err) => {

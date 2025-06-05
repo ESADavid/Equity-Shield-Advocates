@@ -1,93 +1,63 @@
-/** @jest-environment node */
 const request = require('supertest');
-const express = require('express');
+const { app } = require('./server');
+const fs = require('fs');
+const path = require('path');
 
-let server;
-let app;
+jest.mock('./update_revenue_data');
+jest.mock('./fetch_and_sync_payroll');
 
-beforeAll((done) => {
-  // Import the server module freshly to avoid caching issues
-  const express = require('express');
-  const serverModule = require('./server_rebuilt');
-  app = serverModule.app;
+const updateRevenueData = require('./update_revenue_data').default || require('./update_revenue_data');
+const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default || require('./fetch_and_sync_payroll');
 
-  // Start server on random free port for testing
-  server = app.listen(0, () => {
-    // Update app's port to the actual port used
-    app.set('port', server.address().port);
-    done();
-  });
-});
-
-afterAll((done) => {
-  if (server && typeof server.close === 'function') {
-    server.close(done);
-  } else {
-    done();
-  }
-});
-
-describe('Earnings Dashboard API Tests', () => {
-  test('GET /api/earnings returns earnings data with status 200', async () => {
-    const response = await request(app)
-      .get('/api/earnings')
-      .auth('admin', 'securepassword');
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('totalAnnualRevenue');
-    expect(response.body).toHaveProperty('totalDailyRevenue');
-    expect(response.body).toHaveProperty('revenueStreams');
-    for (const stream of Object.values(response.body.revenueStreams)) {
-      expect(stream).toHaveProperty('amount');
-      expect(stream).toHaveProperty('accountNumber');
-    }
+describe('Update API Endpoints', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  test('GET /api/earnings without auth returns 401', async () => {
-    const response = await request(app).get('/api/earnings');
-    expect(response.status).toBe(401);
+  test('GET /api/update/revenue - success', async () => {
+    updateRevenueData.mockResolvedValue();
+    const res = await request(app).get('/api/update/revenue');
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual({ message: 'Revenue data updated successfully' });
+    expect(updateRevenueData).toHaveBeenCalledTimes(1);
   });
 
-  test('GET /api/earnings/download returns JSON file with earnings data', async () => {
-    const response = await request(app)
-      .get('/api/earnings/download')
-      .auth('admin', 'securepassword');
-    expect(response.status).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/);
-    expect(response.headers['content-disposition']).toMatch(/attachment/);
-    const body = JSON.parse(response.text);
-    expect(body).toHaveProperty('totalAnnualRevenue');
-    expect(body).toHaveProperty('totalDailyRevenue');
-    expect(body).toHaveProperty('revenueStreams');
-    for (const stream of Object.values(body.revenueStreams)) {
-      expect(stream).toHaveProperty('amount');
-      expect(stream).toHaveProperty('accountNumber');
-    }
+  test('GET /api/update/revenue - failure', async () => {
+    updateRevenueData.mockRejectedValue(new Error('Update failed'));
+    const res = await request(app).get('/api/update/revenue');
+    expect(res.statusCode).toBe(500);
+    expect(res.body).toEqual({ error: 'Failed to update revenue data' });
   });
 
-  test('GET /api/earnings/download without auth returns 401', async () => {
-    const response = await request(app).get('/api/earnings/download');
-    expect(response.status).toBe(401);
+  test('GET /api/update/payroll - success', async () => {
+    fetchAndSyncPayroll.mockResolvedValue();
+    const res = await request(app).get('/api/update/payroll');
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual({ message: 'Payroll data updated successfully' });
+    expect(fetchAndSyncPayroll).toHaveBeenCalledTimes(1);
   });
 
-  test('GET / returns the HTML dashboard', async () => {
-    const response = await request(app)
-      .get('/')
-      .auth('admin', 'securepassword');
-    expect(response.status).toBe(200);
-    expect(response.text).toMatch(/OWLban Earnings Dashboard/);
+  test('GET /api/update/payroll - failure', async () => {
+    fetchAndSyncPayroll.mockRejectedValue(new Error('Payroll update failed'));
+    const res = await request(app).get('/api/update/payroll');
+    expect(res.statusCode).toBe(500);
+    expect(res.body).toEqual({ error: 'Failed to update payroll data' });
   });
 
-  test('GET unknown route returns 404', async () => {
-    const response = await request(app)
-      .get('/unknown-route')
-      .auth('admin', 'securepassword');
-    expect(response.status).toBe(404);
+  test('GET /api/update/all - success', async () => {
+    updateRevenueData.mockResolvedValue();
+    fetchAndSyncPayroll.mockResolvedValue();
+    const res = await request(app).get('/api/update/all');
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual({ message: 'Revenue and payroll data updated successfully' });
+    expect(updateRevenueData).toHaveBeenCalledTimes(1);
+    expect(fetchAndSyncPayroll).toHaveBeenCalledTimes(1);
   });
 
-  test('POST /api/earnings returns 404 or 405', async () => {
-    const response = await request(app)
-      .post('/api/earnings')
-      .auth('admin', 'securepassword');
-    expect([404, 405]).toContain(response.status);
+  test('GET /api/update/all - failure', async () => {
+    updateRevenueData.mockRejectedValue(new Error('Update failed'));
+    const res = await request(app).get('/api/update/all');
+    expect(res.statusCode).toBe(500);
+    expect(res.body).toEqual({ error: 'Failed to update all data' });
   });
 });

@@ -68,7 +68,10 @@ function updateRevenueData() {
   }
 
   // Add sample transaction details for each revenue stream if missing
-  for (const streamName of Object.keys(data.revenueStreams || {})) {
+  if (!data.revenueStreams) {
+    data.revenueStreams = {};
+  }
+  for (const streamName of Object.keys(data.revenueStreams)) {
     if (!Array.isArray(data.revenueStreamsDetails[streamName])) {
       data.revenueStreamsDetails[streamName] = [];
     }
