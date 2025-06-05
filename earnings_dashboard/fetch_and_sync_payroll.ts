@@ -16,7 +16,7 @@ async function fetchPayrollData(employeeId: string): Promise<PayrollData | null>
 
   if (!baseUrl || !accessToken) {
     console.error('Dynamics365 base URL or access token is not set in environment variables. Please set DYNAMICS365_BASE_URL and DYNAMICS365_ACCESS_TOKEN.');
-    return null;
+    process.exit(1);
   }
 
   try {
@@ -38,9 +38,10 @@ async function fetchPayrollData(employeeId: string): Promise<PayrollData | null>
 }
 
 async function fetchAndSyncPayroll(): Promise<void> {
-  // TODO: Replace with actual employee IDs
+  // TODO: Replace with actual employee IDs or fetch dynamically
   const employeeIds = [
     'OSCAR BROOME',
+    // Add more employee IDs here
   ];
 
   const payrollDataList: PayrollData[] = [];
@@ -49,7 +50,14 @@ async function fetchAndSyncPayroll(): Promise<void> {
     const payrollData = await fetchPayrollData(employeeId);
     if (payrollData) {
       payrollDataList.push(payrollData);
+    } else {
+      console.warn(`Payroll data for employee ${employeeId} could not be fetched and will be skipped.`);
     }
+  }
+
+  if (payrollDataList.length === 0) {
+    console.warn('No payroll data was fetched. Revenue data will not be updated.');
+    return;
   }
 
   // Read existing revenue data
@@ -73,4 +81,9 @@ async function fetchAndSyncPayroll(): Promise<void> {
   }
 }
 
-fetchAndSyncPayroll();
+export default fetchAndSyncPayroll;
+
+// Run the sync only if this module is the main module
+if (require.main === module) {
+  fetchAndSyncPayroll();
+}

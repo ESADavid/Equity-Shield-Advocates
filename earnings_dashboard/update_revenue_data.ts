@@ -9,7 +9,13 @@ function updateRevenueData() {
     return; // Changed from process.exit(1) to return to avoid abrupt exit during tests
   }
 
-  const data = JSON.parse(fs.readFileSync(revenueDataPath, 'utf-8'));
+  let data;
+  try {
+    data = JSON.parse(fs.readFileSync(revenueDataPath, 'utf-8'));
+  } catch (error) {
+    console.error('Failed to parse revenue data JSON:', error);
+    return;
+  }
 
   // Ensure purchases object exists
   if (!data.purchases) {
@@ -76,8 +82,20 @@ function updateRevenueData() {
     }
   }
 
+  // Integrate payroll data if present
+  if (Array.isArray(data.payroll)) {
+    let payrollTotal = 0;
+    for (const payrollEntry of data.payroll) {
+      if (typeof payrollEntry.amount === 'number') {
+        payrollTotal += payrollEntry.amount;
+      }
+    }
+    data.payrollTotal = payrollTotal;
+    console.log(`Integrated payroll data total amount: ${payrollTotal}`);
+  }
+
   fs.writeFileSync(revenueDataPath, JSON.stringify(data, null, 2), 'utf-8');
-  console.log('Revenue data updated with enhanced detailed purchase and revenue stream information.');
+  console.log('Revenue data updated with enhanced detailed purchase, revenue stream, and payroll information.');
 }
 
 export default updateRevenueData;
