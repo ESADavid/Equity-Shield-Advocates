@@ -102,6 +102,30 @@ app.get('/api/earnings', async (req, res) => {
 });
 
 /**
+ * New Route: Microsoft Chat/Profile Authentication Redirect Handler
+ */
+app.get('/microsoft/chat', (req, res) => {
+  try {
+    const { auth, origin, origindomain, redirectOrgId, redirectUserId } = req.query;
+    console.log('Microsoft chat/profile auth redirect received:', req.query);
+
+    // TODO: Implement authentication flow or token exchange based on query parameters
+    // For now, just respond with success and echo the parameters
+    res.status(200).json({
+      message: 'Microsoft chat/profile authentication redirect handled successfully',
+      auth,
+      origin,
+      origindomain,
+      redirectOrgId,
+      redirectUserId,
+    });
+  } catch (error) {
+    console.error('Error handling Microsoft chat/profile auth redirect:', error);
+    res.status(500).json({ error: 'Failed to handle Microsoft chat/profile auth redirect' });
+  }
+});
+
+/**
  * Route 1002: Download earnings report JSON
  */
 app.get('/api/earnings/download', (req, res) => {
