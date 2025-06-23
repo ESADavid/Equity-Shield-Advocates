@@ -44,6 +44,28 @@ app.use(compression());
 const wealthEngine = new WealthCreationEngine();
 app.locals.wealthEngine = wealthEngine;
 
+// Load project revenue data and update wealthEngine revenue streams
+const fs = require('fs').promises;
+const path = require('path');
+
+async function loadProjectRevenueData() {
+  try {
+    const dataPath = path.resolve(__dirname, '../earnings_report.json');
+    const dataRaw = await fs.readFile(dataPath, 'utf-8');
+    const projectRevenueData = JSON.parse(dataRaw);
+    if (projectRevenueData && projectRevenueData.revenueStreams) {
+      wealthEngine.updateRevenue(projectRevenueData.revenueStreams);
+      console.log('Project revenue data loaded and applied to wealthEngine');
+    } else {
+      console.warn('Project revenue data missing or invalid');
+    }
+  } catch (error) {
+    console.error('Error loading project revenue data:', error);
+  }
+}
+
+loadProjectRevenueData();
+
 // Instantiate PerformanceTracker
 const performanceTracker = new PerformanceTracker(['efficiency', 'precision', 'stability'], {
   efficiency: 0.7,
@@ -274,6 +296,18 @@ app.get('/api/update/all', async (req, res) => {
   } catch (error) {
     console.error('Error updating all data:', error);
     res.status(500).json({ error: 'Failed to update all data' });
+  }
+});
+
+// New API endpoint to update project revenue data by syncing to Copilot agent
+app.get('/api/update/project-revenue', async (req, res) => {
+  try {
+    const agentManager = new (require('../FOUR-ERA-AI/src/ai-agent-manager'))();
+    const result = await agentManager.syncProjectRevenueData();
+    res.status(200).json({ message: result });
+  } catch (error) {
+    console.error('Error updating project revenue data:', error);
+    res.status(500).json({ error: 'Failed to update project revenue data' });
   }
 });
 
