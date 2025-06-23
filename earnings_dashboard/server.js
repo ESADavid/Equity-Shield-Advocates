@@ -14,6 +14,8 @@ const EnhancedBlackboxTrainer = require('../FOUR-ERA-AI/blackbox-trainer-complet
 const updateRevenueData = require('./update_revenue_data').default || require('./update_revenue_data');
 const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default || require('./fetch_and_sync_payroll');
 
+const AIAgentManager = require('../FOUR-ERA-AI/src/ai-agent-manager');
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -222,7 +224,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-const server = app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', async () => {
   console.log(`Earnings dashboard running at http://0.0.0.0:${PORT}`);
   console.log('Environment Variables:', {
     PORT,
@@ -230,6 +232,15 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     ADMIN_PASS: process.env.ADMIN_PASS,
     NODE_ENV: process.env.NODE_ENV,
   });
+
+  // Initialize and sync project revenue data on server start
+  try {
+    const agentManager = new AIAgentManager();
+    const result = await agentManager.syncProjectRevenueData();
+    console.log(result);
+  } catch (error) {
+    console.error('Error syncing project revenue data on startup:', error);
+  }
 });
 
 // New API endpoint to update revenue data
