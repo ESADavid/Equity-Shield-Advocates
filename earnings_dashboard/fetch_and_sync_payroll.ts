@@ -8,7 +8,7 @@ interface PayrollData {
   amount: number;
   date: string;
   taxRate?: number;
-  deductions?: any;
+  deductions?: number;
   bonuses?: number;
 }
 
@@ -23,11 +23,10 @@ async function fetchAndSyncPayroll(): Promise<void> {
     process.exit(1);
   }
 
-  // TODO: Replace with actual employee IDs or fetch dynamically
-  const employeeIds = [
-    'OSCAR BROOME',
-    // Add more employee IDs here
-  ];
+import { fetchEmployeeIds } from './fetch_employee_ids';
+
+// Fetch employee IDs dynamically
+const employeeIds = await fetchEmployeeIds();
 
   const payrollIntegration = new PayrollIntegration(baseUrl, accessToken);
   const payrollDataList: PayrollData[] = [];
