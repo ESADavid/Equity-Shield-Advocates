@@ -90,6 +90,8 @@ const accountNumbers = {
   militaryAI: "ACCT1005",
   dataStorage: "ACCT1006",
   strategicConsulting: "ACCT1007",
+  "David Leeper": "ACCT1008",
+  "Sandra Broome Edwards": "ACCT1009",
 };
 
 /**
