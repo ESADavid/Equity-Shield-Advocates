@@ -1,6 +1,6 @@
 # Embedding OWLban Earnings Dashboard into Company Website
 
-This document provides instructions to embed the OWLban Earnings Dashboard into the company website (e.g., https://www.quadranova.net/).
+This document provides instructions to embed the OWLban Earnings Dashboard into the company website (e.g., <https://www.quadranova.net/>).
 
 ## Hosting the Dashboard
 
