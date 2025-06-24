@@ -128,16 +128,22 @@ app.get('/api/earnings', async (req, res) => {
 /**
  * New Route: Microsoft Chat/Profile Authentication Redirect Handler
  */
-app.get('/microsoft/chat', (req, res) => {
+app.get('/microsoft/chat', async (req, res) => {
   try {
     const { auth, origin, origindomain, redirectOrgId, redirectUserId } = req.query;
     console.log('Microsoft chat/profile auth redirect received:', req.query);
 
-    // TODO: Implement authentication flow or token exchange based on query parameters
-    // For now, just respond with success and echo the parameters
+    // Implement a simple token exchange simulation for demonstration
+    if (!auth) {
+      return res.status(400).json({ error: 'Missing auth parameter' });
+    }
+
+    // Simulate token exchange or authentication flow
+    const token = `token-for-${auth}`;
+
     res.status(200).json({
       message: 'Microsoft chat/profile authentication redirect handled successfully',
-      auth,
+      token,
       origin,
       origindomain,
       redirectOrgId,

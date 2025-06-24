@@ -6,11 +6,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OWLban Earnings Dashboard</title>
   <link rel="stylesheet" href="dashboard.css" />
+  <script src="https://alcdn.msauth.net/browser/2.28.1/js/msal-browser.min.js"></script>
 </head>
 <body>
   <h1>OWLban Earnings Dashboard</h1>
+  <button id="loginBtn">Login with Microsoft</button>
+  <button id="logoutBtn" style="display:none;">Logout</button>
+  <div id="userInfo" style="margin-top: 10px;"></div>
   <div id="earnings"></div>
   <script>
+    const msalConfig = {
+      auth: {
+        clientId: "YOUR_CLIENT_ID", // Replace with your Azure AD app client ID
+        authority: "https://login.microsoftonline.com/common",
+        redirectUri: window.location.origin
+      }
+    };
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const userInfoDiv = document.getElementById("userInfo");
+
+    loginBtn.onclick = async () => {
+      try {
+        const loginResponse = await msalInstance.loginPopup({
+          scopes: ["User.Read", "Mail.Read", "Calendars.Read"] // Add scopes as needed
+        });
+        console.log("Login successful:", loginResponse);
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline";
+        userInfoDiv.textContent = `Hello, ${loginResponse.account.username}`;
+        fetchEarnings();
+      } catch (error) {
+        console.error("Login failed:", error);
+        userInfoDiv.textContent = "Login failed: " + error.message;
+      }
+    };
+
+    logoutBtn.onclick = () => {
+      msalInstance.logoutPopup().then(() => {
+        loginBtn.style.display = "inline";
+        logoutBtn.style.display = "none";
+        userInfoDiv.textContent = "";
+        document.getElementById("earnings").innerHTML = "";
+      });
+    };
+
     async function fetchEarnings() {
       try {
         const response = await fetch("/api/earnings", {
@@ -50,7 +92,6 @@
           "Error fetching earnings data: " + error.message;
       }
     }
-    fetchEarnings();
   </script>
 </body>
 </html>
