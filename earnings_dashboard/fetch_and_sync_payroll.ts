@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import PayrollIntegration from '../payroll_integration';
+import { fetchEmployeeIds } from './fetch_employee_ids';
 
 interface PayrollData {
   employeeId: string;
@@ -23,10 +24,8 @@ async function fetchAndSyncPayroll(): Promise<void> {
     process.exit(1);
   }
 
-import { fetchEmployeeIds } from './fetch_employee_ids';
-
-// Fetch employee IDs dynamically
-const employeeIds = await fetchEmployeeIds();
+  // Fetch employee IDs dynamically
+  const employeeIds = await fetchEmployeeIds();
 
   const payrollIntegration = new PayrollIntegration(baseUrl, accessToken);
   const payrollDataList: PayrollData[] = [];
