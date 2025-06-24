@@ -11,8 +11,8 @@
 <body>
   <h1>OWLban Earnings Dashboard</h1>
   <button id="loginBtn">Login with Microsoft</button>
-  <button id="logoutBtn" style="display:none;">Logout</button>
-  <div id="userInfo" style="margin-top: 10px;"></div>
+  <button id="logoutBtn" class="hidden">Logout</button>
+  <div id="userInfo" class="user-info"></div>
   <div id="earnings"></div>
   <script>
     const msalConfig = {
@@ -92,6 +92,12 @@
           "Error fetching earnings data: " + error.message;
       }
     }
+
+    // Added NVIDIA link section
+    const nvidiaLink = document.createElement('div');
+    nvidiaLink.style.marginTop = '20px';
+    nvidiaLink.innerHTML = '<a href="https://www.nvidia.com/en-us/studio/laptops-desktops/" target="_blank" rel="noopener noreferrer">Explore NVIDIA Studio Laptops & Desktops</a>';
+    document.body.appendChild(nvidiaLink);
   </script>
 </body>
 </html>
