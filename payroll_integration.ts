@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 
 interface PayrollEmployee {
@@ -8,6 +9,8 @@ interface PayrollEmployee {
   accountNumber?: string;
   routingNumber?: string;
   benefits?: any;
+  deductions?: any;
+  bonuses?: number;
 }
 
 export interface PayrollResponse {
@@ -34,13 +37,15 @@ class PayrollIntegration {
 
   async addOrUpdateEmployeePayroll(employee: PayrollEmployee): Promise<PayrollResponse> {
     try {
-      // Simulate API call to Microsoft Dynamics 365 Payroll endpoint
+      // API call to Microsoft Dynamics 365 Payroll endpoint
       const url = `${this.dynamicsBaseUrl}/payroll/employees/${employee.id}`;
       const response = await axios.put(url, employee, {
         headers: this.getAuthHeaders(),
       });
       return { success: true, message: 'Payroll data updated', data: response.data };
     } catch (error) {
+      // Improved error handling with logging
+      console.error('Error updating payroll data:', error);
       return { success: false, message: 'Failed to update payroll data', data: error };
     }
   }
@@ -53,9 +58,11 @@ class PayrollIntegration {
       });
       return { success: true, message: 'Payroll data fetched', data: response.data };
     } catch (error) {
+      console.error('Error fetching payroll data:', error);
       return { success: false, message: 'Failed to fetch payroll data', data: error };
     }
   }
 }
 
 export default PayrollIntegration;
+

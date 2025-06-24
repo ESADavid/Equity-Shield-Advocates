@@ -7,6 +7,9 @@ interface PayrollData {
   employeeId: string;
   amount: number;
   date: string;
+  taxRate?: number;
+  deductions?: any;
+  bonuses?: number;
 }
 
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
@@ -36,6 +39,9 @@ async function fetchAndSyncPayroll(): Promise<void> {
         payrollDataList.push({
           employeeId,
           amount: response.data.salary,
+          taxRate: response.data.taxRate,
+          deductions: response.data.deductions,
+          bonuses: response.data.bonuses,
           date: new Date().toISOString(),
         });
       } else {
