@@ -28,7 +28,8 @@ function readRevenueData() {
   if (!data.purchases) {
     data.purchases = {
       corporateHomes: 0,
-      autoFleet: 0
+      autoFleet: 0,
+      autoFleetDetails: []
     };
   }
   return data;
@@ -98,9 +99,39 @@ app.post('/api/purchase/auto', (req, res) => {
   if (!data.purchases.autoFleetDetails) {
     data.purchases.autoFleetDetails = [];
   }
-  data.purchases.autoFleetDetails.push({ model, vin, dealership, cost, purchaseDate: new Date().toISOString() });
+  data.purchases.autoFleetDetails.push({ model, vin, dealership, cost, purchaseDate: new Date().toISOString(), deliveryStatus: 'pending', deliveryDate: null, deliveryAddress: null });
   writeRevenueData(data);
   res.json({ message: 'Auto fleet purchased successfully', remainingRevenue: data.totalRevenue, purchases: data.purchases });
+});
+
+// New endpoint to mark a car as delivered
+app.post('/api/delivery/mark-delivered', (req, res) => {
+  const data = readRevenueData();
+  if (!data) {
+    return res.status(404).json({ error: 'Revenue data not found' });
+  }
+  const { vin, deliveryDate, deliveryAddress } = req.body;
+  if (!vin) {
+    return res.status(400).json({ error: 'Missing VIN for delivery update' });
+  }
+  const car = data.purchases.autoFleetDetails.find(c => c.vin === vin);
+  if (!car) {
+    return res.status(404).json({ error: 'Car with specified VIN not found' });
+  }
+  car.deliveryStatus = 'delivered';
+  car.deliveryDate = deliveryDate || new Date().toISOString();
+  car.deliveryAddress = deliveryAddress || car.deliveryAddress || null;
+  writeRevenueData(data);
+  res.json({ message: 'Car marked as delivered', car });
+});
+
+// Endpoint to get delivery status of all cars
+app.get('/api/delivery/status', (req, res) => {
+  const data = readRevenueData();
+  if (!data) {
+    return res.status(404).json({ error: 'Revenue data not found' });
+  }
+  res.json({ autoFleetDetails: data.purchases.autoFleetDetails });
 });
 
 app.get('/api/earnings/download', (req, res) => {
@@ -140,6 +171,13 @@ app.get('/', (req, res) => {
     '<input type="text" id="autoVIN" placeholder="Enter VIN" />',
     '<input type="text" id="autoDealership" placeholder="Enter dealership" />',
     '<button onclick="purchaseAuto()">Purchase Auto Fleet</button>',
+    '<h2>Fleet Delivery Status</h2>',
+    '<div id="deliveryStatus"></div>',
+    '<h3>Mark Car as Delivered</h3>',
+    '<input type="text" id="deliveryVIN" placeholder="Enter VIN" />',
+    '<input type="date" id="deliveryDate" />',
+    '<input type="text" id="deliveryAddress" placeholder="Enter delivery address" />',
+    '<button onclick="markDelivered()">Mark Delivered</button>',
     '<h2>Data Synchronization</h2>',
     '<button onclick="syncAll()">Sync All Data</button>',
     '<script>',
@@ -166,13 +204,12 @@ app.get('/', (req, res) => {
     '    html += "<h3>Purchased Cars:</h3>";',
     '    html += "<ul>";',
     '    data.purchases.autoFleetDetails.forEach(car => {',
-    '      html += `<li>Model: ${car.model}, VIN: ${car.vin}, Dealership: ${car.dealership}, Cost: $${car.cost.toLocaleString()}, Purchased on: ${new Date(car.purchaseDate).toLocaleDateString()}</li>`;',
+    '      html += `<li>Model: ${car.model}, VIN: ${car.vin}, Dealership: ${car.dealership}, Cost: $${car.cost.toLocaleString()}, Purchased on: ${new Date(car.purchaseDate).toLocaleDateString()}, Delivery Status: ${car.deliveryStatus}${car.deliveryDate ? ", Delivered on: " + new Date(car.deliveryDate).toLocaleDateString() : ""}${car.deliveryAddress ? ", Delivery Address: " + car.deliveryAddress : ""}</li>`;',
     '    });',
     '    html += "</ul>";',
     '  }',
     '  document.getElementById("earnings").innerHTML = html;',
     '}',
-    'fetchEarnings();',
     'async function purchaseHome() {',
     '  const cost = parseFloat(document.getElementById("homeCost").value);',
     '  if (isNaN(cost) || cost <= 0) {',
@@ -222,6 +259,44 @@ app.get('/', (req, res) => {
     '    alert("Error: " + result.error);',
     '  }',
     '}',
+    'async function fetchDeliveryStatus() {',
+    '  const response = await fetch("/api/delivery/status");',
+    '  if (!response.ok) {',
+    '    document.getElementById("deliveryStatus").innerText = "Failed to load delivery status";',
+    '    return;',
+    '  }',
+    '  const data = await response.json();',
+    '  let html = "<h3>Fleet Delivery Status</h3><ul>";',
+    '  data.autoFleetDetails.forEach(car => {',
+    '    html += `<li>Model: ${car.model}, VIN: ${car.vin}, Delivery Status: ${car.deliveryStatus}${car.deliveryDate ? ", Delivered on: " + new Date(car.deliveryDate).toLocaleDateString() : ""}${car.deliveryAddress ? ", Delivery Address: " + car.deliveryAddress : ""}</li>`;',
+    '  });',
+    '  html += "</ul>";',
+    '  document.getElementById("deliveryStatus").innerHTML = html;',
+    '}',
+    'async function markDelivered() {',
+    '  const vin = document.getElementById("deliveryVIN").value.trim();',
+    '  const deliveryDate = document.getElementById("deliveryDate").value;',
+    '  const deliveryAddress = document.getElementById("deliveryAddress").value.trim();',
+    '  if (!vin) {',
+    '    alert("Please enter the VIN of the car to mark as delivered.");',
+    '    return;',
+    '  }',
+    '  const response = await fetch("/api/delivery/mark-delivered", {',
+    '    method: "POST",',
+    '    headers: {',
+    '      "Content-Type": "application/json"',
+    '    },',
+    '    body: JSON.stringify({ vin, deliveryDate, deliveryAddress })',
+    '  });',
+    '  const result = await response.json();',
+    '  if (response.ok) {',
+    '    alert(result.message);',
+    '    fetchDeliveryStatus();',
+    '    fetchEarnings();',
+    '  } else {',
+    '    alert("Error: " + result.error);',
+    '  }',
+    '}',
     'async function syncAll() {',
     '  const response = await fetch("/api/sync/all", { method: "POST" });',
     '  const result = await response.json();',
@@ -232,6 +307,8 @@ app.get('/', (req, res) => {
     '    alert("Error: " + result.error);',
     '  }',
     '}',
+    'fetchEarnings();',
+    'fetchDeliveryStatus();',
     '</script>',
     '</body>',
     '</html>'
