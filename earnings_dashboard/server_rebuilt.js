@@ -3,6 +3,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const basicAuth = require('express-basic-auth');
+const { syncAllData } = require('./sync_jobs');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -111,6 +112,17 @@ app.get('/api/earnings/download', (req, res) => {
   res.json(earnings);
 });
 
+// New API endpoint to trigger synchronization of all data
+app.post('/api/sync/all', async (req, res) => {
+  try {
+    await syncAllData();
+    res.status(200).json({ message: 'Data synchronization completed successfully' });
+  } catch (error) {
+    console.error('Error during data synchronization:', error);
+    res.status(500).json({ error: 'Data synchronization failed' });
+  }
+});
+
 app.get('/', (req, res) => {
   const html = [
     '<html>',
@@ -128,6 +140,8 @@ app.get('/', (req, res) => {
     '<input type="text" id="autoVIN" placeholder="Enter VIN" />',
     '<input type="text" id="autoDealership" placeholder="Enter dealership" />',
     '<button onclick="purchaseAuto()">Purchase Auto Fleet</button>',
+    '<h2>Data Synchronization</h2>',
+    '<button onclick="syncAll()">Sync All Data</button>',
     '<script>',
     'async function fetchEarnings() {',
     '  const response = await fetch("/api/earnings");',
@@ -200,6 +214,16 @@ app.get('/', (req, res) => {
     '    },',
     '    body: JSON.stringify({ cost, model, vin, dealership })',
     '  });',
+    '  const result = await response.json();',
+    '  if (response.ok) {',
+    '    alert(result.message);',
+    '    fetchEarnings();',
+    '  } else {',
+    '    alert("Error: " + result.error);',
+    '  }',
+    '}',
+    'async function syncAll() {',
+    '  const response = await fetch("/api/sync/all", { method: "POST" });',
     '  const result = await response.json();',
     '  if (response.ok) {',
     '    alert(result.message);',
