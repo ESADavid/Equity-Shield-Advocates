@@ -143,6 +143,29 @@ app.get('/api/earnings/download', (req, res) => {
   res.json(earnings);
 });
 
+// New API endpoint to get combined fleet and payroll report
+app.get('/api/report/fleet-payroll', (req, res) => {
+  const data = readRevenueData();
+  if (!data) {
+    return res.status(404).json({ error: 'Revenue data not found' });
+  }
+  const fleetDetails = data.purchases.autoFleetDetails || [];
+  const payrollData = data.payroll || [];
+  const totalFleetCost = data.purchases.autoFleet || 0;
+  const totalPayrollAmount = payrollData.reduce((sum, entry) => sum + (entry.amount || 0), 0);
+  const deliveredCars = fleetDetails.filter(car => car.deliveryStatus === 'delivered').length;
+  const pendingCars = fleetDetails.length - deliveredCars;
+
+  res.json({
+    totalFleetCost,
+    totalPayrollAmount,
+    deliveredCars,
+    pendingCars,
+    fleetDetails,
+    payrollData
+  });
+});
+
 // New API endpoint to trigger synchronization of all data
 app.post('/api/sync/all', async (req, res) => {
   try {
