@@ -1,5 +1,5 @@
 {
-  "totalRevenue": 1234181891,
+  "totalRevenue": 1233368395,
   "revenueStreams": {
     "Sample Repo": {
       "amount": 617090945,
@@ -28,8 +28,80 @@
     }
   },
   "purchases": {
-    "corporateHomes": 200000,
-    "autoFleet": 185999
+    "corporateHomes": 203000,
+    "autoFleet": 996495,
+    "autoFleetDetails": [
+      {
+        "model": "2025 ROLLS-ROYCE BLACK BADGE SPECTRA",
+        "vin": "SCATK4CO4SU229567",
+        "dealership": "ROLLS-ROYCE MOTORS CARS CHARLOTTE 1316 SOUTH TRYON ST. CHARLOTTE NC 28203",
+        "cost": 799996,
+        "purchaseDate": "2024-06-10T00:00:00.000Z",
+        "deliveryStatus": "delivered",
+        "deliveryDate": "2024-06-10T00:00:00.000Z",
+        "deliveryAddress": "7438 STILLBROOKBEND CT HUNTERSVILLE NC 28078"
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-06-26T20:57:49.570Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-06-26T20:57:49.688Z",
+        "deliveryStatus": "delivered",
+        "deliveryDate": "2025-01-01",
+        "deliveryAddress": "123 Delivery St"
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-06-26T21:09:06.896Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-06-26T21:09:07.288Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-06-26T21:38:37.202Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-06-26T21:38:37.338Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null
+      }
+    ]
   },
   "payroll": []
 }
