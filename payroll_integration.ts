@@ -1,4 +1,5 @@
 
+
 import axios from 'axios';
 
 interface PayrollEmployee {
@@ -86,6 +87,36 @@ class PayrollIntegration {
       console.error('Error fetching payroll data:', error);
       return { success: false, message: 'Failed to fetch payroll data', data: error };
     }
+  }
+
+  // New method: Validate direct deposit details with banking API
+  async validateDirectDeposit(employee: PayrollEmployee): Promise<PayrollResponse> {
+    try {
+      if (!employee.accountNumber || !employee.routingNumber) {
+        const message = 'Missing bank account or routing number for validation';
+        console.error(message);
+        return { success: false, message };
+      }
+      // Simulate banking API validation call
+      const isValid = await this.simulateBankValidation(employee.accountNumber, employee.routingNumber);
+      if (!isValid) {
+        return { success: false, message: 'Invalid bank account or routing number' };
+      }
+      return { success: true, message: 'Direct deposit details validated' };
+    } catch (error) {
+      console.error('Error validating direct deposit:', error);
+      return { success: false, message: 'Failed to validate direct deposit', data: error };
+    }
+  }
+
+  private async simulateBankValidation(accountNumber: string, routingNumber: string): Promise<boolean> {
+    // Simulate async validation logic, e.g., call to external banking API
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    // For demo, assume all account numbers starting with '0' are invalid
+    if (accountNumber.startsWith('0')) {
+      return false;
+    }
+    return true;
   }
 }
 
