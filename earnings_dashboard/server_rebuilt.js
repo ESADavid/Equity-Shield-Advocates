@@ -3,7 +3,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const basicAuth = require('express-basic-auth');
-const { syncAllData } = require('./sync_jobs');
+const { syncAllData } = require('./sync_jobs.ts');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -11,6 +11,11 @@ const PORT = process.env.PORT || 4000;
 app.use(basicAuth({
   users: { 'admin': 'securepassword' },
   challenge: true,
+  unauthorizedResponse: (req) => {
+    return req.auth
+      ? 'Credentials rejected'
+      : 'No credentials provided'
+  }
 }));
 
 app.use(cors());
