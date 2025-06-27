@@ -99,9 +99,20 @@ app.post('/api/purchase/auto', (req, res) => {
   if (!data.purchases.autoFleetDetails) {
     data.purchases.autoFleetDetails = [];
   }
-  data.purchases.autoFleetDetails.push({ model, vin, dealership, cost, purchaseDate: new Date().toISOString(), deliveryStatus: 'pending', deliveryDate: null, deliveryAddress: null });
+  // Generate a simple receipt ID (could be improved with UUID)
+  const receiptId = 'RCPT-' + Date.now();
+  const purchaseDate = new Date().toISOString();
+  const receipt = {
+    receiptId,
+    model,
+    vin,
+    dealership,
+    cost,
+    purchaseDate
+  };
+  data.purchases.autoFleetDetails.push({ model, vin, dealership, cost, purchaseDate, deliveryStatus: 'pending', deliveryDate: null, deliveryAddress: null, receipt });
   writeRevenueData(data);
-  res.json({ message: 'Auto fleet purchased successfully', remainingRevenue: data.totalRevenue, purchases: data.purchases });
+  res.json({ message: 'Auto fleet purchased successfully', remainingRevenue: data.totalRevenue, purchases: data.purchases, receipt });
 });
 
 // New endpoint to mark a car as delivered
