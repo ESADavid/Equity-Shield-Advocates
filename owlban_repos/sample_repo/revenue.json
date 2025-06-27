@@ -1,5 +1,5 @@
 {
-  "totalRevenue": 1233341395,
+  "totalRevenue": 1233336895,
   "revenueStreams": {
     "Sample Repo": {
       "amount": 617090945,
@@ -28,8 +28,8 @@
     }
   },
   "purchases": {
-    "corporateHomes": 209000,
-    "autoFleet": 1017495,
+    "corporateHomes": 210000,
+    "autoFleet": 1020995,
     "autoFleetDetails": [
       {
         "model": "2025 ROLLS-ROYCE BLACK BADGE SPECTRA",
@@ -299,6 +299,42 @@
           "dealership": "Delivery Dealership",
           "cost": 1500,
           "purchaseDate": "2025-06-27T17:00:09.154Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-06-27T18:29:17.822Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1751048957822",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-06-27T18:29:17.822Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-06-27T18:29:19.525Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1751048959525",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-06-27T18:29:19.525Z"
         }
       }
     ]
