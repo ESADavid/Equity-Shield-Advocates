@@ -4,7 +4,8 @@
   "description": "Backend server and dashboard for OWLban earnings data",
   "main": "earnings_dashboard/server_rebuilt.js",
   "scripts": {
-    "start": "node earnings_dashboard/server_rebuilt.js",
+    "build": "tsc",
+    "start": "node earnings_dashboard/server.js",
     "test": "jest"
   },
   "dependencies": {
@@ -12,7 +13,7 @@
     "compression": "^1.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "express": "^4.21.2",
+    "express": "^5.1.0",
     "express-basic-auth": "^1.2.1",
     "morgan": "^1.10.0",
     "node-fetch": "^2.7.0",
@@ -22,6 +23,8 @@
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-typescript": "^7.27.1",
     "@types/axios": "^0.9.36",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.29",
     "axios": "^1.9.0",
