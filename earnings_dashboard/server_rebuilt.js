@@ -1,4 +1,4 @@
-"use strictP";
+"use strict";
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -181,18 +181,17 @@ app.get('/api/report/fleet-payroll', (req, res) => {
   });
 });
 
-/*
 // New API endpoint to trigger synchronization of all data
 app.post('/api/sync/all', async (req, res) => {
   try {
-    await syncAllData();
+    const syncJobs = await import('./sync_jobs.js');
+    await syncJobs.syncAllData();
     res.status(200).json({ message: 'Data synchronization completed successfully' });
   } catch (error) {
     console.error('Error during data synchronization:', error);
-    res.status(500).json({ error: 'Data synchronization failed' });
+  res.status(500).json({ error: 'Data synchronization failed' });
   }
 });
-*/
 
 app.get('/', (req, res) => {
   const html = [
@@ -370,3 +369,5 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
+>>>>>>> REPLACE
+</edit_file>
