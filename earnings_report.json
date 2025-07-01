@@ -1,1 +1,48 @@
-{"totalAnnualRevenue":1234179391,"totalDailyRevenue":3381313.4,"revenueStreams":{"Sample Repo":{"amount":617090945,"accountNumber":"987654321","routingNumber":"123456789"},"Owlban Investments":{"amount":370254567,"accountNumber":"123123123","routingNumber":"321321321"},"Corporate Ventures":{"amount":246836379,"accountNumber":"456456456","routingNumber":"654654654"}},"purchases":{"corporateHomes":201000,"autoFleet":187499,"autoFleetDetails":[{"model":"Tesla Model 3","vin":"5YJ3E1EA7KF317XXX","dealership":"Tesla Store","cost":1500,"purchaseDate":"2025-06-05T20:49:30.912Z"}]}}
+{
+  "totalAnnualRevenue": 1233327895,
+  "totalDailyRevenue": 1233327895 / 365,
+  "revenueStreams": {
+    "Sample Repo": {
+      "amount": 617090945,
+      "accountNumber": "987654321",
+      "routingNumber": "123456789"
+    },
+    "Owlban Investments": {
+      "amount": 370254567,
+      "accountNumber": "123123123",
+      "routingNumber": "321321321"
+    },
+    "Corporate Ventures": {
+      "amount": 246836379,
+      "accountNumber": "456456456",
+      "routingNumber": "654654654"
+    },
+    "David Leeper": {
+      "amount": 0,
+      "accountNumber": "111222333",
+      "routingNumber": "444555666"
+    },
+    "Sandra Broome Edwards": {
+      "amount": 0,
+      "accountNumber": "222333444",
+      "routingNumber": "555666777"
+    }
+  },
+  "purchases": {
+    "corporateHomes": 212000,
+    "autoFleet": 1027995,
+    "autoFleetDetails": [
+      {
+        "model": "2025 ROLLS-ROYCE BLACK BADGE SPECTRA",
+        "vin": "SCATK4CO4SU229567",
+        "dealership": "ROLLS-ROYCE MOTORS CARS CHARLOTTE 1316 SOUTH TRYON ST. CHARLOTTE NC 28203",
+        "cost": 799996,
+        "purchaseDate": "2024-06-10T00:00:00.000Z",
+        "deliveryStatus": "delivered",
+        "deliveryDate": "2024-06-10T00:00:00.000Z",
+        "deliveryAddress": "7438 STILLBROOKBEND CT HUNTERSVILLE NC 28078"
+      }
+    ]
+  },
+  "payroll": []
+}
