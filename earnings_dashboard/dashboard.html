@@ -6,120 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OWLban Earnings Dashboard</title>
   <link rel="stylesheet" href="dashboard.css" />
-  <script src="https://alcdn.msauth.net/browser/2.28.1/js/msal-browser.min.js"></script>
 </head>
 <body>
   <h1>OWLban Earnings Dashboard</h1>
-  <button id="loginBtn">Login with Microsoft</button>
-  <button id="logoutBtn" class="hidden">Logout</button>
-  <div id="userInfo" class="user-info"></div>
-
-  <button id="updateAllBtn" style="margin-top: 10px;">Update All Data</button>
-  <div id="updateMessage" class="message" style="margin-top: 10px; font-weight: bold;"></div>
-
-  <div id="earnings"></div>
+  <div id="earnings">Loading earnings data...</div>
   <script>
-    const msalConfig = {
-      auth: {
-        clientId: "YOUR_CLIENT_ID", // Replace with your Azure AD app client ID
-        authority: "https://login.microsoftonline.com/common",
-        redirectUri: window.location.origin
-      }
-    };
-    const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-    const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const userInfoDiv = document.getElementById("userInfo");
-    const updateAllBtn = document.getElementById("updateAllBtn");
-    const updateMessage = document.getElementById("updateMessage");
-
-    updateAllBtn.addEventListener("click", async () => {
-      updateMessage.textContent = "Updating data... Please wait.";
-      try {
-        const response = await fetch("/api/update/all");
-        if (response.ok) {
-          const result = await response.json();
-          updateMessage.textContent = result.message || "Data updated successfully.";
-          fetchEarnings();
-        } else {
-          updateMessage.textContent = "Failed to update data.";
-        }
-      } catch (error) {
-        updateMessage.textContent = "Error updating data: " + error.message;
-      }
-    });
-
-    loginBtn.onclick = async () => {
-      try {
-        const loginResponse = await msalInstance.loginPopup({
-          scopes: ["User.Read", "Mail.Read", "Calendars.Read"] // Add scopes as needed
-        });
-        console.log("Login successful:", loginResponse);
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline";
-        userInfoDiv.textContent = `Hello, ${loginResponse.account.username}`;
-        fetchEarnings();
-      } catch (error) {
-        console.error("Login failed:", error);
-        userInfoDiv.textContent = "Login failed: " + error.message;
-      }
-    };
-
-    logoutBtn.onclick = () => {
-      msalInstance.logoutPopup().then(() => {
-        loginBtn.style.display = "inline";
-        logoutBtn.style.display = "none";
-        userInfoDiv.textContent = "";
-        document.getElementById("earnings").innerHTML = "";
-      });
-    };
-
     async function fetchEarnings() {
       try {
-        const response = await fetch("/api/earnings", {
+        const response = await fetch('/api/earnings', {
           headers: {
-            Authorization: "Basic " + btoa("admin:securepassword"),
+            Authorization: 'Basic ' + btoa('admin:securepassword'),
           },
         });
         if (!response.ok) {
-          document.getElementById("earnings").innerText =
-            "Failed to load earnings data";
+          document.getElementById('earnings').innerText = 'Failed to load earnings data';
           return;
         }
         const data = await response.json();
-        let html =
-          "<h2>Total Annual Revenue: $" +
-          data.totalAnnualRevenue.toLocaleString() +
-          "</h2>";
-        html +=
-          "<h3>Total Daily Revenue: $" + data.totalDailyRevenue.toFixed(2) + "</h3>";
-        html += "<ul>";
+        let html = '<h2>Total Revenue: $' + data.totalAnnualRevenue.toLocaleString() + '</h2><ul>';
         for (const [stream, details] of Object.entries(data.revenueStreams)) {
-          html +=
-            "<li>" +
-            stream +
-            ": $" +
-            details.amount.toLocaleString() +
-            " (Account: " +
-            (details.accountNumber || "N/A") +
-            ", Routing Number: " +
-            (details.routingNumber || "N/A") +
-            ")</li>";
+          html += '<li>' + stream + ': $' + details.amount.toLocaleString() + ' (Account: ' + details.accountNumber + ')</li>';
         }
-        html += "</ul>";
-        document.getElementById("earnings").innerHTML = html;
+        html += '</ul>';
+        document.getElementById('earnings').innerHTML = html;
       } catch (error) {
-        document.getElementById("earnings").innerText =
-          "Error fetching earnings data: " + error.message;
+        document.getElementById('earnings').innerText = 'Error loading earnings data: ' + error.message;
       }
-    };
-
-    // Added NVIDIA link section
-    const nvidiaLink = document.createElement('div');
-    nvidiaLink.style.marginTop = '20px';
-    nvidiaLink.innerHTML = '<a href="https://www.nvidia.com/en-us/studio/laptops-desktops/" target="_blank" rel="noopener noreferrer">Explore NVIDIA Studio Laptops & Desktops</a>';
-    document.body.appendChild(nvidiaLink);
+    }
+    fetchEarnings();
   </script>
 </body>
 </html>
