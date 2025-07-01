@@ -22,7 +22,7 @@ export default {
       testMatch: ["<rootDir>/earnings_dashboard/**/*.test.{ts,tsx,js,jsx}", "<rootDir>/**/*.test.{ts,tsx,js,jsx}", "<rootDir>/FOUR-ERA-AI/test/**/*.ts"],
       testEnvironment: "node",
       transformIgnorePatterns: [
-        "/node_modules/(?!@?some-esm-module|another-esm-module|@babel/runtime|@babel/plugin-transform-runtime|@babel/runtime).+\\.js$"
+        "/node_modules/(?!@?some-esm-module|another-esm-module|@babel/runtime/helpers/interopRequireDefault|@babel/runtime/helpers/interopRequireDefault|@babel/runtime/helpers/esm/interopRequireDefault|@babel/plugin-transform-runtime|@babel/runtime|@babel/helpers|@babel/runtime/helpers|@babel/plugin-transform-class-properties|@babel/plugin-transform-private-methods|@babel/plugin-syntax-dynamic-import).+\\.js$"
       ]
     },
     {
