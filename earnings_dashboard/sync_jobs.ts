@@ -1,6 +1,8 @@
 import fetchAndSyncPayroll from './fetch_and_sync_payroll';
 import updateRevenueData from './update_revenue_data';
 
+import cron from 'node-cron';
+
 export async function syncAllData(): Promise<void> {
   try {
     console.log('Starting full data synchronization...');
@@ -12,9 +14,8 @@ export async function syncAllData(): Promise<void> {
   }
 }
 
-// Optionally, you can add scheduled sync using node-cron or similar here
-// Example:
-// import cron from 'node-cron';
-// cron.schedule('0 * * * *', () => {
-//   syncAllData();
-// });
+// Scheduled daily sync at 2:00 AM
+cron.schedule('0 2 * * *', () => {
+  console.log('Running scheduled daily data synchronization...');
+  syncAllData();
+});

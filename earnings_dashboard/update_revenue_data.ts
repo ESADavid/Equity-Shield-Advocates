@@ -3,6 +3,14 @@ import path from 'path';
 
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 
+function validateNumber(value: any, fieldName: string): number {
+  if (typeof value !== 'number' || isNaN(value) || value < 0) {
+    console.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
+    return 0;
+  }
+  return value;
+}
+
 function updateRevenueData() {
   if (!fs.existsSync(revenueDataPath)) {
     console.error('Revenue data file not found at', revenueDataPath);
@@ -35,6 +43,10 @@ function updateRevenueData() {
       data.purchases.corporateHomesDetails = [];
     }
   }
+
+  // Validate and sanitize purchase costs
+  data.purchases.autoFleet = validateNumber(data.purchases.autoFleet, 'autoFleet');
+  data.purchases.corporateHomes = validateNumber(data.purchases.corporateHomes, 'corporateHomes');
 
   // Add a sample auto fleet purchase if none exist
   if (data.purchases.autoFleetDetails.length === 0) {
@@ -78,7 +90,7 @@ function updateRevenueData() {
     if (data.revenueStreamsDetails[streamName].length === 0) {
       data.revenueStreamsDetails[streamName].push({
         transactionId: `TXN-${Math.floor(Math.random() * 1000000)}`,
-        amount: data.revenueStreams[streamName].amount,
+        amount: validateNumber(data.revenueStreams[streamName].amount, `revenueStreams.${streamName}.amount`),
         date: new Date().toISOString(),
         description: `Initial transaction for ${streamName}`
       });
@@ -89,16 +101,40 @@ function updateRevenueData() {
   if (Array.isArray(data.payroll)) {
     let payrollTotal = 0;
     for (const payrollEntry of data.payroll) {
-      if (typeof payrollEntry.amount === 'number') {
+      if (typeof payrollEntry.amount === 'number' && !isNaN(payrollEntry.amount) && payrollEntry.amount >= 0) {
         payrollTotal += payrollEntry.amount;
+      } else {
+        console.warn('Invalid payroll entry amount detected, skipping:', payrollEntry);
       }
     }
     data.payrollTotal = payrollTotal;
     console.log(`Integrated payroll data total amount: ${payrollTotal}`);
   }
 
-  fs.writeFileSync(revenueDataPath, JSON.stringify(data, null, 2), 'utf-8');
-  console.log('Revenue data updated with enhanced detailed purchase, revenue stream, and payroll information.');
+  // Add audit trail entry
+  if (!Array.isArray(data.auditTrail)) {
+    data.auditTrail = [];
+  }
+  data.auditTrail.push({
+    timestamp: new Date().toISOString(),
+    action: 'updateRevenueData',
+    details: {
+      totalRevenue: data.totalRevenue,
+      purchases: {
+        autoFleet: data.purchases.autoFleet,
+        corporateHomes: data.purchases.corporateHomes
+      },
+      payrollTotal: data.payrollTotal || 0
+    }
+  });
+
+  try {
+    fs.writeFileSync(revenueDataPath, JSON.stringify(data, null, 2), 'utf-8');
+    console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
+  } catch (error) {
+    console.error('Error writing updated revenue data file:', error);
+    throw error;
+  }
 }
 
 export default updateRevenueData;
