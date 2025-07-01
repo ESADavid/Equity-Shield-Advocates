@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   preset: 'ts-jest',
   testTimeout: 30000,
   verbose: true,
@@ -20,7 +20,10 @@ module.exports = {
     {
       displayName: "backend",
       testMatch: ["<rootDir>/earnings_dashboard/**/*.test.{ts,tsx,js,jsx}", "<rootDir>/**/*.test.{ts,tsx,js,jsx}", "<rootDir>/FOUR-ERA-AI/test/**/*.ts"],
-      testEnvironment: "node"
+      testEnvironment: "node",
+      transformIgnorePatterns: [
+        "/node_modules/(?!@?some-esm-module|another-esm-module|@babel/runtime|@babel/plugin-transform-runtime|@babel/runtime).+\\.js$"
+      ]
     },
     {
       displayName: "frontend",
