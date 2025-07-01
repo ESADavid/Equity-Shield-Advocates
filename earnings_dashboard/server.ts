@@ -19,24 +19,24 @@ app.use(express.json());
 // Load aggregated revenue data from multi-repo aggregator output
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/aggregated_revenue.json');
 
-app.get('/api/earnings', (req, res) => {
+app.get('/api/earnings', (req: express.Request, res: express.Response) => {
   if (!fs.existsSync(revenueDataPath)) {
     return res.status(404).json({ error: 'Earnings data not found' });
   }
   const data = fs.readFileSync(revenueDataPath, 'utf-8');
-  res.json(JSON.parse(data));
+  return res.json(JSON.parse(data));
 });
 
 // Endpoint to download earnings report as JSON file
-app.get('/api/earnings/download', (req, res) => {
+app.get('/api/earnings/download', (req: express.Request, res: express.Response) => {
   if (!fs.existsSync(revenueDataPath)) {
     return res.status(404).json({ error: 'Earnings data not found' });
   }
-  res.download(revenueDataPath, 'earnings_report.json');
+  return res.download(revenueDataPath, 'earnings_report.json');
 });
 
 // Simple dashboard page
-app.get('/', (req, res) => {
+app.get('/', (req: express.Request, res: express.Response) => {
   res.send(`
     <html>
       <head><title>OWLban Earnings Dashboard</title></head>
@@ -66,5 +66,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(\`Earnings dashboard running at http://localhost:\${PORT}\`);
+  console.log("Earnings dashboard running at http://localhost:" + PORT);
 });
