@@ -1,10 +1,9 @@
+"use strictP";
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const basicAuth = require('express-basic-auth');
-const { syncAllData } = require('./sync_jobs.ts');
-
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -182,6 +181,7 @@ app.get('/api/report/fleet-payroll', (req, res) => {
   });
 });
 
+/*
 // New API endpoint to trigger synchronization of all data
 app.post('/api/sync/all', async (req, res) => {
   try {
@@ -192,6 +192,7 @@ app.post('/api/sync/all', async (req, res) => {
     res.status(500).json({ error: 'Data synchronization failed' });
   }
 });
+*/
 
 app.get('/', (req, res) => {
   const html = [
@@ -362,3 +363,10 @@ const server = app.listen(PORT, HOST, () => {
 });
 
 module.exports = { app, server };
+
+process.on('SIGINT', () => {
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
