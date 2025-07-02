@@ -18,6 +18,7 @@ const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default || requi
 
 const AIAgentManager = require('../FOUR-ERA-AI/src/ai-agent-manager');
 const apiRouter = require('./api');
+const merchantBillPayRouter = require('./merchant_bill_pay').router;
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -48,6 +49,9 @@ app.use(compression());
 
 // Mount API router
 app.use('/api', apiRouter);
+
+// Mount merchant bill pay router
+app.use('/api/merchant-pay', merchantBillPayRouter);
 
 // Instantiate WealthCreationEngine
 const wealthEngine = new WealthCreationEngine();
