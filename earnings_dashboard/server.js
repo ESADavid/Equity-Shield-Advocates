@@ -15,6 +15,7 @@ const updateRevenueData = require('./update_revenue_data').default || require('.
 const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default || require('./fetch_and_sync_payroll');
 
 const AIAgentManager = require('../FOUR-ERA-AI/src/ai-agent-manager');
+const apiRouter = require('./api');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -39,6 +40,9 @@ app.use(express.json());
 app.use(morgan('combined'));
 app.use(express.static('public'));
 app.use(compression());
+
+// Mount API router
+app.use('/api', apiRouter);
 
 // Instantiate WealthCreationEngine
 const wealthEngine = new WealthCreationEngine();
