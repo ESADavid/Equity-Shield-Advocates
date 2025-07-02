@@ -92,4 +92,4 @@ app.listen(PORT, () => {
 const NODE_ENV = process.env.NODE_ENV || 'development';
 if (NODE_ENV === 'production') {
   console.log('Running in production mode');
-});
+}

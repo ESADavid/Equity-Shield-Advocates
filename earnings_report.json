@@ -1,6 +1,6 @@
 {
   "totalAnnualRevenue": 1233327895,
-  "totalDailyRevenue": 1233327895 / 365,
+  "totalDailyRevenue": 33763.84,
   "revenueStreams": {
     "Sample Repo": {
       "amount": 617090945,

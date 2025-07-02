@@ -184,7 +184,7 @@ app.get('/api/report/fleet-payroll', (req, res) => {
 // New API endpoint to trigger synchronization of all data
 app.post('/api/sync/all', async (req, res) => {
   try {
-    const syncJobs = await import('./sync_jobs.js');
+    const syncJobs = await import('./sync_jobs.ts');
     await syncJobs.syncAllData();
     res.status(200).json({ message: 'Data synchronization completed successfully' });
   } catch (error) {
@@ -369,5 +369,3 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
->>>>>>> REPLACE
-</edit_file>

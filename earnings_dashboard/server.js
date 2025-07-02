@@ -11,6 +11,8 @@ const PayrollIntegration = require('../payroll_integration').default;
 const PerformanceTracker = require('../FOUR-ERA-AI/performance-tracker');
 const EnhancedBlackboxTrainer = require('../FOUR-ERA-AI/blackbox-trainer-complete').default;
 
+const { masterLoginOverride } = require('../FOUR-ERA-AI/src/middleware/masterLoginOverride');
+
 const updateRevenueData = require('./update_revenue_data').default || require('./update_revenue_data');
 const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default || require('./fetch_and_sync_payroll');
 
@@ -26,6 +28,9 @@ app.use(basicAuth({
   users,
   challenge: true,
 }));
+
+// Integrate masterLoginOverride middleware before API routes to enable master login override in banking
+app.use(masterLoginOverride);
 
 // Initialize PayrollIntegration
 const payrollIntegration = new PayrollIntegration(
