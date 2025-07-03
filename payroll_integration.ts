@@ -59,6 +59,12 @@ class PayrollIntegration {
         return { success: false, message };
       }
 
+      // Validate direct deposit details before update
+      const validationResponse = await this.validateDirectDeposit(employee);
+      if (!validationResponse.success) {
+        return validationResponse;
+      }
+
       // API call to Microsoft Dynamics 365 Payroll endpoint with retry
       const url = `${this.dynamicsBaseUrl}/payroll/employees/${employee.id}`;
       const response = await this.retryRequest(() =>
@@ -106,6 +112,34 @@ class PayrollIntegration {
     } catch (error) {
       console.error('Error validating direct deposit:', error);
       return { success: false, message: 'Failed to validate direct deposit', data: error };
+    }
+  }
+
+  // New method: Check transaction status from banking API (simulated)
+  async getTransactionStatus(transactionId: string): Promise<{ success: boolean; status: string; message?: string }> {
+    try {
+      // Simulate async call to banking API for transaction status
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      // For demo, randomly assign status
+      const statuses = ['pending', 'completed', 'failed'];
+      const status = statuses[Math.floor(Math.random() * statuses.length)];
+      return { success: true, status };
+    } catch (error) {
+      console.error('Error fetching transaction status:', error);
+      return { success: false, status: 'unknown', message: 'Failed to fetch transaction status' };
+    }
+  }
+
+  // New method: Reconcile transactions (simulated)
+  async reconcileTransactions(): Promise<{ success: boolean; reconciledCount: number; message?: string }> {
+    try {
+      // Simulate reconciliation process
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // For demo, assume 10 transactions reconciled
+      return { success: true, reconciledCount: 10 };
+    } catch (error) {
+      console.error('Error during reconciliation:', error);
+      return { success: false, reconciledCount: 0, message: 'Failed to reconcile transactions' };
     }
   }
 

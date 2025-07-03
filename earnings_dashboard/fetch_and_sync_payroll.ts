@@ -15,6 +15,7 @@ interface PayrollData {
 
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 
+
 async function fetchAndSyncPayroll(): Promise<void> {
   const baseUrl = process.env.DYNAMICS365_BASE_URL;
   const accessToken = process.env.DYNAMICS365_ACCESS_TOKEN;
@@ -30,18 +31,33 @@ async function fetchAndSyncPayroll(): Promise<void> {
   const payrollIntegration = new PayrollIntegration(baseUrl, accessToken);
   const payrollDataList: PayrollData[] = [];
 
+  // Read existing revenue data to support incremental sync
+  let revenueData: any = {};
+  try {
+    const fileContent = fs.readFileSync(revenueDataPath, 'utf-8');
+    revenueData = JSON.parse(fileContent);
+  } catch (error) {
+    console.warn('Failed to read existing revenue data, starting with empty object.');
+  }
+
   for (const employeeId of employeeIds) {
     try {
       const response = await payrollIntegration.getEmployeePayroll(employeeId);
       if (response.success && response.data) {
-        payrollDataList.push({
-          employeeId,
-          amount: response.data.salary,
-          taxRate: response.data.taxRate,
-          deductions: response.data.deductions,
-          bonuses: response.data.bonuses,
-          date: new Date().toISOString(),
-        });
+        // Check if payroll data for this employee and date already exists to avoid duplicates
+        const existingEntry = (revenueData.payroll || []).find(
+          (entry: any) => entry.employeeId === employeeId && entry.date === new Date().toISOString().split('T')[0]
+        );
+        if (!existingEntry) {
+          payrollDataList.push({
+            employeeId,
+            amount: response.data.salary,
+            taxRate: response.data.taxRate,
+            deductions: response.data.deductions,
+            bonuses: response.data.bonuses,
+            date: new Date().toISOString(),
+          });
+        }
       } else {
         console.warn(`Payroll data for employee ${employeeId} could not be fetched and will be skipped.`);
       }
@@ -51,21 +67,12 @@ async function fetchAndSyncPayroll(): Promise<void> {
   }
 
   if (payrollDataList.length === 0) {
-    console.warn('No payroll data was fetched. Revenue data will not be updated.');
+    console.warn('No new payroll data was fetched. Revenue data will not be updated.');
     return;
   }
 
-  // Read existing revenue data
-  let revenueData: any = {};
-  try {
-    const fileContent = fs.readFileSync(revenueDataPath, 'utf-8');
-    revenueData = JSON.parse(fileContent);
-  } catch (error) {
-    console.warn('Failed to read existing revenue data, starting with empty object.');
-  }
-
-  // Update revenue data with payroll data
-  revenueData.payroll = payrollDataList;
+  // Append new payroll data to existing revenue data
+  revenueData.payroll = (revenueData.payroll || []).concat(payrollDataList);
 
   // Write updated revenue data back to file
   try {
