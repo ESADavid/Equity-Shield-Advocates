@@ -36,10 +36,10 @@
     "@types/node": "^22.15.29",
     "axios": "^1.9.0",
     "cypress": "^14.4.0",
-    "jest": "^29.5.0",
+    "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "supertest": "^6.3.3",
-    "ts-jest": "^29.3.4",
+    "ts-jest": "^29.4.0",
     "typescript": "^5.8.3"
   },
   "author": "",

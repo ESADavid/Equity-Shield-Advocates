@@ -15,9 +15,9 @@ function validateNumber(value: any, fieldName: string): number {
  * Flag to control whether to add sample purchase data.
  * Set to false in production to avoid adding hardcoded sample data.
  */
-const ADD_SAMPLE_DATA = true;
+const ADD_SAMPLE_DATA = false;
 
-function updateRevenueData(): boolean {
+function updateRevenueData(incremental: boolean = false): boolean {
   if (!fs.existsSync(revenueDataPath)) {
     console.error('Revenue data file not found at', revenueDataPath);
     return false; // Changed from process.exit(1) to return false to indicate failure
@@ -60,7 +60,7 @@ function updateRevenueData(): boolean {
     data.totalRevenue = 0;
   }
 
-  if (ADD_SAMPLE_DATA) {
+  if (!incremental && ADD_SAMPLE_DATA) {
     // Add a sample auto fleet purchase if none exist
     if (data.purchases.autoFleetDetails.length === 0) {
       data.purchases.autoFleetDetails.push({
@@ -138,7 +138,8 @@ function updateRevenueData(): boolean {
         autoFleet: data.purchases.autoFleet,
         corporateHomes: data.purchases.corporateHomes
       },
-      payrollTotal: data.payrollTotal || 0
+      payrollTotal: data.payrollTotal || 0,
+      incrementalUpdate: incremental
     }
   });
 
