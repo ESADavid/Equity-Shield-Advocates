@@ -51,33 +51,6 @@ app.use(compression());
 app.use('/api', apiRouter);
 
 // Mount merchant bill pay router
-app.use('/api/merchant-pay', merchantBillPayRouter);
-
-// Instantiate WealthCreationEngine
-const wealthEngine = new WealthCreationEngine();
-app.locals.wealthEngine = wealthEngine;
-
-// Load project revenue data and update wealthEngine revenue streams
-const fs = require('fs').promises;
-const path = require('path');
-
-async function loadProjectRevenueData() {
-  try {
-    const dataPath = path.resolve(__dirname, '../earnings_report.json');
-    const dataRaw = await fs.readFile(dataPath, 'utf-8');
-    const projectRevenueData = JSON.parse(dataRaw);
-    if (projectRevenueData && projectRevenueData.revenueStreams) {
-      wealthEngine.updateRevenue(projectRevenueData.revenueStreams);
-      console.log('Project revenue data loaded and applied to wealthEngine');
-    } else {
-      console.warn('Project revenue data missing or invalid');
-    }
-  } catch (error) {
-    console.error('Error loading project revenue data:', error);
-  }
-}
-
-loadProjectRevenueData();
 
 // Instantiate PerformanceTracker
 const performanceTracker = new PerformanceTracker(['efficiency', 'precision', 'stability'], {
