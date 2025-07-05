@@ -1,27 +1,4 @@
 require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const basicAuth = require('express-basic-auth');
-const morgan = require('morgan');
-const compression = require('compression');
-const WealthCreationEngine = require('../FOUR-ERA-AI/src/wealth-creation-engine-new.cjs').default;
-const TemporalProfitAnalyzer = require('../FOUR-ERA-AI/src/temporal-profit-analyzer.js').default;
-const winston = require('winston');
-const PayrollIntegration = require('../payroll_integration').default;
-const PerformanceTracker = require('../FOUR-ERA-AI/performance-tracker');
-const EnhancedBlackboxTrainer = require('../FOUR-ERA-AI/blackbox-trainer-complete').default;
-
-const { masterLoginOverride } = require('../FOUR-ERA-AI/src/middleware/masterLoginOverride');
-
-const updateRevenueData = require('./update_revenue_data').default || require('./update_revenue_data');
-const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default || require('./fetch_and_sync_payroll');
-
-const AIAgentManager = require('../FOUR-ERA-AI/src/ai-agent-manager');
-const apiRouter = require('./api');
-const merchantBillPayRouter = require('./merchant_bill_pay').router;
-
-const app = express();
-const PORT = process.env.PORT || 4000;
 
 // Basic authentication setup
 const users = { [process.env.ADMIN_USER || 'admin']: process.env.ADMIN_PASS || 'securepassword' };
