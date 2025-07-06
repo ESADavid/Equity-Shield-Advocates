@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OWLban Earnings Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+  <h1>OWLban Earnings Dashboard</h1>
+  <div id="earnings">Loading earnings data...</div>
+  <script>
+    async function fetchEarnings() {
+      try {
+        const response = await fetch('/api/earnings', {
+          headers: {
+            Authorization: 'Basic ' + btoa('admin:securepassword'),
+          },
+        });
+        if (!response.ok) {
+          document.getElementById('earnings').innerText = 'Failed to load earnings data';
+          return;
+        }
+        const data = await response.json();
+        let html = '<h2>Total Revenue: $' + data.totalAnnualRevenue.toLocaleString() + '</h2><ul>';
+        for (const [stream, details] of Object.entries(data.revenueStreams)) {
+          html += '<li>' + stream + ': $' + details.amount.toLocaleString() + ' (Account: ' + details.accountNumber + ')</li>';
+        }
+        html += '</ul>';
+        document.getElementById('earnings').innerHTML = html;
+      } catch (error) {
+        document.getElementById('earnings').innerText = 'Error loading earnings data: ' + error.message;
+      }
+    }
+    fetchEarnings();
+  </script>
+</body>
+</html>
