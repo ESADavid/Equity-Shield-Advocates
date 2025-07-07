@@ -1,40 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const initialMoneyInput = document.getElementById('initial-money');
-  const setMoneyBtn = document.getElementById('set-money-btn');
   const spendSection = document.querySelector('.spend-section');
   const summarySection = document.querySelector('.summary-section');
   const fleetSection = document.querySelector('.fleet-section');
   const currentBalanceEl = document.getElementById('current-balance');
   const transactionList = document.getElementById('transaction-list');
-  const spendForm = document.getElementById('spend-form');
   const carListEl = document.getElementById('car-list');
   const purchasedCarListEl = document.getElementById('purchased-car-list');
 
+  const authHeader = 'Basic ' + btoa('admin:securepassword');
 
   let balance = 0;
   let transactions = [];
   let purchasedCars = [];
+  let cars = []; // Will be fetched from backend purchases or API
 
-  let cars = []; // Will be fetched from API
-
-  async function fetchCarsFromAPI() {
+  async function fetchEarningsFromBackend() {
     try {
-      const response = await fetch('https://api.example.com/cars');
+      const response = await fetch('/api/earnings', {
+        headers: { 'Authorization': authHeader }
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      cars = data.cars || [];
-      renderCarList();
+      balance = data.totalAnnualRevenue;
+      transactions = []; // Backend does not provide generic transactions, so keep empty or could be enhanced
+      purchasedCars = data.purchases.autoFleetDetails || [];
+      renderBalance();
+      renderPurchasedCars();
+      spendSection.style.display = 'block';
+      summarySection.style.display = 'block';
+      fleetSection.style.display = 'block';
     } catch (error) {
-      console.error('Failed to fetch cars from API:', error);
-      alert('Failed to load car data. Please try again later.');
+      console.error('Failed to fetch earnings from backend:', error);
+      alert('Failed to load earnings data. Please try again later.');
     }
   }
 
-  function updateBalance() {
-    const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
-    balance = initialMoneyInput.value - totalSpent;
+  function renderBalance() {
     currentBalanceEl.textContent = balance.toFixed(2);
   }
 
@@ -58,30 +61,82 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  async function fetchCarsFromBackend() {
+    // For now, use purchasedCars as cars available for purchase is not provided by backend
+    // Alternatively, could fetch from external API or backend endpoint if available
+    // Here, we simulate cars available for purchase by filtering out purchased cars from a static list or empty list
+    // For demo, we use a static list of cars
+    cars = [
+      { model: 'Tesla Model S', price: 79999 },
+      { model: 'BMW X5', price: 60999 },
+      { model: 'Audi Q7', price: 54999 }
+    ];
+    // Remove cars already purchased by VIN or model if VIN not available
+    const purchasedModels = new Set(purchasedCars.map(car => car.model));
+    cars = cars.filter(car => !purchasedModels.has(car.model));
+    renderCarList();
+  }
+
+  function updateBalance() {
+    // Balance is managed by backend, so here just re-render
+    renderBalance();
+  }
+
   function renderCarList() {
     carListEl.innerHTML = '';
-    cars.forEach((car, index) => {
+    cars.forEach((car) => {
       const li = document.createElement('li');
       li.textContent = `${car.model} - $${car.price.toFixed(2)}`;
 
       const purchaseBtn = document.createElement('button');
       purchaseBtn.textContent = 'Purchase';
       purchaseBtn.style.marginLeft = '1rem';
-      purchaseBtn.addEventListener('click', () => {
+      purchaseBtn.addEventListener('click', async () => {
         if (car.price > balance) {
           alert('Insufficient balance to purchase this car.');
           return;
         }
-        // Add purchase as a transaction
-        transactions.push({
-          amount: car.price,
-          description: `Purchased ${car.model}`,
-          category: 'Corporate Fleet',
-        });
-        purchasedCars.push(car);
-        updateBalance();
-        renderTransactions();
-        renderPurchasedCars();
+        // Call backend API to purchase auto fleet
+        const vin = 'VIN-' + Math.floor(Math.random() * 1000000); // Generate dummy VIN
+        const dealership = 'Default Dealership'; // Placeholder
+        try {
+          const response = await fetch('/api/purchase/auto', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': authHeader
+            },
+            body: JSON.stringify({
+              cost: car.price,
+              model: car.model,
+              vin,
+              dealership
+            })
+          });
+          const result = await response.json();
+          if (response.ok) {
+            alert(result.message);
+            balance = result.remainingRevenue;
+            purchasedCars.push({
+              model: car.model,
+              vin,
+              dealership,
+              cost: car.price,
+              purchaseDate: new Date().toISOString(),
+              deliveryStatus: 'pending',
+              deliveryDate: null,
+              deliveryAddress: null
+            });
+            cars = cars.filter(c => c.model !== car.model);
+            renderBalance();
+            renderCarList();
+            renderPurchasedCars();
+          } else {
+            alert('Error: ' + result.error);
+          }
+        } catch (error) {
+          alert('Failed to make purchase: ' + error.message);
+        }
       });
 
       li.appendChild(purchaseBtn);
@@ -93,73 +148,16 @@ document.addEventListener('DOMContentLoaded', () => {
     purchasedCarListEl.innerHTML = '';
     purchasedCars.forEach((car) => {
       const li = document.createElement('li');
-      li.textContent = `${car.model} - $${car.price.toFixed(2)}`;
+      li.textContent = `${car.model} - $${car.cost.toFixed(2)} (VIN: ${car.vin})`;
       purchasedCarListEl.appendChild(li);
     });
   }
 
-  setMoneyBtn.addEventListener('click', () => {
-    const value = parseFloat(initialMoneyInput.value);
-    if (isNaN(value) || value < 0) {
-      alert('Please enter a valid non-negative number for your available money.');
-      return;
-    }
-    balance = value;
-    spendSection.style.display = 'block';
-    summarySection.style.display = 'block';
-    fleetSection.style.display = 'block';
-    updateBalance();
-    fetchCarsFromAPI();
-    renderPurchasedCars();
-  });
+  // Remove local spend form and transactions as backend does not support generic spending transactions
+  // Optionally, could implement backend API for generic spending if needed
 
-  const purchaseAllBtn = document.getElementById('purchase-all-btn');
-  purchaseAllBtn.addEventListener('click', () => {
-    const totalPrice = cars.reduce((sum, car) => sum + car.price, 0);
-    if (totalPrice > balance) {
-      alert('Insufficient balance to purchase all cars.');
-      return;
-    }
-    cars.forEach((car) => {
-      transactions.push({
-        amount: car.price,
-        description: `Purchased ${car.model}`,
-        category: 'Corporate Fleet',
-      });
-      purchasedCars.push(car);
-    });
-    updateBalance();
-    renderTransactions();
-    renderPurchasedCars();
-  });
-
-  spendForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const amount = parseFloat(document.getElementById('spend-amount').value);
-    const description = document.getElementById('spend-description').value.trim();
-    const category = document.getElementById('spend-category').value;
-
-    if (isNaN(amount) || amount <= 0) {
-      alert('Please enter a valid amount greater than zero.');
-      return;
-    }
-    if (!description) {
-      alert('Please enter a description.');
-      return;
-    }
-    if (!category) {
-      alert('Please select a category.');
-      return;
-    }
-    if (amount > balance) {
-      alert('Insufficient balance for this transaction.');
-      return;
-    }
-
-    transactions.push({ amount, description, category });
-    updateBalance();
-    renderTransactions();
-
-    spendForm.reset();
+  // Initialize UI by fetching earnings and cars from backend
+  fetchEarningsFromBackend().then(() => {
+    fetchCarsFromBackend();
   });
 });

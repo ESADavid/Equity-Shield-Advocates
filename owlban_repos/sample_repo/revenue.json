@@ -1,5 +1,5 @@
 {
-  "totalRevenue": 1233300893,
+  "totalRevenue": 1233300889,
   "revenueStreams": {
     "Sample Repo": {
       "amount": 617090945,
@@ -28,8 +28,8 @@
     }
   },
   "purchases": {
-    "corporateHomes": 218001,
-    "autoFleet": 1048996,
+    "corporateHomes": 218003,
+    "autoFleet": 1048998,
     "autoFleetDetails": [
       {
         "model": "2025 ROLLS-ROYCE BLACK BADGE SPECTRA",
@@ -38,7 +38,7 @@
         "cost": 799996,
         "purchaseDate": "2024-06-10T00:00:00.000Z",
         "deliveryStatus": "delivered",
-        "deliveryDate": "2025-07-06T23:09:58.729Z",
+        "deliveryDate": "2025-07-07T18:09:21.771Z",
         "deliveryAddress": "7438 STILLBROOKBEND CT HUNTERSVILLE NC 28078"
       },
       {
@@ -273,6 +273,42 @@
           "dealership": "Test Dealership",
           "cost": 1,
           "purchaseDate": "2025-07-06T23:09:58.710Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-07-07T18:08:10.648Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1751911690648",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-07-07T18:08:10.648Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-07-07T18:09:21.746Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1751911761746",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-07-07T18:09:21.746Z"
         }
       }
     ]
