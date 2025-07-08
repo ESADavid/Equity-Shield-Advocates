@@ -1,138 +1,149 @@
-
-const fs = require('fs');
-const path = require('path');
-const readline = require('readline');
-
-const revenueStreams = {
-  aiLicensing: 500000000,
-  autonomousSecurity: 350000000,
-  medicalDiagnostics: 250000000,
-  climateModeling: 200000000,
-  militaryAI: 300000000,
-  dataStorage: 150000000,
-  strategicConsulting: 100000000,
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-
-function interactiveUpdateRevenueStreams() {
-  console.log('Update Revenue Streams');
-  console.log('Current Revenue Streams:', JSON.stringify(revenueStreams, null, 2));
-
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  const updatedRevenue = {};
-
-  const keys = Object.keys(revenueStreams);
-  let index = 0;
-
-  function askNext() {
-    if (index === keys.length) {
-      console.log('Updated Revenue Data:');
-      console.log(JSON.stringify(updatedRevenue, null, 2));
-      rl.close();
-      return;
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
+const revenueDataPath = path_1.default.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+function validateNumber(value, fieldName) {
+    if (typeof value !== 'number' || isNaN(value) || value < 0) {
+        console.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
+        return 0;
     }
-    const key = keys[index];
-    rl.question(`Enter new value for ${key} (current: ${revenueStreams[key]}): `, (answer) => {
-      const value = Number(answer);
-      if (isNaN(value)) {
-        console.log('Please enter a valid number.');
-        askNext();
-      } else {
-        updatedRevenue[key] = value;
-        index++;
-        askNext();
-      }
+    return value;
+}
+/**
+ * Flag to control whether to add sample purchase data.
+ * Set to false in production to avoid adding hardcoded sample data.
+ */
+const ADD_SAMPLE_DATA = false;
+function updateRevenueData(incremental = false) {
+    if (!fs_1.default.existsSync(revenueDataPath)) {
+        console.error('Revenue data file not found at', revenueDataPath);
+        return false; // Changed from process.exit(1) to return false to indicate failure
+    }
+    let data;
+    try {
+        data = JSON.parse(fs_1.default.readFileSync(revenueDataPath, 'utf-8'));
+    }
+    catch (error) {
+        console.error('Failed to parse revenue data JSON:', error);
+        return false;
+    }
+    // Ensure purchases object exists
+    if (!data.purchases) {
+        data.purchases = {
+            corporateHomes: 0,
+            corporateHomesDetails: [],
+            autoFleet: 0,
+            autoFleetDetails: []
+        };
+    }
+    else {
+        // Ensure autoFleetDetails array exists
+        if (!Array.isArray(data.purchases.autoFleetDetails)) {
+            data.purchases.autoFleetDetails = [];
+        }
+        // Ensure corporateHomesDetails array exists
+        if (!Array.isArray(data.purchases.corporateHomesDetails)) {
+            data.purchases.corporateHomesDetails = [];
+        }
+    }
+    // Validate and sanitize purchase costs
+    data.purchases.autoFleet = validateNumber(data.purchases.autoFleet, 'autoFleet');
+    data.purchases.corporateHomes = validateNumber(data.purchases.corporateHomes, 'corporateHomes');
+    // Validate totalRevenue before decrementing
+    if (typeof data.totalRevenue !== 'number' || isNaN(data.totalRevenue)) {
+        console.warn('Invalid or missing totalRevenue, defaulting to 0.');
+        data.totalRevenue = 0;
+    }
+    if (!incremental && ADD_SAMPLE_DATA) {
+        // Add a sample auto fleet purchase if none exist
+        if (data.purchases.autoFleetDetails.length === 0) {
+            data.purchases.autoFleetDetails.push({
+                model: 'Sample Model',
+                vin: 'SAMPLEVIN123456789',
+                dealership: 'Sample Dealership',
+                cost: 50000,
+                purchaseDate: new Date().toISOString()
+            });
+            data.purchases.autoFleet += 50000;
+            data.totalRevenue -= 50000;
+        }
+        // Add a sample corporate home purchase if none exist
+        if (data.purchases.corporateHomesDetails.length === 0) {
+            data.purchases.corporateHomesDetails.push({
+                address: '123 Corporate Blvd',
+                city: 'Metropolis',
+                state: 'CA',
+                cost: 250000,
+                purchaseDate: new Date().toISOString()
+            });
+            data.purchases.corporateHomes += 250000;
+            data.totalRevenue -= 250000;
+        }
+    }
+    // Ensure revenueStreamsDetails object exists
+    if (!data.revenueStreamsDetails) {
+        data.revenueStreamsDetails = {};
+    }
+    // Add sample transaction details for each revenue stream if missing
+    if (!data.revenueStreams) {
+        data.revenueStreams = {};
+    }
+    for (const streamName of Object.keys(data.revenueStreams)) {
+        if (!Array.isArray(data.revenueStreamsDetails[streamName])) {
+            data.revenueStreamsDetails[streamName] = [];
+        }
+        if (data.revenueStreamsDetails[streamName].length === 0) {
+            data.revenueStreamsDetails[streamName].push({
+                transactionId: `TXN-${Math.floor(Math.random() * 1000000)}`,
+                amount: validateNumber(data.revenueStreams[streamName].amount, `revenueStreams.${streamName}.amount`),
+                date: new Date().toISOString(),
+                description: `Initial transaction for ${streamName}`
+            });
+        }
+    }
+    // Integrate payroll data if present
+    if (Array.isArray(data.payroll)) {
+        let payrollTotal = 0;
+        for (const payrollEntry of data.payroll) {
+            if (typeof payrollEntry.amount === 'number' && !isNaN(payrollEntry.amount) && payrollEntry.amount >= 0) {
+                payrollTotal += payrollEntry.amount;
+            }
+            else {
+                console.warn('Invalid payroll entry amount detected, skipping:', payrollEntry);
+            }
+        }
+        data.payrollTotal = payrollTotal;
+        console.log(`Integrated payroll data total amount: ${payrollTotal}`);
+    }
+    // Add audit trail entry
+    if (!Array.isArray(data.auditTrail)) {
+        data.auditTrail = [];
+    }
+    data.auditTrail.push({
+        timestamp: new Date().toISOString(),
+        action: 'updateRevenueData',
+        details: {
+            totalRevenue: data.totalRevenue,
+            purchases: {
+                autoFleet: data.purchases.autoFleet,
+                corporateHomes: data.purchases.corporateHomes
+            },
+            payrollTotal: data.payrollTotal || 0,
+            incrementalUpdate: incremental
+        }
     });
-  }
-
-  askNext();
-}
-
-function updateRevenueData() {
-  const revenueFilePath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
-  if (!fs.existsSync(revenueFilePath)) {
-    console.error('Revenue data file not found:', revenueFilePath);
-    process.exit(1);
-  }
-
-  let revenueData;
-  try {
-    const fileContent = fs.readFileSync(revenueFilePath, 'utf-8');
-    revenueData = JSON.parse(fileContent);
-  } catch (error) {
-    console.error('Error reading or parsing revenue data file:', error);
-    throw error;
-  }
-
-  // Add detailed purchase data if missing
-  if (!revenueData.purchases) {
-    revenueData.purchases = {};
-  }
-  if (!Array.isArray(revenueData.purchases.autoFleetDetails)) {
-    revenueData.purchases.autoFleetDetails = [
-      {
-        model: 'Model X',
-        vin: 'VIN123456789',
-        dealership: 'Main Dealership',
-        cost: 50000,
-        purchaseDate: '2023-01-01T00:00:00.000Z',
-      },
-    ];
-  }
-  if (!Array.isArray(revenueData.purchases.corporateHomesDetails)) {
-    revenueData.purchases.corporateHomesDetails = [
-      {
-        address: '123 Corporate Blvd',
-        city: 'Metropolis',
-        state: 'CA',
-        cost: 250000,
-        purchaseDate: '2022-06-15T00:00:00.000Z',
-      },
-    ];
-  }
-
-  // Add revenueStreamsDetails if missing
-  if (!revenueData.revenueStreamsDetails || typeof revenueData.revenueStreamsDetails !== 'object') {
-    revenueData.revenueStreamsDetails = {};
-  }
-  Object.keys(revenueData.revenueStreams || {}).forEach((stream) => {
-    if (!Array.isArray(revenueData.revenueStreamsDetails[stream])) {
-      revenueData.revenueStreamsDetails[stream] = [
-        {
-          transactionId: 'TXN-000001',
-          amount: revenueData.revenueStreams[stream].amount || 0,
-          date: new Date().toISOString(),
-          description: 'Initial transaction',
-        },
-      ];
+    try {
+        fs_1.default.writeFileSync(revenueDataPath, JSON.stringify(data, null, 2), 'utf-8');
+        console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
+        return true;
     }
-  });
-
-  // Update totalRevenue by subtracting purchase costs
-  const totalPurchaseCost =
-    (revenueData.purchases.autoFleetDetails || []).reduce((sum, item) => sum + (item.cost || 0), 0) +
-    (revenueData.purchases.corporateHomesDetails || []).reduce((sum, item) => sum + (item.cost || 0), 0);
-
-  revenueData.totalRevenue = (revenueData.totalRevenue || 0) - totalPurchaseCost;
-
-  // Write updated data back to file
-  try {
-    fs.writeFileSync(revenueFilePath, JSON.stringify(revenueData, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('Error writing updated revenue data file:', error);
-    throw error;
-  }
+    catch (error) {
+        console.error('Error writing updated revenue data file:', error);
+        throw error;
+    }
 }
-
-if (require.main === module) {
-  interactiveUpdateRevenueStreams();
-}
-
-module.exports = {
-  interactiveUpdateRevenueStreams,
-  revenueStreams,
-  updateRevenueData,
-};
+module.exports = updateRevenueData;

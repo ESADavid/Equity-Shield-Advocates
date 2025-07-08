@@ -16,13 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchEarningsFromBackend() {
     try {
+      console.log('Fetching earnings from backend...');
       const response = await fetch('/api/earnings', {
-        headers: { 'Authorization': authHeader }
+        headers: { 'Authorization': authHeader },
+        credentials: 'include'
       });
+      console.log('Fetch response status:', response.status);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
+      console.log('Earnings data received:', data);
       balance = data.totalAnnualRevenue;
       transactions = []; // Backend does not provide generic transactions, so keep empty or could be enhanced
       purchasedCars = data.purchases.autoFleetDetails || [];

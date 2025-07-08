@@ -1,63 +1,98 @@
-const request = require('supertest');
-const { app } = require('./server');
-const fs = require('fs');
-const path = require('path');
-
-jest.mock('./update_revenue_data');
-jest.mock('./fetch_and_sync_payroll');
-
-const updateRevenueData = require('./update_revenue_data').default || require('./update_revenue_data');
-const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default || require('./fetch_and_sync_payroll');
-
-describe('Update API Endpoints', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  test('GET /api/update/revenue - success', async () => {
-    updateRevenueData.mockResolvedValue();
-    const res = await request(app).get('/api/update/revenue');
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toEqual({ message: 'Revenue data updated successfully' });
-    expect(updateRevenueData).toHaveBeenCalledTimes(1);
-  });
-
-  test('GET /api/update/revenue - failure', async () => {
-    updateRevenueData.mockRejectedValue(new Error('Update failed'));
-    const res = await request(app).get('/api/update/revenue');
-    expect(res.statusCode).toBe(500);
-    expect(res.body).toEqual({ error: 'Failed to update revenue data' });
-  });
-
-  test('GET /api/update/payroll - success', async () => {
-    fetchAndSyncPayroll.mockResolvedValue();
-    const res = await request(app).get('/api/update/payroll');
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toEqual({ message: 'Payroll data updated successfully' });
-    expect(fetchAndSyncPayroll).toHaveBeenCalledTimes(1);
-  });
-
-  test('GET /api/update/payroll - failure', async () => {
-    fetchAndSyncPayroll.mockRejectedValue(new Error('Payroll update failed'));
-    const res = await request(app).get('/api/update/payroll');
-    expect(res.statusCode).toBe(500);
-    expect(res.body).toEqual({ error: 'Failed to update payroll data' });
-  });
-
-  test('GET /api/update/all - success', async () => {
-    updateRevenueData.mockResolvedValue();
-    fetchAndSyncPayroll.mockResolvedValue();
-    const res = await request(app).get('/api/update/all');
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toEqual({ message: 'Revenue and payroll data updated successfully' });
-    expect(updateRevenueData).toHaveBeenCalledTimes(1);
-    expect(fetchAndSyncPayroll).toHaveBeenCalledTimes(1);
-  });
-
-  test('GET /api/update/all - failure', async () => {
-    updateRevenueData.mockRejectedValue(new Error('Update failed'));
-    const res = await request(app).get('/api/update/all');
-    expect(res.statusCode).toBe(500);
-    expect(res.body).toEqual({ error: 'Failed to update all data' });
-  });
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/** @jest-environment node */
+const supertest_1 = __importDefault(require("supertest"));
+const server_1 = require("./server");
+afterAll(() => {
+    server_1.server.close();
+});
+describe('OSCAR Earnings Dashboard API Tests', () => {
+    describe('GET /api/earnings', () => {
+        it('should return earnings data with status 200', async () => {
+            const response = await (0, supertest_1.default)(server_1.app)
+                .get('/api/earnings')
+                .auth('admin', 'securepassword');
+            expect(response.status).toBe(200);
+            expect(response.body).toHaveProperty('totalAnnualRevenue');
+            expect(response.body).toHaveProperty('totalDailyRevenue');
+            expect(response.body).toHaveProperty('revenueStreams');
+            for (const stream of Object.values(response.body.revenueStreams)) {
+                expect(stream).toHaveProperty('amount');
+                expect(stream).toHaveProperty('accountNumber');
+            }
+        });
+        it('should return 401 if authentication fails', async () => {
+            const response = await (0, supertest_1.default)(server_1.app).get('/api/earnings');
+            expect(response.status).toBe(401);
+        });
+    });
+    describe('GET /api/earnings/download', () => {
+        it('should return a JSON file with earnings data', async () => {
+            const response = await (0, supertest_1.default)(server_1.app)
+                .get('/api/earnings/download')
+                .auth('admin', 'securepassword');
+            expect(response.status).toBe(200);
+            expect(response.headers['content-type']).toMatch(/application\/json/);
+            expect(response.headers['content-disposition']).toMatch(/attachment/);
+            const body = JSON.parse(response.text);
+            expect(body).toHaveProperty('totalAnnualRevenue');
+            expect(body).toHaveProperty('totalDailyRevenue');
+            expect(body).toHaveProperty('revenueStreams');
+            for (const stream of Object.values(body.revenueStreams)) {
+                expect(stream).toHaveProperty('amount');
+                expect(stream).toHaveProperty('accountNumber');
+            }
+        });
+        it('should return 401 if authentication fails', async () => {
+            const response = await (0, supertest_1.default)(server_1.app).get('/api/earnings/download');
+            expect(response.status).toBe(401);
+        });
+    });
+    describe('GET /', () => {
+        it('should return the HTML dashboard', async () => {
+            const response = await (0, supertest_1.default)(server_1.app)
+                .get('/')
+                .auth('admin', 'securepassword');
+            expect(response.status).toBe(200);
+            expect(response.text).toMatch(/OWLban Earnings Dashboard/);
+        });
+    });
+    describe('Error Handling', () => {
+        it('should return 500 for an internal server error', async () => {
+            // Simulate error by mocking getRevenueReport to throw
+            const wealthEngine = server_1.app.locals.wealthEngine;
+            const originalGetRevenueReport = wealthEngine.getRevenueReport;
+            wealthEngine.getRevenueReport = () => { throw new Error('Test error'); };
+            const response = await (0, supertest_1.default)(server_1.app)
+                .get('/api/earnings')
+                .auth('admin', 'securepassword');
+            expect(response.status).toBe(500);
+            wealthEngine.getRevenueReport = originalGetRevenueReport;
+        });
+    });
+    describe('Invalid Routes', () => {
+        it('should return 404 for unknown route', async () => {
+            const response = await (0, supertest_1.default)(server_1.app)
+                .get('/invalid-route')
+                .auth('admin', 'securepassword');
+            expect(response.status).toBe(404);
+        });
+    });
+    describe('Unsupported Methods on /api/earnings', () => {
+        it('should return 404 or 405 for POST method', async () => {
+            const response = await (0, supertest_1.default)(server_1.app)
+                .post('/api/earnings')
+                .auth('admin', 'securepassword');
+            expect([404, 405]).toContain(response.status);
+        });
+    });
+    describe('Malformed Requests', () => {
+        it('should return 401 if Authorization header is missing', async () => {
+            const response = await (0, supertest_1.default)(server_1.app).get('/api/earnings');
+            expect(response.status).toBe(401);
+        });
+    });
 });
