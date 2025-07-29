@@ -425,6 +425,19 @@
         "payrollTotal": 0,
         "incrementalUpdate": false
       }
+    },
+    {
+      "timestamp": "2025-07-29T18:04:56.322Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233296387,
+        "purchases": {
+          "autoFleet": 1052499,
+          "corporateHomes": 219004
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
     }
   ]
 }
