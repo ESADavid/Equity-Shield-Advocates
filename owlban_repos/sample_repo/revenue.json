@@ -365,7 +365,66 @@
           "purchaseDate": "2025-07-07T20:44:08.334Z"
         }
       }
+    ],
+    "corporateHomesDetails": []
+  },
+  "payroll": [],
+  "revenueStreamsDetails": {
+    "Sample Repo": [
+      {
+        "transactionId": "TXN-638218",
+        "amount": 617090945,
+        "date": "2025-07-29T18:01:05.339Z",
+        "description": "Initial transaction for Sample Repo"
+      }
+    ],
+    "Owlban Investments": [
+      {
+        "transactionId": "TXN-100880",
+        "amount": 370254567,
+        "date": "2025-07-29T18:01:05.339Z",
+        "description": "Initial transaction for Owlban Investments"
+      }
+    ],
+    "Corporate Ventures": [
+      {
+        "transactionId": "TXN-211678",
+        "amount": 246836379,
+        "date": "2025-07-29T18:01:05.339Z",
+        "description": "Initial transaction for Corporate Ventures"
+      }
+    ],
+    "David Leeper": [
+      {
+        "transactionId": "TXN-802662",
+        "amount": 0,
+        "date": "2025-07-29T18:01:05.339Z",
+        "description": "Initial transaction for David Leeper"
+      }
+    ],
+    "Sandra Broome Edwards": [
+      {
+        "transactionId": "TXN-533867",
+        "amount": 0,
+        "date": "2025-07-29T18:01:05.339Z",
+        "description": "Initial transaction for Sandra Broome Edwards"
+      }
     ]
   },
-  "payroll": []
+  "payrollTotal": 0,
+  "auditTrail": [
+    {
+      "timestamp": "2025-07-29T18:01:05.339Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233296387,
+        "purchases": {
+          "autoFleet": 1052499,
+          "corporateHomes": 219004
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    }
+  ]
 }
