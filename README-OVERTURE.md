@@ -1,11 +1,13 @@
 # Oscar Broome Revenue Override Capabilities
 
 ## Overview
+
 This enhanced Oscar Broome Revenue System includes comprehensive transaction override capabilities, allowing authorized users to modify, approve, or reject transaction changes with full audit logging.
 
 ## Features
 
 ### Transaction Override System
+
 - **Override Request Creation**: Submit override requests for any transaction
 - **Approval Workflow**: Multi-level approval process with role-based access
 - **Audit Trail**: Complete audit logging for all override operations
@@ -13,6 +15,7 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
 - **Security**: Enhanced authentication and authorization
 
 ### User Roles
+
 - **Admin**: Full override capabilities and system management
 - **Override Manager**: Create and manage override requests
 - **Super Admin**: Complete system access and override approval
@@ -20,6 +23,7 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
 ### API Endpoints
 
 #### Transaction Override Endpoints
+
 - `GET /api/transactions/overrides` - List all override requests
 - `POST /api/transactions/override` - Create new override request
 - `PUT /api/transactions/:id/override` - Update transaction with override
@@ -27,6 +31,7 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
 - `GET /api/transactions/:id/audit` - Get transaction audit trail
 
 ### System Endpoints
+
 - `GET /api/earnings` - Get earnings data
 - `GET /health` - System health check
 - `GET /override-dashboard` - Override management dashboard
@@ -34,12 +39,14 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
 ## Installation
 
 1. **Install Dependencies**
+
    ```bash
    npm install
    ```
 
 2. **Environment Configuration**
    Create `.env` file:
+
    ```
    PORT=4000
    ADMIN_USER=admin
@@ -51,6 +58,7 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
    ```
 
 3. **Start the Server**
+
    ```bash
    npm start
    ```

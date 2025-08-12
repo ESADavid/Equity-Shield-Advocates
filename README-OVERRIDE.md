@@ -1,11 +1,13 @@
 # Oscar Broome Transaction Override Capabilities
 
 ## Overview
+
 This enhanced Oscar Broome Revenue System includes comprehensive transaction override capabilities, allowing authorized users to modify, approve, or reject transaction changes with full audit logging.
 
 ## Features
 
 ### Transaction Override System
+
 - **Override Request Creation**: Submit override requests for any transaction
 - **Approval Workflow**: Multi-level approval process with role-based access
 - **Audit Trail**: Complete audit logging for all override operations
@@ -13,6 +15,7 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
 - **Security**: Enhanced authentication and authorization
 
 ### User Roles
+
 - **Admin**: Full override capabilities and system management
 - **Override Manager**: Create and manage override requests
 - **Super Admin**: Complete system access and override approval
@@ -20,6 +23,7 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
 ### API Endpoints
 
 #### Transaction Override Endpoints
+
 - `GET /api/transactions/overrides` - List all override requests
 - `POST /api/transactions/override` - Create new override request
 - `PUT /api/transactions/:id/override` - Update transaction with override
@@ -27,6 +31,7 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
 - `GET /api/transactions/:id/audit` - Get transaction audit trail
 
 #### System Endpoints
+
 - `GET /api/earnings` - Get earnings data
 - `GET /health` - System health check
 - `GET /override-dashboard` - Override management dashboard
@@ -34,12 +39,14 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
 ## Installation
 
 1. **Install Dependencies**
+
    ```bash
    npm install
    ```
 
 2. **Environment Configuration**
    Create `.env` file:
+
    ```
    PORT=4000
    ADMIN_USER=admin
@@ -51,6 +58,7 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
    ```
 
 3. **Start the Server**
+
    ```bash
    npm start
    # or for development
@@ -60,12 +68,14 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
 ## Usage
 
 ### Accessing the Override Dashboard
+
 1. Navigate to `http://localhost:4000/override-dashboard`
 2. Login with credentials:
    - Username: `admin`
    - Password: `securepassword`
 
 ### Creating Override Requests
+
 1. Fill in the override form with:
    - Transaction ID
    - Transaction type
@@ -74,11 +84,13 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
    - Reason for override
 
 ### Managing Override Requests
+
 1. View all override requests in the dashboard
 2. Approve or reject requests based on role permissions
 3. View complete audit trail for any transaction
 
 ## Security Features
+
 - **Role-based Access Control**: Different permissions for different roles
 - **Comprehensive Audit Logging**: All actions logged with user, timestamp, and details
 - **Authentication**: Basic auth with configurable credentials
@@ -86,6 +98,7 @@ This enhanced Oscar Broome Revenue System includes comprehensive transaction ove
 - **Error Handling**: Comprehensive error handling and logging
 
 ## File Structure
+
 ```
 OSCAR-BROOME-REVENUE/
 ├── models/
@@ -102,18 +115,23 @@ OSCAR-BROOME-REVENUE/
 ```
 
 ## Testing
+
 Run the test suite:
+
 ```bash
 npm test
 ```
 
 ## Logging
+
 All override operations are logged to:
+
 - Console output
 - `override.log` - Override-specific logs
 - `error.log` - Error logs
 
 ## Future Enhancements
+
 - Database integration for persistent override storage
 - Email notifications for override requests
 - Advanced reporting and analytics
