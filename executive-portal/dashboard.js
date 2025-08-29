@@ -88,11 +88,20 @@ class ExecutiveDashboard {
 
         document.getElementById('corporateHomes').textContent = 
             new Intl.NumberFormat('en-US').format(this.data.purchases?.corporateHomes || 0);
+
+        // New AUM metrics
+        document.getElementById('totalAUM').textContent =
+            new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+            }).format(this.data.assetsUnderManagement?.totalAUM || 0);
     }
 
     setupCharts() {
         this.createRevenueChart();
         this.createFleetChart();
+        this.createAUMChart();
     }
 
     createRevenueChart() {
@@ -226,6 +235,9 @@ class ExecutiveDashboard {
             case 'analytics':
                 this.loadAnalyticsData();
                 break;
+            case 'aum':
+                this.loadAUMData();
+                break;
         }
     }
 
@@ -310,18 +322,74 @@ class ExecutiveDashboard {
         }
     }
 
-    createForecastChart() {
-        const ctx = document.getElementById('forecastChart');
+    async loadAUMData() {
+        const container = document.getElementById('aumMetrics');
+        const assetClassContainer = document.getElementById('aumAssetClasses');
+        const performanceContainer = document.getElementById('aumPerformanceMetrics');
+        if (!container || !assetClassContainer || !performanceContainer) return;
+
+        const aum = this.data.assetsUnderManagement || {};
+
+        container.textContent = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            maximumFractionDigits: 0
+        }).format(aum.totalAUM || 0);
+
+        assetClassContainer.innerHTML = Object.entries(aum.assetClasses || {}).map(([key, val]) => `
+            <div class="aum-asset-class">
+                <h4>${key.charAt(0).toUpperCase() + key.slice(1)}</h4>
+                <p>Amount: ${Utils.formatCurrency(val.amount)}</p>
+                <p>Percentage: ${val.percentage}%</p>
+                <p>${val.description}</p>
+            </div>
+        `).join('');
+
+        performanceContainer.innerHTML = `
+            <div class="metrics-list">
+                <div class="metric">
+                    <span>YTD Return</span>
+                    <span class="value">${aum.performanceMetrics?.ytdReturn || 0}%</span>
+                </div>
+                <div class="metric">
+                    <span>Annualized Return</span>
+                    <span class="value">${aum.performanceMetrics?.annualizedReturn || 0}%</span>
+                </div>
+                <div class="metric">
+                    <span>Sharpe Ratio</span>
+                    <span class="value">${aum.performanceMetrics?.sharpeRatio || 0}</span>
+                </div>
+                <div class="metric">
+                    <span>Volatility</span>
+                    <span class="value">${aum.performanceMetrics?.volatility || 0}%</span>
+                </div>
+            </div>
+        `;
+
+        this.createAUMChart();
+    }
+
+    createAUMChart() {
+        const ctx = document.getElementById('aumChart');
         if (!ctx) return;
 
-        new Chart(ctx.getContext('2d'), {
-            type: 'bar',
+        const aum = this.data.assetsUnderManagement || {};
+        const labels = Object.keys(aum.assetClasses || {});
+        const data = labels.map(key => aum.assetClasses[key].amount);
+
+        this.charts.aum = new Chart(ctx.getContext('2d'), {
+            type: 'pie',
             data: {
-                labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                labels,
                 datasets: [{
-                    label: 'Projected Revenue',
-                    data: [280000, 320000, 350000, 400000],
-                    backgroundColor: 'rgba(212, 175, 55, 0.8)'
+                    data,
+                    backgroundColor: [
+                        '#d4af37',
+                        '#1a1a2e',
+                        '#16213e',
+                        '#0f3460',
+                        '#333'
+                    ]
                 }]
             },
             options: {
@@ -331,27 +399,6 @@ class ExecutiveDashboard {
                     legend: {
                         labels: {
                             color: '#ffffff'
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        ticks: {
-                            color: '#ffffff',
-                            callback: function(value) {
-                                return '$' + value.toLocaleString();
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            color: '#ffffff'
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
                         }
                     }
                 }

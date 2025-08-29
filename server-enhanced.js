@@ -60,10 +60,11 @@ app.use(morgan('combined', { stream: { write: (msg) => logger.info(msg.trim()) }
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/executive-portal', express.static(path.join(__dirname, 'executive-portal')));
 
 // Load revenue data path
 const revenueDataPath = process.env.REVENUE_DATA_PATH ||
-    path.resolve(__dirname, 'owlban_repos/aggregated_revenue.json');
+    path.resolve(__dirname, 'earnings_report_updated.json');
 
 // API Routes
 app.use('/api/transactions', transactionOverrideRoutes);

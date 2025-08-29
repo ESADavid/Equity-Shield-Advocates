@@ -28,6 +28,9 @@
                 <a href="#" class="nav-item" data-section="analytics">
                     <i class="fas fa-chart-bar"></i> Analytics
                 </a>
+                <a href="#" class="nav-item" data-section="aum">
+                    <i class="fas fa-wallet"></i> Assets Under Management
+                </a>
             </nav>
             <div class="user-profile">
                 <span id="executiveName">Oscar Broome</span>
@@ -84,6 +87,16 @@
                             <div class="metric-value" id="dailyRevenue">$0</div>
                             <div class="metric-label">Daily Revenue</div>
                             <div class="metric-change positive">+8.3% vs yesterday</div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="totalAUM">$0</div>
+                            <div class="metric-label">Total Assets Under Management</div>
                         </div>
                     </div>
                 </div>
@@ -165,6 +178,42 @@
                             <!-- Forecast data will be populated here -->
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- Assets Under Management Section -->
+            <section id="aum-section" class="dashboard-section">
+                <h1>Assets Under Management</h1>
+                
+                <div class="aum-metrics">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="aumMetrics">$0</div>
+                            <div class="metric-label">Total Assets Under Management</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="aum-asset-classes">
+                    <h3>Asset Classes</h3>
+                    <div id="aumAssetClasses">
+                        <!-- Asset classes will be populated here -->
+                    </div>
+                </div>
+
+                <div class="aum-performance-metrics">
+                    <h3>Performance Metrics</h3>
+                    <div id="aumPerformanceMetrics">
+                        <!-- Performance metrics will be populated here -->
+                    </div>
+                </div>
+
+                <div class="aum-chart-card">
+                    <h3>AUM Distribution</h3>
+                    <canvas id="aumChart"></canvas>
                 </div>
             </section>
         </main>
