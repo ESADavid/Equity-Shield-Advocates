@@ -67,28 +67,15 @@ const revenueDataPath = process.env.REVENUE_DATA_PATH ||
     path.resolve(__dirname, 'earnings_report_updated.json');
 
 // API Routes
+const earningsApiRouter = require('./earnings_dashboard/api');
 app.use('/api/transactions', transactionOverrideRoutes);
+app.use('/api', earningsApiRouter);
 
 // Serve override dashboard
 app.get('/override-dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'override-dashboard.html'));
 });
 
-// API endpoint to get earnings data
-app.get('/api/earnings', (req, res) => {
-    try {
-        if (!fs.existsSync(revenueDataPath)) {
-            logger.warn('Earnings data not found at ' + revenueDataPath);
-            return res.status(404).json({ error: 'Earnings data not found' });
-        }
-        
-        const data = fs.readFileSync(revenueDataPath, 'utf-8');
-        return res.json(JSON.parse(data));
-    } catch (error) {
-        logger.error('Error reading earnings data: ' + error.message);
-        return res.status(500).json({ error: 'Failed to read earnings data' });
-    }
-});
 
 // Health check endpoint
 app.get('/health', (req, res) => {

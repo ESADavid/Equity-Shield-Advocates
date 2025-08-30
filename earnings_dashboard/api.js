@@ -4,6 +4,7 @@ const paymentRouter = require('./payment');
 const merchantBillPayRouter = require('./merchant_bill_pay');
 const githubPayment = require('./github_payment');
 const MicrosoftPayment = require('./microsoft_payment').default;
+const jpmorganPaymentRouter = require('./jpmorgan_payment');
 
 const microsoftPaymentInstance = new MicrosoftPayment(
   process.env.DYNAMICS365_BASE_URL || '',
@@ -14,6 +15,7 @@ const microsoftPaymentInstance = new MicrosoftPayment(
 router.use('/payment', paymentRouter);
 router.use('/merchant-bill-pay', merchantBillPayRouter);
 router.use('/github-payment', githubPayment.router);
+router.use('/jpmorgan-payment', jpmorganPaymentRouter);
 
 // Microsoft payment route
 router.post('/microsoft-payment/initiate', async (req, res) => {
