@@ -188,21 +188,68 @@ Net Pay: ${paycheckData.netPay}
 };
 
 // Global functions for payroll calculator
-function syncPayrollData() {
-    if (dashboard && dashboard.loadPayrollData) {
-        dashboard.loadPayrollData();
-        dashboard.showSuccess('Payroll data synchronized successfully');
+async function syncPayrollData() {
+    try {
+        const response = await fetch('/api/payroll/sync', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('executiveToken'),
+                'Content-Type': 'application/json'
+            }
+        });
+        const result = await response.json();
+        if (result.success) {
+            if (dashboard && dashboard.loadPayrollData) {
+                await dashboard.loadPayrollData();
+            }
+            if (dashboard && dashboard.showSuccess) {
+                dashboard.showSuccess('Payroll data synchronized successfully');
+            }
+        } else {
+            if (dashboard && dashboard.showError) {
+                dashboard.showError('Payroll data sync failed');
+            }
+        }
+    } catch (error) {
+        console.error('Error syncing payroll data:', error);
+        if (dashboard && dashboard.showError) {
+            dashboard.showError('Error syncing payroll data');
+        }
+    }
+}
+
+async function loadEmployeeData() {
+    try {
+        const response = await fetch('/api/payroll/employees', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('executiveToken')
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to load employee data');
+        }
+        const employees = await response.json();
+        const select = document.getElementById('employeeSelect');
+        if (select) {
+            select.innerHTML = '<option value="">Choose employee...</option>';
+            employees.forEach(employee => {
+                const option = document.createElement('option');
+                option.value = employee.employeeId || employee.id || '';
+                option.textContent = employee.name || 'Unknown';
+                option.dataset.employee = JSON.stringify(employee);
+                select.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading employee list:', error);
+        if (dashboard && dashboard.showError) {
+            dashboard.showError('Failed to load employee data');
+        }
     }
 }
 
 function openQuickBooksCalculator() {
     window.open('https://quickbooks.intuit.com/payroll/paycheck-calculator/', '_blank');
-}
-
-function loadEmployeeData() {
-    if (dashboard && dashboard.loadEmployeeList) {
-        dashboard.loadEmployeeList();
-    }
 }
 
 function calculatePaycheck() {

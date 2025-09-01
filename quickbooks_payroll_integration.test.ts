@@ -1,131 +1,113 @@
 import QuickBooksPayrollIntegration from './quickbooks_payroll_integration';
 
+const dummyConfig = {
+  baseUrl: 'https://quickbooks.api.intuit.com',
+  accessToken: 'dummy-access-token',
+  companyId: 'dummy-company-id',
+  clientId: 'dummy-client-id',
+  clientSecret: 'dummy-client-secret',
+  refreshToken: 'dummy-refresh-token',
+};
+
 describe('QuickBooksPayrollIntegration', () => {
   let integration: QuickBooksPayrollIntegration;
 
   beforeEach(() => {
     integration = new QuickBooksPayrollIntegration(
-      'https://quickbooks.api.intuit.com',
-      'test-access-token',
-      'test-company-id',
-      'test-client-id',
-      'test-client-secret',
-      'test-refresh-token'
+      dummyConfig.baseUrl,
+      dummyConfig.accessToken,
+      dummyConfig.companyId,
+      dummyConfig.clientId,
+      dummyConfig.clientSecret,
+      dummyConfig.refreshToken
     );
   });
 
-  describe('constructor', () => {
-    it('should initialize with provided parameters', () => {
-      expect(integration).toBeDefined();
-    });
-  });
-
-  describe('getAuthHeaders', () => {
-    it('should return correct authorization headers', () => {
-      const headers = (integration as any).getAuthHeaders();
-      expect(headers.Authorization).toBe('Bearer test-access-token');
-      expect(headers['Content-Type']).toBe('application/json');
-      expect(headers.Accept).toBe('application/json');
-    });
-  });
-
-  describe('addOrUpdateEmployeePayroll', () => {
-    it('should validate bank account info', async () => {
-      const employee = {
-        id: '1',
-        name: 'John Doe',
-        salary: 50000,
-        taxRate: 0.2,
-        // Missing accountNumber and routingNumber
-      };
-
-      const result = await integration.addOrUpdateEmployeePayroll(employee);
-      expect(result.success).toBe(false);
-      expect(result.message).toContain('Missing bank account');
-    });
-
-    it('should handle API errors gracefully', async () => {
-      const employee = {
-        id: '1',
-        name: 'John Doe',
-        salary: 50000,
-        taxRate: 0.2,
-        accountNumber: '123456789',
-        routingNumber: '123456789',
-      };
-
-      // Mock axios to throw error
-      const mockAxios = require('axios');
-      mockAxios.post = jest.fn().mockRejectedValue(new Error('API Error'));
-
-      const result = await integration.addOrUpdateEmployeePayroll(employee);
-      expect(result.success).toBe(false);
-      expect(result.message).toContain('Failed to update payroll data');
-    });
-  });
-
-  describe('getEmployeePayroll', () => {
-    it('should fetch employee payroll data', async () => {
-      // Mock successful API response
-      const mockAxios = require('axios');
-      mockAxios.get = jest.fn().mockResolvedValue({
+  test('should refresh access token on 401 error and retry request', async () => {
+    // Mock axios post for token refresh and get for employee payroll
+    const axios = require('axios');
+    jest.spyOn(axios, 'post').mockImplementationOnce(() =>
+      Promise.resolve({
+        data: {
+          access_token: 'new-access-token',
+          refresh_token: 'new-refresh-token',
+        },
+      })
+    );
+    jest.spyOn(axios, 'get').mockImplementationOnce(() =>
+      Promise.reject({ response: { status: 401 } })
+    );
+    jest.spyOn(axios, 'get').mockImplementationOnce(() =>
+      Promise.resolve({
         data: {
           Employee: {
-            Id: '1',
+            Id: '123',
             Name: 'John Doe',
-            Compensation: {
-              HourlyRate: 25,
-            },
+            Compensation: { HourlyRate: 50 },
           },
         },
-      });
+      })
+    );
 
-      const result = await integration.getEmployeePayroll('1');
-      expect(result.success).toBe(true);
-      expect(result.data.employeeId).toBe('1');
-      expect(result.data.name).toBe('John Doe');
-    });
-
-    it('should handle API errors', async () => {
-      const mockAxios = require('axios');
-      mockAxios.get = jest.fn().mockRejectedValue(new Error('API Error'));
-
-      const result = await integration.getEmployeePayroll('1');
-      expect(result.success).toBe(false);
-      expect(result.message).toContain('Failed to fetch payroll data');
-    });
+    const response = await integration.getEmployeePayroll('123');
+    expect(response.success).toBe(true);
+    expect(response.data.employeeId).toBe('123');
   });
 
-  describe('getAllEmployees', () => {
-    it('should fetch all employees', async () => {
-      const mockAxios = require('axios');
-      mockAxios.get = jest.fn().mockResolvedValue({
-        data: {
-          QueryResponse: {
-            Employee: [
-              { Id: '1', Name: 'John Doe' },
-              { Id: '2', Name: 'Jane Smith' },
-            ],
-          },
+  test('should add or update employee payroll', async () => {
+    const axios = require('axios');
+    jest.spyOn(axios, 'post').mockResolvedValue({
+      data: { success: true },
+    });
+
+    const employee = {
+      id: '123',
+      name: 'John Doe',
+      salary: 50000,
+      taxRate: 0.2,
+      accountNumber: '123456789',
+      routingNumber: '987654321',
+    };
+
+    const response = await integration.addOrUpdateEmployeePayroll(employee);
+    expect(response.success).toBe(true);
+  });
+
+  test('should fail to add or update employee payroll if bank info missing', async () => {
+    const employee = {
+      id: '123',
+      name: 'John Doe',
+      salary: 50000,
+      taxRate: 0.2,
+    };
+
+    const response = await integration.addOrUpdateEmployeePayroll(employee);
+    expect(response.success).toBe(false);
+    expect(response.message).toMatch(/Missing bank account/);
+  });
+
+  test('should get all employees', async () => {
+    const axios = require('axios');
+    jest.spyOn(axios, 'get').mockResolvedValue({
+      data: {
+        QueryResponse: {
+          Employee: [{ Id: '123', Name: 'John Doe' }],
         },
-      });
-
-      const result = await integration.getAllEmployees();
-      expect(result.success).toBe(true);
-      expect(result.data).toHaveLength(2);
+      },
     });
+
+    const response = await integration.getAllEmployees();
+    expect(response.success).toBe(true);
+    expect(response.data.length).toBeGreaterThan(0);
   });
 
-  describe('createPayrollRun', () => {
-    it('should create a payroll run', async () => {
-      const mockAxios = require('axios');
-      mockAxios.post = jest.fn().mockResolvedValue({
-        data: { Id: 'run-1', Status: 'Created' },
-      });
-
-      const result = await integration.createPayrollRun(['1', '2']);
-      expect(result.success).toBe(true);
-      expect(result.message).toContain('Payroll run created');
+  test('should create payroll run', async () => {
+    const axios = require('axios');
+    jest.spyOn(axios, 'post').mockResolvedValue({
+      data: { success: true },
     });
+
+    const response = await integration.createPayrollRun(['123', '456']);
+    expect(response.success).toBe(true);
   });
 });

@@ -6,6 +6,7 @@ const githubPayment = require('./github_payment');
 const microsoftPayment = require('./microsoft_payment');
 const jpmorganPaymentRouter = require('./jpmorgan_payment');
 const nvidiaPayment = require('./nvidia_payment');
+const payrollApiRouter = require('./payroll_api');
 
 // Mount payment routes under /api/payment
 router.use('/payment', paymentRouter);
@@ -14,6 +15,9 @@ router.use('/github-payment', githubPayment.router);
 router.use('/jpmorgan-payment', jpmorganPaymentRouter);
 router.use('/microsoft-payment', microsoftPayment.router);
 router.use('/nvidia-payment', nvidiaPayment.router);
+
+// Mount payroll API routes under /api/payroll
+router.use('/payroll', payrollApiRouter);
 
 // Additional API endpoints can be added here as needed
 

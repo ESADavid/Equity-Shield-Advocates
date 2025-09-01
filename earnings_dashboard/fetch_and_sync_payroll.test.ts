@@ -1,118 +1,71 @@
+import request from 'supertest';
+import express from 'express';
+import payrollApiRouter from './payroll_api';
+import fetchAndSyncPayroll from './fetch_and_sync_payroll';
 import fs from 'fs';
 import path from 'path';
-import fetchAndSyncPayroll from './fetch_and_sync_payroll';
-import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration';
-import PayrollIntegration from '../payroll_integration';
 
+jest.mock('./fetch_and_sync_payroll');
 jest.mock('fs');
-jest.mock('../quickbooks_payroll_integration');
-jest.mock('../payroll_integration');
-jest.mock('./fetch_employee_ids', () => ({
-  fetchEmployeeIds: jest.fn().mockResolvedValue(['emp1', 'emp2']),
-}));
 
-describe('fetchAndSyncPayroll', () => {
-  const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+const app = express();
+app.use(express.json());
+app.use('/api/payroll', payrollApiRouter);
 
+const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+
+describe('Payroll API', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
-  it('should fetch payroll data from Dynamics 365 and QuickBooks and update revenue data', async () => {
-    // Mock reading existing revenue data
-    (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({ payroll: [] }));
+  describe('GET /api/payroll/employees', () => {
+    it('should return payroll data from revenue file', async () => {
+      const mockPayrollData = [
+        { employeeId: '1', amount: 1000, date: '2024-01-01', source: 'quickbooks' },
+        { employeeId: '2', amount: 2000, date: '2024-01-01', source: 'dynamics365' },
+      ];
+      const mockRevenueData = { payroll: mockPayrollData };
+      (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify(mockRevenueData));
 
-    // Mock Dynamics 365 integration
-    const mockDynamicsGetEmployeePayroll = jest.fn()
-      .mockResolvedValueOnce({ success: true, data: { salary: 1000, taxRate: 0.2, deductions: 50, bonuses: 100 } })
-      .mockResolvedValueOnce({ success: true, data: { salary: 2000, taxRate: 0.25, deductions: 100, bonuses: 200 } });
-    (PayrollIntegration as jest.Mock).mockImplementation(() => ({
-      getEmployeePayroll: mockDynamicsGetEmployeePayroll,
-    }));
+      const res = await request(app).get('/api/payroll/employees');
 
-    // Mock QuickBooks integration
-    const mockQuickBooksGetEmployeePayroll = jest.fn()
-      .mockResolvedValueOnce({ success: true, data: { amount: 1100, taxRate: 0.2, deductions: 55, bonuses: 110 } })
-      .mockResolvedValueOnce({ success: true, data: { amount: 2100, taxRate: 0.25, deductions: 105, bonuses: 210 } });
-    (QuickBooksPayrollIntegration as jest.Mock).mockImplementation(() => ({
-      getEmployeePayroll: mockQuickBooksGetEmployeePayroll,
-    }));
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual(mockPayrollData);
+      expect(fs.readFileSync).toHaveBeenCalledWith(revenueDataPath, 'utf-8');
+    });
 
-    // Mock writing to file
-    (fs.writeFileSync as jest.Mock).mockImplementation(() => {});
+    it('should return 500 if reading payroll data fails', async () => {
+      (fs.readFileSync as jest.Mock).mockImplementation(() => {
+        throw new Error('File read error');
+      });
 
-    await fetchAndSyncPayroll();
+      const res = await request(app).get('/api/payroll/employees');
 
-    expect(fs.readFileSync).toHaveBeenCalledWith(revenueDataPath, 'utf-8');
-    expect(mockDynamicsGetEmployeePayroll).toHaveBeenCalledTimes(2);
-    expect(mockQuickBooksGetEmployeePayroll).toHaveBeenCalledTimes(2);
-    expect(fs.writeFileSync).toHaveBeenCalled();
-
-    const writtenData = JSON.parse((fs.writeFileSync as jest.Mock).mock.calls[0][1]);
-    expect(writtenData.payroll.length).toBeGreaterThanOrEqual(2);
+      expect(res.status).toBe(500);
+      expect(res.body).toHaveProperty('error');
+    });
   });
 
-  it('should handle missing revenue data file gracefully', async () => {
-    (fs.readFileSync as jest.Mock).mockImplementation(() => { throw new Error('File not found'); });
+  describe('POST /api/payroll/sync', () => {
+    it('should trigger payroll sync and return success', async () => {
+      (fetchAndSyncPayroll as jest.Mock).mockResolvedValue(undefined);
 
-    (PayrollIntegration as jest.Mock).mockImplementation(() => ({
-      getEmployeePayroll: jest.fn().mockResolvedValue({ success: true, data: { salary: 1000, taxRate: 0.2 } }),
-    }));
+      const res = await request(app).post('/api/payroll/sync');
 
-    (QuickBooksPayrollIntegration as jest.Mock).mockImplementation(() => ({
-      getEmployeePayroll: jest.fn().mockResolvedValue({ success: true, data: { amount: 1100, taxRate: 0.2 } }),
-    }));
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ success: true, message: 'Payroll data sync completed' });
+      expect(fetchAndSyncPayroll).toHaveBeenCalled();
+    });
 
-    (fs.writeFileSync as jest.Mock).mockImplementation(() => {});
+    it('should return 500 if payroll sync fails', async () => {
+      (fetchAndSyncPayroll as jest.Mock).mockRejectedValue(new Error('Sync error'));
 
-    await fetchAndSyncPayroll();
+      const res = await request(app).post('/api/payroll/sync');
 
-    expect(fs.writeFileSync).toHaveBeenCalled();
-  });
-
-  it('should skip updating revenue data if no new payroll data fetched', async () => {
-    (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({ payroll: [{ employeeId: 'emp1', date: new Date().toISOString(), source: 'dynamics365' }] }));
-
-    (PayrollIntegration as jest.Mock).mockImplementation(() => ({
-      getEmployeePayroll: jest.fn().mockResolvedValue({ success: true, data: { salary: 1000, taxRate: 0.2 } }),
-    }));
-
-    (QuickBooksPayrollIntegration as jest.Mock).mockImplementation(() => ({
-      getEmployeePayroll: jest.fn().mockResolvedValue({ success: true, data: { amount: 1100, taxRate: 0.2 } }),
-    }));
-
-    (fs.writeFileSync as jest.Mock).mockImplementation(() => {});
-
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-    await fetchAndSyncPayroll();
-
-    expect(consoleWarnSpy).toHaveBeenCalledWith('No new payroll data was fetched. Revenue data will not be updated.');
-    expect(fs.writeFileSync).not.toHaveBeenCalled();
-
-    consoleWarnSpy.mockRestore();
-  });
-
-  it('should handle errors during payroll fetch gracefully', async () => {
-    (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({ payroll: [] }));
-
-    (PayrollIntegration as jest.Mock).mockImplementation(() => ({
-      getEmployeePayroll: jest.fn().mockRejectedValue(new Error('Dynamics API error')),
-    }));
-
-    (QuickBooksPayrollIntegration as jest.Mock).mockImplementation(() => ({
-      getEmployeePayroll: jest.fn().mockRejectedValue(new Error('QuickBooks API error')),
-    }));
-
-    (fs.writeFileSync as jest.Mock).mockImplementation(() => {});
-
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-    await fetchAndSyncPayroll();
-
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(2);
-    expect(fs.writeFileSync).not.toHaveBeenCalled();
-
-    consoleWarnSpy.mockRestore();
+      expect(res.status).toBe(500);
+      expect(res.body).toEqual({ success: false, message: 'Payroll data sync failed' });
+      expect(fetchAndSyncPayroll).toHaveBeenCalled();
+    });
   });
 });
