@@ -9,56 +9,49 @@ app.use(bodyParser.json());
 app.use('/api/jpmorgan-payment', jpmorganPaymentRouter);
 
 // Test server
-const server = app.listen(0);
+let server;
 
-async function runTests() {
-  console.log('🧪 Testing JPMorgan Payments Integration...\n');
+describe('JPMorgan Payments Integration Tests', () => {
+  beforeAll(() => {
+    server = app.listen(0);
+  });
 
-  try {
-    // Test 1: Health check endpoint
-    console.log('1. Testing health check endpoint...');
-    const healthRes = await request(server).get('/api/jpmorgan-payment/health');
-    console.log(`   Status: ${healthRes.statusCode}, Response: ${JSON.stringify(healthRes.body)}`);
+  afterAll((done) => {
+    server.close(done);
+  });
 
-    // Test 2: Create payment validation
-    console.log('\n2. Testing payment validation (missing amount)...');
-    const createRes1 = await request(server)
+  test('Health check endpoint returns status', async () => {
+    const res = await request(server).get('/api/jpmorgan-payment/health');
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toBeDefined();
+  });
+
+  test('Create payment validation (missing amount) returns 400', async () => {
+    const res = await request(server)
       .post('/api/jpmorgan-payment/create-payment')
       .send({ orderId: 'ORDER123' });
-    console.log(`   Status: ${createRes1.statusCode}, Success: ${createRes1.body.success}`);
+    expect(res.statusCode).toBe(400);
+    expect(res.body.success).toBe(false);
+  });
 
-    // Test 3: Create payment validation (missing orderId)
-    console.log('\n3. Testing payment validation (missing orderId)...');
-    const createRes2 = await request(server)
+  test('Create payment validation (missing orderId) returns 400', async () => {
+    const res = await request(server)
       .post('/api/jpmorgan-payment/create-payment')
       .send({ amount: 1000 });
-    console.log(`   Status: ${createRes2.statusCode}, Success: ${createRes2.body.success}`);
+    expect(res.statusCode).toBe(400);
+    expect(res.body.success).toBe(false);
+  });
 
-    // Test 4: Get payment status
-    console.log('\n4. Testing payment status endpoint...');
-    const statusRes = await request(server).get('/api/jpmorgan-payment/payment-status/TEST123');
-    console.log(`   Status: ${statusRes.statusCode}, Success: ${statusRes.body.success}`);
+  test('Get payment status returns response', async () => {
+    const res = await request(server).get('/api/jpmorgan-payment/payment-status/TEST123');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.success).toBeDefined();
+  });
 
-    // Test 5: Webhook security
-    console.log('\n5. Testing webhook security (missing signature)...');
-    const webhookRes = await request(server)
+  test('Webhook security (missing signature) returns 401', async () => {
+    const res = await request(server)
       .post('/api/jpmorgan-payment/webhook')
       .send({ type: 'test.event' });
-    console.log(`   Status: ${webhookRes.statusCode}`);
-
-    console.log('\n✅ Basic integration tests completed successfully!');
-    console.log('\n📋 Summary:');
-    console.log('   - All endpoints are accessible');
-    console.log('   - Input validation is working');
-    console.log('   - Error handling is functional');
-    console.log('   - Authentication middleware is in place');
-
-  } catch (error) {
-    console.error('❌ Test failed:', error.message);
-  } finally {
-    server.close();
-  }
-}
-
-// Run tests
-runTests();
+    expect(res.statusCode).toBe(401);
+  });
+});

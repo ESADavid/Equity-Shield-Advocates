@@ -1,6 +1,21 @@
 const request = require('supertest');
 const express = require('express');
 const bodyParser = require('body-parser');
+
+// Mock axios before requiring the module
+jest.mock('axios', () => ({
+  post: jest.fn(),
+  get: jest.fn(),
+  create: jest.fn(() => ({
+    post: jest.fn(),
+    get: jest.fn(),
+    interceptors: {
+      request: { use: jest.fn() },
+      response: { use: jest.fn() }
+    }
+  }))
+}));
+
 const jpmorganPaymentRouter = require('./jpmorgan_payment');
 
 const app = express();
@@ -41,17 +56,14 @@ describe('JPMorgan Payments API', () => {
 
   // Mock axios for successful payment creation
   test('Create payment success returns payment details', async () => {
-    // Mock axios post
-    jest.mock('axios', () => ({
-      post: jest.fn(() => Promise.resolve({
-        data: {
-          id: 'PAY123',
-          status: 'AUTHORIZED',
-          authorizationCode: 'AUTH456'
-        }
-      }))
-    }));
     const axios = require('axios');
+    axios.post.mockResolvedValue({
+      data: {
+        id: 'PAY123',
+        status: 'AUTHORIZED',
+        authorizationCode: 'AUTH456'
+      }
+    });
 
     const res = await request(server)
       .post('/api/jpmorgan-payment/create-payment')
@@ -63,16 +75,16 @@ describe('JPMorgan Payments API', () => {
   });
 
   test('Get payment status returns 200', async () => {
-    jest.mock('axios', () => ({
-      get: jest.fn(() => Promise.resolve({
-        data: {
-          id: 'PAY123',
-          status: 'CAPTURED',
-          amount: 1000,
-          currency: 'USD'
-        }
-      }))
-    }));
+    const axios = require('axios');
+    axios.get.mockResolvedValue({
+      data: {
+        id: 'PAY123',
+        status: 'CAPTURED',
+        amount: 1000,
+        currency: 'USD'
+      }
+    });
+
     const res = await request(server).get('/api/jpmorgan-payment/payment-status/PAY123');
     expect(res.statusCode).toBe(200);
     expect(res.body.success).toBe(true);
@@ -103,14 +115,14 @@ describe('JPMorgan Payments API', () => {
   });
 
   test('Get transactions returns 200', async () => {
-    jest.mock('axios', () => ({
-      get: jest.fn(() => Promise.resolve({
-        data: {
-          transactions: [],
-          totalCount: 0
-        }
-      }))
-    }));
+    const axios = require('axios');
+    axios.get.mockResolvedValue({
+      data: {
+        transactions: [],
+        totalCount: 0
+      }
+    });
+
     const res = await request(server).get('/api/jpmorgan-payment/transactions');
     expect(res.statusCode).toBe(200);
     expect(res.body.success).toBe(true);
