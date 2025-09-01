@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import PayrollIntegration from '../payroll_integration';
+import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration';
 import { fetchEmployeeIds } from './fetch_employee_ids';
 
 interface PayrollData {
@@ -11,24 +12,15 @@ interface PayrollData {
   taxRate?: number;
   deductions?: number;
   bonuses?: number;
+  source?: string; // 'dynamics365' or 'quickbooks'
 }
 
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 
-
 async function fetchAndSyncPayroll(): Promise<void> {
-  const baseUrl = process.env.DYNAMICS365_BASE_URL;
-  const accessToken = process.env.DYNAMICS365_ACCESS_TOKEN;
-
-  if (!baseUrl || !accessToken) {
-    console.error('Dynamics365 base URL or access token is not set in environment variables.');
-    process.exit(1);
-  }
-
   // Fetch employee IDs dynamically
   const employeeIds = await fetchEmployeeIds();
 
-  const payrollIntegration = new PayrollIntegration(baseUrl, accessToken);
   const payrollDataList: PayrollData[] = [];
 
   // Read existing revenue data to support incremental sync
@@ -40,29 +32,95 @@ async function fetchAndSyncPayroll(): Promise<void> {
     console.warn('Failed to read existing revenue data, starting with empty object.');
   }
 
+  // Check for Dynamics 365 configuration
+  const dynamicsBaseUrl = process.env.DYNAMICS365_BASE_URL;
+  const dynamicsAccessToken = process.env.DYNAMICS365_ACCESS_TOKEN;
+  let dynamicsIntegration: PayrollIntegration | null = null;
+
+  if (dynamicsBaseUrl && dynamicsAccessToken) {
+    dynamicsIntegration = new PayrollIntegration(dynamicsBaseUrl, dynamicsAccessToken);
+    console.log('Dynamics 365 payroll integration configured.');
+  } else {
+    console.warn('Dynamics 365 configuration not found, skipping Dynamics 365 payroll sync.');
+  }
+
+  // Check for QuickBooks configuration
+  const qbBaseUrl = process.env.QUICKBOOKS_BASE_URL || 'https://quickbooks.api.intuit.com';
+  const qbAccessToken = process.env.QUICKBOOKS_ACCESS_TOKEN;
+  const qbCompanyId = process.env.QUICKBOOKS_COMPANY_ID;
+  const qbClientId = process.env.QUICKBOOKS_CLIENT_ID;
+  const qbClientSecret = process.env.QUICKBOOKS_CLIENT_SECRET;
+  const qbRefreshToken = process.env.QUICKBOOKS_REFRESH_TOKEN;
+  let quickbooksIntegration: QuickBooksPayrollIntegration | null = null;
+
+  if (qbAccessToken && qbCompanyId && qbClientId && qbClientSecret && qbRefreshToken) {
+    quickbooksIntegration = new QuickBooksPayrollIntegration(
+      qbBaseUrl,
+      qbAccessToken,
+      qbCompanyId,
+      qbClientId,
+      qbClientSecret,
+      qbRefreshToken
+    );
+    console.log('QuickBooks payroll integration configured.');
+  } else {
+    console.warn('QuickBooks configuration not complete, skipping QuickBooks payroll sync.');
+  }
+
+  if (!dynamicsIntegration && !quickbooksIntegration) {
+    console.error('No payroll integrations configured. Please set environment variables for Dynamics 365 or QuickBooks.');
+    process.exit(1);
+  }
+
   for (const employeeId of employeeIds) {
-    try {
-      const response = await payrollIntegration.getEmployeePayroll(employeeId);
-      if (response.success && response.data) {
-        // Check if payroll data for this employee and date already exists to avoid duplicates
-        const existingEntry = (revenueData.payroll || []).find(
-          (entry: any) => entry.employeeId === employeeId && entry.date === new Date().toISOString().split('T')[0]
-        );
-        if (!existingEntry) {
-          payrollDataList.push({
-            employeeId,
-            amount: response.data.salary,
-            taxRate: response.data.taxRate,
-            deductions: response.data.deductions,
-            bonuses: response.data.bonuses,
-            date: new Date().toISOString(),
-          });
+    // Try Dynamics 365 first
+    if (dynamicsIntegration) {
+      try {
+        const response = await dynamicsIntegration.getEmployeePayroll(employeeId);
+        if (response.success && response.data) {
+          const existingEntry = (revenueData.payroll || []).find(
+            (entry: any) => entry.employeeId === employeeId && entry.date === new Date().toISOString().split('T')[0] && entry.source === 'dynamics365'
+          );
+          if (!existingEntry) {
+            payrollDataList.push({
+              employeeId,
+              amount: response.data.salary,
+              taxRate: response.data.taxRate,
+              deductions: response.data.deductions,
+              bonuses: response.data.bonuses,
+              date: new Date().toISOString(),
+              source: 'dynamics365',
+            });
+          }
         }
-      } else {
-        console.warn(`Payroll data for employee ${employeeId} could not be fetched and will be skipped.`);
+      } catch (error) {
+        console.warn(`Dynamics 365 payroll data for employee ${employeeId} could not be fetched: ${error}`);
       }
-    } catch (error) {
-      console.warn(`Payroll data for employee ${employeeId} could not be fetched and will be skipped.`);
+    }
+
+    // Try QuickBooks
+    if (quickbooksIntegration) {
+      try {
+        const response = await quickbooksIntegration.getEmployeePayroll(employeeId);
+        if (response.success && response.data) {
+          const existingEntry = (revenueData.payroll || []).find(
+            (entry: any) => entry.employeeId === employeeId && entry.date === new Date().toISOString().split('T')[0] && entry.source === 'quickbooks'
+          );
+          if (!existingEntry) {
+            payrollDataList.push({
+              employeeId,
+              amount: response.data.amount,
+              taxRate: response.data.taxRate,
+              deductions: response.data.deductions,
+              bonuses: response.data.bonuses,
+              date: new Date().toISOString(),
+              source: 'quickbooks',
+            });
+          }
+        }
+      } catch (error) {
+        console.warn(`QuickBooks payroll data for employee ${employeeId} could not be fetched: ${error}`);
+      }
     }
   }
 

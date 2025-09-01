@@ -181,109 +181,6 @@
                 </div>
             </section>
 
-<!-- Payroll Calculator Section -->
-            <section id="payroll-section" class="dashboard-section">
-                <h1>Payroll Calculator</h1>
-
-                <div class="payroll-controls">
-                    <button class="btn-primary" onclick="syncPayrollData()">
-                        <i class="fas fa-sync"></i> Sync Payroll Data
-                    </button>
-                    <button class="btn-secondary" onclick="openQuickBooksCalculator()">
-                        <i class="fas fa-external-link-alt"></i> QuickBooks Calculator
-                    </button>
-                </div>
-
-                <div class="calculator-container">
-                    <div class="calculator-form">
-                        <h3>Calculate Paycheck</h3>
-                        <form id="payrollCalculatorForm">
-                            <div class="form-group">
-                                <label for="employeeSelect">Select Employee:</label>
-                                <select id="employeeSelect" onchange="loadEmployeeData()">
-                                    <option value="">Choose employee...</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="hoursWorked">Hours Worked:</label>
-                                <input type="number" id="hoursWorked" step="0.01" placeholder="40.00">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="hourlyRate">Hourly Rate:</label>
-                                <input type="number" id="hourlyRate" step="0.01" placeholder="25.00">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="overtimeHours">Overtime Hours:</label>
-                                <input type="number" id="overtimeHours" step="0.01" placeholder="0.00">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="taxRate">Tax Rate (%):</label>
-                                <input type="number" id="taxRate" step="0.01" placeholder="20.00">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="deductions">Deductions:</label>
-                                <input type="number" id="deductions" step="0.01" placeholder="0.00">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="bonuses">Bonuses:</label>
-                                <input type="number" id="bonuses" step="0.01" placeholder="0.00">
-                            </div>
-
-                            <button type="button" class="btn-primary" onclick="calculatePaycheck()">
-                                <i class="fas fa-calculator"></i> Calculate Paycheck
-                            </button>
-                        </form>
-                    </div>
-
-                    <div class="calculator-results">
-                        <h3>Paycheck Summary</h3>
-                        <div id="paycheckResults">
-                            <div class="result-item">
-                                <span class="label">Gross Pay:</span>
-                                <span class="value" id="grossPay">$0.00</span>
-                            </div>
-                            <div class="result-item">
-                                <span class="label">Taxes:</span>
-                                <span class="value" id="taxAmount">$0.00</span>
-                            </div>
-                            <div class="result-item">
-                                <span class="label">Deductions:</span>
-                                <span class="value" id="deductionAmount">$0.00</span>
-                            </div>
-                            <div class="result-item">
-                                <span class="label">Bonuses:</span>
-                                <span class="value" id="bonusAmount">$0.00</span>
-                            </div>
-                            <div class="result-item total">
-                                <span class="label">Net Pay:</span>
-                                <span class="value" id="netPay">$0.00</span>
-                            </div>
-                        </div>
-
-                        <div class="calculator-actions">
-                            <button class="btn-secondary" onclick="saveCalculation()">
-                                <i class="fas fa-save"></i> Save Calculation
-                            </button>
-                            <button class="btn-secondary" onclick="exportPaycheck()">
-                                <i class="fas fa-download"></i> Export Paycheck
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="recent-calculations">
-                    <h3>Recent Calculations</h3>
-                    <div id="recentCalculationsList">
-                        <!-- Recent calculations will be populated here -->
-                    </div>
-                </div>
-            </section>
             <!-- Assets Under Management Section -->
             <section id="aum-section" class="dashboard-section">
                 <h1>Assets Under Management</h1>
@@ -322,6 +219,6 @@
         </main>
     </div>
 
-    <script src="dashboard.js"></script>`n    <script src="payroll_calculator.js"></script>
+    <script src="dashboard.js"></script>
 </body>
 </html>

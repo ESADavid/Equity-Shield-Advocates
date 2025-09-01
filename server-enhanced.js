@@ -68,8 +68,10 @@ const revenueDataPath = process.env.REVENUE_DATA_PATH ||
 
 // API Routes
 const earningsApiRouter = require('./earnings_dashboard/api');
+const payrollApiRouter = require('./executive-portal/payroll_api');
 app.use('/api/transactions', transactionOverrideRoutes);
 app.use('/api', earningsApiRouter);
+app.use('/api/payroll', payrollApiRouter);
 
 // Serve override dashboard
 app.get('/override-dashboard', (req, res) => {
