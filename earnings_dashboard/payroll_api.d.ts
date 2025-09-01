@@ -1,5 +1,5 @@
 declare module './payroll_api' {
-  import { Router } from 'express';
-  const router: Router;
-  export default router;
+  // Add specific type declarations here as needed
+  const value: any;
+  export default value;
 }
