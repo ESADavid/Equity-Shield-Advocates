@@ -8,7 +8,7 @@ const path = require('path');
 // JPMorgan Payments API Configuration
 const JPMORGAN_BASE_URL = process.env.JPMORGAN_BASE_URL || 'https://api.payments.jpmorgan.com';
 const JPMORGAN_ORGANIZATION_ID = process.env.JPMORGAN_ORGANIZATION_ID || 'D3R56WRGSR3R';
-const JPMORGAN_PROJECT_ID = process.env.JPMORGAN_PROJECT_ID || 'D4YZRR0LSDXX';
+const JPMORGAN_PROJECT_ID = process.env.JPMORGAN_PROJECT_ID || 'D81XKN9JH2VY';
 const JPMORGAN_CLIENT_ID = process.env.JPMORGAN_CLIENT_ID;
 const JPMORGAN_CLIENT_SECRET = process.env.JPMORGAN_CLIENT_SECRET;
 const JPMORGAN_MERCHANT_ID = process.env.JPMORGAN_MERCHANT_ID;
@@ -401,6 +401,64 @@ router.get('/health', async (req, res) => {
       error: 'JPMorgan API unavailable',
       details: error.message
     });
+  }
+});
+
+const QuickBooksPayrollIntegration = require('../quickbooks_payroll_integration.ts');
+
+// Example function to sync payments with QuickBooks payroll
+async function syncPaymentsWithQuickBooks() {
+  try {
+    // Fetch recent transactions from JPMorgan
+    const headers = generateAuthHeaders();
+    const response = await axios.get(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/transactions?limit=100`,
+      { headers }
+    );
+    const transactions = response.data.transactions;
+
+    // For each transaction, update QuickBooks payroll
+    for (const tx of transactions) {
+      if (tx.status === 'COMPLETED' && tx.type === 'PAYROLL') {
+        // Map JPMorgan transaction to QuickBooks employee payroll update
+        const employeeId = tx.customer?.id || '';
+        const amount = tx.amount?.value || 0;
+
+        if (employeeId && amount > 0) {
+          const qbIntegration = new quickbooksPayrollIntegration(
+            process.env.QUICKBOOKS_BASE_URL,
+            process.env.QUICKBOOKS_ACCESS_TOKEN,
+            process.env.QUICKBOOKS_COMPANY_ID,
+            process.env.QUICKBOOKS_CLIENT_ID,
+            process.env.QUICKBOOKS_CLIENT_SECRET,
+            process.env.QUICKBOOKS_REFRESH_TOKEN
+          );
+
+          // Update payroll for employee
+          await qbIntegration.addOrUpdateEmployeePayroll({
+            id: employeeId,
+            name: tx.customer?.name || 'Unknown',
+            salary: amount,
+            taxRate: 0.2,
+            accountNumber: tx.customer?.accountNumber,
+            routingNumber: tx.customer?.routingNumber,
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error syncing payments with QuickBooks:', error);
+  }
+}
+
+// Schedule or trigger syncPaymentsWithQuickBooks as needed
+// For example, expose an endpoint to trigger sync manually
+router.post('/sync-quickbooks', async (req, res) => {
+  try {
+    await syncPaymentsWithQuickBooks();
+    res.json({ success: true, message: 'Sync with QuickBooks payroll completed' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to sync with QuickBooks', details: error.message });
   }
 });
 
