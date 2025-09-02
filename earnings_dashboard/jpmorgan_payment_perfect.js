@@ -45,3 +45,10 @@ if (missingConfig.length > 0) {
 const logger = winston.createLogger({
   level: config.security.logLevel,
   format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console()
+  ]
+});
