@@ -6,7 +6,9 @@ const fs = require('fs');
 const path = require('path');
 
 // JPMorgan Payments API Configuration
-const JPMORGAN_BASE_URL = process.env.JPMORGAN_BASE_URL || 'https://api-mock.payments.jpmorgan.com';
+const JPMORGAN_BASE_URL = process.env.JPMORGAN_BASE_URL || 'https://api.payments.jpmorgan.com';
+const JPMORGAN_ORGANIZATION_ID = process.env.JPMORGAN_ORGANIZATION_ID || 'D3R56WRGSR3R';
+const JPMORGAN_PROJECT_ID = process.env.JPMORGAN_PROJECT_ID || 'D4YZRR0LSDXX';
 const JPMORGAN_CLIENT_ID = process.env.JPMORGAN_CLIENT_ID;
 const JPMORGAN_CLIENT_SECRET = process.env.JPMORGAN_CLIENT_SECRET;
 const JPMORGAN_MERCHANT_ID = process.env.JPMORGAN_MERCHANT_ID;
@@ -89,7 +91,7 @@ router.post('/create-payment', async (req, res) => {
     };
 
     const response = await axios.post(
-      `${JPMORGAN_BASE_URL}/v1/payments`,
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments`,
       paymentData,
       { headers }
     );
@@ -120,7 +122,7 @@ router.get('/payment-status/:paymentId', async (req, res) => {
     const headers = generateAuthHeaders();
     
     const response = await axios.get(
-      `${JPMORGAN_BASE_URL}/v1/payments/${paymentId}`,
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments/${paymentId}`,
       { headers }
     );
 
@@ -162,7 +164,7 @@ router.post('/refund', async (req, res) => {
     };
 
     const response = await axios.post(
-      `${JPMORGAN_BASE_URL}/v1/payments/${paymentId}/refunds`,
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments/${paymentId}/refunds`,
       refundData,
       { headers }
     );
