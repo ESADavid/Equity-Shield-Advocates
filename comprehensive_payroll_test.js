@@ -84,17 +84,17 @@ function testPayrollEdgeCases() {
         {
             name: 'Negative hours worked',
             input: { hoursWorked: -10, hourlyRate: 25, overtimeHours: 0, taxRate: 20, deductions: 0, bonuses: 0 },
-            expected: { grossPay: -250, taxAmount: -50, netPay: -250 }
+            expected: { grossPay: -250, taxAmount: -50, netPay: -200 }
         },
         {
             name: 'Very high overtime',
             input: { hoursWorked: 40, hourlyRate: 25, overtimeHours: 100, taxRate: 30, deductions: 100, bonuses: 500 },
-            expected: { grossPay: 4000, taxAmount: 1200, netPay: 2700 }
+            expected: { grossPay: 5250, taxAmount: 1575, netPay: 3575 }
         },
         {
             name: 'Zero tax rate',
             input: { hoursWorked: 40, hourlyRate: 30, overtimeHours: 10, taxRate: 0, deductions: 50, bonuses: 100 },
-            expected: { grossPay: 1450, taxAmount: 0, netPay: 1400 }
+            expected: { grossPay: 1750, taxAmount: 0, netPay: 1700 }
         },
         {
             name: '100% tax rate',
@@ -104,7 +104,7 @@ function testPayrollEdgeCases() {
         {
             name: 'Large bonus',
             input: { hoursWorked: 40, hourlyRate: 20, overtimeHours: 5, taxRate: 25, deductions: 100, bonuses: 10000 },
-            expected: { grossPay: 10200, taxAmount: 2550, netPay: 7650 }
+            expected: { grossPay: 10950, taxAmount: 2737.5, netPay: 8112.5 }
         }
     ];
 

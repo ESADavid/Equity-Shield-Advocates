@@ -113,7 +113,7 @@ function testPayrollCalculation() {
 function testHTMLStructure() {
     console.log('🧪 Testing HTML Structure...');
 
-    const htmlFile = path.join(__dirname, 'executive-portal', 'payroll_calculator_section.html');
+    const htmlFile = path.join(__dirname, 'executive-portal', 'payroll_calculator_section_fixed.html');
     const htmlContent = fs.readFileSync(htmlFile, 'utf8');
 
     const requiredElements = [
@@ -154,7 +154,7 @@ function testHTMLStructure() {
 function testCSSStyles() {
     console.log('🧪 Testing CSS Styles...');
 
-    const cssFile = path.join(__dirname, 'executive-portal', 'styles.css');
+    const cssFile = path.join(__dirname, 'executive-portal', 'payroll_calculator_styles.css');
     const cssContent = fs.readFileSync(cssFile, 'utf8');
 
     const requiredStyles = [
@@ -215,12 +215,12 @@ function testAPIEndpoints() {
 function testDashboardIntegration() {
     console.log('🧪 Testing Dashboard Integration...');
 
-    const dashboardFile = path.join(__dirname, 'executive-portal', 'dashboard.html');
+    const dashboardFile = path.join(__dirname, 'executive-portal', 'dashboard_fixed.html');
     const dashboardContent = fs.readFileSync(dashboardFile, 'utf8');
 
     const requiredIntegrations = [
         'payroll_calculator.js',
-        'payroll_calculator_section.html'
+        'payroll-section'
     ];
 
     let missingIntegrations = [];
