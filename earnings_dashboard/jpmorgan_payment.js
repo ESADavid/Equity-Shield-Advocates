@@ -208,7 +208,7 @@ router.post('/capture', async (req, res) => {
     };
 
     const response = await axios.post(
-      `${JPMORGAN_BASE_URL}/v1/payments/${paymentId}/capture`,
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments/${paymentId}/capture`,
       captureData,
       { headers }
     );
@@ -249,7 +249,7 @@ router.post('/void', async (req, res) => {
     };
 
     const response = await axios.post(
-      `${JPMORGAN_BASE_URL}/v1/payments/${paymentId}/void`,
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments/${paymentId}/void`,
       voidData,
       { headers }
     );
@@ -285,7 +285,7 @@ router.get('/transactions', async (req, res) => {
     params.append('limit', limit.toString());
 
     const response = await axios.get(
-      `${JPMORGAN_BASE_URL}/v1/transactions?${params}`,
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/transactions?${params}`,
       { headers }
     );
 
@@ -385,7 +385,7 @@ router.get('/health', async (req, res) => {
     
     // Simple health check by making a small API call
     const response = await axios.get(
-      `${JPMORGAN_BASE_URL}/v1/health`,
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/health`,
       { headers, timeout: 5000 }
     );
 
