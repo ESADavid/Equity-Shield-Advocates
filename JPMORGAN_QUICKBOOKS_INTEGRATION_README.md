@@ -34,7 +34,7 @@ This integration combines JPMorgan's enterprise-grade payment processing with Qu
 ```bash
 JPMORGAN_BASE_URL=https://api.payments.jpmorgan.com
 JPMORGAN_ORGANIZATION_ID=D3R56WRGSR3R
-JPMORGAN_PROJECT_ID=D81XKN9JH2VY
+JPMORGAN_PROJECT_ID=D4YZRR0LSDXX
 JPMORGAN_CLIENT_ID=your_client_id
 JPMORGAN_CLIENT_SECRET=your_client_secret
 JPMORGAN_MERCHANT_ID=your_merchant_id

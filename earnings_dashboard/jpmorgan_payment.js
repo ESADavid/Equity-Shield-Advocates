@@ -8,7 +8,7 @@ const path = require('path');
 // JPMorgan Payments API Configuration
 const JPMORGAN_BASE_URL = process.env.JPMORGAN_BASE_URL || 'https://api.payments.jpmorgan.com';
 const JPMORGAN_ORGANIZATION_ID = process.env.JPMORGAN_ORGANIZATION_ID || 'D3R56WRGSR3R';
-const JPMORGAN_PROJECT_ID = process.env.JPMORGAN_PROJECT_ID || 'D81XKN9JH2VY';
+const JPMORGAN_PROJECT_ID = process.env.JPMORGAN_PROJECT_ID || 'DK2MQSR1FS7V';
 const JPMORGAN_CLIENT_ID = process.env.JPMORGAN_CLIENT_ID;
 const JPMORGAN_CLIENT_SECRET = process.env.JPMORGAN_CLIENT_SECRET;
 const JPMORGAN_MERCHANT_ID = process.env.JPMORGAN_MERCHANT_ID;
