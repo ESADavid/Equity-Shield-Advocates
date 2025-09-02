@@ -96,6 +96,175 @@ router.post('/wallet-decrypt', async (req, res) => {
   }
 });
 
+// Wallet Encryption API endpoint
+router.post('/wallet-encrypt', async (req, res) => {
+  try {
+    const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } = req.body;
+
+    if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
+      return res.status(400).json({
+        success: false,
+        error: 'cardNumber, expiryDate, cvv, and cardholderName are required'
+      });
+    }
+
+    const headers = generateAuthHeaders();
+
+    const encryptPayload = {
+      cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces
+      expiryDate: expiryDate,
+      cvv: cvv,
+      cardholderName: cardholderName,
+      billingAddress: billingAddress || {}
+    };
+
+    const response = await axios.post(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/wallet/encrypt`,
+      encryptPayload,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      encryptedData: response.data.encryptedWalletData,
+      walletId: response.data.walletId
+    });
+
+  } catch (error) {
+    console.error('JPMorgan wallet encryption error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to encrypt wallet data',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
+// Wallet Validation API endpoint
+router.post('/wallet-validate', async (req, res) => {
+  try {
+    const { walletData } = req.body;
+
+    if (!walletData) {
+      return res.status(400).json({
+        success: false,
+        error: 'walletData is required'
+      });
+    }
+
+    const headers = generateAuthHeaders();
+
+    const validatePayload = {
+      walletData: walletData
+    };
+
+    const response = await axios.post(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/wallet/validate`,
+      validatePayload,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      isValid: response.data.isValid,
+      message: response.data.message,
+      validationDetails: response.data.details
+    });
+
+  } catch (error) {
+    console.error('JPMorgan wallet validation error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to validate wallet data',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
+// Wallet Tokenization API endpoint
+router.post('/wallet-tokenize', async (req, res) => {
+  try {
+    const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } = req.body;
+
+    if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
+      return res.status(400).json({
+        success: false,
+        error: 'cardNumber, expiryDate, cvv, and cardholderName are required'
+      });
+    }
+
+    const headers = generateAuthHeaders();
+
+    const tokenizePayload = {
+      cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces
+      expiryDate: expiryDate,
+      cvv: cvv,
+      cardholderName: cardholderName,
+      billingAddress: billingAddress || {}
+    };
+
+    const response = await axios.post(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/wallet/tokenize`,
+      tokenizePayload,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      token: response.data.token,
+      tokenId: response.data.tokenId,
+      expiresAt: response.data.expiresAt
+    });
+
+  } catch (error) {
+    console.error('JPMorgan wallet tokenization error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to tokenize wallet data',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
+// Wallet Detokenization API endpoint
+router.post('/wallet-detokenize', async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        error: 'token is required'
+      });
+    }
+
+    const headers = generateAuthHeaders();
+
+    const detokenizePayload = {
+      token: token
+    };
+
+    const response = await axios.post(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/wallet/detokenize`,
+      detokenizePayload,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      walletData: response.data
+    });
+
+  } catch (error) {
+    console.error('JPMorgan wallet detokenization error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to detokenize wallet data',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
 // Create payment transaction
 router.post('/create-payment', async (req, res) => {
   try {

@@ -144,7 +144,43 @@ All endpoints are mounted under `/api/jpmorgan-payment/`
   - `payment.voided`
   - `payment.failed`
 
-### 8. Health Check
+### 8. Wallet Decryption
+- **Endpoint**: `POST /api/jpmorgan-payment/wallet-decrypt`
+- **Description**: Decrypts encrypted wallet data using JPMorgan's wallet decryption API
+- **Request Body**:
+  ```json
+  {
+    "encryptedWalletData": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // Required encrypted wallet data string
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "decryptedWallet": {
+      "cardNumber": "4111111111111111",
+      "expiryDate": "12/25",
+      "cvv": "123",
+      "cardholderName": "John Doe",
+      "billingAddress": {
+        "street": "123 Main St",
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10001"
+      }
+    }
+  }
+  ```
+- **Error Response**:
+  ```json
+  {
+    "success": false,
+    "error": "encryptedWalletData is required",
+    "details": "Additional error details if available"
+  }
+  ```
+
+### 9. Health Check
 - **Endpoint**: `GET /api/jpmorgan-payment/health`
 - **Description**: Checks the health of the JPMorgan Payments integration
 - **Response**:
