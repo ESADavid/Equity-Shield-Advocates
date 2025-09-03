@@ -1,9 +1,162 @@
 const express = require('express');
 const Stripe = require('stripe');
+const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+
+// Conditionally initialize Stripe only if API key is available
+let stripe = null;
+if (process.env.STRIPE_SECRET_KEY) {
+  stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+} else {
+  console.warn('⚠️  STRIPE_SECRET_KEY not found. Stripe functionality will be disabled for testing.');
+  // Create a mock Stripe object for testing
+  stripe = {
+    paymentIntents: {
+      create: async () => {
+        throw new Error('Stripe not configured - please set STRIPE_SECRET_KEY');
+      }
+    },
+    webhooks: {
+      constructEvent: () => {
+        throw new Error('Stripe not configured - please set STRIPE_SECRET_KEY');
+      }
+    }
+  };
+}
+
+// Email transporter configuration
+const emailTransporter = nodemailer.createTransporter({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: process.env.SMTP_PORT || 587,
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
+});
+
+// Notification functions
+async function sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntentId) {
+  try {
+    // Get merchant contact info (this could be from a database or configuration)
+    const merchantEmail = getMerchantEmail(merchantId);
+    const merchantPhone = getMerchantPhone(merchantId);
+
+    if (merchantEmail) {
+      const mailOptions = {
+        from: process.env.SMTP_USER,
+        to: merchantEmail,
+        subject: 'Payment Received - Oscar Broome Revenue System',
+        html: `
+          <h2>Payment Successfully Processed</h2>
+          <p>Dear Merchant,</p>
+          <p>Your payment has been successfully processed.</p>
+          <ul>
+            <li><strong>Merchant ID:</strong> ${merchantId}</li>
+            <li><strong>Amount:</strong> $${amount.toFixed(2)}</li>
+            <li><strong>Payment ID:</strong> ${paymentIntentId}</li>
+            <li><strong>Date:</strong> ${new Date().toLocaleString()}</li>
+          </ul>
+          <p>Your account balance has been updated accordingly.</p>
+          <p>Thank you for using Oscar Broome Revenue System.</p>
+          <br>
+          <p>Best regards,<br>Oscar Broome Revenue Team</p>
+        `
+      };
+
+      await emailTransporter.sendMail(mailOptions);
+      console.log(`Email notification sent to merchant ${merchantId}`);
+    }
+
+    // SMS notification (if Twilio is configured)
+    if (merchantPhone && process.env.TWILIO_SID && process.env.TWILIO_AUTH_TOKEN) {
+      await sendSMSNotification(merchantPhone, `Payment of $${amount.toFixed(2)} received. Payment ID: ${paymentIntentId}`);
+    }
+  } catch (error) {
+    console.error('Error sending payment success notification:', error);
+  }
+}
+
+async function sendMerchantPaymentFailureNotification(merchantId, amount, paymentIntentId, errorMessage) {
+  try {
+    const merchantEmail = getMerchantEmail(merchantId);
+    const merchantPhone = getMerchantPhone(merchantId);
+
+    if (merchantEmail) {
+      const mailOptions = {
+        from: process.env.SMTP_USER,
+        to: merchantEmail,
+        subject: 'Payment Failed - Oscar Broome Revenue System',
+        html: `
+          <h2>Payment Processing Failed</h2>
+          <p>Dear Merchant,</p>
+          <p>Unfortunately, your payment could not be processed.</p>
+          <ul>
+            <li><strong>Merchant ID:</strong> ${merchantId}</li>
+            <li><strong>Amount:</strong> $${amount.toFixed(2)}</li>
+            <li><strong>Payment ID:</strong> ${paymentIntentId}</li>
+            <li><strong>Date:</strong> ${new Date().toLocaleString()}</li>
+            <li><strong>Error:</strong> ${errorMessage}</li>
+          </ul>
+          <p>Please check your payment method and try again, or contact support for assistance.</p>
+          <p>Thank you for using Oscar Broome Revenue System.</p>
+          <br>
+          <p>Best regards,<br>Oscar Broome Revenue Team</p>
+        `
+      };
+
+      await emailTransporter.sendMail(mailOptions);
+      console.log(`Failure email notification sent to merchant ${merchantId}`);
+    }
+
+    // SMS notification (if Twilio is configured)
+    if (merchantPhone && process.env.TWILIO_SID && process.env.TWILIO_AUTH_TOKEN) {
+      await sendSMSNotification(merchantPhone, `Payment of $${amount.toFixed(2)} failed. Error: ${errorMessage}`);
+    }
+  } catch (error) {
+    console.error('Error sending payment failure notification:', error);
+  }
+}
+
+// Helper functions to get merchant contact info
+function getMerchantEmail(merchantId) {
+  // This should be replaced with actual database lookup
+  // For now, return a placeholder or null
+  const merchantContacts = {
+    'merchant_001': 'merchant1@example.com',
+    'merchant_002': 'merchant2@example.com'
+  };
+  return merchantContacts[merchantId] || null;
+}
+
+function getMerchantPhone(merchantId) {
+  // This should be replaced with actual database lookup
+  const merchantPhones = {
+    'merchant_001': '+1234567890',
+    'merchant_002': '+0987654321'
+  };
+  return merchantPhones[merchantId] || null;
+}
+
+// SMS notification function (requires Twilio)
+async function sendSMSNotification(phoneNumber, message) {
+  try {
+    const twilio = require('twilio');
+    const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+
+    await client.messages.create({
+      body: message,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: phoneNumber
+    });
+
+    console.log(`SMS notification sent to ${phoneNumber}`);
+  } catch (error) {
+    console.error('Error sending SMS notification:', error);
+  }
+}
 
 const revenueDataPath = path.resolve(__dirname, '../earnings_report_updated.json');
 
@@ -91,9 +244,9 @@ async function handleMerchantWebhook(req, res) {
           
           writeRevenueData(data);
           console.log(`Updated merchant ${merchantId} balance: $${data.merchants[merchantId].balance.toFixed(2)}`);
-          
-          // TODO: Add actual merchant notification logic here (email, SMS, etc.)
-          console.log(`Notifying merchant ${merchantId} of successful payment of $${amount.toFixed(2)}`);
+
+          // Send notification to merchant
+          await sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntent.id);
         }
       }
       break;
@@ -131,9 +284,9 @@ async function handleMerchantWebhook(req, res) {
           
           writeRevenueData(data);
           console.log(`Recorded failed payment for merchant ${merchantId}`);
-          
-          // TODO: Add actual merchant notification logic for failed payments
-          console.log(`Notifying merchant ${merchantId} of failed payment attempt`);
+
+          // Send failure notification to merchant
+          await sendMerchantPaymentFailureNotification(merchantId, failedIntent.amount / 100, failedIntent.id, failedIntent.last_payment_error?.message || 'Unknown error');
         }
       }
       break;
