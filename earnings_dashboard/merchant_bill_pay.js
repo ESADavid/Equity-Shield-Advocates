@@ -27,15 +27,26 @@ if (process.env.STRIPE_SECRET_KEY) {
 }
 
 // Email transporter configuration
-const emailTransporter = nodemailer.createTransporter({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: process.env.SMTP_PORT || 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
+let emailTransporter = null;
+if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+  emailTransporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: process.env.SMTP_PORT || 587,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+    }
+  });
+} else {
+  console.warn('⚠️  SMTP credentials not found. Email functionality will be disabled for testing.');
+  // Create a mock transporter for testing
+  emailTransporter = {
+    sendMail: async () => {
+      console.log('Mock email sent (SMTP not configured)');
+    }
+  };
+}
 
 // Notification functions
 async function sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntentId) {
@@ -316,4 +327,9 @@ module.exports = {
   router,
   createMerchantPaymentIntent,
   handleMerchantWebhook,
+  sendMerchantPaymentSuccessNotification,
+  sendMerchantPaymentFailureNotification,
+  sendSMSNotification,
+  getMerchantEmail,
+  getMerchantPhone,
 };

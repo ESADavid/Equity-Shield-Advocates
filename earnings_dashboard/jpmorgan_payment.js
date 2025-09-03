@@ -443,7 +443,7 @@ router.get('/health', async (req, res) => {
   }
 });
 
-const QuickBooksPayrollIntegration = require('../quickbooks_payroll_integration.ts');
+const QuickBooksPayrollIntegration = require('../quickbooks_payroll_integration.js');
 
 // Example function to sync payments with QuickBooks payroll
 async function syncPaymentsWithQuickBooks() {

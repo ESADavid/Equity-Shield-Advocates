@@ -1,108 +1,221 @@
-/**
- * Enhanced Oscar Broome Revenue Server
- * Includes transaction override capabilities
- */
+#!/usr/bin/env node
+
+require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 const fs = require('fs');
 const path = require('path');
-const basicAuth = require('express-basic-auth');
-const morgan = require('morgan');
-const winston = require('winston');
-const dotenv = require('dotenv');
-const transactionOverrideRoutes = require('./routes/transactionOverrideRoutes');
-
-// Load environment variables
-dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 4000;
+const PORT = process.env.PORT || 3000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
-// Enhanced auth configuration for override operations
-const ADMIN_USER = process.env.ADMIN_USER || 'admin';
-const ADMIN_PASS = process.env.ADMIN_PASS || 'securepassword';
-const OVERRIDE_MANAGER_USER = process.env.OVERRIDE_MANAGER_USER || 'override_manager';
-const OVERRIDE_MANAGER_PASS = process.env.OVERRIDE_MANAGER_PASS || 'override123';
+// Import merchant bill pay system
+let merchantBillPay;
+try {
+  merchantBillPay = require('./earnings_dashboard/merchant_bill_pay');
+  console.log('✅ Merchant bill pay system loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load merchant bill pay system:', error.message);
+  process.exit(1);
+}
 
-// Setup Winston logger
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.printf(({ timestamp, level, message }) => {
-            return `${timestamp} [${level.toUpperCase()}]: ${message}`;
-        })
-    ),
-    transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: 'override.log', level: 'info' }),
-        new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    ],
-});
-
-// Enhanced auth setup with multiple roles
-const authConfig = {
-    users: {
-        [ADMIN_USER]: ADMIN_PASS,
-        [OVERRIDE_MANAGER_USER]: OVERRIDE_MANAGER_PASS,
-        'super_admin': 'supersecure123'
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
     },
-    challenge: true,
-    realm: 'Oscar Broome Transaction Override System'
-};
+  },
+}));
 
-// Middleware setup
-app.use(basicAuth(authConfig));
-app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
-app.use(express.json());
-app.use(morgan('combined', { stream: { write: (msg) => logger.info(msg.trim()) } }));
+// CORS configuration
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000'],
+  credentials: true
+}));
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/executive-portal', express.static(path.join(__dirname, 'executive-portal')));
-
-// Load revenue data path
-const revenueDataPath = process.env.REVENUE_DATA_PATH ||
-    path.resolve(__dirname, 'earnings_report_updated.json');
-
-// API Routes
-const earningsApiRouter = require('./earnings_dashboard/api');
-const payrollApiRouter = require('./executive-portal/payroll_api');
-app.use('/api/transactions', transactionOverrideRoutes);
-app.use('/api', earningsApiRouter);
-app.use('/api/payroll', payrollApiRouter);
-
-// Serve override dashboard
-app.get('/override-dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'override-dashboard.html'));
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
+app.use('/api/', limiter);
+
+// Compression
+app.use(compression());
+
+// Logging
+if (NODE_ENV === 'production') {
+  // Create logs directory if it doesn't exist
+  const logsDir = path.join(__dirname, 'logs');
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir);
+  }
+
+  // Write logs to file
+  const accessLogStream = fs.createWriteStream(path.join(logsDir, 'access.log'), { flags: 'a' });
+  app.use(morgan('combined', { stream: accessLogStream }));
+} else {
+  app.use(morgan('dev'));
+}
+
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-    res.json({ 
-        status: 'healthy', 
-        timestamp: new Date().toISOString(),
-        service: 'Oscar Broome Revenue with Override Capabilities'
-    });
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    environment: NODE_ENV,
+    version: process.env.npm_package_version || '1.0.0',
+    uptime: process.uptime()
+  });
+});
+
+// API status endpoint
+app.get('/api/status', (req, res) => {
+  const status = {
+    merchantBillPay: {
+      loaded: !!merchantBillPay,
+      functions: merchantBillPay ? Object.keys(merchantBillPay).filter(key => typeof merchantBillPay[key] === 'function') : []
+    },
+    environment: {
+      nodeVersion: process.version,
+      environment: NODE_ENV,
+      port: PORT
+    },
+    services: {
+      stripe: !!process.env.STRIPE_SECRET_KEY,
+      smtp: !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS),
+      twilio: !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER)
+    }
+  };
+
+  res.json(status);
+});
+
+// Merchant Bill Pay API Routes
+if (merchantBillPay && merchantBillPay.router) {
+  app.use('/api/merchant', merchantBillPay.router);
+  console.log('✅ Merchant bill pay routes mounted at /api/merchant');
+}
+
+// Webhook endpoint for Stripe
+app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
+  try {
+    if (!merchantBillPay || !merchantBillPay.handleMerchantWebhook) {
+      return res.status(500).json({ error: 'Webhook handler not available' });
+    }
+
+    await merchantBillPay.handleMerchantWebhook(req, res);
+  } catch (error) {
+    console.error('Webhook processing error:', error);
+    res.status(500).json({ error: 'Webhook processing failed' });
+  }
+});
+
+// Static file serving for frontend
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Catch-all handler for SPA
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+
+  // Don't leak error details in production
+  const errorResponse = {
+    error: NODE_ENV === 'production' ? 'Internal server error' : err.message,
+    timestamp: new Date().toISOString(),
+    path: req.path
+  };
+
+  res.status(err.status || 500).json(errorResponse);
 });
 
 // 404 handler
 app.use((req, res) => {
-    res.status(404).json({ error: 'Endpoint not found' });
+  res.status(404).json({
+    error: 'Not found',
+    path: req.path,
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Global error handler
-app.use((err, req, res, next) => {
-    logger.error('Unhandled error: ' + err.stack);
-    res.status(500).json({ error: 'Internal Server Error' });
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  server.close(() => {
+    console.log('Process terminated');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down gracefully');
+  server.close(() => {
+    console.log('Process terminated');
+    process.exit(0);
+  });
+});
+
+// Unhandled promise rejection handler
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Don't exit in production, just log
+  if (NODE_ENV !== 'production') {
+    process.exit(1);
+  }
+});
+
+// Uncaught exception handler
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  // Don't exit in production, just log
+  if (NODE_ENV !== 'production') {
+    process.exit(1);
+  }
 });
 
 // Start server
-app.listen(PORT, () => {
-    logger.info(`Oscar Broome Revenue with Override Capabilities running at http://localhost:${PORT}`);
-    logger.info(`Override Dashboard available at http://localhost:${PORT}/override-dashboard`);
+const server = app.listen(PORT, () => {
+  console.log('🚀 OSCAR BROOME REVENUE - Production Server');
+  console.log('==========================================');
+  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`✅ Environment: ${NODE_ENV}`);
+  console.log(`✅ Health check: http://localhost:${PORT}/health`);
+  console.log(`✅ API status: http://localhost:${PORT}/api/status`);
+  console.log(`✅ Started at: ${new Date().toISOString()}`);
+  console.log('');
+
+  if (NODE_ENV === 'production') {
+    console.log('📊 Production Features:');
+    console.log('   - Security headers enabled');
+    console.log('   - Rate limiting active');
+    console.log('   - Compression enabled');
+    console.log('   - Request logging to file');
+    console.log('   - Graceful error handling');
+    console.log('');
+  }
 });
 
+// Export for testing
 module.exports = app;
