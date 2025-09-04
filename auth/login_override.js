@@ -7,6 +7,8 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // Override logger
 const overrideLogger = winston.createLogger({
@@ -18,6 +20,25 @@ const overrideLogger = winston.createLogger({
   defaultMeta: { service: 'login-override' },
   transports: [
     new winston.transports.File({ filename: 'logs/login_override.log' }),
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      )
+    })
+  ]
+});
+
+// Standard authentication logger
+const authLogger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  defaultMeta: { service: 'standard-auth' },
+  transports: [
+    new winston.transports.File({ filename: 'logs/auth.log' }),
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
@@ -542,6 +563,384 @@ class LoginOverrideManager {
 
     return stats;
   }
+
+  // Standard User Authentication Methods
+  async registerUser(username, email, password, role = 'user') {
+    try {
+      // Check if user already exists
+      const existingUser = await this.getUserByUsername(username);
+      if (existingUser) {
+        throw new Error('Username already exists');
+      }
+
+      const existingEmail = await this.getUserByEmail(email);
+      if (existingEmail) {
+        throw new Error('Email already exists');
+      }
+
+      // Hash password
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+      // Create user object
+      const user = {
+        id: this.generateUserId(),
+        username,
+        email,
+        password: hashedPassword,
+        role,
+        createdAt: new Date().toISOString(),
+        lastLogin: null,
+        isActive: true,
+        loginAttempts: 0,
+        lockoutUntil: null,
+        mfaEnabled: false,
+        mfaSecret: null
+      };
+
+      // Save user (in production, use database)
+      await this.saveUser(user);
+
+      // Log registration
+      authLogger.info('USER REGISTERED', {
+        userId: user.id,
+        username,
+        email,
+        role,
+        timestamp: user.createdAt
+      });
+
+      return {
+        success: true,
+        userId: user.id,
+        message: 'User registered successfully'
+      };
+    } catch (error) {
+      authLogger.error('USER REGISTRATION FAILED', {
+        username,
+        email,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  async authenticateUser(usernameOrEmail, password) {
+    try {
+      // Get user by username or email
+      let user = await this.getUserByUsername(usernameOrEmail);
+      if (!user) {
+        user = await this.getUserByEmail(usernameOrEmail);
+      }
+
+      if (!user) {
+        throw new Error('Invalid credentials');
+      }
+
+      // Check if account is locked
+      if (user.lockoutUntil && new Date() < new Date(user.lockoutUntil)) {
+        throw new Error('Account is temporarily locked due to too many failed attempts');
+      }
+
+      // Verify password
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      if (!isValidPassword) {
+        await this.recordFailedLoginAttempt(user.id);
+        throw new Error('Invalid credentials');
+      }
+
+      // Check if account is active
+      if (!user.isActive) {
+        throw new Error('Account is deactivated');
+      }
+
+      // Reset login attempts on successful login
+      await this.resetLoginAttempts(user.id);
+
+      // Update last login
+      user.lastLogin = new Date().toISOString();
+      await this.updateUser(user);
+
+      // Generate JWT token
+      const token = jwt.sign(
+        {
+          userId: user.id,
+          username: user.username,
+          email: user.email,
+          role: user.role
+        },
+        process.env.JWT_SECRET || 'your_jwt_secret_key',
+        { expiresIn: '24h' }
+      );
+
+      // Log successful login
+      authLogger.info('USER LOGIN SUCCESSFUL', {
+        userId: user.id,
+        username: user.username,
+        timestamp: new Date().toISOString()
+      });
+
+      return {
+        success: true,
+        token,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          lastLogin: user.lastLogin
+        }
+      };
+    } catch (error) {
+      authLogger.warn('USER LOGIN FAILED', {
+        usernameOrEmail,
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
+      throw error;
+    }
+  }
+
+  async changePassword(userId, currentPassword, newPassword) {
+    try {
+      const user = await this.getUserById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      // Verify current password
+      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+      if (!isValidPassword) {
+        throw new Error('Current password is incorrect');
+      }
+
+      // Validate new password strength
+      if (!this.validatePasswordStrength(newPassword)) {
+        throw new Error('New password does not meet strength requirements');
+      }
+
+      // Hash new password
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      // Update password
+      user.password = hashedPassword;
+      await this.updateUser(user);
+
+      // Log password change
+      authLogger.info('PASSWORD CHANGED', {
+        userId,
+        timestamp: new Date().toISOString()
+      });
+
+      return {
+        success: true,
+        message: 'Password changed successfully'
+      };
+    } catch (error) {
+      authLogger.error('PASSWORD CHANGE FAILED', {
+        userId,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  async enableMFA(userId) {
+    try {
+      const user = await this.getUserById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      // Generate MFA secret
+      const mfaSecret = crypto.randomBytes(32).toString('hex');
+
+      user.mfaEnabled = true;
+      user.mfaSecret = mfaSecret;
+      await this.updateUser(user);
+
+      authLogger.info('MFA ENABLED', {
+        userId,
+        timestamp: new Date().toISOString()
+      });
+
+      return {
+        success: true,
+        mfaSecret,
+        message: 'MFA enabled successfully'
+      };
+    } catch (error) {
+      authLogger.error('MFA ENABLEMENT FAILED', {
+        userId,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  async verifyMFAToken(userId, token) {
+    try {
+      const user = await this.getUserById(userId);
+      if (!user || !user.mfaEnabled || !user.mfaSecret) {
+        throw new Error('MFA not enabled for this user');
+      }
+
+      // Simple token verification (in production, use proper TOTP)
+      const expectedToken = crypto.createHmac('sha256', user.mfaSecret)
+        .update(Math.floor(Date.now() / 30000).toString()) // 30-second window
+        .digest('hex')
+        .substring(0, 6);
+
+      if (token !== expectedToken) {
+        throw new Error('Invalid MFA token');
+      }
+
+      return { success: true, message: 'MFA token verified' };
+    } catch (error) {
+      authLogger.warn('MFA VERIFICATION FAILED', {
+        userId,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  async deactivateUser(userId, adminUserId) {
+    try {
+      const user = await this.getUserById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      // Check admin permissions
+      if (!this.validateAdminPermissions(adminUserId)) {
+        throw new Error('Insufficient permissions to deactivate user');
+      }
+
+      user.isActive = false;
+      await this.updateUser(user);
+
+      authLogger.info('USER DEACTIVATED', {
+        userId,
+        adminUserId,
+        timestamp: new Date().toISOString()
+      });
+
+      return {
+        success: true,
+        message: 'User deactivated successfully'
+      };
+    } catch (error) {
+      authLogger.error('USER DEACTIVATION FAILED', {
+        userId,
+        adminUserId,
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
+  // Helper methods for user management
+  generateUserId() {
+    return `USER_${Date.now()}_${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+  }
+
+  validatePasswordStrength(password) {
+    // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  }
+
+  async recordFailedLoginAttempt(userId) {
+    const user = await this.getUserById(userId);
+    if (user) {
+      user.loginAttempts = (user.loginAttempts || 0) + 1;
+
+      // Lock account after 5 failed attempts
+      if (user.loginAttempts >= 5) {
+        user.lockoutUntil = new Date(Date.now() + 30 * 60 * 1000).toISOString(); // 30 minutes
+      }
+
+      await this.updateUser(user);
+    }
+  }
+
+  async resetLoginAttempts(userId) {
+    const user = await this.getUserById(userId);
+    if (user) {
+      user.loginAttempts = 0;
+      user.lockoutUntil = null;
+      await this.updateUser(user);
+    }
+  }
+
+  // User data persistence methods (in production, use database)
+  async saveUser(user) {
+    try {
+      const usersPath = path.join(__dirname, '../data/users.json');
+      let users = {};
+
+      if (fs.existsSync(usersPath)) {
+        users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
+      }
+
+      users[user.id] = user;
+      fs.writeFileSync(usersPath, JSON.stringify(users, null, 2), 'utf-8');
+    } catch (error) {
+      throw new Error(`Failed to save user: ${error.message}`);
+    }
+  }
+
+  async getUserById(userId) {
+    try {
+      const usersPath = path.join(__dirname, '../data/users.json');
+      if (!fs.existsSync(usersPath)) return null;
+
+      const users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
+      return users[userId] || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async getUserByUsername(username) {
+    try {
+      const usersPath = path.join(__dirname, '../data/users.json');
+      if (!fs.existsSync(usersPath)) return null;
+
+      const users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
+      return Object.values(users).find(user => user.username === username) || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async getUserByEmail(email) {
+    try {
+      const usersPath = path.join(__dirname, '../data/users.json');
+      if (!fs.existsSync(usersPath)) return null;
+
+      const users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
+      return Object.values(users).find(user => user.email === email) || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async updateUser(user) {
+    await this.saveUser(user);
+  }
+
+  // Validate JWT token
+  validateToken(token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key');
+      return { valid: true, user: decoded };
+    } catch (error) {
+      return { valid: false, error: error.message };
+    }
+  }
 }
 
 // Create singleton instance
@@ -561,5 +960,16 @@ module.exports = {
   LoginOverrideManager,
   loginOverrideManager,
   OVERRIDE_TYPES,
-  OVERRIDE_REASONS
+  OVERRIDE_REASONS,
+  // Standard authentication methods
+  registerUser: loginOverrideManager.registerUser.bind(loginOverrideManager),
+  authenticateUser: loginOverrideManager.authenticateUser.bind(loginOverrideManager),
+  changePassword: loginOverrideManager.changePassword.bind(loginOverrideManager),
+  enableMFA: loginOverrideManager.enableMFA.bind(loginOverrideManager),
+  verifyMFAToken: loginOverrideManager.verifyMFAToken.bind(loginOverrideManager),
+  deactivateUser: loginOverrideManager.deactivateUser.bind(loginOverrideManager),
+  validateToken: loginOverrideManager.validateToken.bind(loginOverrideManager),
+  getUserById: loginOverrideManager.getUserById.bind(loginOverrideManager),
+  getUserByUsername: loginOverrideManager.getUserByUsername.bind(loginOverrideManager),
+  getUserByEmail: loginOverrideManager.getUserByEmail.bind(loginOverrideManager)
 };
