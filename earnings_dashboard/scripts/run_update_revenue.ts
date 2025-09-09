@@ -2,7 +2,7 @@ import updateRevenueData from '../update_revenue_data';
 
 async function runUpdate() {
   try {
-    const success = updateRevenueData();
+    const success = await updateRevenueData(false); // Pass false for incremental update
     if (success) {
       console.log('Revenue data updated successfully.');
     } else {

@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
@@ -17,17 +17,20 @@ function validateNumber(value: any, fieldName: string): number {
  */
 const ADD_SAMPLE_DATA = false;
 
-function updateRevenueData(incremental: boolean = false): boolean {
-  if (!fs.existsSync(revenueDataPath)) {
+async function updateRevenueData(incremental: boolean = false): Promise<boolean> {
+  try {
+    await fs.access(revenueDataPath);
+  } catch {
     console.error('Revenue data file not found at', revenueDataPath);
-    return false; // Changed from process.exit(1) to return false to indicate failure
+    return false;
   }
 
   let data;
   try {
-    data = JSON.parse(fs.readFileSync(revenueDataPath, 'utf-8'));
+    const fileContent = await fs.readFile(revenueDataPath, 'utf-8');
+    data = JSON.parse(fileContent);
   } catch (error) {
-    console.error('Failed to parse revenue data JSON:', error);
+    console.error('Failed to read or parse revenue data JSON:', error);
     return false;
   }
 
@@ -144,7 +147,7 @@ function updateRevenueData(incremental: boolean = false): boolean {
   });
 
   try {
-    fs.writeFileSync(revenueDataPath, JSON.stringify(data, null, 2), 'utf-8');
+    await fs.writeFile(revenueDataPath, JSON.stringify(data, null, 2), 'utf-8');
     console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
     return true;
   } catch (error) {
@@ -153,4 +156,4 @@ function updateRevenueData(incremental: boolean = false): boolean {
   }
 }
 
-module.exports = updateRevenueData;
+export default updateRevenueData;

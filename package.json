@@ -22,7 +22,8 @@
     "deploy:staging": "node staging_deployment.js",
     "start:staging": "NODE_ENV=staging npm start",
     "docker:build:staging": "docker build -f Dockerfile.staging -t oscar-broome-revenue:staging .",
-    "docker:run:staging": "docker run -p 3001:3000 --env-file .env.staging oscar-broome-revenue:staging"
+    "docker:run:staging": "docker run -p 3001:3000 --env-file .env.staging oscar-broome-revenue:staging",
+    "frontend:start": "serve -s frontend -l 5173"
   },
   "keywords": [
     "revenue",

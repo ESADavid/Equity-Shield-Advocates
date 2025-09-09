@@ -1,9 +1,9 @@
 
 import fs from 'fs';
 import path from 'path';
-import PayrollIntegration from '../payroll_integration';
-import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration';
-import { fetchEmployeeIds } from './fetch_employee_ids';
+import PayrollIntegration from '../payroll_integration.js';
+import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration.js';
+import { fetchEmployeeIds } from './fetch_employee_ids.js';
 
 interface PayrollData {
   employeeId: string;
@@ -144,6 +144,6 @@ async function fetchAndSyncPayroll(): Promise<void> {
 export default fetchAndSyncPayroll;
 
 // Run the sync only if this module is the main module
-if (require.main === module) {
+if (typeof require !== 'undefined' && require.main === module) {
   fetchAndSyncPayroll();
 }

@@ -55,12 +55,22 @@ const OVERRIDE_CONFIG = {
   MAX_OVERRIDE_ATTEMPTS: parseInt(process.env.MAX_OVERRIDE_ATTEMPTS) || 3,
   OVERRIDE_WINDOW_MINUTES: parseInt(process.env.OVERRIDE_WINDOW_MINUTES) || 15,
   REQUIRE_ADDITIONAL_AUTH: process.env.REQUIRE_ADDITIONAL_AUTH === 'true',
-  NOTIFICATION_EMAILS: (process.env.NOTIFICATION_EMAILS || '').split(',').filter(email => email.trim())
+  NOTIFICATION_EMAILS: (process.env.NOTIFICATION_EMAILS || '').split(',').filter(email => email.trim()),
+  // Enhanced security settings
+  RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
+  RATE_LIMIT_MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 5,
+  MFA_ENFORCEMENT_LEVEL: process.env.MFA_ENFORCEMENT_LEVEL || 'required', // 'required', 'optional', 'disabled'
+  SESSION_TIMEOUT_MINUTES: parseInt(process.env.SESSION_TIMEOUT_MINUTES) || 30,
+  PASSWORD_MIN_LENGTH: parseInt(process.env.PASSWORD_MIN_LENGTH) || 12,
+  PASSWORD_REQUIRE_COMPLEXITY: process.env.PASSWORD_REQUIRE_COMPLEXITY !== 'false'
 };
 
-// Override session storage
-const activeOverrides = new Map();
-const overrideAttempts = new Map();
+  // Override session storage
+  const activeOverrides = new Map();
+  const overrideAttempts = new Map();
+
+  // Rate limiting storage
+  const rateLimitStore = new Map();
 
 // Override types
 const OVERRIDE_TYPES = {
@@ -940,6 +950,104 @@ class LoginOverrideManager {
     } catch (error) {
       return { valid: false, error: error.message };
     }
+  }
+
+  // Rate limiting for override requests
+  checkRateLimit(identifier) {
+    const now = Date.now();
+    const windowStart = now - OVERRIDE_CONFIG.RATE_LIMIT_WINDOW_MS;
+
+    // Get or create rate limit data for this identifier
+    let rateData = rateLimitStore.get(identifier);
+    if (!rateData) {
+      rateData = { requests: [], lastReset: now };
+      rateLimitStore.set(identifier, rateData);
+    }
+
+    // Clean old requests outside the window
+    rateData.requests = rateData.requests.filter(timestamp => timestamp > windowStart);
+
+    // Check if under limit
+    if (rateData.requests.length >= OVERRIDE_CONFIG.RATE_LIMIT_MAX_REQUESTS) {
+      const oldestRequest = Math.min(...rateData.requests);
+      const resetTime = oldestRequest + OVERRIDE_CONFIG.RATE_LIMIT_WINDOW_MS;
+      return {
+        allowed: false,
+        resetTime: resetTime,
+        remainingRequests: 0,
+        resetInMs: resetTime - now
+      };
+    }
+
+    // Add current request
+    rateData.requests.push(now);
+
+    return {
+      allowed: true,
+      resetTime: now + OVERRIDE_CONFIG.RATE_LIMIT_WINDOW_MS,
+      remainingRequests: OVERRIDE_CONFIG.RATE_LIMIT_MAX_REQUESTS - rateData.requests.length,
+      resetInMs: OVERRIDE_CONFIG.RATE_LIMIT_WINDOW_MS
+    };
+  }
+
+  // Enhanced password validation with configurable requirements
+  validatePasswordStrength(password) {
+    if (!password || password.length < OVERRIDE_CONFIG.PASSWORD_MIN_LENGTH) {
+      return false;
+    }
+
+    if (OVERRIDE_CONFIG.PASSWORD_REQUIRE_COMPLEXITY) {
+      // At least 1 uppercase, 1 lowercase, 1 number, 1 special character
+      const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+      return complexityRegex.test(password);
+    }
+
+    return true;
+  }
+
+  // Enhanced MFA enforcement
+  shouldEnforceMFA(user, action = 'login') {
+    if (OVERRIDE_CONFIG.MFA_ENFORCEMENT_LEVEL === 'disabled') {
+      return false;
+    }
+
+    if (OVERRIDE_CONFIG.MFA_ENFORCEMENT_LEVEL === 'required') {
+      return true;
+    }
+
+    // Optional level - check user preference or role-based requirements
+    if (user && user.role === 'admin') {
+      return true; // Always require MFA for admins
+    }
+
+    return user && user.mfaEnabled;
+  }
+
+  // Session timeout validation
+  validateSessionTimeout(sessionStartTime) {
+    const now = new Date();
+    const sessionAge = now - new Date(sessionStartTime);
+    const maxAge = OVERRIDE_CONFIG.SESSION_TIMEOUT_MINUTES * 60 * 1000;
+
+    return sessionAge < maxAge;
+  }
+
+  // Cleanup rate limit data periodically
+  cleanupRateLimitData() {
+    const now = Date.now();
+    const cutoff = now - (OVERRIDE_CONFIG.RATE_LIMIT_WINDOW_MS * 2); // Keep 2x window for safety
+
+    for (const [identifier, data] of rateLimitStore) {
+      data.requests = data.requests.filter(timestamp => timestamp > cutoff);
+      if (data.requests.length === 0) {
+        rateLimitStore.delete(identifier);
+      }
+    }
+
+    overrideLogger.info('Rate limit data cleaned up', {
+      activeIdentifiers: rateLimitStore.size,
+      timestamp: new Date().toISOString()
+    });
   }
 }
 
