@@ -1,0 +1,66 @@
+{
+  "summary": {
+    "total": 9,
+    "passed": 1,
+    "failed": 4,
+    "skipped": 4,
+    "successRate": "11.11"
+  },
+  "tests": [
+    {
+      "name": "Environment Config",
+      "result": "passed",
+      "message": "All required environment variables are set",
+      "timestamp": "2025-09-09T22:54:22.841Z"
+    },
+    {
+      "name": "Health Endpoint",
+      "result": "failed",
+      "message": "Health check failed: ",
+      "timestamp": "2025-09-09T22:54:29.006Z"
+    },
+    {
+      "name": "Create Payment",
+      "result": "failed",
+      "message": "Payment creation failed: ",
+      "timestamp": "2025-09-09T22:54:30.490Z"
+    },
+    {
+      "name": "Payment Status",
+      "result": "skipped",
+      "message": "Payment creation failed or no credentials",
+      "timestamp": "2025-09-09T22:54:30.491Z"
+    },
+    {
+      "name": "Refund Payment",
+      "result": "skipped",
+      "message": "Payment creation failed or no credentials",
+      "timestamp": "2025-09-09T22:54:30.491Z"
+    },
+    {
+      "name": "Capture Payment",
+      "result": "skipped",
+      "message": "Payment creation failed or no credentials",
+      "timestamp": "2025-09-09T22:54:30.492Z"
+    },
+    {
+      "name": "Void Payment",
+      "result": "skipped",
+      "message": "Payment creation failed or no credentials",
+      "timestamp": "2025-09-09T22:54:30.492Z"
+    },
+    {
+      "name": "Get Transactions",
+      "result": "failed",
+      "message": "Transactions fetch failed: ",
+      "timestamp": "2025-09-09T22:54:30.497Z"
+    },
+    {
+      "name": "Webhook Endpoint",
+      "result": "failed",
+      "message": "Webhook test failed: ",
+      "timestamp": "2025-09-09T22:54:30.511Z"
+    }
+  ],
+  "timestamp": "2025-09-09T22:54:30.514Z"
+}
