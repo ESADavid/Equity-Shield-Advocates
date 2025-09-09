@@ -57,6 +57,27 @@ function generateAuthHeaders() {
   };
 }
 
+// Generate Treasury API authentication headers
+function generateTreasuryAuthHeaders() {
+  const timestamp = Math.floor(Date.now() / 1000);
+  const nonce = crypto.randomBytes(16).toString('hex');
+  const message = `${JPMORGAN_CLIENT_ID}${timestamp}${nonce}`;
+  const signature = crypto
+    .createHmac('sha256', JPMORGAN_CLIENT_SECRET)
+    .update(message)
+    .digest('base64');
+
+  return {
+    'Content-Type': 'application/json',
+    'Client-Id': JPMORGAN_CLIENT_ID,
+    'Timestamp': timestamp.toString(),
+    'Nonce': nonce,
+    'Signature': signature,
+    'Organization-Id': JPMORGAN_ORGANIZATION_ID,
+    'Project-Id': JPMORGAN_PROJECT_ID
+  };
+}
+
 // Wallet Decryption API endpoint
 router.post('/wallet-decrypt', async (req, res) => {
   try {
@@ -498,6 +519,291 @@ router.post('/sync-quickbooks', async (req, res) => {
     res.json({ success: true, message: 'Sync with QuickBooks payroll completed' });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to sync with QuickBooks', details: error.message });
+  }
+});
+
+// ==========================================
+// TREASURY MANAGEMENT ENDPOINTS
+// ==========================================
+
+// Get cash positions and liquidity
+router.get('/treasury/cash-positions', async (req, res) => {
+  try {
+    const { currency = 'USD', accountType } = req.query;
+    const headers = generateTreasuryAuthHeaders();
+
+    const params = new URLSearchParams();
+    if (currency) params.append('currency', currency);
+    if (accountType) params.append('accountType', accountType);
+
+    const response = await axios.get(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/treasury/cash-positions?${params}`,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      cashPositions: response.data,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('JPMorgan treasury cash positions error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch cash positions',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
+// Get foreign exchange rates
+router.get('/treasury/fx-rates', async (req, res) => {
+  try {
+    const { baseCurrency = 'USD', quoteCurrency, date } = req.query;
+    const headers = generateTreasuryAuthHeaders();
+
+    const params = new URLSearchParams();
+    if (baseCurrency) params.append('baseCurrency', baseCurrency);
+    if (quoteCurrency) params.append('quoteCurrency', quoteCurrency);
+    if (date) params.append('date', date);
+
+    const response = await axios.get(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/treasury/fx-rates?${params}`,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      fxRates: response.data,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('JPMorgan treasury FX rates error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch FX rates',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
+// Get liquidity forecast
+router.get('/treasury/liquidity-forecast', async (req, res) => {
+  try {
+    const { days = 30, currency = 'USD' } = req.query;
+    const headers = generateTreasuryAuthHeaders();
+
+    const params = new URLSearchParams();
+    params.append('days', days.toString());
+    params.append('currency', currency);
+
+    const response = await axios.get(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/treasury/liquidity-forecast?${params}`,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      liquidityForecast: response.data,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('JPMorgan treasury liquidity forecast error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch liquidity forecast',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
+// Get risk exposure analysis
+router.get('/treasury/risk-exposure', async (req, res) => {
+  try {
+    const { riskType, currency = 'USD', dateRange } = req.query;
+    const headers = generateTreasuryAuthHeaders();
+
+    const params = new URLSearchParams();
+    if (riskType) params.append('riskType', riskType);
+    if (currency) params.append('currency', currency);
+    if (dateRange) params.append('dateRange', dateRange);
+
+    const response = await axios.get(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/treasury/risk-exposure?${params}`,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      riskExposure: response.data,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('JPMorgan treasury risk exposure error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch risk exposure',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
+// Create investment instruction
+router.post('/treasury/investment-instruction', async (req, res) => {
+  try {
+    const { instrumentType, amount, currency = 'USD', maturityDate, strategy } = req.body;
+
+    if (!instrumentType || !amount) {
+      return res.status(400).json({
+        success: false,
+        error: 'Instrument type and amount are required'
+      });
+    }
+
+    const headers = generateTreasuryAuthHeaders();
+
+    const instructionData = {
+      instrumentType,
+      amount: {
+        value: amount,
+        currency
+      },
+      maturityDate,
+      strategy: strategy || 'conservative',
+      organizationId: JPMORGAN_ORGANIZATION_ID,
+      projectId: JPMORGAN_PROJECT_ID
+    };
+
+    const response = await axios.post(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/treasury/investment-instructions`,
+      instructionData,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      investmentInstructionId: response.data.id,
+      status: response.data.status,
+      instructionDetails: response.data
+    });
+
+  } catch (error) {
+    console.error('JPMorgan treasury investment instruction error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to create investment instruction',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
+// Get portfolio performance
+router.get('/treasury/portfolio-performance', async (req, res) => {
+  try {
+    const { period = '1M', benchmark, currency = 'USD' } = req.query;
+    const headers = generateTreasuryAuthHeaders();
+
+    const params = new URLSearchParams();
+    params.append('period', period);
+    if (benchmark) params.append('benchmark', benchmark);
+    params.append('currency', currency);
+
+    const response = await axios.get(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/treasury/portfolio-performance?${params}`,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      portfolioPerformance: response.data,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('JPMorgan treasury portfolio performance error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch portfolio performance',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
+// Get cash flow analytics
+router.get('/treasury/cash-flow-analytics', async (req, res) => {
+  try {
+    const { startDate, endDate, granularity = 'daily', currency = 'USD' } = req.query;
+    const headers = generateTreasuryAuthHeaders();
+
+    const params = new URLSearchParams();
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+    params.append('granularity', granularity);
+    params.append('currency', currency);
+
+    const response = await axios.get(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/treasury/cash-flow-analytics?${params}`,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      cashFlowAnalytics: response.data,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('JPMorgan treasury cash flow analytics error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch cash flow analytics',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
+// Treasury health check
+router.get('/treasury/health', async (req, res) => {
+  try {
+    const headers = generateTreasuryAuthHeaders();
+
+    const response = await axios.get(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/treasury/health`,
+      { headers, timeout: 5000 }
+    );
+
+    res.json({
+      status: 'healthy',
+      treasuryStatus: response.data.status,
+      timestamp: new Date().toISOString(),
+      services: {
+        cashPositions: true,
+        fxRates: true,
+        liquidityForecast: true,
+        riskExposure: true,
+        portfolioPerformance: true,
+        cashFlowAnalytics: true
+      }
+    });
+
+  } catch (error) {
+    res.status(503).json({
+      status: 'unhealthy',
+      error: 'JPMorgan Treasury API unavailable',
+      details: error.message,
+      services: {
+        cashPositions: false,
+        fxRates: false,
+        liquidityForecast: false,
+        riskExposure: false,
+        portfolioPerformance: false,
+        cashFlowAnalytics: false
+      }
+    });
   }
 });
 
