@@ -3,7 +3,7 @@ from flask import Blueprint, Response
 # Create a Blueprint for Chase Auto Finance integration
 router = Blueprint('chase_auto_finance', __name__)
 
-@router.route('/chase-auto-finance')
+@router.route('/')
 def chase_auto_finance_page():
     """
     Serve Chase Auto Finance page embed or link.

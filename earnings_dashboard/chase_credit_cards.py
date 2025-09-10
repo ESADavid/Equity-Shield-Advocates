@@ -200,7 +200,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@router.route('/chase-credit-cards/login', methods=['POST'])
+@router.route('/login', methods=['POST'])
 def chase_login():
     """Handle Chase login"""
     data = request.get_json()
@@ -236,7 +236,7 @@ def chase_login():
     else:
         return jsonify(auth_result), 401
 
-@router.route('/chase-credit-cards/accounts', methods=['GET'])
+@router.route('/accounts', methods=['GET'])
 @login_required
 def get_accounts():
     """Get credit card accounts"""
@@ -249,7 +249,7 @@ def get_accounts():
     else:
         return jsonify(result), 400
 
-@router.route('/chase-credit-cards/transactions/<account_id>', methods=['GET'])
+@router.route('/transactions/<account_id>', methods=['GET'])
 @login_required
 def get_transactions(account_id):
     """Get credit card transactions"""
@@ -263,7 +263,7 @@ def get_transactions(account_id):
     else:
         return jsonify(result), 400
 
-@router.route('/chase-credit-cards/payment', methods=['POST'])
+@router.route('/payment', methods=['POST'])
 @login_required
 def make_payment():
     """Make a credit card payment"""
@@ -283,7 +283,7 @@ def make_payment():
     else:
         return jsonify(result), 400
 
-@router.route('/chase-credit-cards/limits/<account_id>', methods=['GET'])
+@router.route('/limits/<account_id>', methods=['GET'])
 @login_required
 def get_limits(account_id):
     """Get credit card limits"""
@@ -294,7 +294,7 @@ def get_limits(account_id):
     else:
         return jsonify(result), 400
 
-@router.route('/chase-credit-cards/sync', methods=['POST'])
+@router.route('/sync', methods=['POST'])
 @login_required
 def sync_credit_card_data():
     """Sync credit card data with local system"""
@@ -350,7 +350,7 @@ def sync_credit_card_data():
             'error': f'Sync failed: {str(e)}'
         }), 500
 
-@router.route('/chase-credit-cards')
+@router.route('/')
 def chase_credit_cards_page():
     """
     Serve enhanced Chase Credit Cards page with API integration.
