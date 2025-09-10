@@ -7,7 +7,22 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["jest", "node"],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "declaration": true,
+    "sourceMap": true
   },
-  "include": ["FOUR-ERA-AI/test/**/*.ts", "FOUR-ERA-AI/src/**/*.ts", "earnings_dashboard/**/*.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.d.ts",
+    "earnings_dashboard/**/*.ts",
+    "tests/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.js",
+    "**/*.spec.js"
+  ]
 }

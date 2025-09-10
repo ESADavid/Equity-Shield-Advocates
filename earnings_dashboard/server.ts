@@ -6,6 +6,7 @@ import basicAuth from 'express-basic-auth';
 import morgan from 'morgan';
 import winston from 'winston';
 import dotenv from 'dotenv';
+import { Server } from 'http';
 
 dotenv.config();
 
@@ -98,8 +99,8 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   next(err);
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   logger.info(`Earnings dashboard running at http://localhost:${PORT}`);
 });
 
-export { app };
+export { app, server };
