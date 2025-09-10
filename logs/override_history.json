@@ -1,30 +1,4 @@
 {
-  "activeOverrides": {
-    "OVERRIDE_1756962899727_93158906": {
-      "id": "OVERRIDE_1756962899727_93158906",
-      "type": "emergency",
-      "userId": "USER_1756962899346_D1E8DB45",
-      "reason": "emergency_access",
-      "timestamp": "2025-09-04T05:14:59.727Z",
-      "expiresAt": "2025-09-04T05:29:59.727Z",
-      "status": "expired",
-      "additionalAuth": "account_access_emergency",
-      "approvedBy": "SYSTEM_EMERGENCY_PROTOCOL",
-      "notificationsSent": []
-    },
-    "OVERRIDE_1756962900111_6545129D": {
-      "id": "OVERRIDE_1756962900111_6545129D",
-      "type": "admin",
-      "adminUserId": "admin@oscarsystem.com",
-      "targetUserId": "USER_1756962900103_802368DB",
-      "reason": "technical_issue",
-      "justification": "User reported login issues",
-      "timestamp": "2025-09-04T05:15:00.111Z",
-      "expiresAt": "2025-09-04T05:30:00.111Z",
-      "status": "expired",
-      "approvedBy": "admin@oscarsystem.com",
-      "notificationsSent": []
-    }
-  },
-  "lastUpdated": "2025-09-04T05:34:56.193Z"
+  "activeOverrides": {},
+  "lastUpdated": "2025-09-10T20:00:22.039Z"
 }

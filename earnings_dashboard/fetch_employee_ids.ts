@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const employeeIdsFilePath = path.resolve(__dirname, '../owlban_repos/sample_repo/employee_ids.json');
 
@@ -7,7 +7,7 @@ const employeeIdsFilePath = path.resolve(__dirname, '../owlban_repos/sample_repo
  * Fetch employee IDs dynamically from a JSON file.
  * This simulates dynamic fetching and can be replaced with API calls or database queries.
  */
-export async function fetchEmployeeIds(): Promise<string[]> {
+export async function fetchEmployeeIds(): Promise<{id: string, name: string, department?: string}[]> {
   try {
     const data = fs.readFileSync(employeeIdsFilePath, 'utf-8');
     const employeeIds = JSON.parse(data);
