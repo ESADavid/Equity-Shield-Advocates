@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import PayrollIntegration from '../payroll_integration.js';
 import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration.js';
-import { fetchEmployeeIds } from './fetch_employee_ids.js';
+import { fetchEmployeeIds } from './fetch_employee_ids';
 
 interface PayrollData {
   employeeId: string;
@@ -72,7 +72,8 @@ async function fetchAndSyncPayroll(): Promise<void> {
     process.exit(1);
   }
 
-  for (const employeeId of employeeIds) {
+  for (const employee of employeeIds) {
+    const employeeId = employee.id;
     // Try Dynamics 365 first
     if (dynamicsIntegration) {
       try {
