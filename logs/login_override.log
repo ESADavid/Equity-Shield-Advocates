@@ -5,3 +5,4 @@
 {"adminUserId":"admin@oscarsystem.com","expiresAt":"2025-09-04T05:30:00.111Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1756962900111_6545129D","reason":"technical_issue","service":"login-override","targetUserId":"USER_1756962900103_802368DB","timestamp":"2025-09-04T05:15:00.111Z"}
 {"count":3,"level":"info","message":"Cleaned up expired overrides","service":"login-override","timestamp":"2025-09-04T05:32:19.104Z"}
 {"count":2,"level":"info","message":"Cleaned up expired overrides","service":"login-override","timestamp":"2025-09-04T05:34:56.190Z"}
+{"expiresAt":"2025-09-10T23:49:11.101Z","level":"warn","message":"EMERGENCY OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1757547251101_93C024F8","reason":"emergency_access","service":"login-override","timestamp":"2025-09-10T23:34:11.101Z","userId":"USER_1757547250073_7CE392A1"}

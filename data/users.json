@@ -278,5 +278,19 @@
     "lockoutUntil": null,
     "mfaEnabled": false,
     "mfaSecret": null
+  },
+  "USER_1757547250073_7CE392A1": {
+    "id": "USER_1757547250073_7CE392A1",
+    "username": "financeuser",
+    "email": "finance@example.com",
+    "password": "$2b$12$h1aSxRyLcq871xpFaXhTr.7SHzie4orATwM2J..GbCHRhXmJ3E9te",
+    "role": "finance",
+    "createdAt": "2025-09-10T23:34:10.074Z",
+    "lastLogin": "2025-09-10T23:34:10.996Z",
+    "isActive": true,
+    "loginAttempts": 0,
+    "lockoutUntil": null,
+    "mfaEnabled": false,
+    "mfaSecret": null
   }
 }

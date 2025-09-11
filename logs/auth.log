@@ -122,3 +122,6 @@
 {"email":"perf7@example.com","error":"Username already exists","level":"error","message":"USER REGISTRATION FAILED","service":"standard-auth","timestamp":"2025-09-10T18:57:01.069Z","username":"perfuser7"}
 {"email":"perf8@example.com","error":"Username already exists","level":"error","message":"USER REGISTRATION FAILED","service":"standard-auth","timestamp":"2025-09-10T18:57:01.082Z","username":"perfuser8"}
 {"email":"perf9@example.com","error":"Username already exists","level":"error","message":"USER REGISTRATION FAILED","service":"standard-auth","timestamp":"2025-09-10T18:57:01.084Z","username":"perfuser9"}
+{"email":"test@example.com","error":"Username already exists","level":"error","message":"USER REGISTRATION FAILED","service":"standard-auth","timestamp":"2025-09-10T23:34:09.283Z","username":"testuser"}
+{"email":"finance@example.com","level":"info","message":"USER REGISTERED","role":"finance","service":"standard-auth","timestamp":"2025-09-10T23:34:10.074Z","userId":"USER_1757547250073_7CE392A1","username":"financeuser"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-10T23:34:11.073Z","userId":"USER_1757547250073_7CE392A1","username":"financeuser"}

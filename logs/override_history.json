@@ -1,4 +1,17 @@
 {
-  "activeOverrides": {},
-  "lastUpdated": "2025-09-10T20:27:01.240Z"
+  "activeOverrides": {
+    "OVERRIDE_1757547251101_93C024F8": {
+      "id": "OVERRIDE_1757547251101_93C024F8",
+      "type": "emergency",
+      "userId": "USER_1757547250073_7CE392A1",
+      "reason": "emergency_access",
+      "timestamp": "2025-09-10T23:34:11.101Z",
+      "expiresAt": "2025-09-10T23:49:11.101Z",
+      "status": "active",
+      "additionalAuth": "finance_emergency_code",
+      "approvedBy": "SYSTEM_EMERGENCY_PROTOCOL",
+      "notificationsSent": []
+    }
+  },
+  "lastUpdated": "2025-09-10T23:44:09.275Z"
 }
