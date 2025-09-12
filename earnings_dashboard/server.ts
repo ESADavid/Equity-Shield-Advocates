@@ -6,7 +6,6 @@ import basicAuth from 'express-basic-auth';
 import morgan from 'morgan';
 import winston from 'winston';
 import dotenv from 'dotenv';
-import { Server } from 'http';
 
 dotenv.config();
 
@@ -30,7 +29,10 @@ const logger = winston.createLogger({
   ],
 });
 
-// Basic auth setup
+// Import authentication routes
+const jpmorganAuthRoutes = require('../routes/jpmorgan_auth_routes.js');
+
+// Basic auth setup (fallback for legacy endpoints)
 app.use(
   basicAuth({
     users: { [ADMIN_USER]: ADMIN_PASS },
@@ -42,61 +44,72 @@ app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 app.use(express.json());
 app.use(morgan('combined', { stream: { write: (msg: string) => logger.info(msg.trim()) } }));
 
+// Mount JPMorgan authentication routes
+app.use('/api/auth', jpmorganAuthRoutes);
+
 // Load aggregated revenue data path from environment or default
 const revenueDataPath =
   process.env.REVENUE_DATA_PATH ||
   path.resolve(__dirname, '../owlban_repos/aggregated_revenue.json');
 
 // Serve static dashboard HTML file
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response): void => {
   const dashboardPath = path.resolve(__dirname, 'dashboard.html');
   if (!fs.existsSync(dashboardPath)) {
     logger.error('Dashboard HTML file not found');
-    return res.status(500).send('Dashboard not available');
+    res.status(500).send('Dashboard not available');
+    return;
   }
   res.sendFile(dashboardPath);
+  return;
 });
 
 // API endpoint to get earnings data
-app.get('/api/earnings', (req: Request, res: Response) => {
+app.get('/api/earnings', (_req: Request, res: Response): void => {
   try {
     if (!fs.existsSync(revenueDataPath)) {
       logger.warn('Earnings data not found at ' + revenueDataPath);
-      return res.status(404).json({ error: 'Earnings data not found' });
+      res.status(404).json({ error: 'Earnings data not found' });
+      return;
     }
     const data = fs.readFileSync(revenueDataPath, 'utf-8');
-    return res.json(JSON.parse(data));
+    res.json(JSON.parse(data));
+    return;
   } catch (error) {
     logger.error('Error reading earnings data: ' + (error as Error).message);
-    return res.status(500).json({ error: 'Failed to read earnings data' });
+    res.status(500).json({ error: 'Failed to read earnings data' });
+    return;
   }
 });
 
 // API endpoint to download earnings report as JSON file
-app.get('/api/earnings/download', (req: Request, res: Response) => {
+app.get('/api/earnings/download', (_req: Request, res: Response): void => {
   try {
     if (!fs.existsSync(revenueDataPath)) {
       logger.warn('Earnings data not found at ' + revenueDataPath);
-      return res.status(404).json({ error: 'Earnings data not found' });
+      res.status(404).json({ error: 'Earnings data not found' });
+      return;
     }
-    return res.download(revenueDataPath, 'earnings_report.json');
+    res.download(revenueDataPath, 'earnings_report.json');
+    return;
   } catch (error) {
     logger.error('Error sending earnings report: ' + (error as Error).message);
-    return res.status(500).json({ error: 'Failed to download earnings report' });
+    res.status(500).json({ error: 'Failed to download earnings report' });
+    return;
   }
 });
 
 // 404 handler
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((_req: Request, res: Response, _next: NextFunction): void => {
   res.status(404).json({ error: 'Not Found' });
-  next();
+  return;
 });
 
 // Global error handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  logger.error('Unhandled error: ' + err.stack);
+app.use((_err: any, _req: Request, res: Response, _next: NextFunction): void => {
+  logger.error('Unhandled error: ' + _err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
-  next(err);
+  return;
 });
 
 const server = app.listen(PORT, () => {

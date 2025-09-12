@@ -7,9 +7,12 @@
  * and integration functionality.
  */
 
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 // Load environment variables
 dotenv.config();
@@ -21,8 +24,8 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Import JPMorgan payment routes
-const jpmorganRoutes = require('./earnings_dashboard/jpmorgan_payment');
+// Import JPMorgan payment routes (using CommonJS require since the module uses CommonJS)
+const jpmorganRoutes = require('./earnings_dashboard/jpmorgan_payment.js');
 
 // Mount JPMorgan routes under /jpmorgan
 app.use('/jpmorgan', jpmorganRoutes);
@@ -101,4 +104,4 @@ process.on('SIGTERM', () => {
   });
 });
 
-module.exports = app;
+export default app;

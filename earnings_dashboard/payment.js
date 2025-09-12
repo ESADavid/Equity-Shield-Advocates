@@ -5,6 +5,18 @@ const fs = require('fs');
 const path = require('path');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
+// Import JPMorgan Authentication Integration
+const {
+  jpmorganAuthMiddleware,
+  jpmorganAdminMiddleware,
+  authenticateUser,
+  adminOverride,
+  verifyToken,
+  refreshToken,
+  logout,
+  getUserProfile
+} = require('../auth/jpmorgan_auth_integration');
+
 const revenueDataPath = path.resolve(__dirname, '../earnings_report_updated.json');
 
 function readRevenueData() {
@@ -26,29 +38,49 @@ function writeRevenueData(data) {
   fs.writeFileSync(revenueDataPath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-// Create a payment intent
-router.post('/create-payment-intent', async (req, res) => {
-  try {
-    const { amount, currency = 'usd' } = req.body;
+// Create a payment intent - Protected route requiring JPMorgan authentication
+router.post('/create-payment-intent',
+  jpmorganAuthMiddleware(['jpmorgan_payments']),
+  async (req, res) => {
+    try {
+      const { amount, currency = 'usd' } = req.body;
+      const user = req.user;
 
-    if (!amount) {
-      return res.status(400).json({ error: 'Amount is required' });
+      if (!amount) {
+        return res.status(400).json({ error: 'Amount is required' });
+      }
+
+      // Log authenticated payment request
+      console.log(`JPMorgan authenticated payment request by ${user.email} (${user.role})`);
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency,
+        payment_method_types: ['card'],
+        metadata: {
+          userId: user.userId,
+          userEmail: user.email,
+          department: user.department,
+          timestamp: new Date().toISOString()
+        }
+      });
+
+      res.json({
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id,
+        user: {
+          id: user.userId,
+          email: user.email,
+          role: user.role,
+          department: user.department
+        }
+      });
+    } catch (error) {
+      console.error('Error creating payment intent:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency,
-      payment_method_types: ['card'],
-    });
-
-    res.json({
-      clientSecret: paymentIntent.client_secret,
-    });
-  } catch (error) {
-    console.error('Error creating payment intent:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
   }
-});
+);
 
 // Stripe webhook endpoint to handle events
 router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
