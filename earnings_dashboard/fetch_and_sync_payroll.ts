@@ -1,9 +1,41 @@
 
-import fs from 'fs';
-import path from 'path';
-import PayrollIntegration from '../payroll_integration.js';
-import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration.js';
+import * as fs from 'fs';
+import * as path from 'path';
 import { fetchEmployeeIds } from './fetch_employee_ids';
+
+// Type definitions for payroll integrations
+interface PayrollResponse {
+  success: boolean;
+  data?: any;
+}
+
+interface PayrollIntegration {
+  getEmployeePayroll(employeeId: string): Promise<PayrollResponse>;
+}
+
+interface QuickBooksPayrollIntegration {
+  getEmployeePayroll(employeeId: string): Promise<PayrollResponse>;
+}
+
+// Dynamic imports for JavaScript modules
+let PayrollIntegration: any = null;
+let QuickBooksPayrollIntegration: any = null;
+
+async function loadPayrollIntegrations() {
+  try {
+    const payrollModule = await import('../payroll_integration.js');
+    PayrollIntegration = payrollModule.default || payrollModule;
+  } catch (error) {
+    console.warn('Failed to load PayrollIntegration:', error);
+  }
+
+  try {
+    const qbModule = await import('../quickbooks_payroll_integration.js');
+    QuickBooksPayrollIntegration = qbModule.default || qbModule;
+  } catch (error) {
+    console.warn('Failed to load QuickBooksPayrollIntegration:', error);
+  }
+}
 
 interface PayrollData {
   employeeId: string;
@@ -18,6 +50,9 @@ interface PayrollData {
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 
 async function fetchAndSyncPayroll(): Promise<void> {
+  // Load payroll integrations dynamically
+  await loadPayrollIntegrations();
+
   // Fetch employee IDs dynamically
   const employeeIds = await fetchEmployeeIds();
 

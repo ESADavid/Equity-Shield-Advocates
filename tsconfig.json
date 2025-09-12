@@ -39,8 +39,7 @@
     "node_modules",
     "dist",
     "**/*.test.js",
-    "**/*.spec.js",
-    "**/*.js"
+    "**/*.spec.js"
   ],
   "ts-node": {
     "esm": false

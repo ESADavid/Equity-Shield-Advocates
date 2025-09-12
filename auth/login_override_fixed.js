@@ -48,11 +48,20 @@ const authLogger = winston.createLogger({
   ]
 });
 
-// Configuration
+// Configuration with enhanced security
 const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(64).toString('hex');
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || crypto.randomBytes(64).toString('hex');
 const MFA_SECRET = process.env.MFA_SECRET || crypto.randomBytes(32).toString('hex');
 const ADMIN_OVERRIDE_CODE = process.env.ADMIN_OVERRIDE_CODE || 'OSCAR_BROOME_EMERGENCY_2024';
+
+// Enhanced security settings
+const PASSWORD_MIN_LENGTH = parseInt(process.env.PASSWORD_MIN_LENGTH) || 12;
+const PASSWORD_REQUIRE_UPPERCASE = process.env.PASSWORD_REQUIRE_UPPERCASE !== 'false';
+const PASSWORD_REQUIRE_LOWERCASE = process.env.PASSWORD_REQUIRE_LOWERCASE !== 'false';
+const PASSWORD_REQUIRE_NUMBERS = process.env.PASSWORD_REQUIRE_NUMBERS !== 'false';
+const PASSWORD_REQUIRE_SPECIAL = process.env.PASSWORD_REQUIRE_SPECIAL !== 'false';
+const SESSION_TIMEOUT = parseInt(process.env.SESSION_TIMEOUT) || 3600000; // 1 hour
+const MAX_SESSIONS_PER_USER = parseInt(process.env.MAX_SESSIONS_PER_USER) || 5;
 
 // In-memory user store (in production, use database)
 const users = new Map();
@@ -343,6 +352,136 @@ class AuthenticationManager {
       mfaEnabled: user.mfaEnabled
     };
   }
+
+  // Enhanced password validation
+  validatePassword(password) {
+    if (!password || password.length < PASSWORD_MIN_LENGTH) {
+      return { valid: false, message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters long` };
+    }
+
+    if (PASSWORD_REQUIRE_UPPERCASE && !/[A-Z]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one uppercase letter' };
+    }
+
+    if (PASSWORD_REQUIRE_LOWERCASE && !/[a-z]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one lowercase letter' };
+    }
+
+    if (PASSWORD_REQUIRE_NUMBERS && !/\d/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one number' };
+    }
+
+    if (PASSWORD_REQUIRE_SPECIAL && !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one special character' };
+    }
+
+    return { valid: true, message: 'Password is valid' };
+  }
+
+  // Session management
+  getActiveSessions(userId) {
+    const userSessions = [];
+    for (const [token, session] of sessions.entries()) {
+      if (session.userId === userId && session.expiresAt > Date.now()) {
+        userSessions.push({
+          token: token.substring(0, 10) + '...', // Partial token for security
+          expiresAt: session.expiresAt,
+          createdAt: session.expiresAt - (15 * 60 * 1000) // Approximate creation time
+        });
+      }
+    }
+    return userSessions;
+  }
+
+  // Force logout all sessions for a user
+  forceLogoutAll(userId) {
+    const tokensToDelete = [];
+    for (const [token, session] of sessions.entries()) {
+      if (session.userId === userId) {
+        tokensToDelete.push(token);
+      }
+    }
+
+    tokensToDelete.forEach(token => sessions.delete(token));
+    authLogger.info(`Force logout all sessions for user: ${userId}`);
+    return { success: true, message: `${tokensToDelete.length} sessions terminated` };
+  }
+
+  // Enhanced token verification with session cleanup
+  verifyTokenEnhanced(token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      const session = sessions.get(token);
+
+      if (!session) {
+        return { valid: false, message: 'Session not found' };
+      }
+
+      if (session.expiresAt < Date.now()) {
+        sessions.delete(token); // Clean up expired session
+        return { valid: false, message: 'Session expired' };
+      }
+
+      // Check if user still exists and is not locked
+      const user = users.get(session.email);
+      if (!user || user.locked) {
+        sessions.delete(token);
+        return { valid: false, message: 'User account is locked or inactive' };
+      }
+
+      return {
+        valid: true,
+        decoded,
+        session,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          permissions: user.permissions
+        }
+      };
+    } catch (error) {
+      if (sessions.has(token)) {
+        sessions.delete(token); // Clean up invalid session
+      }
+      return { valid: false, message: 'Invalid token' };
+    }
+  }
+
+  // Security audit methods
+  getSecurityStats() {
+    const totalUsers = users.size;
+    const lockedUsers = Array.from(users.values()).filter(user => user.locked).length;
+    const activeSessions = Array.from(sessions.values()).filter(session => session.expiresAt > Date.now()).length;
+    const failedAttempts = Array.from(loginAttempts.values()).filter(attempt => attempt.count > 0).length;
+
+    return {
+      totalUsers,
+      lockedUsers,
+      activeSessions,
+      failedAttempts,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  // Clean up expired sessions (should be called periodically)
+  cleanupExpiredSessions() {
+    const now = Date.now();
+    let cleaned = 0;
+
+    for (const [token, session] of sessions.entries()) {
+      if (session.expiresAt < now) {
+        sessions.delete(token);
+        cleaned++;
+      }
+    }
+
+    if (cleaned > 0) {
+      authLogger.info(`Cleaned up ${cleaned} expired sessions`);
+    }
+
+    return { cleaned };
+  }
 }
 
 // Export singleton instance
@@ -354,7 +493,13 @@ module.exports = {
   authenticateUser: (email, password, mfaCode) => authManager.authenticateUser(email, password, mfaCode),
   adminOverride: (code, email) => authManager.adminOverride(code, email),
   verifyToken: (token) => authManager.verifyToken(token),
+  verifyTokenEnhanced: (token) => authManager.verifyTokenEnhanced(token),
   refreshToken: (token) => authManager.refreshToken(token),
   logout: (token) => authManager.logout(token),
-  getUserProfile: (email) => authManager.getUserProfile(email)
+  getUserProfile: (email) => authManager.getUserProfile(email),
+  validatePassword: (password) => authManager.validatePassword(password),
+  getActiveSessions: (userId) => authManager.getActiveSessions(userId),
+  forceLogoutAll: (userId) => authManager.forceLogoutAll(userId),
+  getSecurityStats: () => authManager.getSecurityStats(),
+  cleanupExpiredSessions: () => authManager.cleanupExpiredSessions()
 };
