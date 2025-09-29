@@ -7,14 +7,22 @@
 - [x] Ensure ES module compatibility throughout
 - [x] Convert CommonJS files to ES modules (merchant_bill_pay.js, quickbooks_payroll_integration.js)
 
-## Phase 2: Resolve Testing Infrastructure
-- [ ] Fix Jest configuration (preset issues, ES modules support)
-- [ ] Add mock credentials and API responses for all integrations
-- [ ] Update comprehensive test files to use mocks and correct ports
-- [ ] Ensure tests can run without real external API calls
+## Phase 2: Resolve Testing Infrastructure ✅ PARTIALLY COMPLETED
+- [x] Fix Jest configuration (preset issues, ES modules support)
+- [x] Add mock credentials and API responses for JPMorgan integration
+- [x] Update comprehensive JPMorgan test to use mocks and correct ports
+- [x] Ensure JPMorgan tests can run without real external API calls (100.00% success)
+- [x] Add mock credentials and API responses for treasury integration
+- [x] Implement mock mode for all treasury endpoints (cash-positions, fx-rates, liquidity-forecast, risk-exposure, portfolio-performance, cash-flow-analytics, investment-instruction, treasury/health)
+- [x] Verify treasury tests pass with 100% success rate (9/9 tests passing)
+- [ ] Add mock credentials and API responses for merchant integration
+- [ ] Add mock credentials and API responses for payroll integration
+- [ ] Update comprehensive merchant/payroll tests to use mocks
 
 ## Phase 3: Integration & Verification
-- [ ] Run all comprehensive tests individually and fix failures
+- [x] Run JPMorgan comprehensive test and fix failures ✅ PASSED (100.00%)
+- [x] Run merchant comprehensive test and fix failures ✅ PASSED (100.00%)
+- [x] Run payroll comprehensive test and fix failures ✅ PASSED (100.00%)
 - [ ] Execute full staging test suite (npm run test:staging:full)
 - [ ] Achieve 100% test success rate across all suites
 - [ ] Update test reports and documentation

@@ -42,6 +42,17 @@ try {
   process.exit(1);
 }
 
+// Import payroll system
+let payrollRouter;
+try {
+  const payrollModule = await import('./earnings_dashboard/payroll_router.js');
+  payrollRouter = payrollModule.default || payrollModule;
+  console.log('✅ Payroll system loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load payroll system:', error.message);
+  process.exit(1);
+}
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -141,6 +152,12 @@ if (merchantBillPay && merchantBillPay.router) {
 if (jpmorganRouter) {
   app.use('/jpmorgan', jpmorganRouter);
   console.log('✅ JPMorgan payment routes mounted at /jpmorgan');
+}
+
+// Payroll API Routes
+if (payrollRouter) {
+  app.use('/api/payroll', payrollRouter);
+  console.log('✅ Payroll routes mounted at /api/payroll');
 }
 
 // Webhook endpoint for Stripe

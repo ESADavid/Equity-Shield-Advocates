@@ -3,7 +3,7 @@
  * Tests all API endpoints, edge cases, error handling, and integration scenarios
  */
 
-const {
+import {
   loginOverrideManager,
   registerUser,
   authenticateUser,
@@ -15,7 +15,7 @@ const {
   getUserById,
   OVERRIDE_TYPES,
   OVERRIDE_REASONS
-} = require('./auth/login_override');
+} from './auth/login_override.js';
 
 // Mock Account Management System
 class AccountManager {
@@ -387,7 +387,7 @@ async function testSecurityFeatures() {
     const user = await registerUser('securityuser', 'security@example.com', 'SecurityPass123!', 'user');
     const mfaResult = await enableMFA(user.userId);
 
-    const crypto = require('crypto');
+import crypto from 'crypto';
     const testToken = crypto.createHmac('sha256', mfaResult.mfaSecret)
       .update(Math.floor(Date.now() / 30000).toString())
       .digest('hex')

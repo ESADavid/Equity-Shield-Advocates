@@ -1,66 +1,66 @@
 {
   "summary": {
     "total": 9,
-    "passed": 1,
-    "failed": 4,
-    "skipped": 4,
-    "successRate": "11.11"
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "successRate": "100.00"
   },
   "tests": [
     {
       "name": "Environment Config",
       "result": "passed",
-      "message": "All required environment variables are set",
-      "timestamp": "2025-09-09T22:54:22.841Z"
+      "message": "Mock mode active - environment config not required",
+      "timestamp": "2025-09-29T17:45:54.298Z"
     },
     {
       "name": "Health Endpoint",
-      "result": "failed",
-      "message": "Health check failed: ",
-      "timestamp": "2025-09-09T22:54:29.006Z"
+      "result": "passed",
+      "message": "Health check successful",
+      "timestamp": "2025-09-29T17:45:54.370Z"
     },
     {
       "name": "Create Payment",
-      "result": "failed",
-      "message": "Payment creation failed: ",
-      "timestamp": "2025-09-09T22:54:30.490Z"
+      "result": "passed",
+      "message": "Payment created: mock-payment-1759167954376-6ikuoj1nm (Mock: true)",
+      "timestamp": "2025-09-29T17:45:54.379Z"
     },
     {
       "name": "Payment Status",
-      "result": "skipped",
-      "message": "Payment creation failed or no credentials",
-      "timestamp": "2025-09-09T22:54:30.491Z"
+      "result": "passed",
+      "message": "Status: AUTHORIZED (Mock: true)",
+      "timestamp": "2025-09-29T17:45:54.391Z"
     },
     {
       "name": "Refund Payment",
-      "result": "skipped",
-      "message": "Payment creation failed or no credentials",
-      "timestamp": "2025-09-09T22:54:30.491Z"
+      "result": "passed",
+      "message": "Refund created: mock-txn-1759167954399-fbrlxe8gb (Mock: true)",
+      "timestamp": "2025-09-29T17:45:54.404Z"
     },
     {
       "name": "Capture Payment",
-      "result": "skipped",
-      "message": "Payment creation failed or no credentials",
-      "timestamp": "2025-09-09T22:54:30.492Z"
+      "result": "passed",
+      "message": "Payment captured: mock-txn-1759167954413-vtsuz5pmq (Mock: true)",
+      "timestamp": "2025-09-29T17:45:54.418Z"
     },
     {
       "name": "Void Payment",
-      "result": "skipped",
-      "message": "Payment creation failed or no credentials",
-      "timestamp": "2025-09-09T22:54:30.492Z"
+      "result": "passed",
+      "message": "Payment voided: mock-txn-1759167954424-7lammo5yq (Mock: true)",
+      "timestamp": "2025-09-29T17:45:54.428Z"
     },
     {
       "name": "Get Transactions",
-      "result": "failed",
-      "message": "Transactions fetch failed: ",
-      "timestamp": "2025-09-09T22:54:30.497Z"
+      "result": "passed",
+      "message": "Retrieved 10 transactions (Mock: true)",
+      "timestamp": "2025-09-29T17:45:54.456Z"
     },
     {
       "name": "Webhook Endpoint",
-      "result": "failed",
-      "message": "Webhook test failed: ",
-      "timestamp": "2025-09-09T22:54:30.511Z"
+      "result": "passed",
+      "message": "Webhook processed successfully (Mock: ${isMockMode})",
+      "timestamp": "2025-09-29T17:45:54.464Z"
     }
   ],
-  "timestamp": "2025-09-09T22:54:30.514Z"
+  "timestamp": "2025-09-29T17:45:54.465Z"
 }

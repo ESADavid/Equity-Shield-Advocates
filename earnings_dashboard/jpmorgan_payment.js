@@ -724,6 +724,36 @@ router.post('/sync-quickbooks', async (req, res) => {
 router.get('/treasury/cash-positions', async (req, res) => {
   try {
     const { currency = 'USD', accountType } = req.query;
+
+    // Check mock mode first, before any auth header generation
+    if (isMockMode()) {
+      console.log('Mock treasury cash positions requested');
+
+      return res.json({
+        success: true,
+        cashPositions: [
+          {
+            accountId: 'ACC001',
+            currency: currency,
+            balance: 5000000.00,
+            availableBalance: 4800000.00,
+            accountType: accountType || 'checking',
+            lastUpdated: new Date().toISOString()
+          },
+          {
+            accountId: 'ACC002',
+            currency: currency,
+            balance: 2500000.00,
+            availableBalance: 2400000.00,
+            accountType: 'savings',
+            lastUpdated: new Date().toISOString()
+          }
+        ],
+        totalBalance: 7500000.00,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     const headers = generateTreasuryAuthHeaders();
 
     const params = new URLSearchParams();
@@ -755,6 +785,28 @@ router.get('/treasury/cash-positions', async (req, res) => {
 router.get('/treasury/fx-rates', async (req, res) => {
   try {
     const { baseCurrency = 'USD', quoteCurrency, date } = req.query;
+
+    // Check mock mode first, before any auth header generation
+    if (isMockMode()) {
+      console.log('Mock treasury FX rates requested');
+
+      const mockRates = {};
+      const currencies = ['EUR', 'GBP', 'JPY', 'CAD', 'AUD'];
+      currencies.forEach(currency => {
+        mockRates[`${baseCurrency}/${currency}`] = {
+          rate: (0.8 + Math.random() * 0.4).toFixed(4),
+          timestamp: new Date().toISOString()
+        };
+      });
+
+      return res.json({
+        success: true,
+        fxRates: mockRates,
+        baseCurrency,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     const headers = generateTreasuryAuthHeaders();
 
     const params = new URLSearchParams();
@@ -787,6 +839,33 @@ router.get('/treasury/fx-rates', async (req, res) => {
 router.get('/treasury/liquidity-forecast', async (req, res) => {
   try {
     const { days = 30, currency = 'USD' } = req.query;
+
+    // Check mock mode first, before any auth header generation
+    if (isMockMode()) {
+      console.log('Mock treasury liquidity forecast requested');
+
+      const forecast = [];
+      const daysCount = Math.min(parseInt(days) || 30, 90);
+
+      for (let i = 0; i < daysCount; i++) {
+        forecast.push({
+          date: new Date(Date.now() + i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          inflow: Math.floor(Math.random() * 50000) + 10000,
+          outflow: Math.floor(Math.random() * 40000) + 5000,
+          netCashFlow: Math.floor(Math.random() * 20000) - 5000,
+          balance: 7500000 + (Math.random() - 0.5) * 100000
+        });
+      }
+
+      return res.json({
+        success: true,
+        liquidityForecast: forecast,
+        currency,
+        period: `${daysCount} days`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     const headers = generateTreasuryAuthHeaders();
 
     const params = new URLSearchParams();
@@ -818,6 +897,30 @@ router.get('/treasury/liquidity-forecast', async (req, res) => {
 router.get('/treasury/risk-exposure', async (req, res) => {
   try {
     const { riskType, currency = 'USD', dateRange } = req.query;
+
+    // Check mock mode first, before any auth header generation
+    if (isMockMode()) {
+      console.log('Mock treasury risk exposure requested');
+
+      return res.json({
+        success: true,
+        riskExposure: {
+          currencyRisk: {
+            USD: 0.02,
+            EUR: 0.15,
+            GBP: 0.08,
+            JPY: 0.05
+          },
+          interestRateRisk: 0.12,
+          creditRisk: 0.03,
+          totalVaR: 250000,
+          riskType: riskType || 'comprehensive',
+          dateRange: dateRange || '30d'
+        },
+        timestamp: new Date().toISOString()
+      });
+    }
+
     const headers = generateTreasuryAuthHeaders();
 
     const params = new URLSearchParams();
@@ -855,6 +958,27 @@ router.post('/treasury/investment-instruction', async (req, res) => {
       return res.status(400).json({
         success: false,
         error: 'Instrument type and amount are required'
+      });
+    }
+
+    // Mock mode response
+    if (isMockMode()) {
+      const mockInstructionId = generateMockTransactionId();
+      console.log('Mock investment instruction created:', mockInstructionId);
+
+      return res.json({
+        success: true,
+        investmentInstructionId: mockInstructionId,
+        status: 'PENDING',
+        instructionDetails: {
+          id: mockInstructionId,
+          instrumentType,
+          amount: { value: amount, currency },
+          maturityDate,
+          strategy: strategy || 'conservative',
+          status: 'PENDING',
+          createdAt: new Date().toISOString()
+        }
       });
     }
 
@@ -899,6 +1023,27 @@ router.post('/treasury/investment-instruction', async (req, res) => {
 router.get('/treasury/portfolio-performance', async (req, res) => {
   try {
     const { period = '1M', benchmark, currency = 'USD' } = req.query;
+
+    // Check mock mode first, before any auth header generation
+    if (isMockMode()) {
+      console.log('Mock treasury portfolio performance requested');
+
+      return res.json({
+        success: true,
+        portfolioPerformance: {
+          totalReturn: 8.45,
+          benchmarkReturn: benchmark ? 7.23 : undefined,
+          volatility: 12.34,
+          sharpeRatio: 0.68,
+          maxDrawdown: -5.67,
+          period: period,
+          currency: currency,
+          lastUpdated: new Date().toISOString()
+        },
+        timestamp: new Date().toISOString()
+      });
+    }
+
     const headers = generateTreasuryAuthHeaders();
 
     const params = new URLSearchParams();
@@ -931,6 +1076,34 @@ router.get('/treasury/portfolio-performance', async (req, res) => {
 router.get('/treasury/cash-flow-analytics', async (req, res) => {
   try {
     const { startDate, endDate, granularity = 'daily', currency = 'USD' } = req.query;
+
+    // Check mock mode first, before any auth header generation
+    if (isMockMode()) {
+      console.log('Mock treasury cash flow analytics requested');
+
+      const analytics = [];
+      const days = 30;
+
+      for (let i = 0; i < days; i++) {
+        analytics.push({
+          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          operatingCashFlow: Math.floor(Math.random() * 100000) - 20000,
+          investingCashFlow: Math.floor(Math.random() * 50000) - 25000,
+          financingCashFlow: Math.floor(Math.random() * 30000) - 15000,
+          netCashFlow: Math.floor(Math.random() * 80000) - 40000,
+          currency: currency
+        });
+      }
+
+      return res.json({
+        success: true,
+        cashFlowAnalytics: analytics,
+        granularity,
+        period: `${days} days`,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     const headers = generateTreasuryAuthHeaders();
 
     const params = new URLSearchParams();
@@ -963,6 +1136,25 @@ router.get('/treasury/cash-flow-analytics', async (req, res) => {
 // Treasury health check
 router.get('/treasury/health', async (req, res) => {
   try {
+    // Check mock mode first, before any auth header generation
+    if (isMockMode()) {
+      console.log('Mock treasury health check requested');
+
+      return res.json({
+        status: 'healthy',
+        treasuryStatus: 'operational',
+        timestamp: new Date().toISOString(),
+        services: {
+          cashPositions: true,
+          fxRates: true,
+          liquidityForecast: true,
+          riskExposure: true,
+          portfolioPerformance: true,
+          cashFlowAnalytics: true
+        }
+      });
+    }
+
     const headers = generateTreasuryAuthHeaders();
 
     const response = await axios.get(

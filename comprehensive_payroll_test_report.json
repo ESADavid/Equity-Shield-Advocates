@@ -1,0 +1,49 @@
+{
+  "suite": "Payroll Integration Tests",
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "successRate": "100.00%",
+    "duration": 175
+  },
+  "tests": [
+    {
+      "name": "Environment Config",
+      "result": "passed",
+      "message": "Server is healthy and running",
+      "duration": 0,
+      "timestamp": "2025-09-29T18:01:24.990Z"
+    },
+    {
+      "name": "Get Employees",
+      "result": "passed",
+      "message": "Retrieved 0 employees",
+      "duration": 0,
+      "timestamp": "2025-09-29T18:01:25.014Z"
+    },
+    {
+      "name": "Add Employee",
+      "result": "passed",
+      "message": "Employee added successfully",
+      "duration": 0,
+      "timestamp": "2025-09-29T18:01:25.051Z"
+    },
+    {
+      "name": "Calculate Payroll",
+      "result": "passed",
+      "message": "Payroll calculated correctly",
+      "duration": 0,
+      "timestamp": "2025-09-29T18:01:25.059Z"
+    },
+    {
+      "name": "Process Payroll",
+      "result": "passed",
+      "message": "Processed payroll for 1 employees",
+      "duration": 0,
+      "timestamp": "2025-09-29T18:01:25.072Z"
+    }
+  ],
+  "timestamp": "2025-09-29T18:01:25.079Z"
+}

@@ -317,6 +317,38 @@ async function handleMerchantWebhook(req, res) {
 // Express route to create payment intent
 router.post('/create-merchant-payment-intent', async (req, res) => {
   try {
+    console.log('Merchant payment intent request received:', req.body);
+    // Mock mode check
+    const isMockMode = !process.env.STRIPE_SECRET_KEY;
+    console.log('Merchant payment intent creation - Mock mode:', isMockMode, 'STRIPE_SECRET_KEY:', !!process.env.STRIPE_SECRET_KEY);
+
+    if (isMockMode) {
+      const { amount, currency = 'usd', merchantId, description } = req.body;
+
+      if (!amount) {
+        return res.status(400).json({ error: 'Amount is required' });
+      }
+      if (!merchantId) {
+        return res.status(400).json({ error: 'Merchant ID is required' });
+      }
+
+      const mockClientSecret = `pi_mock_${Date.now()}_secret_${Math.random().toString(36).substring(2)}`;
+      console.log('Mock payment intent created:', mockClientSecret);
+
+      return res.json({
+        success: true,
+        clientSecret: mockClientSecret,
+        paymentIntent: {
+          id: `pi_mock_${Date.now()}`,
+          amount,
+          currency,
+          merchantId,
+          description: description || `Payment to merchant ${merchantId}`,
+          status: 'requires_payment_method'
+        }
+      });
+    }
+
     const paymentIntent = await createMerchantPaymentIntent(req.body);
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
@@ -326,7 +358,83 @@ router.post('/create-merchant-payment-intent', async (req, res) => {
 });
 
 // Express route for webhook
-router.post('/merchant-webhook', express.raw({ type: 'application/json' }), handleMerchantWebhook);
+router.post('/merchant-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  try {
+    // Mock mode check
+    const isMockMode = !process.env.STRIPE_SECRET_KEY;
+    console.log('Merchant webhook - Mock mode:', isMockMode);
+
+    if (isMockMode) {
+      // Skip signature verification in mock mode
+      console.log('Mock webhook received, processing without signature verification');
+
+      // Mock successful payment event
+      const mockEvent = {
+        type: 'payment_intent.succeeded',
+        data: {
+          object: {
+            id: `pi_mock_${Date.now()}`,
+            amount: 1000,
+            metadata: { merchantId: 'merchant_001' },
+            description: 'Mock payment for testing',
+            last_payment_error: null
+          }
+        }
+      };
+
+      // Process the mock event
+      switch (mockEvent.type) {
+        case 'payment_intent.succeeded': {
+          const paymentIntent = mockEvent.data.object;
+          console.log('Mock PaymentIntent was successful!', paymentIntent.id);
+
+          // Update revenue data with mock payment
+          const data = readRevenueData();
+          if (data) {
+            const merchantId = paymentIntent.metadata?.merchantId;
+            const amount = paymentIntent.amount / 100; // Convert from cents to dollars
+
+            if (merchantId) {
+              if (!data.merchants) {
+                data.merchants = {};
+              }
+
+              if (!data.merchants[merchantId]) {
+                data.merchants[merchantId] = {
+                  balance: 0,
+                  payments: []
+                };
+              }
+
+              data.merchants[merchantId].balance += amount;
+              data.merchants[merchantId].payments.push({
+                paymentIntentId: paymentIntent.id,
+                amount,
+                date: new Date().toISOString(),
+                description: paymentIntent.description || `Payment to merchant ${merchantId}`
+              });
+
+              writeRevenueData(data);
+              console.log(`Mock updated merchant ${merchantId} balance: $${data.merchants[merchantId].balance.toFixed(2)}`);
+
+              // Send mock notification
+              await sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntent.id);
+            }
+          }
+          break;
+        }
+      }
+
+      return res.json({ received: true, mock: true });
+    }
+
+    // Real webhook processing
+    await handleMerchantWebhook(req, res);
+  } catch (error) {
+    console.error('Error in merchant webhook:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 export default {
   router,

@@ -5,9 +5,13 @@
  * portfolio performance, and cash flow analytics
  */
 
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
+import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuration
 const TEST_CONFIG = {
@@ -176,12 +180,11 @@ async function testInvestmentInstruction() {
 
   try {
     const instructionData = {
-      type: 'BUY',
-      instrument: 'US_TREASURY_BOND',
+      instrumentType: 'US_TREASURY_BOND',
       amount: 1000000,
       currency: 'USD',
-      maturity: '2025-12-31',
-      rate: 4.5
+      maturityDate: '2025-12-31',
+      strategy: 'conservative'
     };
 
     const response = await makeRequest('POST', '/jpmorgan/treasury/investment-instruction', instructionData);
@@ -440,11 +443,11 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 // Run tests if this file is executed directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   runComprehensiveTreasuryTests();
 }
 
-module.exports = {
+export {
   runComprehensiveTreasuryTests,
   testCashPositions,
   testFXRates,

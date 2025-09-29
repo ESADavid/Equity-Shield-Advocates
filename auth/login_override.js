@@ -3,12 +3,16 @@
  * Emergency access and administrative override capabilities
  */
 
-const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
-const winston = require('winston');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import winston from 'winston';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Override logger
 const overrideLogger = winston.createLogger({
@@ -1064,20 +1068,16 @@ setInterval(() => {
   loginOverrideManager.saveOverrideHistory();
 }, 10 * 60 * 1000); // Every 10 minutes
 
-module.exports = {
-  LoginOverrideManager,
-  loginOverrideManager,
-  OVERRIDE_TYPES,
-  OVERRIDE_REASONS,
-  // Standard authentication methods
-  registerUser: loginOverrideManager.registerUser.bind(loginOverrideManager),
-  authenticateUser: loginOverrideManager.authenticateUser.bind(loginOverrideManager),
-  changePassword: loginOverrideManager.changePassword.bind(loginOverrideManager),
-  enableMFA: loginOverrideManager.enableMFA.bind(loginOverrideManager),
-  verifyMFAToken: loginOverrideManager.verifyMFAToken.bind(loginOverrideManager),
-  deactivateUser: loginOverrideManager.deactivateUser.bind(loginOverrideManager),
-  validateToken: loginOverrideManager.validateToken.bind(loginOverrideManager),
-  getUserById: loginOverrideManager.getUserById.bind(loginOverrideManager),
-  getUserByUsername: loginOverrideManager.getUserByUsername.bind(loginOverrideManager),
-  getUserByEmail: loginOverrideManager.getUserByEmail.bind(loginOverrideManager)
-};
+export { LoginOverrideManager, loginOverrideManager, OVERRIDE_TYPES, OVERRIDE_REASONS };
+
+// Export standard authentication methods
+export const registerUser = loginOverrideManager.registerUser.bind(loginOverrideManager);
+export const authenticateUser = loginOverrideManager.authenticateUser.bind(loginOverrideManager);
+export const changePassword = loginOverrideManager.changePassword.bind(loginOverrideManager);
+export const enableMFA = loginOverrideManager.enableMFA.bind(loginOverrideManager);
+export const verifyMFAToken = loginOverrideManager.verifyMFAToken.bind(loginOverrideManager);
+export const deactivateUser = loginOverrideManager.deactivateUser.bind(loginOverrideManager);
+export const validateToken = loginOverrideManager.validateToken.bind(loginOverrideManager);
+export const getUserById = loginOverrideManager.getUserById.bind(loginOverrideManager);
+export const getUserByUsername = loginOverrideManager.getUserByUsername.bind(loginOverrideManager);
+export const getUserByEmail = loginOverrideManager.getUserByEmail.bind(loginOverrideManager);

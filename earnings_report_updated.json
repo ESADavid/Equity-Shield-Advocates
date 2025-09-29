@@ -400,5 +400,18 @@
         }
       }
     ]
+  },
+  "merchants": {
+    "merchant_001": {
+      "balance": 10,
+      "payments": [
+        {
+          "paymentIntentId": "pi_mock_1759168645974",
+          "amount": 10,
+          "date": "2025-09-29T17:57:25.975Z",
+          "description": "Mock payment for testing"
+        }
+      ]
+    }
   }
 }

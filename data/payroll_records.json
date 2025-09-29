@@ -1,0 +1,10 @@
+[
+  {
+    "employeeId": "test-emp-1759168885015",
+    "taxAmount": null,
+    "deductions": 50,
+    "bonuses": 100,
+    "netPay": null,
+    "payDate": "2025-09-29T18:01:25.066Z"
+  }
+]
