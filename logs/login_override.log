@@ -32,3 +32,5 @@
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+{"expiresAt":"2025-09-29T21:24:28.986Z","level":"warn","message":"EMERGENCY OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759180168985_B4BF1C23","reason":"emergency_access","service":"login-override","timestamp":"2025-09-29T21:09:28.986Z","userId":"USER_1759180168699_ECE90FE0"}
+{"adminUserId":"admin@oscarsystem.com","expiresAt":"2025-09-29T21:24:29.316Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759180169315_8982B7D1","reason":"technical_issue","service":"login-override","targetUserId":"USER_1759180169300_672DF339","timestamp":"2025-09-29T21:09:29.315Z"}

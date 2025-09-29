@@ -1,13 +1,11 @@
-module.exports = {
+export default {
   presets: [
     ['@babel/preset-env', { targets: { node: 'current' } }],
-    '@babel/preset-typescript',
   ],
   plugins: [
     '@babel/plugin-transform-runtime',
     '@babel/plugin-proposal-class-properties',
-    '@babel/plugin-proposal-private-methods',
-    '@babel/plugin-syntax-dynamic-import'
+    '@babel/plugin-proposal-private-methods'
   ],
   ignore: [
     "node_modules"

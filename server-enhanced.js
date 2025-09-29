@@ -225,12 +225,31 @@ app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), asyn
   }
 });
 
-// Static file serving for frontend
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+import mime from 'mime';
+
+// Static file serving for frontend with correct MIME types
+app.use((req, res, next) => {
+  if (req.path === '/styles.css') {
+    const cssPath = path.join(__dirname, 'public', 'override-dashboard.css');
+    res.type(mime.getType(cssPath));
+    res.sendFile(cssPath);
+  } else {
+    next();
+  }
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Catch-all handler for SPA
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  // Serve override-dashboard.html instead of missing index.html
+  res.sendFile(path.join(__dirname, 'public', 'override-dashboard.html'));
 });
 
 // Error handling middleware
