@@ -53,6 +53,17 @@ try {
   process.exit(1);
 }
 
+// Import analytics system
+let analyticsRouter;
+try {
+  const analyticsModule = await import('./earnings_dashboard/analytics_router.js');
+  analyticsRouter = analyticsModule.default || analyticsModule;
+  console.log('✅ Analytics system loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load analytics system:', error.message);
+  process.exit(1);
+}
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -158,6 +169,12 @@ if (jpmorganRouter) {
 if (payrollRouter) {
   app.use('/api/payroll', payrollRouter);
   console.log('✅ Payroll routes mounted at /api/payroll');
+}
+
+// Analytics API Routes
+if (analyticsRouter) {
+  app.use('/api/analytics', analyticsRouter);
+  console.log('✅ Analytics routes mounted at /api/analytics');
 }
 
 // Webhook endpoint for Stripe
