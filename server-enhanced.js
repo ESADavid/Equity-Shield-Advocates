@@ -34,6 +34,9 @@ const io = new Server(server, {
   }
 });
 
+// Initialize notification service
+const notificationService = new NotificationService(io);
+
 // Import merchant bill pay system
 let merchantBillPay;
 try {
@@ -287,9 +290,6 @@ process.on('uncaughtException', (error) => {
     process.exit(1);
   }
 });
-
-// Initialize notification service
-const notificationService = new NotificationService(io);
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
