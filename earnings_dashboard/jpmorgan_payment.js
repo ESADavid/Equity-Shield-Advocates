@@ -70,6 +70,10 @@ function generateAuthHeaders() {
 
 // Generate Treasury API authentication headers
 function generateTreasuryAuthHeaders() {
+  if (!JPMORGAN_CLIENT_ID || !JPMORGAN_CLIENT_SECRET) {
+    throw new Error('JPMorgan credentials not configured for treasury operations');
+  }
+
   const timestamp = Math.floor(Date.now() / 1000);
   const nonce = crypto.randomBytes(16).toString('hex');
   const message = `${JPMORGAN_CLIENT_ID}${timestamp}${nonce}`;
