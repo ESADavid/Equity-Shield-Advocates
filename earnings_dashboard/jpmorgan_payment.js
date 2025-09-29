@@ -26,7 +26,7 @@ console.log('Environment check:', {
 });
 
 // Revenue data path
-const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+const revenueDataPath = path.resolve(__dirname, '../owlban_repos/aggregated_revenue.json');
 
 function readRevenueData() {
   if (!fs.existsSync(revenueDataPath)) {
@@ -1193,6 +1193,496 @@ router.get('/treasury/health', async (req, res) => {
         portfolioPerformance: false,
         cashFlowAnalytics: false
       }
+    });
+  }
+});
+
+// Process revenue through JPMorgan
+router.post('/process-revenue', async (req, res) => {
+  try {
+    const revenueData = readRevenueData();
+
+    if (!revenueData || !revenueData.revenueStreams) {
+      return res.status(400).json({
+        success: false,
+        error: 'No revenue data available to process'
+      });
+    }
+
+    const processedPayments = [];
+    const failedPayments = [];
+
+    // Process each revenue stream
+    for (const [streamName, streamData] of Object.entries(revenueData.revenueStreams)) {
+      if (streamData.amount > 0) {
+        try {
+          // Create payment for this revenue stream
+          const paymentData = {
+            amount: streamData.amount,
+            currency: 'USD',
+            orderId: `REV-${streamName}-${Date.now()}`,
+            description: `Revenue from ${streamName}`,
+            customer: {
+              name: streamName,
+              accountNumber: streamData.accountNumber,
+              routingNumber: streamData.routingNumber
+            }
+          };
+
+          // In mock mode, simulate payment creation
+          if (isMockMode()) {
+            const mockPaymentId = generateMockPaymentId();
+            console.log(`Mock revenue payment processed for ${streamName}:`, mockPaymentId);
+
+            processedPayments.push({
+              streamName,
+              paymentId: mockPaymentId,
+              amount: streamData.amount,
+              status: 'AUTHORIZED',
+              orderId: paymentData.orderId
+            });
+          } else {
+            // Real API call
+            const headers = generateAuthHeaders();
+            const response = await axios.post(
+              `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments`,
+              {
+                amount: {
+                  value: paymentData.amount,
+                  currency: paymentData.currency
+                },
+                order: {
+                  id: paymentData.orderId,
+                  description: paymentData.description
+                },
+                customer: paymentData.customer,
+                merchant: {
+                  id: JPMORGAN_MERCHANT_ID,
+                  terminalId: JPMORGAN_TERMINAL_ID
+                },
+                paymentMethod: {
+                  type: 'ACH' // Use ACH for revenue deposits
+                }
+              },
+              { headers }
+            );
+
+            processedPayments.push({
+              streamName,
+              paymentId: response.data.id,
+              amount: streamData.amount,
+              status: response.data.status,
+              orderId: paymentData.orderId
+            });
+          }
+        } catch (error) {
+          console.error(`Failed to process revenue for ${streamName}:`, error.message);
+          failedPayments.push({
+            streamName,
+            amount: streamData.amount,
+            error: error.message
+          });
+        }
+      }
+    }
+
+    res.json({
+      success: true,
+      message: 'Revenue processing completed',
+      processedPayments,
+      failedPayments,
+      totalProcessed: processedPayments.length,
+      totalFailed: failedPayments.length,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Revenue processing error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to process revenue through JPMorgan',
+      details: error.message
+    });
+  }
+});
+
+// Get revenue processing status
+router.get('/revenue-status', async (req, res) => {
+  try {
+    const revenueData = readRevenueData();
+
+    if (!revenueData) {
+      return res.json({
+        success: true,
+        revenueData: null,
+        message: 'No revenue data found'
+      });
+    }
+
+    // Calculate summary
+    const revenueStreams = Object.entries(revenueData.revenueStreams || {});
+    const activeStreams = revenueStreams.filter(([_, data]) => data.amount > 0);
+    const totalRevenue = revenueStreams.reduce((sum, [_, data]) => sum + (data.amount || 0), 0);
+
+    res.json({
+      success: true,
+      revenueData: {
+        totalRevenue,
+        totalStreams: revenueStreams.length,
+        activeStreams: activeStreams.length,
+        streams: revenueStreams.map(([name, data]) => ({
+          name,
+          amount: data.amount,
+          accountNumber: data.accountNumber,
+          routingNumber: data.routingNumber
+        }))
+      },
+      lastUpdated: revenueData.auditTrail?.[revenueData.auditTrail.length - 1]?.timestamp,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Revenue status error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get revenue status',
+      details: error.message
+    });
+  }
+});
+
+// ==========================================
+// CONTROL CENTER ENDPOINTS
+// ==========================================
+
+// Control status endpoint
+router.get('/control/status', async (req, res) => {
+  try {
+    // Mock control status - in production, this would check actual system status
+    const controlStatus = {
+      overallStatus: 'operational',
+      paymentStatus: 'active',
+      treasuryStatus: 'active',
+      websiteStatus: 'active',
+      bankingStatus: 'active',
+      lastUpdated: new Date().toISOString(),
+      activeControls: ['payments', 'treasury', 'websites', 'banking']
+    };
+
+    res.json(controlStatus);
+  } catch (error) {
+    console.error('Control status error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get control status',
+      details: error.message
+    });
+  }
+});
+
+// System metrics endpoint
+router.get('/control/metrics', async (req, res) => {
+  try {
+    // Mock system metrics
+    const metrics = {
+      totalTransactions: 15420,
+      activeConnections: 23,
+      uptime: '99.8%',
+      errorRate: '0.02%',
+      responseTime: '45ms',
+      lastUpdated: new Date().toISOString()
+    };
+
+    res.json(metrics);
+  } catch (error) {
+    console.error('Metrics error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get system metrics',
+      details: error.message
+    });
+  }
+});
+
+// Recent activities endpoint
+router.get('/control/activities', async (req, res) => {
+  try {
+    // Mock recent activities
+    const activities = [
+      {
+        timestamp: new Date(Date.now() - 300000).toISOString(),
+        action: 'Payment Processed',
+        target: 'Transaction #12345',
+        status: 'success',
+        user: 'System'
+      },
+      {
+        timestamp: new Date(Date.now() - 600000).toISOString(),
+        action: 'Website Access',
+        target: 'JPMorgan Online Banking',
+        status: 'success',
+        user: 'Control Center'
+      },
+      {
+        timestamp: new Date(Date.now() - 900000).toISOString(),
+        action: 'Treasury Sync',
+        target: 'Cash Positions',
+        status: 'success',
+        user: 'Automated'
+      }
+    ];
+
+    res.json({ activities });
+  } catch (error) {
+    console.error('Activities error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get recent activities',
+      details: error.message
+    });
+  }
+});
+
+// Execute control action endpoint
+router.post('/control/execute', async (req, res) => {
+  try {
+    const { action, target } = req.body;
+
+    console.log(`Executing control action: ${action} on ${target}`);
+
+    // Mock action execution
+    const result = {
+      action,
+      target,
+      status: 'executed',
+      timestamp: new Date().toISOString(),
+      message: `Action "${action}" executed successfully on ${target}`
+    };
+
+    res.json({
+      success: true,
+      result
+    });
+  } catch (error) {
+    console.error('Control execution error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to execute control action',
+      details: error.message
+    });
+  }
+});
+
+// Website management endpoints
+router.get('/control/websites', async (req, res) => {
+  try {
+    // Mock JPMorgan websites
+    const websites = [
+      {
+        id: 'jpm-online-banking',
+        name: 'JPMorgan Online Banking',
+        url: 'https://onlinebanking.jpmorgan.com',
+        type: 'Banking Platform',
+        status: 'active',
+        lastAccess: new Date(Date.now() - 3600000).toISOString(),
+        activeSessions: 5,
+        config: {
+          autoLogin: true,
+          sessionMonitoring: true,
+          activityLogging: true
+        }
+      },
+      {
+        id: 'jpm-treasury-portal',
+        name: 'JPMorgan Treasury Portal',
+        url: 'https://treasury.jpmorgan.com',
+        type: 'Treasury Management',
+        status: 'active',
+        lastAccess: new Date(Date.now() - 1800000).toISOString(),
+        activeSessions: 2,
+        config: {
+          autoLogin: false,
+          sessionMonitoring: true,
+          activityLogging: true
+        }
+      },
+      {
+        id: 'jpm-private-banking',
+        name: 'JPMorgan Private Banking',
+        url: 'https://privatebanking.jpmorgan.com',
+        type: 'Private Banking',
+        status: 'active',
+        lastAccess: new Date(Date.now() - 7200000).toISOString(),
+        activeSessions: 1,
+        config: {
+          autoLogin: true,
+          sessionMonitoring: true,
+          activityLogging: true
+        }
+      }
+    ];
+
+    res.json({ websites });
+  } catch (error) {
+    console.error('Websites fetch error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch websites',
+      details: error.message
+    });
+  }
+});
+
+// Website action endpoint
+router.post('/control/website-action', async (req, res) => {
+  try {
+    const { action, websiteId } = req.body;
+
+    console.log(`Executing website action: ${action} on ${websiteId}`);
+
+    const result = {
+      action,
+      websiteId,
+      status: 'executed',
+      timestamp: new Date().toISOString(),
+      message: `Website action "${action}" executed successfully`
+    };
+
+    res.json({
+      success: true,
+      result
+    });
+  } catch (error) {
+    console.error('Website action error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to execute website action',
+      details: error.message
+    });
+  }
+});
+
+// Website configuration endpoint
+router.put('/control/website-config', async (req, res) => {
+  try {
+    const { websiteId, config } = req.body;
+
+    console.log(`Updating website config for ${websiteId}:`, config);
+
+    const result = {
+      websiteId,
+      config,
+      status: 'updated',
+      timestamp: new Date().toISOString(),
+      message: 'Website configuration updated successfully'
+    };
+
+    res.json({
+      success: true,
+      result
+    });
+  } catch (error) {
+    console.error('Website config error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update website configuration',
+      details: error.message
+    });
+  }
+});
+
+// Banking accounts endpoint
+router.get('/control/banking/accounts', async (req, res) => {
+  try {
+    // Mock banking accounts
+    const accounts = [
+      {
+        id: 'acc-001',
+        name: 'Primary Checking',
+        number: '****1234',
+        type: 'Checking',
+        currency: 'USD',
+        balance: 2500000.00,
+        availableBalance: 2400000.00,
+        status: 'active',
+        lastTransaction: new Date(Date.now() - 86400000).toISOString(),
+        settings: {
+          autoTransfer: true,
+          alerts: true,
+          onlineBanking: true
+        }
+      },
+      {
+        id: 'acc-002',
+        name: 'Investment Account',
+        number: '****5678',
+        type: 'Investment',
+        currency: 'USD',
+        balance: 15000000.00,
+        availableBalance: 14800000.00,
+        status: 'active',
+        lastTransaction: new Date(Date.now() - 43200000).toISOString(),
+        settings: {
+          autoTransfer: false,
+          alerts: true,
+          onlineBanking: true
+        }
+      },
+      {
+        id: 'acc-003',
+        name: 'Private Banking Reserve',
+        number: '****9012',
+        type: 'Savings',
+        currency: 'USD',
+        balance: 50000000.00,
+        availableBalance: 49500000.00,
+        status: 'active',
+        lastTransaction: new Date(Date.now() - 21600000).toISOString(),
+        settings: {
+          autoTransfer: true,
+          alerts: false,
+          onlineBanking: true
+        }
+      }
+    ];
+
+    res.json({ accounts });
+  } catch (error) {
+    console.error('Banking accounts error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch banking accounts',
+      details: error.message
+    });
+  }
+});
+
+// Banking action endpoint
+router.post('/control/banking-action', async (req, res) => {
+  try {
+    const { action, accountId, ...params } = req.body;
+
+    console.log(`Executing banking action: ${action} on account ${accountId}`, params);
+
+    const result = {
+      action,
+      accountId,
+      params,
+      status: 'executed',
+      timestamp: new Date().toISOString(),
+      message: `Banking action "${action}" executed successfully`
+    };
+
+    res.json({
+      success: true,
+      result
+    });
+  } catch (error) {
+    console.error('Banking action error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to execute banking action',
+      details: error.message
     });
   }
 });

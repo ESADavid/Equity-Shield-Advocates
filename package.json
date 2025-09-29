@@ -21,6 +21,8 @@
     "lint:fix": "eslint . --ext .js,.ts --fix",
     "build": "babel src --out-dir dist --copy-files",
     "build:staging": "cross-env NODE_ENV=staging npm run build",
+    "build:dashboard": "vite build --config vite.config.js",
+    "dev:dashboard": "vite --config vite.config.js",
     "migrate": "node scripts/migrate.js",
     "migrate:staging": "cross-env NODE_ENV=staging npm run migrate",
     "deploy:staging": "node staging_deployment.js",
@@ -44,6 +46,7 @@
   "dependencies": {
     "axios": "^1.11.0",
     "bcrypt": "^5.1.1",
+    "chart.js": "^4.4.0",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -57,6 +60,9 @@
     "mysql2": "^3.6.0",
     "nodemailer": "^7.0.6",
     "puppeteer": "^24.18.0",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
     "redis": "^4.6.0",
     "socket.io": "^4.8.1",
     "stripe": "^18.5.0",
@@ -78,12 +84,14 @@
     "@types/morgan": "^1.9.0",
     "@types/node": "^20.0.0",
     "@types/winston": "^2.4.0",
+    "@vitejs/plugin-react": "^4.0.0",
     "cross-env": "^10.1.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^30.1.1",
     "nodemon": "^2.0.20",
     "supertest": "^6.3.3",
-    "ts-jest": "^29.4.1"
+    "ts-jest": "^29.4.1",
+    "vite": "^4.3.9"
   },
   "engines": {
     "node": ">=14.0.0"
