@@ -277,6 +277,24 @@ volumes:
             stdio: 'inherit'
         });
 
+        // Run comprehensive JPMorgan tests
+        execSync('node comprehensive_jpmorgan_test.js', {
+            cwd: this.projectRoot,
+            stdio: 'inherit'
+        });
+
+        // Run comprehensive merchant tests
+        execSync('node comprehensive_merchant_test.js', {
+            cwd: this.projectRoot,
+            stdio: 'inherit'
+        });
+
+        // Run comprehensive payroll tests
+        execSync('node comprehensive_payroll_test.js', {
+            cwd: this.projectRoot,
+            stdio: 'inherit'
+        });
+
         this.log('✅ Staging tests passed', 'success');
     }
 

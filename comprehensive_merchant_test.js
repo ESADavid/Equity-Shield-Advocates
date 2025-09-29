@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
+import merchantBillPay from './earnings_dashboard/merchant_bill_pay.js';
+
 console.log('🧪 Comprehensive Merchant Bill Pay Test Suite\n');
 
 async function runTests() {
   try {
-    const merchantBillPay = require('./earnings_dashboard/merchant_bill_pay');
 
     // Test 1: Module Import and Basic Setup
     console.log('1. Testing module import and basic setup...');

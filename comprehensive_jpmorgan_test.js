@@ -7,12 +7,14 @@
  * and integration functionality.
  */
 
-const express = require('express');
-const axios = require('axios');
-const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
-require('dotenv').config();
+import express from 'express';
+import axios from 'axios';
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // Test configuration
 const TEST_CONFIG = {
@@ -509,7 +511,7 @@ async function runComprehensiveTests() {
 }
 
 // Run tests if called directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   runComprehensiveTests()
     .then(report => {
       console.log('\n🏁 Comprehensive testing completed!');
@@ -521,4 +523,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { runComprehensiveTests, JPMorganEndpointTests, TestSuite };
+export { runComprehensiveTests, JPMorganEndpointTests, TestSuite };

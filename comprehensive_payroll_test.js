@@ -1,8 +1,8 @@
 // Comprehensive Payroll Calculator Testing Suite
 // Tests edge cases, error handling, UI interactions, and full integration
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Mock DOM for testing
 global.document = {
@@ -512,7 +512,7 @@ function runComprehensiveTests() {
 }
 
 // Export for use in other test files
-module.exports = {
+export {
     testPayrollEdgeCases,
     testErrorHandling,
     testAPIEndpoints,
@@ -524,6 +524,6 @@ module.exports = {
 };
 
 // Run tests if this file is executed directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     runComprehensiveTests();
 }
