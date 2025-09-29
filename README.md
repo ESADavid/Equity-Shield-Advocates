@@ -17,6 +17,15 @@ This project provides a backend server and frontend dashboard to display earning
 
 - Node.js (v14 or higher recommended)
 - npm package manager
+- GitHub CLI (gh) - Install from [GitHub CLI releases](https://cli.github.com/) and authenticate with a personal access token
+
+### GitHub CLI Setup
+
+To use GitHub CLI for repository operations (such as opening pull requests), you need to create a personal access token:
+
+1. Go to [https://github.com/settings/tokens/new](https://github.com/settings/tokens/new)
+2. Generate a new token with appropriate scopes (e.g., `repo`, `workflow` for repository access)
+3. Authenticate GitHub CLI: `gh auth login` and follow the prompts to enter your token
 
 ### Installation
 
