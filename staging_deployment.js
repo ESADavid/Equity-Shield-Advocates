@@ -5,9 +5,13 @@
  * Deploys the application to staging environment with treasury management integration
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class StagingDeployment {
     constructor() {
@@ -409,9 +413,9 @@ volumes:
 }
 
 // Run deployment if called directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     const deployment = new StagingDeployment();
     deployment.run().catch(console.error);
 }
 
-module.exports = StagingDeployment;
+export default StagingDeployment;

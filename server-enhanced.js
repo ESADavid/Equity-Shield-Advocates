@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const compression = require('compression');
-const rateLimit = require('express-rate-limit');
-const fs = require('fs');
-const path = require('path');
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import compression from 'compression';
+import rateLimit from 'express-rate-limit';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,10 +23,22 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 // Import merchant bill pay system
 let merchantBillPay;
 try {
-  merchantBillPay = require('./earnings_dashboard/merchant_bill_pay');
+  const merchantModule = await import('./earnings_dashboard/merchant_bill_pay.js');
+  merchantBillPay = merchantModule.default || merchantModule;
   console.log('✅ Merchant bill pay system loaded successfully');
 } catch (error) {
   console.error('❌ Failed to load merchant bill pay system:', error.message);
+  process.exit(1);
+}
+
+// Import JPMorgan payment system
+let jpmorganRouter;
+try {
+  const jpmorganModule = await import('./earnings_dashboard/jpmorgan_payment.js');
+  jpmorganRouter = jpmorganModule.default || jpmorganModule;
+  console.log('✅ JPMorgan payment system loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load JPMorgan payment system:', error.message);
   process.exit(1);
 }
 
@@ -94,6 +111,10 @@ app.get('/api/status', (req, res) => {
       loaded: !!merchantBillPay,
       functions: merchantBillPay ? Object.keys(merchantBillPay).filter(key => typeof merchantBillPay[key] === 'function') : []
     },
+    jpmorganPayment: {
+      loaded: !!jpmorganRouter,
+      functions: jpmorganRouter ? Object.keys(jpmorganRouter).filter(key => typeof jpmorganRouter[key] === 'function') : []
+    },
     environment: {
       nodeVersion: process.version,
       environment: NODE_ENV,
@@ -102,7 +123,8 @@ app.get('/api/status', (req, res) => {
     services: {
       stripe: !!process.env.STRIPE_SECRET_KEY,
       smtp: !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS),
-      twilio: !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER)
+      twilio: !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER),
+      jpmorgan: !!(process.env.JPMORGAN_CLIENT_ID && process.env.JPMORGAN_CLIENT_SECRET && process.env.JPMORGAN_MERCHANT_ID && process.env.JPMORGAN_TERMINAL_ID)
     }
   };
 
@@ -113,6 +135,12 @@ app.get('/api/status', (req, res) => {
 if (merchantBillPay && merchantBillPay.router) {
   app.use('/api/merchant', merchantBillPay.router);
   console.log('✅ Merchant bill pay routes mounted at /api/merchant');
+}
+
+// JPMorgan Payment API Routes
+if (jpmorganRouter) {
+  app.use('/jpmorgan', jpmorganRouter);
+  console.log('✅ JPMorgan payment routes mounted at /jpmorgan');
 }
 
 // Webhook endpoint for Stripe
@@ -218,4 +246,4 @@ const server = app.listen(PORT, () => {
 });
 
 // Export for testing
-module.exports = app;
+export default app;

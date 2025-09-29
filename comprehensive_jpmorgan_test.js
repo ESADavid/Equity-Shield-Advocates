@@ -28,8 +28,8 @@ const TEST_CONFIG = {
     TERMINAL_ID: process.env.JPMORGAN_TERMINAL_ID
   },
   SERVER: {
-    PORT: 3001,
-    HOST: 'http://localhost:3001'
+    PORT: 3000,
+    HOST: 'http://localhost:3000'
   }
 };
 
