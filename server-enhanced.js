@@ -12,6 +12,9 @@ import rateLimit from 'express-rate-limit';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import NotificationService from './earnings_dashboard/notification_service.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +22,17 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
+
+// Create HTTP server
+const server = createServer(app);
+
+// Initialize Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000'],
+    methods: ['GET', 'POST']
+  }
+});
 
 // Import merchant bill pay system
 let merchantBillPay;
@@ -61,6 +75,17 @@ try {
   console.log('✅ Analytics system loaded successfully');
 } catch (error) {
   console.error('❌ Failed to load analytics system:', error.message);
+  process.exit(1);
+}
+
+// Import notification system
+let notificationRouter;
+try {
+  const { default: createNotificationRouter } = await import('./earnings_dashboard/notification_router.js');
+  notificationRouter = createNotificationRouter(notificationService);
+  console.log('✅ Notification system loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load notification system:', error.message);
   process.exit(1);
 }
 
@@ -177,6 +202,12 @@ if (analyticsRouter) {
   console.log('✅ Analytics routes mounted at /api/analytics');
 }
 
+// Notification API Routes
+if (notificationRouter) {
+  app.use('/api/notifications', notificationRouter);
+  console.log('✅ Notification routes mounted at /api/notifications');
+}
+
 // Webhook endpoint for Stripe
 app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
@@ -257,14 +288,37 @@ process.on('uncaughtException', (error) => {
   }
 });
 
+// Initialize notification service
+const notificationService = new NotificationService(io);
+
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log('🔌 Client connected:', socket.id);
+
+  socket.on('disconnect', () => {
+    console.log('🔌 Client disconnected:', socket.id);
+  });
+
+  socket.on('subscribe-notifications', (userId) => {
+    socket.join(`user-${userId}`);
+    console.log(`📡 User ${userId} subscribed to notifications`);
+  });
+
+  socket.on('unsubscribe-notifications', (userId) => {
+    socket.leave(`user-${userId}`);
+    console.log(`📡 User ${userId} unsubscribed from notifications`);
+  });
+});
+
 // Start server
-const server = app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log('🚀 OSCAR BROOME REVENUE - Production Server');
   console.log('==========================================');
   console.log(`✅ Server running on port ${PORT}`);
   console.log(`✅ Environment: ${NODE_ENV}`);
   console.log(`✅ Health check: http://localhost:${PORT}/health`);
   console.log(`✅ API status: http://localhost:${PORT}/api/status`);
+  console.log(`✅ WebSocket notifications enabled`);
   console.log(`✅ Started at: ${new Date().toISOString()}`);
   console.log('');
 
@@ -275,9 +329,13 @@ const server = app.listen(PORT, () => {
     console.log('   - Compression enabled');
     console.log('   - Request logging to file');
     console.log('   - Graceful error handling');
+    console.log('   - Real-time notifications');
     console.log('');
   }
 });
 
 // Export for testing
 export default app;
+
+// Export notification service for use in other modules
+export { notificationService };
