@@ -28,4 +28,7 @@
 {"adminUserId":"admin@oscarsystem.com","expiresAt":"2025-09-29T21:13:02.125Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759179482125_DA84FE63","reason":"technical_issue","service":"login-override","targetUserId":"USER_1759179482118_DC63B69B","timestamp":"2025-09-29T20:58:02.125Z"}
 {"expiresAt":"2025-09-29T21:17:13.903Z","level":"warn","message":"EMERGENCY OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759179733902_9A438510","reason":"emergency_access","service":"login-override","timestamp":"2025-09-29T21:02:13.902Z","userId":"USER_1759179733358_EA972431"}
 {"adminUserId":"admin@oscarsystem.com","expiresAt":"2025-09-29T21:17:14.269Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759179734269_3F9F43E0","reason":"technical_issue","service":"login-override","targetUserId":"USER_1759179734260_674C3620","timestamp":"2025-09-29T21:02:14.269Z"}
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
