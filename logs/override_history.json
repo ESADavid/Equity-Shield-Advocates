@@ -1,17 +1,30 @@
 {
   "activeOverrides": {
-    "OVERRIDE_1757547251101_93C024F8": {
-      "id": "OVERRIDE_1757547251101_93C024F8",
+    "OVERRIDE_1759170071555_941FC35F": {
+      "id": "OVERRIDE_1759170071555_941FC35F",
       "type": "emergency",
-      "userId": "USER_1757547250073_7CE392A1",
+      "userId": "USER_1759170071336_D3036487",
       "reason": "emergency_access",
-      "timestamp": "2025-09-10T23:34:11.101Z",
-      "expiresAt": "2025-09-10T23:49:11.101Z",
+      "timestamp": "2025-09-29T18:21:11.555Z",
+      "expiresAt": "2025-09-29T18:36:11.555Z",
       "status": "active",
-      "additionalAuth": "finance_emergency_code",
+      "additionalAuth": "account_access_emergency",
       "approvedBy": "SYSTEM_EMERGENCY_PROTOCOL",
+      "notificationsSent": []
+    },
+    "OVERRIDE_1759170071771_9C090D69": {
+      "id": "OVERRIDE_1759170071771_9C090D69",
+      "type": "admin",
+      "adminUserId": "admin@oscarsystem.com",
+      "targetUserId": "USER_1759170071768_33BAE568",
+      "reason": "technical_issue",
+      "justification": "User reported login issues",
+      "timestamp": "2025-09-29T18:21:11.771Z",
+      "expiresAt": "2025-09-29T18:36:11.771Z",
+      "status": "active",
+      "approvedBy": "admin@oscarsystem.com",
       "notificationsSent": []
     }
   },
-  "lastUpdated": "2025-09-10T23:44:09.275Z"
+  "lastUpdated": "2025-09-29T18:31:09.534Z"
 }
