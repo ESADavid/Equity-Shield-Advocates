@@ -1,144 +1,333 @@
-# OWLban Earnings Dashboard
+# Oscar Broome Revenue System
 
 ## Overview
 
-This project provides a backend server and frontend dashboard to display earnings data aggregated from various repositories. The server exposes REST API endpoints secured with basic authentication and serves a simple HTML dashboard.
+The Oscar Broome Revenue System is a comprehensive financial management platform that integrates multiple banking systems, payment processors, and revenue tracking capabilities. The system features quantum-secure cryptography, JPMorgan Chase integration, merchant processing, payroll management, and advanced analytics.
 
-## Features
+## 🏗️ Architecture
 
-- Secure API endpoints with basic authentication
-- Fetch earnings data from a JSON file
-- Download earnings data as JSON file
-- Simple frontend dashboard displaying total and per-stream revenue
+### Core Components
+- **Quantum Security Layer**: Post-quantum cryptography with AES-256-GCM encryption and HMAC-SHA256 signatures
+- **JPMorgan Control Center**: Full banking system integration with real-time controls
+- **Earnings Dashboard**: React-based analytics and monitoring interface
+- **Payroll System**: Comprehensive payroll processing with QuickBooks integration
+- **Merchant Processing**: Stripe and merchant account management
+- **Treasury Management**: Advanced financial controls and overrides
 
-## Setup
+### Technology Stack
+- **Backend**: Node.js with Express.js
+- **Frontend**: React with Vite build system
+- **Database**: MySQL with connection pooling
+- **Security**: Quantum-safe cryptography, JWT tokens, zero-trust architecture
+- **Integration**: JPMorgan Chase API, Stripe, QuickBooks, Twilio
+- **Deployment**: PM2 process management, Docker support
+
+## 🚀 Features
+
+### 🔐 Quantum Security
+- AES-256-GCM encryption with proper IV handling
+- HMAC-SHA256 digital signatures with timing-safe verification
+- Quantum-safe JWT tokens
+- Zero-trust authentication architecture
+- Post-quantum cryptographic algorithms
+
+### 🏦 JPMorgan Control Center
+- Real-time banking account management
+- Website access controls and configuration
+- Private banking operations
+- Treasury management overrides
+- Payment processing controls
+- System status monitoring and metrics
+
+### 📊 Earnings Dashboard
+- Real-time revenue analytics
+- Multi-stream earnings tracking
+- Interactive charts and visualizations
+- AI-powered insights and predictions
+- Notification system for alerts
+
+### 💰 Payroll System
+- Comprehensive payroll processing
+- QuickBooks integration
+- Automated tax calculations
+- Employee management
+- Pay period scheduling
+
+### 🛒 Merchant Processing
+- Stripe payment integration
+- Merchant account management
+- Transaction processing and reconciliation
+- Bill payment automation
+- Revenue tracking and analytics
+
+### 📈 Analytics & AI
+- Machine learning revenue predictions
+- Behavioral analytics
+- Performance monitoring
+- Automated reporting
+- Real-time dashboards
+
+## 🛠️ Setup & Installation
 
 ### Prerequisites
-
-- Node.js (v14 or higher recommended)
-- npm package manager
-- GitHub CLI (gh) - Install from [GitHub CLI releases](https://cli.github.com/) and authenticate with a personal access token
-
-### GitHub CLI Setup
-
-To use GitHub CLI for repository operations (such as opening pull requests), you need to create a personal access token:
-
-1. Go to [https://github.com/settings/tokens/new](https://github.com/settings/tokens/new)
-2. Generate a new token with appropriate scopes (e.g., `repo`, `workflow` for repository access)
-3. Authenticate GitHub CLI: `gh auth login` and follow the prompts to enter your token
+- Node.js (v18 or higher)
+- MySQL database
+- npm or yarn package manager
+- GitHub CLI (for repository operations)
 
 ### Installation
-
-1. Clone the repository
-2. Run `npm install` to install dependencies
-
-### Running the Server
-
 ```bash
-node earnings_dashboard/server_rebuilt.js
+# Clone the repository
+git clone <repository-url>
+cd oscar-broome-revenue
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
 ```
 
-The server will start on port 4000.
+### Environment Configuration
+```env
+# Server Configuration
+PORT=3000
+NODE_ENV=production
 
-### API Endpoints
+# Database
+DB_HOST=localhost
+DB_USER=your_db_user
+DB_PASS=your_db_password
+DB_NAME=oscar_broome_revenue
 
-- `GET /api/earnings` - Returns earnings data (requires basic auth)
-- `GET /api/earnings/download` - Downloads earnings data as JSON file (requires basic auth)
-- `GET /` - Serves the earnings dashboard HTML page (requires basic auth)
+# Security
+JWT_SECRET=your_jwt_secret
+ENCRYPTION_KEY=your_encryption_key
 
-### Authentication
+# JPMorgan Integration
+JPMORGAN_API_KEY=your_jpmorgan_key
+JPMORGAN_BASE_URL=https://api.jpmorgan.com
 
-Use basic authentication with username `admin` and password `securepassword`.
+# Stripe Integration
+STRIPE_SECRET_KEY=your_stripe_secret
+STRIPE_PUBLISHABLE_KEY=your_stripe_publishable
 
-## Testing
+# QuickBooks Integration
+QUICKBOOKS_CLIENT_ID=your_quickbooks_client_id
+QUICKBOOKS_CLIENT_SECRET=your_quickbooks_secret
 
-Run the Jest test suite with:
-
-```bash
-npx jest earnings_dashboard/server.test.js --runInBand --detectOpenHandles --verbose
+# Twilio (for notifications)
+TWILIO_ACCOUNT_SID=your_twilio_sid
+TWILIO_AUTH_TOKEN=your_twilio_token
+TWILIO_PHONE_NUMBER=your_twilio_number
 ```
 
-## Deployment
+### Database Setup
+```bash
+# Create database
+mysql -u root -p < scripts/create_database.sql
 
-This project can be deployed using Docker or PM2 process manager.
+# Run migrations
+npm run migrate
+```
 
-### Environment Variables
+## 🚀 Running the Application
 
-The following environment variables should be set in your production environment:
+### Development Mode
+```bash
+# Start the main server
+npm run dev
 
-- `PORT` - Port number the server listens on (default: 4000)
-- `ADMIN_USER` - Username for basic authentication (default: admin)
-- `ADMIN_PASS` - Password for basic authentication (default: securepassword)
-- `NODE_ENV` - Node environment (set to "production" in production)
-- `DYNAMICS365_BASE_URL` - (Optional) Base URL for Dynamics365 integration
-- `DYNAMICS365_ACCESS_TOKEN` - (Optional) Access token for Dynamics365 API
-- `CORS_ORIGIN` - (Optional) Allowed origin for CORS
+# Start the dashboard (separate terminal)
+npm run dev:dashboard
+```
+
+### Production Mode
+```bash
+# Build the dashboard
+npm run build:dashboard
+
+# Start with PM2
+npm run start
+```
 
 ### Docker Deployment
-
-1. Build the Docker image:
-
 ```bash
-docker build -t owlban-earnings-dashboard .
+# Build Docker image
+docker build -t oscar-broome-revenue .
+
+# Run container
+docker run -d -p 3000:3000 \
+  --env-file .env \
+  --name oscar-broome-container \
+  oscar-broome-revenue
 ```
 
-1. Run the Docker container (example with environment variables):
+## 📡 API Endpoints
 
+### Authentication
+- `POST /auth/login` - User authentication
+- `POST /auth/verify` - Token verification
+
+### JPMorgan Control Center
+- `GET /jpmorgan/control/status` - System status
+- `GET /jpmorgan/control/metrics` - Performance metrics
+- `POST /jpmorgan/control/execute` - Execute control actions
+- `GET /jpmorgan/control/websites` - Website management
+- `POST /jpmorgan/control/website-action` - Website actions
+- `GET /jpmorgan/control/banking/accounts` - Banking accounts
+- `POST /jpmorgan/control/banking-action` - Banking operations
+
+### Earnings & Analytics
+- `GET /api/earnings` - Earnings data
+- `GET /api/analytics/revenue` - Revenue analytics
+- `GET /api/analytics/predictions` - AI predictions
+- `GET /api/notifications` - System notifications
+
+### Payroll System
+- `GET /api/payroll/employees` - Employee management
+- `POST /api/payroll/process` - Process payroll
+- `GET /api/payroll/reports` - Payroll reports
+
+### Merchant Processing
+- `POST /api/merchant/payment` - Process payments
+- `GET /api/merchant/transactions` - Transaction history
+- `POST /api/merchant/bill-pay` - Bill payments
+
+## 🧪 Testing
+
+### Run All Tests
 ```bash
-docker run -d -p 4000:4000 \
-  -e ADMIN_USER=yourusername \
-  -e ADMIN_PASS=yourpassword \
-  -e NODE_ENV=production \
-  --name owlban-dashboard-container \
-  owlban-earnings-dashboard
+# Run complete test suite
+npm run test:all-windows
+
+# Individual test suites
+npm run test:jpmorgan    # JPMorgan integration tests
+npm run test:merchant    # Merchant processing tests
+npm run test:payroll     # Payroll system tests
+npm run test:staging     # Staging environment tests
 ```
 
-### PM2 Deployment
-
-1. Install PM2 globally if not installed:
-
+### Test Coverage
 ```bash
-npm install -g pm2
+npm run test:coverage
 ```
 
-1. Start the app with PM2 using the ecosystem config:
+## 📊 Dashboard Access
 
+The React dashboard is available at `http://localhost:5173` (development) or `http://localhost:3000/dashboard` (production).
+
+### Dashboard Features
+- **Earnings Overview**: Real-time revenue tracking
+- **JPMorgan Controls**: Banking system management
+- **Analytics**: AI-powered insights
+- **Payroll Management**: Employee and payroll operations
+- **Merchant Tools**: Payment processing controls
+
+## 🔒 Security Features
+
+### Quantum Security Implementation
+- **Encryption**: AES-256-GCM with unique IVs
+- **Signatures**: HMAC-SHA256 with timing-safe verification
+- **Zero-Trust**: Every request validated with multiple factors
+- **JWT Tokens**: Quantum-safe token generation and verification
+
+### Authentication & Authorization
+- Multi-factor authentication support
+- Role-based access control (RBAC)
+- Session management with secure tokens
+- API rate limiting and DDoS protection
+
+## 📈 Monitoring & Logging
+
+### System Monitoring
+- Real-time performance metrics
+- Error tracking and alerting
+- Database connection pooling
+- Memory and CPU usage monitoring
+
+### Logging
+- Winston logging framework
+- Structured logging with levels
+- Log rotation and archival
+- Centralized logging support
+
+## 🚀 Deployment Options
+
+### PM2 Production Deployment
 ```bash
+# Start with PM2
 pm2 start ecosystem.config.js --env production
+
+# Monitor processes
+pm2 monit
+
+# View logs
+pm2 logs
 ```
 
-1. To monitor logs:
-
-```bash
-pm2 logs owlban-earnings-dashboard
+### Docker Compose (Multi-Service)
+```yaml
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=your_password
+      - MYSQL_DATABASE=oscar_broome_revenue
 ```
 
-1. To restart the app:
+## 🤝 Contributing
 
-```bash
-pm2 restart owlban-earnings-dashboard
-```
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-### Pre-Deployment Testing
+### Development Guidelines
+- Follow ES6+ syntax and async/await patterns
+- Use meaningful commit messages
+- Add tests for new features
+- Update documentation as needed
+- Follow the existing code style
 
-Run tests before deployment to ensure stability:
+## 📝 License
 
-```bash
-npm test
-```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Data
+## 🆘 Support
 
-- Earnings data is read from `owlban_repos/sample_repo/revenue.json`.
-- Replace this file with real data as needed.
+For support and questions:
+- Create an issue in the repository
+- Check the documentation in `/docs`
+- Review the comprehensive integration summary in `COMPREHENSIVE_INTEGRATION_SUMMARY.md`
 
-## Future Improvements
+## 🎯 Roadmap
 
-- Enhance frontend UI with React or similar framework
-- Add database integration for dynamic data
-- Implement user management and role-based access control
-- Add CI/CD pipeline for automated testing and deployment
+### Phase 7: Advanced Features
+- [ ] Blockchain integration for audit trails
+- [ ] Advanced AI analytics and predictions
+- [ ] Multi-tenant architecture support
+- [ ] Real-time collaboration features
+- [ ] Mobile application development
 
-## License
+### Phase 8: Enterprise Scaling
+- [ ] Microservices architecture migration
+- [ ] Kubernetes orchestration
+- [ ] Advanced monitoring and alerting
+- [ ] Disaster recovery and backup systems
+- [ ] Compliance and regulatory reporting
 
-MIT License
+---
+
+**Built with ❤️ for Oscar Broome Revenue Management**

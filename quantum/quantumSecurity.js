@@ -2,8 +2,8 @@
  * QUANTUM SECURITY LAYER - Unbreakable protection system
  * Implements post-quantum cryptography and zero-trust architecture
  */
-const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
 class QuantumSecurity {
   constructor() {
@@ -13,8 +13,8 @@ class QuantumSecurity {
   }
 
   generateQuantumKey() {
-    // Generate 512-bit quantum-resistant key
-    return crypto.randomBytes(64).toString('hex');
+    // Generate 256-bit AES key for encryption
+    return crypto.randomBytes(32);
   }
 
   initializeSecurityMatrix() {
@@ -29,25 +29,28 @@ class QuantumSecurity {
 
   // Post-quantum encryption
   encrypt(data) {
-    const cipher = crypto.createCipher('aes-256-gcm', this.encryptionKey);
+    const iv = crypto.randomBytes(12); // 96-bit IV for GCM
+    const cipher = crypto.createCipheriv('aes-256-gcm', this.encryptionKey, iv);
     let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
     encrypted += cipher.final('hex');
     const authTag = cipher.getAuthTag();
-    
+
     return {
       encrypted,
       authTag: authTag.toString('hex'),
+      iv: iv.toString('hex'),
       algorithm: this.algorithm
     };
   }
 
   decrypt(encryptedData) {
-    const decipher = crypto.createDecipher('aes-256-gcm', this.encryptionKey);
+    const iv = Buffer.from(encryptedData.iv, 'hex');
+    const decipher = crypto.createDecipheriv('aes-256-gcm', this.encryptionKey, iv);
     decipher.setAuthTag(Buffer.from(encryptedData.authTag, 'hex'));
-    
+
     let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return JSON.parse(decrypted);
   }
 
@@ -79,10 +82,10 @@ class QuantumSecurity {
       ip: this.verifyIPAddress(request.ip),
       userAgent: this.verifyUserAgent(request.userAgent),
       timestamp: this.verifyTimestamp(request.timestamp),
-      signature: this.verifyQuantumSignature(request.signature),
+      signature: request.data && request.signature ? this.verifyQuantumSignature(request.data, request.signature) : false,
       blockchain: this.verifyBlockchainIntegrity(request.blockchain)
     };
-    
+
     return Object.values(verification).every(v => v === true);
   }
 
@@ -102,9 +105,28 @@ class QuantumSecurity {
     return Math.abs(now - timestamp) < 30000; // 30 second window
   }
 
-  verifyQuantumSignature(signature) {
-    // Verify quantum digital signature
-    return crypto.createHash('sha3-512').update(signature).digest('hex') === signature;
+  generateQuantumSignature(data) {
+    // Generate HMAC signature for data integrity
+    return crypto.createHmac('sha256', this.encryptionKey).update(JSON.stringify(data)).digest('hex');
+  }
+
+  verifyQuantumSignature(data, signature) {
+    // Verify HMAC signature
+    try {
+      const expectedSignature = this.generateQuantumSignature(data);
+      const signatureBuffer = Buffer.from(signature, 'hex');
+      const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+
+      // Ensure both buffers have the same length
+      if (signatureBuffer.length !== expectedBuffer.length) {
+        return false;
+      }
+
+      return crypto.timingSafeEqual(signatureBuffer, expectedBuffer);
+    } catch (error) {
+      // If there's any error in buffer creation or comparison, return false
+      return false;
+    }
   }
 
   verifyBlockchainIntegrity(blockchain) {
@@ -140,4 +162,4 @@ class QuantumSecurity {
   }
 }
 
-module.exports = QuantumSecurity;
+export default QuantumSecurity;
