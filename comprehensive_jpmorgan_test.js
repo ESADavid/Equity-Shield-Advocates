@@ -35,6 +35,7 @@ const TEST_CONFIG = {
 
 // Check if credentials are configured
 const hasCredentials = TEST_CONFIG.JPMORGAN.CLIENT_ID && TEST_CONFIG.JPMORGAN.CLIENT_SECRET;
+const isMockMode = !hasCredentials;
 
 // Generate JPMorgan authentication headers
 function generateAuthHeaders() {
@@ -162,33 +163,45 @@ class JPMorganEndpointTests {
     try {
       this.testSuite.log('Testing payment creation endpoint...');
 
-      if (!hasCredentials) {
-        this.testSuite.addTest('Create Payment', 'skipped', 'Credentials not configured');
-        return false;
-      }
+      let headers = {};
+      let paymentData;
 
-      const headers = generateAuthHeaders();
-      const paymentData = {
-        amount: {
-          value: 100.00,
-          currency: 'USD'
-        },
-        order: {
-          id: `TEST-${Date.now()}`,
-          description: 'Comprehensive test payment'
-        },
-        customer: {
-          id: 'TEST-CUSTOMER-001',
-          name: 'Test Customer'
-        },
-        merchant: {
-          id: TEST_CONFIG.JPMORGAN.MERCHANT_ID,
-          terminalId: TEST_CONFIG.JPMORGAN.TERMINAL_ID
-        },
-        paymentMethod: {
-          type: 'CARD'
-        }
-      };
+      if (isMockMode) {
+        // Simple payload for mock mode
+        paymentData = {
+          amount: 100,
+          currency: 'USD',
+          orderId: `TEST-${Date.now()}`,
+          description: 'Comprehensive test payment',
+          customer: {
+            id: 'TEST-CUSTOMER-001',
+            name: 'Test Customer'
+          }
+        };
+      } else {
+        headers = generateAuthHeaders();
+        paymentData = {
+          amount: {
+            value: 100.00,
+            currency: 'USD'
+          },
+          order: {
+            id: `TEST-${Date.now()}`,
+            description: 'Comprehensive test payment'
+          },
+          customer: {
+            id: 'TEST-CUSTOMER-001',
+            name: 'Test Customer'
+          },
+          merchant: {
+            id: TEST_CONFIG.JPMORGAN.MERCHANT_ID,
+            terminalId: TEST_CONFIG.JPMORGAN.TERMINAL_ID
+          },
+          paymentMethod: {
+            type: 'CARD'
+          }
+        };
+      }
 
       const response = await axios.post(
         `${this.baseURL}/jpmorgan/create-payment`,
@@ -197,7 +210,7 @@ class JPMorganEndpointTests {
       );
 
       if (response.status === 200 && response.data.success && response.data.paymentId) {
-        this.testSuite.addTest('Create Payment', 'passed', `Payment created: ${response.data.paymentId}`);
+        this.testSuite.addTest('Create Payment', 'passed', `Payment created: ${response.data.paymentId} (Mock: ${isMockMode})`);
         return response.data.paymentId;
       } else {
         this.testSuite.addTest('Create Payment', 'failed', `Unexpected response: ${JSON.stringify(response.data)}`);
@@ -218,15 +231,15 @@ class JPMorganEndpointTests {
         return false;
       }
 
-      if (!hasCredentials) {
-        this.testSuite.addTest('Payment Status', 'skipped', 'Credentials not configured');
-        return false;
+      let headers = {};
+      if (!isMockMode) {
+        headers = generateAuthHeaders();
       }
 
-      const response = await axios.get(`${this.baseURL}/jpmorgan/payment-status/${paymentId}`, { timeout: 10000 });
+      const response = await axios.get(`${this.baseURL}/jpmorgan/payment-status/${paymentId}`, { headers, timeout: 10000 });
 
       if (response.status === 200 && response.data.success) {
-        this.testSuite.addTest('Payment Status', 'passed', `Status: ${response.data.paymentStatus?.status || 'Unknown'}`);
+        this.testSuite.addTest('Payment Status', 'passed', `Status: ${response.data.paymentStatus?.status || response.data.status || 'Unknown'} (Mock: ${isMockMode})`);
         return true;
       } else {
         this.testSuite.addTest('Payment Status', 'failed', `Unexpected response: ${JSON.stringify(response.data)}`);
@@ -247,15 +260,14 @@ class JPMorganEndpointTests {
         return false;
       }
 
-      if (!hasCredentials) {
-        this.testSuite.addTest('Refund Payment', 'skipped', 'Credentials not configured');
-        return false;
+      let headers = {};
+      if (!isMockMode) {
+        headers = generateAuthHeaders();
       }
 
-      const headers = generateAuthHeaders();
       const refundData = {
         paymentId: paymentId,
-        amount: 50.00,
+        amount: 50,
         reason: 'Test refund'
       };
 
@@ -266,7 +278,7 @@ class JPMorganEndpointTests {
       );
 
       if (response.status === 200 && response.data.success) {
-        this.testSuite.addTest('Refund Payment', 'passed', `Refund created: ${response.data.refundId}`);
+        this.testSuite.addTest('Refund Payment', 'passed', `Refund created: ${response.data.refundId} (Mock: ${isMockMode})`);
         return true;
       } else {
         this.testSuite.addTest('Refund Payment', 'failed', `Unexpected response: ${JSON.stringify(response.data)}`);
@@ -287,15 +299,14 @@ class JPMorganEndpointTests {
         return false;
       }
 
-      if (!hasCredentials) {
-        this.testSuite.addTest('Capture Payment', 'skipped', 'Credentials not configured');
-        return false;
+      let headers = {};
+      if (!isMockMode) {
+        headers = generateAuthHeaders();
       }
 
-      const headers = generateAuthHeaders();
       const captureData = {
         paymentId: paymentId,
-        amount: 50.00
+        amount: 50
       };
 
       const response = await axios.post(
@@ -305,7 +316,7 @@ class JPMorganEndpointTests {
       );
 
       if (response.status === 200 && response.data.success) {
-        this.testSuite.addTest('Capture Payment', 'passed', `Payment captured: ${response.data.captureId}`);
+        this.testSuite.addTest('Capture Payment', 'passed', `Payment captured: ${response.data.captureId} (Mock: ${isMockMode})`);
         return true;
       } else {
         this.testSuite.addTest('Capture Payment', 'failed', `Unexpected response: ${JSON.stringify(response.data)}`);
@@ -326,12 +337,11 @@ class JPMorganEndpointTests {
         return false;
       }
 
-      if (!hasCredentials) {
-        this.testSuite.addTest('Void Payment', 'skipped', 'Credentials not configured');
-        return false;
+      let headers = {};
+      if (!isMockMode) {
+        headers = generateAuthHeaders();
       }
 
-      const headers = generateAuthHeaders();
       const voidData = {
         paymentId: paymentId,
         reason: 'Test void'
@@ -344,7 +354,7 @@ class JPMorganEndpointTests {
       );
 
       if (response.status === 200 && response.data.success) {
-        this.testSuite.addTest('Void Payment', 'passed', `Payment voided: ${response.data.voidId}`);
+        this.testSuite.addTest('Void Payment', 'passed', `Payment voided: ${response.data.voidId} (Mock: ${isMockMode})`);
         return true;
       } else {
         this.testSuite.addTest('Void Payment', 'failed', `Unexpected response: ${JSON.stringify(response.data)}`);
@@ -360,15 +370,15 @@ class JPMorganEndpointTests {
     try {
       this.testSuite.log('Testing transactions endpoint...');
 
-      if (!hasCredentials) {
-        this.testSuite.addTest('Get Transactions', 'skipped', 'Credentials not configured');
-        return false;
+      let headers = {};
+      if (!isMockMode) {
+        headers = generateAuthHeaders();
       }
 
-      const response = await axios.get(`${this.baseURL}/jpmorgan/transactions?limit=10`, { timeout: 10000 });
+      const response = await axios.get(`${this.baseURL}/jpmorgan/transactions?limit=10`, { headers, timeout: 10000 });
 
       if (response.status === 200 && response.data.success) {
-        this.testSuite.addTest('Get Transactions', 'passed', `Retrieved ${response.data.transactions?.length || 0} transactions`);
+        this.testSuite.addTest('Get Transactions', 'passed', `Retrieved ${response.data.transactions?.length || 0} transactions (Mock: ${isMockMode})`);
         return true;
       } else {
         this.testSuite.addTest('Get Transactions', 'failed', `Unexpected response: ${JSON.stringify(response.data)}`);
@@ -394,29 +404,35 @@ class JPMorganEndpointTests {
         }
       };
 
+      let headers = {
+        'Content-Type': 'application/json'
+      };
+
+      if (!isMockMode) {
+        // For real mode, add signature headers (but for test, use invalid to check validation)
+        headers['x-jpmorgan-signature'] = 'test-signature';
+        headers['x-jpmorgan-timestamp'] = Math.floor(Date.now() / 1000).toString();
+        headers['x-jpmorgan-nonce'] = 'test-nonce';
+      }
+
       const response = await axios.post(
         `${this.baseURL}/jpmorgan/webhook`,
         webhookData,
         {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-jpmorgan-signature': 'test-signature',
-            'x-jpmorgan-timestamp': Math.floor(Date.now() / 1000).toString(),
-            'x-jpmorgan-nonce': 'test-nonce'
-          },
+          headers,
           timeout: 10000
         }
       );
 
       if (response.status === 200 && response.data.received) {
-        this.testSuite.addTest('Webhook Endpoint', 'passed', 'Webhook processed successfully');
+        this.testSuite.addTest('Webhook Endpoint', 'passed', 'Webhook processed successfully (Mock: ${isMockMode})');
         return true;
       } else {
         this.testSuite.addTest('Webhook Endpoint', 'failed', `Unexpected response: ${JSON.stringify(response.data)}`);
         return false;
       }
     } catch (error) {
-      if (error.response?.status === 401) {
+      if (!isMockMode && error.response?.status === 401) {
         this.testSuite.addTest('Webhook Endpoint', 'passed', 'Webhook signature validation working (expected 401 for test signature)');
         return true;
       }
@@ -480,17 +496,17 @@ async function runComprehensiveTests() {
   // Test payment creation
   const paymentId = await endpointTests.testCreatePaymentEndpoint();
 
-  // Test other endpoints (only if we have a payment ID and credentials)
-  if (paymentId && hasCredentials) {
+  // Test other endpoints (only if we have a payment ID)
+  if (paymentId) {
     await endpointTests.testPaymentStatusEndpoint(paymentId);
     await endpointTests.testRefundEndpoint(paymentId);
     await endpointTests.testCaptureEndpoint(paymentId);
     await endpointTests.testVoidEndpoint(paymentId);
   } else {
-    testSuite.addTest('Payment Status', 'skipped', 'Payment creation failed or no credentials');
-    testSuite.addTest('Refund Payment', 'skipped', 'Payment creation failed or no credentials');
-    testSuite.addTest('Capture Payment', 'skipped', 'Payment creation failed or no credentials');
-    testSuite.addTest('Void Payment', 'skipped', 'Payment creation failed or no credentials');
+    testSuite.addTest('Payment Status', 'skipped', 'Payment creation failed');
+    testSuite.addTest('Refund Payment', 'skipped', 'Payment creation failed');
+    testSuite.addTest('Capture Payment', 'skipped', 'Payment creation failed');
+    testSuite.addTest('Void Payment', 'skipped', 'Payment creation failed');
   }
 
   // Test transactions endpoint

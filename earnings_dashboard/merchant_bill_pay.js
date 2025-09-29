@@ -1,8 +1,13 @@
-const express = require('express');
-const Stripe = require('stripe');
-const nodemailer = require('nodemailer');
-const fs = require('fs');
-const path = require('path');
+import express from 'express';
+import Stripe from 'stripe';
+import nodemailer from 'nodemailer';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const router = express.Router();
 
 // Conditionally initialize Stripe only if API key is available
@@ -154,7 +159,7 @@ function getMerchantPhone(merchantId) {
 // SMS notification function (requires Twilio)
 async function sendSMSNotification(phoneNumber, message) {
   try {
-    const twilio = require('twilio');
+    const { default: twilio } = await import('twilio');
     const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
 
     await client.messages.create({
@@ -323,7 +328,7 @@ router.post('/create-merchant-payment-intent', async (req, res) => {
 // Express route for webhook
 router.post('/merchant-webhook', express.raw({ type: 'application/json' }), handleMerchantWebhook);
 
-module.exports = {
+export default {
   router,
   createMerchantPaymentIntent,
   handleMerchantWebhook,

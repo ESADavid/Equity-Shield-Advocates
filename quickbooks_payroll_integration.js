@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 class QuickBooksPayrollIntegration {
   constructor(
@@ -173,4 +173,4 @@ class QuickBooksPayrollIntegration {
   }
 }
 
-module.exports = QuickBooksPayrollIntegration;
+export default QuickBooksPayrollIntegration;
