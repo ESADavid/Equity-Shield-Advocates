@@ -36,6 +36,13 @@ class Database {
 
   async connect() {
     try {
+      // Skip database connection if explicitly disabled
+      if (process.env.SKIP_DATABASE === 'true') {
+        console.log('⚠️ Database connection skipped (SKIP_DATABASE=true)');
+        this.isConnected = false;
+        return null;
+      }
+
       const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/oscar-broome-revenue';
 
       const options = {
@@ -175,157 +182,8 @@ class Database {
     }
   }
 
-  async getStats() {
-    try {
-      const stats = await mongoose.connection.db.stats();
-      return {
-        collections: stats.collections,
-        objects: stats.objects,
-        dataSize: stats.dataSize,
-        storageSize: stats.storageSize,
-        indexes: stats.indexes,
-        indexSize: stats.indexSize,
-        performance: this.performanceMetrics
-      };
-    } catch (error) {
-      logger.error('Failed to get database stats', { error: error.message });
-      throw error;
-    }
-  }
-
-  async clearDatabase() {
-    try {
-      if (process.env.NODE_ENV !== 'test') {
-        throw new Error('Database clearing is only allowed in test environment');
-      }
-
-      const collections = mongoose.connection.collections;
-
-      for (const key in collections) {
-        await collections[key].deleteMany({});
-      }
-
-      logger.info('Database cleared successfully');
-    } catch (error) {
-      logger.error('Failed to clear database', { error: error.message });
-      throw error;
-    }
-  }
-
-  async backup(backupPath) {
-    try {
-      const { exec } = await import('child_process');
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const filename = `backup-${timestamp}.gz`;
-      const fullPath = `${backupPath}/${filename}`;
-
-      return new Promise((resolve, reject) => {
-        exec(`mongodump --db ${mongoose.connection.db.databaseName} --out ${fullPath} --gzip`, (error, stdout, stderr) => {
-          if (error) {
-            logger.error('Database backup failed', { error: error.message });
-            reject(error);
-          } else {
-            logger.info('Database backup completed successfully', { path: fullPath });
-            resolve({ path: fullPath, filename });
-          }
-        });
-      });
-    } catch (error) {
-      logger.error('Database backup failed', { error: error.message });
-      throw error;
-    }
-  }
-
-  async restore(backupPath) {
-    try {
-      const { exec } = await import('child_process');
-
-      return new Promise((resolve, reject) => {
-        exec(`mongorestore --db ${mongoose.connection.db.databaseName} ${backupPath} --gzip`, (error, stdout, stderr) => {
-          if (error) {
-            logger.error('Database restore failed', { error: error.message });
-            reject(error);
-          } else {
-            logger.info('Database restore completed successfully');
-            resolve({ success: true });
-          }
-        });
-      });
-    } catch (error) {
-      logger.error('Database restore failed', { error: error.message });
-      throw error;
-    }
-  }
-
-  // Performance optimization methods
-  async optimizeIndexes() {
-    try {
-      const collections = await mongoose.connection.db.listCollections().toArray();
-      const results = [];
-
-      for (const collection of collections) {
-        const coll = mongoose.connection.db.collection(collection.name);
-        const indexes = await coll.indexes();
-
-        // Analyze index usage
-        const stats = await coll.aggregate([
-          { $indexStats: {} }
-        ]).toArray();
-
-        results.push({
-          collection: collection.name,
-          indexes: indexes.length,
-          usage: stats
-        });
-      }
-
-      logger.info('Index optimization analysis completed', { collections: results.length });
-      return results;
-    } catch (error) {
-      logger.error('Index optimization failed', { error: error.message });
-      throw error;
-    }
-  }
-
   getPerformanceMetrics() {
     return { ...this.performanceMetrics };
-  }
-
-  resetPerformanceMetrics() {
-    this.performanceMetrics = {
-      queryCount: 0,
-      slowQueries: 0,
-      connectionPoolSize: 0,
-      averageQueryTime: 0
-    };
-    logger.info('Performance metrics reset');
-  }
-
-  // Cache warming for critical data
-  async warmCache(tenantId) {
-    try {
-      // Warm up tenant configuration
-      await this.setTenantData(tenantId, 'config', { cached: true }, 3600);
-
-      // Warm up user count
-      const User = (await import('../models/User.js')).default;
-      const userCount = await User.countDocuments({ tenantId });
-      await this.setTenantData(tenantId, 'userCount', userCount, 300);
-
-      // Warm up recent transactions count
-      const Transaction = (await import('../models/Transaction.js')).default;
-      const recentTxCount = await Transaction.countDocuments({
-        tenantId,
-        'timestamps.initiated': { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
-      });
-      await this.setTenantData(tenantId, 'recentTransactions', recentTxCount, 300);
-
-      logger.info('Cache warmed for tenant', { tenantId });
-      return true;
-    } catch (error) {
-      logger.error('Cache warming failed', { tenantId, error: error.message });
-      return false;
-    }
   }
 }
 

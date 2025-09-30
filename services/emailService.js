@@ -32,8 +32,14 @@ class EmailService {
 
   initializeTransporter() {
     try {
+      // Check if email is enabled
+      if (!emailConfig.emailEnabled) {
+        logger.warn('Email service disabled due to incomplete configuration');
+        return;
+      }
+
       const config = emailConfig.getTransporterConfig();
-      this.transporter = nodemailer.createTransporter(config);
+      this.transporter = nodemailer.createTransport(config);
 
       // Verify connection
       this.transporter.verify((error, success) => {

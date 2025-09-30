@@ -11,26 +11,26 @@
       "name": "Environment Config",
       "result": "passed",
       "message": "Mock mode active - Stripe credentials not required",
-      "timestamp": "2025-09-29T23:25:44.718Z"
+      "timestamp": "2025-09-30T02:43:40.565Z"
     },
     {
       "name": "Create Merchant Payment Intent",
       "result": "passed",
-      "message": "Payment intent created: pi_mock_1759188345007 (Mock: true)",
-      "timestamp": "2025-09-29T23:25:45.024Z"
+      "message": "Payment intent created: pi_mock_1759200220651 (Mock: true)",
+      "timestamp": "2025-09-30T02:43:40.659Z"
     },
     {
       "name": "Merchant Webhook",
       "result": "passed",
       "message": "Webhook processed successfully (Mock: ${isMockMode})",
-      "timestamp": "2025-09-29T23:25:45.197Z"
+      "timestamp": "2025-09-30T02:43:40.763Z"
     },
     {
       "name": "Payment Intent Validation",
       "result": "passed",
       "message": "Properly validates required fields",
-      "timestamp": "2025-09-29T23:25:45.211Z"
+      "timestamp": "2025-09-30T02:43:40.773Z"
     }
   ],
-  "timestamp": "2025-09-29T23:25:45.213Z"
+  "timestamp": "2025-09-30T02:43:40.774Z"
 }

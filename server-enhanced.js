@@ -23,6 +23,10 @@ import database from './config/database.js';
 import NotificationService from './earnings_dashboard/notification_service.js';
 import cacheService from './services/cacheService.js';
 
+// Import routes
+import authRoutes from './routes/auth.js';
+import transactionRoutes from './routes/transactionOverrideRoutes.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

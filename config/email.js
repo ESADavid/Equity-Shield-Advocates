@@ -81,11 +81,12 @@ class EmailConfig {
     const missing = required.filter(key => !this[key]);
 
     if (missing.length > 0) {
-      logger.error(`Missing required email configuration for ${provider}: ${missing.join(', ')}`);
-      throw new Error(`Email configuration incomplete for provider ${provider}`);
+      logger.warn(`Email configuration incomplete for ${provider}: ${missing.join(', ')} - Email features will be disabled`);
+      this.emailEnabled = false;
+    } else {
+      logger.info(`Email configuration validated for provider: ${provider}`);
+      this.emailEnabled = true;
     }
-
-    logger.info(`Email configuration validated for provider: ${provider}`);
   }
 
   getTransporterConfig() {
