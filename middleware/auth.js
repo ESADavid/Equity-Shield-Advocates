@@ -39,7 +39,36 @@ export const authenticate = async (req, res, next) => {
     req.user = user;
     req.tokenData = tokenData;
 
-    logger.debug('Authentication successful', { userId: user._id, path: req.path });
+    // Extract tenant ID from token or user
+    const tenantId = tokenData.tenantId || user.tenantId;
+    if (!tenantId) {
+      logger.error('No tenant ID found in token or user', {
+        userId: user._id,
+        tokenData: tokenData
+      });
+      return res.status(400).json({
+        success: false,
+        message: 'Tenant information missing'
+      });
+    }
+
+    // Validate user belongs to tenant
+    if (user.tenantId !== tenantId) {
+      logger.error('User tenant mismatch', {
+        userId: user._id,
+        userTenantId: user.tenantId,
+        tokenTenantId: tenantId
+      });
+      return res.status(403).json({
+        success: false,
+        message: 'Invalid tenant access'
+      });
+    }
+
+    // Attach tenant to request
+    req.tenantId = tenantId;
+
+    logger.debug('Authentication successful', { userId: user._id, tenantId, path: req.path });
     next();
   } catch (error) {
     logger.error('Authentication failed', {

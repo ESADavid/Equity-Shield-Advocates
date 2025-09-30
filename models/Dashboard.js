@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const dashboardSchema = new mongoose.Schema({
+  tenantId: {
+    type: String,
+    required: true,
+    index: true
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -155,11 +160,11 @@ const dashboardSchema = new mongoose.Schema({
 });
 
 // Indexes
-dashboardSchema.index({ userId: 1 });
-dashboardSchema.index({ isDefault: 1 });
-dashboardSchema.index({ isPublic: 1 });
-dashboardSchema.index({ 'metadata.category': 1 });
-dashboardSchema.index({ 'accessControl.sharedWith.userId': 1 });
+dashboardSchema.index({ tenantId: 1, userId: 1 });
+dashboardSchema.index({ tenantId: 1, isDefault: 1 });
+dashboardSchema.index({ tenantId: 1, isPublic: 1 });
+dashboardSchema.index({ tenantId: 1, 'metadata.category': 1 });
+dashboardSchema.index({ tenantId: 1, 'accessControl.sharedWith.userId': 1 });
 
 // Virtual for total widgets
 dashboardSchema.virtual('widgetCount').get(function() {
@@ -267,9 +272,10 @@ dashboardSchema.methods = {
 
 // Static methods
 dashboardSchema.statics = {
-  // Get user's dashboards
-  getUserDashboards: function(userId) {
+  // Get user's dashboards within tenant
+  getUserDashboards: function(userId, tenantId) {
     return this.find({
+      tenantId,
       $or: [
         { userId },
         { 'accessControl.sharedWith.userId': userId },
@@ -278,24 +284,26 @@ dashboardSchema.statics = {
     }).sort({ updatedAt: -1 });
   },
 
-  // Get default dashboard for user
-  getDefaultForUser: function(userId) {
+  // Get default dashboard for user within tenant
+  getDefaultForUser: function(userId, tenantId) {
     return this.findOne({
+      tenantId,
       userId,
       isDefault: true
     });
   },
 
-  // Get public dashboards
-  getPublicDashboards: function(limit = 20) {
-    return this.find({ isPublic: true })
+  // Get public dashboards within tenant
+  getPublicDashboards: function(limit = 20, tenantId) {
+    return this.find({ tenantId, isPublic: true })
       .sort({ 'metadata.usage.viewCount': -1 })
       .limit(limit);
   },
 
-  // Search dashboards
-  search: function(query, userId) {
+  // Search dashboards within tenant
+  search: function(query, userId, tenantId) {
     const searchQuery = {
+      tenantId,
       $and: [
         {
           $or: [
@@ -314,6 +322,14 @@ dashboardSchema.statics = {
       ]
     };
     return this.find(searchQuery);
+  },
+
+  // Get dashboards by tenant
+  getByTenant: function(tenantId, limit = 100, skip = 0) {
+    return this.find({ tenantId })
+      .sort({ updatedAt: -1 })
+      .limit(limit)
+      .skip(skip);
   }
 };
 

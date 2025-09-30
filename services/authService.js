@@ -32,19 +32,26 @@ class AuthService {
   // Register new user
   async register(userData) {
     try {
-      const { username, email, password, firstName, lastName, role = 'user' } = userData;
+      const { username, email, password, firstName, lastName, role = 'user', tenantId } = userData;
 
-      // Check if user already exists
+      // Validate tenantId is provided
+      if (!tenantId) {
+        throw new Error('Tenant ID is required for registration');
+      }
+
+      // Check if user already exists within the tenant
       const existingUser = await User.findOne({
+        tenantId,
         $or: [{ email }, { username }]
       });
 
       if (existingUser) {
-        throw new Error('User already exists with this email or username');
+        throw new Error('User already exists with this email or username in this tenant');
       }
 
       // Create new user
       const user = new User({
+        tenantId,
         username,
         email,
         password,
@@ -55,7 +62,7 @@ class AuthService {
 
       await user.save();
 
-      logger.info('User registered successfully', { userId: user._id, username });
+      logger.info('User registered successfully', { userId: user._id, username, tenantId });
 
       // Generate tokens
       const tokens = this.generateTokens(user);
@@ -171,7 +178,8 @@ class AuthService {
         _id: user._id,
         username: user.username,
         role: user.role,
-        permissions: user.permissions
+        permissions: user.permissions,
+        tenantId: user.tenantId
       },
       this.jwtSecret,
       { expiresIn: this.jwtExpiresIn }
@@ -180,7 +188,8 @@ class AuthService {
     const refreshToken = jwt.sign(
       {
         _id: user._id,
-        type: 'refresh'
+        type: 'refresh',
+        tenantId: user.tenantId
       },
       this.jwtSecret,
       { expiresIn: this.refreshTokenExpiresIn }

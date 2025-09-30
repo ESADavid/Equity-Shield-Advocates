@@ -1,70 +1,216 @@
+import mongoose from 'mongoose';
+
 /**
  * Transaction Override Model
  * Manages transaction override requests and approvals
  */
 
-class TransactionOverride {
-  constructor(data = {}) {
-    this.id = data.id || this.generateId();
-    this.originalTransactionId = data.originalTransactionId;
-    this.transactionType = data.transactionType; // 'earnings', 'purchase', etc.
-    this.overrideType = data.overrideType; // 'amount', 'status', 'date', 'delete'
-    this.originalValue = data.originalValue;
-    this.newValue = data.newValue;
-    this.reason = data.reason;
-    this.requestedBy = data.requestedBy;
-    this.requestedAt = data.requestedAt || new Date().toISOString();
-    this.status = data.status || 'pending'; // pending, approved, rejected
-    this.approvedBy = data.approvedBy || null;
-    this.approvedAt = data.approvedAt || null;
-    this.rejectionReason = data.rejectionReason || null;
-    this.auditTrail = data.auditTrail || [];
+const transactionOverrideSchema = new mongoose.Schema({
+  tenantId: {
+    type: String,
+    required: true,
+    index: true
+  },
+  originalTransactionId: {
+    type: String,
+    required: true,
+    index: true
+  },
+  transactionType: {
+    type: String,
+    required: true,
+    enum: ['earnings', 'purchase', 'transfer', 'payment', 'fee', 'refund']
+  },
+  overrideType: {
+    type: String,
+    required: true,
+    enum: ['amount', 'status', 'date', 'delete', 'merchant', 'description']
+  },
+  originalValue: {
+    type: mongoose.Schema.Types.Mixed,
+    required: true
+  },
+  newValue: {
+    type: mongoose.Schema.Types.Mixed,
+    required: true
+  },
+  reason: {
+    type: String,
+    required: true,
+    maxlength: 500
+  },
+  requestedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected', 'cancelled'],
+    default: 'pending'
+  },
+  approvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  approvedAt: Date,
+  rejectionReason: String,
+  auditTrail: [{
+    action: {
+      type: String,
+      enum: ['created', 'approved', 'rejected', 'cancelled', 'modified']
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    details: String,
+    timestamp: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  metadata: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
   }
+}, {
+  timestamps: true
+});
 
-  generateId() {
-    return `override_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
+// Indexes
+transactionOverrideSchema.index({ tenantId: 1, status: 1 });
+transactionOverrideSchema.index({ tenantId: 1, requestedBy: 1 });
+transactionOverrideSchema.index({ tenantId: 1, originalTransactionId: 1 });
+transactionOverrideSchema.index({ tenantId: 1, 'auditTrail.timestamp': -1 });
 
-  addAuditEntry(action, user, details) {
+// Virtual for isPending
+transactionOverrideSchema.virtual('isPending').get(function() {
+  return this.status === 'pending';
+});
+
+// Virtual for isApproved
+transactionOverrideSchema.virtual('isApproved').get(function() {
+  return this.status === 'approved';
+});
+
+// Instance methods
+transactionOverrideSchema.methods = {
+  // Approve override
+  approve: function(approverId, notes = '') {
+    this.status = 'approved';
+    this.approvedBy = approverId;
+    this.approvedAt = new Date();
+    this.auditTrail.push({
+      action: 'approved',
+      user: approverId,
+      details: notes,
+      timestamp: new Date()
+    });
+    return this.save();
+  },
+
+  // Reject override
+  reject: function(approverId, reason) {
+    this.status = 'rejected';
+    this.approvedBy = approverId;
+    this.rejectionReason = reason;
+    this.auditTrail.push({
+      action: 'rejected',
+      user: approverId,
+      details: reason,
+      timestamp: new Date()
+    });
+    return this.save();
+  },
+
+  // Cancel override
+  cancel: function(userId, reason = '') {
+    this.status = 'cancelled';
+    this.auditTrail.push({
+      action: 'cancelled',
+      user: userId,
+      details: reason,
+      timestamp: new Date()
+    });
+    return this.save();
+  },
+
+  // Add audit entry
+  addAuditEntry: function(action, userId, details = '') {
     this.auditTrail.push({
       action,
-      user,
+      user: userId,
       details,
-      timestamp: new Date().toISOString()
+      timestamp: new Date()
     });
-  }
+    return this.save();
+  },
 
-  approve(approver, notes = '') {
-    this.status = 'approved';
-    this.approvedBy = approver;
-    this.approvedAt = new Date().toISOString();
-    this.addAuditEntry('approved', approver, notes);
-  }
-
-  reject(rejector, reason) {
-    this.status = 'rejected';
-    this.rejectionReason = reason;
-    this.addAuditEntry('rejected', rejector, reason);
-  }
-
-  toJSON() {
+  // Get summary
+  getSummary: function() {
     return {
-      id: this.id,
+      id: this._id,
       originalTransactionId: this.originalTransactionId,
       transactionType: this.transactionType,
       overrideType: this.overrideType,
       originalValue: this.originalValue,
       newValue: this.newValue,
       reason: this.reason,
-      requestedBy: this.requestedBy,
-      requestedAt: this.requestedAt,
       status: this.status,
+      requestedBy: this.requestedBy,
+      requestedAt: this.createdAt,
       approvedBy: this.approvedBy,
-      approvedAt: this.approvedAt,
-      rejectionReason: this.rejectionReason,
-      auditTrail: this.auditTrail
+      approvedAt: this.approvedAt
     };
   }
-}
+};
 
-export default TransactionOverride;
+// Static methods
+transactionOverrideSchema.statics = {
+  // Get overrides by status within tenant
+  getByStatus: function(status, tenantId, limit = 50) {
+    return this.find({ tenantId, status })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .populate('requestedBy', 'username firstName lastName')
+      .populate('approvedBy', 'username firstName lastName');
+  },
+
+  // Get overrides by user within tenant
+  getByUser: function(userId, tenantId, limit = 50) {
+    return this.find({ tenantId, requestedBy: userId })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .populate('requestedBy', 'username firstName lastName')
+      .populate('approvedBy', 'username firstName lastName');
+  },
+
+  // Get pending overrides within tenant
+  getPending: function(tenantId, limit = 100) {
+    return this.find({ tenantId, status: 'pending' })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .populate('requestedBy', 'username firstName lastName');
+  },
+
+  // Get overrides by transaction within tenant
+  getByTransaction: function(transactionId, tenantId) {
+    return this.find({ tenantId, originalTransactionId: transactionId })
+      .sort({ createdAt: -1 })
+      .populate('requestedBy', 'username firstName lastName')
+      .populate('approvedBy', 'username firstName lastName');
+  },
+
+  // Get overrides by tenant
+  getByTenant: function(tenantId, limit = 100, skip = 0) {
+    return this.find({ tenantId })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(skip)
+      .populate('requestedBy', 'username firstName lastName')
+      .populate('approvedBy', 'username firstName lastName');
+  }
+};
+
+export default mongoose.model('TransactionOverride', transactionOverrideSchema);

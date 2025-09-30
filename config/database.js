@@ -26,6 +26,12 @@ class Database {
   constructor() {
     this.isConnected = false;
     this.connection = null;
+    this.performanceMetrics = {
+      queryCount: 0,
+      slowQueries: 0,
+      connectionPoolSize: 0,
+      averageQueryTime: 0
+    };
   }
 
   async connect() {
@@ -33,11 +39,21 @@ class Database {
       const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/oscar-broome-revenue';
 
       const options = {
-        maxPoolSize: 10,
+        maxPoolSize: 20, // Increased for better performance
+        minPoolSize: 5,  // Minimum connections to maintain
+        maxIdleTimeMS: 30000,
         serverSelectionTimeoutMS: 5000,
         socketTimeoutMS: 45000,
-        maxIdleTimeMS: 30000,
-        family: 4
+        bufferCommands: false, // Disable mongoose buffering
+        family: 4,
+        // Performance optimizations
+        readPreference: 'primaryPreferred',
+        retryWrites: true,
+        retryReads: true,
+        // Connection monitoring
+        heartbeatFrequencyMS: 10000,
+        // Compression
+        compressors: ['zlib']
       };
 
       this.connection = await mongoose.connect(mongoURI, options);
@@ -47,7 +63,9 @@ class Database {
       logger.info('MongoDB connected successfully', {
         host: this.connection.connection.host,
         port: this.connection.connection.port,
-        name: this.connection.connection.name
+        name: this.connection.connection.name,
+        maxPoolSize: options.maxPoolSize,
+        minPoolSize: options.minPoolSize
       });
 
       // Set up connection event listeners
@@ -66,11 +84,40 @@ class Database {
         this.isConnected = true;
       });
 
+      // Set up query performance monitoring
+      this.setupPerformanceMonitoring();
+
       return this.connection;
     } catch (error) {
       logger.error('MongoDB connection failed', { error: error.message });
       throw error;
     }
+  }
+
+  setupPerformanceMonitoring() {
+    // Monitor query performance
+    mongoose.set('debug', (collectionName, methodName, ...args) => {
+      const startTime = Date.now();
+      this.performanceMetrics.queryCount++;
+
+      // Log slow queries (>100ms)
+      setImmediate(() => {
+        const duration = Date.now() - startTime;
+        if (duration > 100) {
+          this.performanceMetrics.slowQueries++;
+          logger.warn('Slow query detected', {
+            collection: collectionName,
+            method: methodName,
+            duration,
+            args: args.length > 0 ? args[0] : null
+          });
+        }
+
+        // Update average query time
+        this.performanceMetrics.averageQueryTime =
+          (this.performanceMetrics.averageQueryTime + duration) / 2;
+      });
+    });
   }
 
   async disconnect() {
@@ -94,15 +141,37 @@ class Database {
       await mongoose.connection.db.admin().ping();
       const latency = Date.now() - start;
 
+      // Get connection pool stats
+      const poolStats = await this.getConnectionPoolStats();
+
       return {
         status: 'connected',
         latency,
         database: mongoose.connection.db.databaseName,
-        collections: await mongoose.connection.db.listCollections().toArray().then(cols => cols.length)
+        collections: await mongoose.connection.db.listCollections().toArray().then(cols => cols.length),
+        performance: {
+          queryCount: this.performanceMetrics.queryCount,
+          slowQueries: this.performanceMetrics.slowQueries,
+          averageQueryTime: Math.round(this.performanceMetrics.averageQueryTime),
+          connectionPool: poolStats
+        }
       };
     } catch (error) {
       logger.error('Database health check failed', { error: error.message });
       return { status: 'error', error: error.message };
+    }
+  }
+
+  async getConnectionPoolStats() {
+    try {
+      const stats = await mongoose.connection.db.command({ serverStatus: 1 });
+      return {
+        poolSize: stats.connections?.current || 0,
+        available: stats.connections?.available || 0,
+        created: stats.connections?.totalCreated || 0
+      };
+    } catch (error) {
+      return { poolSize: 0, available: 0, created: 0 };
     }
   }
 
@@ -115,7 +184,8 @@ class Database {
         dataSize: stats.dataSize,
         storageSize: stats.storageSize,
         indexes: stats.indexes,
-        indexSize: stats.indexSize
+        indexSize: stats.indexSize,
+        performance: this.performanceMetrics
       };
     } catch (error) {
       logger.error('Failed to get database stats', { error: error.message });
@@ -184,6 +254,77 @@ class Database {
     } catch (error) {
       logger.error('Database restore failed', { error: error.message });
       throw error;
+    }
+  }
+
+  // Performance optimization methods
+  async optimizeIndexes() {
+    try {
+      const collections = await mongoose.connection.db.listCollections().toArray();
+      const results = [];
+
+      for (const collection of collections) {
+        const coll = mongoose.connection.db.collection(collection.name);
+        const indexes = await coll.indexes();
+
+        // Analyze index usage
+        const stats = await coll.aggregate([
+          { $indexStats: {} }
+        ]).toArray();
+
+        results.push({
+          collection: collection.name,
+          indexes: indexes.length,
+          usage: stats
+        });
+      }
+
+      logger.info('Index optimization analysis completed', { collections: results.length });
+      return results;
+    } catch (error) {
+      logger.error('Index optimization failed', { error: error.message });
+      throw error;
+    }
+  }
+
+  getPerformanceMetrics() {
+    return { ...this.performanceMetrics };
+  }
+
+  resetPerformanceMetrics() {
+    this.performanceMetrics = {
+      queryCount: 0,
+      slowQueries: 0,
+      connectionPoolSize: 0,
+      averageQueryTime: 0
+    };
+    logger.info('Performance metrics reset');
+  }
+
+  // Cache warming for critical data
+  async warmCache(tenantId) {
+    try {
+      // Warm up tenant configuration
+      await this.setTenantData(tenantId, 'config', { cached: true }, 3600);
+
+      // Warm up user count
+      const User = (await import('../models/User.js')).default;
+      const userCount = await User.countDocuments({ tenantId });
+      await this.setTenantData(tenantId, 'userCount', userCount, 300);
+
+      // Warm up recent transactions count
+      const Transaction = (await import('../models/Transaction.js')).default;
+      const recentTxCount = await Transaction.countDocuments({
+        tenantId,
+        'timestamps.initiated': { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
+      });
+      await this.setTenantData(tenantId, 'recentTransactions', recentTxCount, 300);
+
+      logger.info('Cache warmed for tenant', { tenantId });
+      return true;
+    } catch (error) {
+      logger.error('Cache warming failed', { tenantId, error: error.message });
+      return false;
     }
   }
 }

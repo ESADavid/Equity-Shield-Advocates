@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const analyticsSchema = new mongoose.Schema({
+  tenantId: {
+    type: String,
+    required: true,
+    index: true
+  },
   type: {
     type: String,
     required: true,
@@ -108,12 +113,12 @@ const analyticsSchema = new mongoose.Schema({
 });
 
 // Indexes
-analyticsSchema.index({ type: 1 });
-analyticsSchema.index({ 'metadata.dateRange.start': 1, 'metadata.dateRange.end': 1 });
-analyticsSchema.index({ 'access.createdBy': 1 });
-analyticsSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-analyticsSchema.index({ status: 1 });
-analyticsSchema.index({ 'insights.severity': 1 });
+analyticsSchema.index({ tenantId: 1, type: 1 });
+analyticsSchema.index({ tenantId: 1, 'metadata.dateRange.start': 1, 'metadata.dateRange.end': 1 });
+analyticsSchema.index({ tenantId: 1, 'access.createdBy': 1 });
+analyticsSchema.index({ tenantId: 1, expiresAt: 1 }, { expireAfterSeconds: 0 });
+analyticsSchema.index({ tenantId: 1, status: 1 });
+analyticsSchema.index({ tenantId: 1, 'insights.severity': 1 });
 
 // Virtual for age
 analyticsSchema.virtual('age').get(function() {
@@ -221,16 +226,17 @@ analyticsSchema.methods = {
 
 // Static methods
 analyticsSchema.statics = {
-  // Get analytics by type
-  getByType: function(type, limit = 50) {
-    return this.find({ type, status: 'completed' })
+  // Get analytics by type within tenant
+  getByType: function(type, tenantId, limit = 50) {
+    return this.find({ tenantId, type, status: 'completed' })
       .sort({ createdAt: -1 })
       .limit(limit);
   },
 
-  // Get analytics by user
-  getByUser: function(userId, limit = 50) {
+  // Get analytics by user within tenant
+  getByUser: function(userId, tenantId, limit = 50) {
     return this.find({
+      tenantId,
       $or: [
         { 'access.createdBy': userId },
         { 'access.sharedWith.userId': userId },
@@ -242,9 +248,10 @@ analyticsSchema.statics = {
     .limit(limit);
   },
 
-  // Get analytics by date range
-  getByDateRange: function(startDate, endDate, type = null) {
+  // Get analytics by date range within tenant
+  getByDateRange: function(startDate, endDate, tenantId, type = null) {
     const query = {
+      tenantId,
       'metadata.dateRange.start': { $gte: startDate },
       'metadata.dateRange.end': { $lte: endDate },
       status: 'completed'
@@ -257,9 +264,10 @@ analyticsSchema.statics = {
     return this.find(query).sort({ createdAt: -1 });
   },
 
-  // Get insights by severity
-  getInsightsBySeverity: function(severity, limit = 100) {
+  // Get insights by severity within tenant
+  getInsightsBySeverity: function(severity, tenantId, limit = 100) {
     return this.find({
+      tenantId,
       'insights.severity': severity,
       status: 'completed'
     })
@@ -267,16 +275,18 @@ analyticsSchema.statics = {
     .limit(limit);
   },
 
-  // Clean expired analytics
-  cleanExpired: function() {
+  // Clean expired analytics within tenant
+  cleanExpired: function(tenantId) {
     return this.deleteMany({
+      tenantId,
       expiresAt: { $lt: new Date() }
     });
   },
 
-  // Get analytics statistics
-  getStats: function() {
+  // Get analytics statistics within tenant
+  getStats: function(tenantId) {
     return this.aggregate([
+      { $match: { tenantId } },
       {
         $group: {
           _id: '$type',
@@ -287,6 +297,14 @@ analyticsSchema.statics = {
         }
       }
     ]);
+  },
+
+  // Get analytics by tenant
+  getByTenant: function(tenantId, limit = 100, skip = 0) {
+    return this.find({ tenantId })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(skip);
   }
 };
 

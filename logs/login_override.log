@@ -44,3 +44,9 @@
 {"count":2,"level":"info","message":"Cleaned up expired overrides","service":"login-override","timestamp":"2025-09-29T21:51:58.941Z"}
 {"count":2,"level":"info","message":"Cleaned up expired overrides","service":"login-override","timestamp":"2025-09-29T21:56:13.452Z"}
 {"count":2,"level":"info","message":"Cleaned up expired overrides","service":"login-override","timestamp":"2025-09-29T22:01:11.633Z"}
+{"expiresAt":"2025-09-30T00:16:41.706Z","level":"warn","message":"EMERGENCY OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759190501705_794441C1","reason":"emergency_access","service":"login-override","timestamp":"2025-09-30T00:01:41.705Z","userId":"USER_1759190501454_047B0E60"}
+{"adminUserId":"admin@oscarsystem.com","expiresAt":"2025-09-30T00:16:42.020Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759190502020_279751A6","reason":"technical_issue","service":"login-override","targetUserId":"USER_1759190501999_64E8533B","timestamp":"2025-09-30T00:01:42.020Z"}
+{"count":2,"level":"info","message":"Cleaned up expired overrides","service":"login-override","timestamp":"2025-09-30T00:18:16.307Z"}
+{"expiresAt":"2025-09-30T00:46:42.547Z","level":"warn","message":"EMERGENCY OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759192302546_20EA5D80","reason":"emergency_access","service":"login-override","timestamp":"2025-09-30T00:31:42.546Z","userId":"USER_1759192301876_0A564810"}
+{"adminUserId":"admin@oscarsystem.com","expiresAt":"2025-09-30T00:46:42.898Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759192302898_9D96CC39","reason":"technical_issue","service":"login-override","targetUserId":"USER_1759192302886_31762CF9","timestamp":"2025-09-30T00:31:42.898Z"}
+{"count":2,"level":"info","message":"Cleaned up expired overrides","service":"login-override","timestamp":"2025-09-30T00:51:40.577Z"}

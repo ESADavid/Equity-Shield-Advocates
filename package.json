@@ -1,7 +1,7 @@
 {
   "name": "oscar-broome-revenue-override",
   "version": "2.0.0",
-  "description": "Oscar Broome Revenue System with Transaction Override Capabilities",
+  "description": "Oscar Broome Revenue System with Transaction Override Capabilities - Performance Optimized",
   "main": "server-enhanced.js",
   "type": "module",
   "scripts": {
@@ -30,7 +30,13 @@
     "docker:build:staging": "docker build -f Dockerfile.staging -t oscar-broome-revenue:staging .",
     "docker:run:staging": "docker run -p 3001:3000 --env-file .env.staging oscar-broome-revenue:staging",
     "frontend:start": "serve -s frontend -l 5173",
-    "test:all-windows": "npm run test:jpmorgan && npm run test:merchant && npm run test:payroll && npm run test:staging"
+    "test:all-windows": "npm run test:jpmorgan && npm run test:merchant && npm run test:payroll && npm run test:staging",
+    "pm2:start": "pm2 start ecosystem.config.js --env production",
+    "pm2:stop": "pm2 stop ecosystem.config.js",
+    "pm2:restart": "pm2 restart ecosystem.config.js",
+    "pm2:delete": "pm2 delete ecosystem.config.js",
+    "pm2:logs": "pm2 logs",
+    "pm2:monit": "pm2 monit"
   },
   "keywords": [
     "revenue",
@@ -39,7 +45,10 @@
     "audit",
     "oscar-broome",
     "treasury",
-    "jpmorgan"
+    "jpmorgan",
+    "performance",
+    "caching",
+    "multi-tenant"
   ],
   "author": "Oscar Broome Revenue Team",
   "license": "MIT",
@@ -63,6 +72,7 @@
     "express-winston": "^4.2.0",
     "framer-motion": "^12.23.22",
     "helmet": "^8.1.0",
+    "ioredis": "^5.8.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.544.0",
     "mathjs": "^14.8.1",
@@ -74,6 +84,7 @@
     "nodemailer": "^7.0.6",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "pm2": "^5.4.3",
     "puppeteer": "^24.18.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
@@ -81,6 +92,7 @@
     "react-query": "^3.39.3",
     "recharts": "^3.2.1",
     "redis": "^4.6.0",
+    "response-time": "^2.3.4",
     "sha3": "^2.1.4",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",

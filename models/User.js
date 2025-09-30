@@ -2,10 +2,14 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
+  tenantId: {
+    type: String,
+    required: true,
+    index: true
+  },
   username: {
     type: String,
     required: true,
-    unique: true,
     trim: true,
     minlength: 3,
     maxlength: 50
@@ -13,7 +17,6 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
     trim: true,
     lowercase: true,
     match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
@@ -108,10 +111,10 @@ userSchema.virtual('isLocked').get(function() {
 });
 
 // Index for performance
-userSchema.index({ email: 1 });
-userSchema.index({ username: 1 });
-userSchema.index({ role: 1 });
-userSchema.index({ isActive: 1 });
+userSchema.index({ tenantId: 1, email: 1 }, { unique: true });
+userSchema.index({ tenantId: 1, username: 1 }, { unique: true });
+userSchema.index({ tenantId: 1, role: 1 });
+userSchema.index({ tenantId: 1, isActive: 1 });
 
 // Pre-save middleware to hash password
 userSchema.pre('save', async function(next) {
@@ -200,22 +203,36 @@ userSchema.methods = {
 
 // Static methods
 userSchema.statics = {
-  // Find user for authentication
-  findForAuth: function(username) {
+  // Find user for authentication within tenant
+  findForAuth: function(username, tenantId) {
     return this.findOne({
+      tenantId,
       $or: [{ username }, { email: username }],
       isActive: true
     });
   },
 
-  // Get users by role
-  getByRole: function(role) {
-    return this.find({ role, isActive: true });
+  // Get users by role within tenant
+  getByRole: function(role, tenantId) {
+    return this.find({ tenantId, role, isActive: true });
   },
 
-  // Get active users
-  getActiveUsers: function() {
-    return this.find({ isActive: true });
+  // Get active users within tenant
+  getActiveUsers: function(tenantId) {
+    return this.find({ tenantId, isActive: true });
+  },
+
+  // Get users by tenant
+  getByTenant: function(tenantId) {
+    return this.find({ tenantId });
+  },
+
+  // Check if username/email is available within tenant
+  isAvailable: function(usernameOrEmail, tenantId) {
+    return this.findOne({
+      tenantId,
+      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }]
+    }).then(user => !user);
   }
 };
 

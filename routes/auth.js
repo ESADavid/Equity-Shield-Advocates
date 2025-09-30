@@ -12,13 +12,13 @@ const router = express.Router();
 // Register new user
 router.post('/register', authRateLimit, logAuthEvent('register'), async (req, res) => {
   try {
-    const { username, email, password, firstName, lastName, role } = req.body;
+    const { username, email, password, firstName, lastName, role, tenantId } = req.body;
 
     // Basic validation
-    if (!username || !email || !password || !firstName || !lastName) {
+    if (!username || !email || !password || !firstName || !lastName || !tenantId) {
       return res.status(400).json({
         success: false,
-        message: 'All fields are required'
+        message: 'All fields including tenantId are required'
       });
     }
 
@@ -35,7 +35,8 @@ router.post('/register', authRateLimit, logAuthEvent('register'), async (req, re
       password,
       firstName,
       lastName,
-      role: role || 'user'
+      role: role || 'user',
+      tenantId
     });
 
     res.status(201).json({
@@ -103,7 +104,7 @@ router.post('/refresh', logAuthEvent('refresh'), async (req, res) => {
     console.error('Token refresh error:', error);
     res.status(401).json({
       success: false,
-      message: error.message
+      message: 'Invalid refresh token'
     });
   }
 });

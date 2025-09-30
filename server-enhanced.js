@@ -16,14 +16,12 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import winston from 'winston';
 import expressWinston from 'express-winston';
+import responseTime from 'response-time';
 
 // Import database and services
 import database from './config/database.js';
 import NotificationService from './earnings_dashboard/notification_service.js';
-
-// Import routes
-import authRoutes from './routes/auth.js';
-import transactionRoutes from './routes/transactionOverrideRoutes.js';
+import cacheService from './services/cacheService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,6 +29,16 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
+
+// Performance monitoring
+const performanceMetrics = {
+  requestCount: 0,
+  totalResponseTime: 0,
+  averageResponseTime: 0,
+  slowRequests: 0,
+  errorCount: 0,
+  startTime: Date.now()
+};
 
 // Create HTTP server
 const server = createServer(app);
@@ -50,6 +58,14 @@ try {
 } catch (error) {
   console.error('❌ Database connection failed:', error.message);
   process.exit(1);
+}
+
+// Initialize cache service
+try {
+  await cacheService.connect();
+  console.log('✅ Cache service initialized');
+} catch (error) {
+  console.warn('⚠️ Cache service initialization failed, falling back to memory cache:', error.message);
 }
 
 // Initialize notification service
@@ -128,19 +144,51 @@ app.use(cors({
   credentials: true
 }));
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.',
+// Response time monitoring
+app.use(responseTime((req, res, time) => {
+  performanceMetrics.requestCount++;
+  performanceMetrics.totalResponseTime += time;
+  performanceMetrics.averageResponseTime = performanceMetrics.totalResponseTime / performanceMetrics.requestCount;
+
+  // Track slow requests (>500ms)
+  if (time > 500) {
+    performanceMetrics.slowRequests++;
+  }
+
+  // Add performance headers
+  res.set('X-Response-Time', `${Math.round(time)}ms`);
+}));
+
+// Rate limiting with different tiers
+const createRateLimit = (windowMs, max, message) => rateLimit({
+  windowMs,
+  max,
+  message: { error: message },
   standardHeaders: true,
   legacyHeaders: false,
+  handler: (req, res) => {
+    performanceMetrics.errorCount++;
+    res.status(429).json({ error: message });
+  }
 });
 
-app.use('/api/', limiter);
+// General API rate limiting
+app.use('/api/', createRateLimit(15 * 60 * 1000, 100, 'Too many requests from this IP, please try again later.'));
 
-// Compression
-app.use(compression());
+// Stricter rate limiting for auth endpoints
+app.use('/api/auth/', createRateLimit(15 * 60 * 1000, 5, 'Too many authentication attempts, please try again later.'));
+
+// Compression with custom settings
+app.use(compression({
+  level: 6, // Balanced compression level
+  threshold: 1024, // Only compress responses > 1KB
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  }
+}));
 
 // Logging
 if (NODE_ENV === 'production') {
@@ -157,19 +205,69 @@ if (NODE_ENV === 'production') {
   app.use(morgan('dev'));
 }
 
-// Body parsing middleware
+// Body parsing middleware with size limits
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    environment: NODE_ENV,
-    version: process.env.npm_package_version || '1.0.0',
-    uptime: process.uptime()
-  });
+// Health check endpoint with performance metrics
+app.get('/health', async (req, res) => {
+  try {
+    const dbHealth = await database.healthCheck();
+    const cacheHealth = await cacheService.healthCheck();
+
+    const health = {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      environment: NODE_ENV,
+      version: process.env.npm_package_version || '1.0.0',
+      uptime: process.uptime(),
+      database: dbHealth,
+      cache: cacheHealth,
+      performance: {
+        ...performanceMetrics,
+        uptime: Date.now() - performanceMetrics.startTime
+      }
+    };
+
+    // Determine overall health status
+    if (dbHealth.status !== 'connected' || cacheHealth.status === 'error') {
+      health.status = 'degraded';
+      res.status(503);
+    }
+
+    res.json(health);
+  } catch (error) {
+    console.error('Health check error:', error);
+    res.status(503).json({
+      status: 'unhealthy',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Performance metrics endpoint
+app.get('/metrics', (req, res) => {
+  const metrics = {
+    performance: {
+      ...performanceMetrics,
+      uptime: Date.now() - performanceMetrics.startTime
+    },
+    database: database.getPerformanceMetrics(),
+    cache: cacheService.getMetrics(),
+    memory: {
+      usage: process.memoryUsage(),
+      uptime: process.uptime()
+    },
+    system: {
+      platform: process.platform,
+      arch: process.arch,
+      nodeVersion: process.version,
+      pid: process.pid
+    }
+  };
+
+  res.json(metrics);
 });
 
 // API status endpoint
@@ -192,8 +290,11 @@ app.get('/api/status', (req, res) => {
       stripe: !!process.env.STRIPE_SECRET_KEY,
       smtp: !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS),
       twilio: !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER),
-      jpmorgan: !!(process.env.JPMORGAN_CLIENT_ID && process.env.JPMORGAN_CLIENT_SECRET && process.env.JPMORGAN_MERCHANT_ID && process.env.JPMORGAN_TERMINAL_ID)
-    }
+      jpmorgan: !!(process.env.JPMORGAN_CLIENT_ID && process.env.JPMORGAN_CLIENT_SECRET && process.env.JPMORGAN_MERCHANT_ID && process.env.JPMORGAN_TERMINAL_ID),
+      redis: cacheService.isConnected,
+      database: database.isConnected
+    },
+    performance: performanceMetrics
   };
 
   res.json(status);
@@ -247,26 +348,22 @@ app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), asyn
     await merchantBillPay.handleMerchantWebhook(req, res);
   } catch (error) {
     console.error('Webhook processing error:', error);
+    performanceMetrics.errorCount++;
     res.status(500).json({ error: 'Webhook processing failed' });
   }
 });
 
-
-
 import mime from 'mime';
 
-// Static file serving for frontend with correct MIME types
-app.use((req, res, next) => {
-  if (req.path === '/styles.css') {
-    const cssPath = path.join(__dirname, 'public', 'override-dashboard.css');
-    res.type(mime.getType(cssPath));
-    res.sendFile(cssPath);
-  } else {
-    next();
+// Static file serving with caching headers
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '1d', // Cache static files for 1 day
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css') || path.endsWith('.js')) {
+      res.set('Cache-Control', 'public, max-age=86400'); // 1 day
+    }
   }
-});
-
-app.use(express.static(path.join(__dirname, 'public')));
+}));
 
 // Catch-all handler for SPA
 app.get('*', (req, res) => {
@@ -277,6 +374,7 @@ app.get('*', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
+  performanceMetrics.errorCount++;
 
   // Don't leak error details in production
   const errorResponse = {
@@ -298,25 +396,38 @@ app.use((req, res) => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    console.log('Process terminated');
-    process.exit(0);
-  });
-});
+const gracefulShutdown = () => {
+  console.log('Graceful shutdown initiated...');
 
-process.on('SIGINT', () => {
-  console.log('SIGINT received, shutting down gracefully');
-  server.close(() => {
+  server.close(async () => {
+    console.log('HTTP server closed');
+
+    try {
+      await database.disconnect();
+      await cacheService.disconnect();
+      console.log('Database and cache connections closed');
+    } catch (error) {
+      console.error('Error during shutdown:', error);
+    }
+
     console.log('Process terminated');
     process.exit(0);
   });
-});
+
+  // Force shutdown after 10 seconds
+  setTimeout(() => {
+    console.error('Forced shutdown after timeout');
+    process.exit(1);
+  }, 10000);
+};
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
 
 // Unhandled promise rejection handler
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  performanceMetrics.errorCount++;
   // Don't exit in production, just log
   if (NODE_ENV !== 'production') {
     process.exit(1);
@@ -326,6 +437,7 @@ process.on('unhandledRejection', (reason, promise) => {
 // Uncaught exception handler
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
+  performanceMetrics.errorCount++;
   // Don't exit in production, just log
   if (NODE_ENV !== 'production') {
     process.exit(1);
@@ -353,11 +465,12 @@ io.on('connection', (socket) => {
 
 // Start server
 server.listen(PORT, () => {
-  console.log('🚀 OSCAR BROOME REVENUE - Production Server');
-  console.log('==========================================');
+  console.log('🚀 OSCAR BROOME REVENUE - Performance Optimized Server');
+  console.log('====================================================');
   console.log(`✅ Server running on port ${PORT}`);
   console.log(`✅ Environment: ${NODE_ENV}`);
   console.log(`✅ Health check: http://localhost:${PORT}/health`);
+  console.log(`✅ Performance metrics: http://localhost:${PORT}/metrics`);
   console.log(`✅ API status: http://localhost:${PORT}/api/status`);
   console.log(`✅ WebSocket notifications enabled`);
   console.log(`✅ Started at: ${new Date().toISOString()}`);
@@ -367,10 +480,13 @@ server.listen(PORT, () => {
     console.log('📊 Production Features:');
     console.log('   - Security headers enabled');
     console.log('   - Rate limiting active');
-    console.log('   - Compression enabled');
+    console.log('   - Response compression enabled');
     console.log('   - Request logging to file');
+    console.log('   - Performance monitoring');
     console.log('   - Graceful error handling');
     console.log('   - Real-time notifications');
+    console.log('   - Redis caching layer');
+    console.log('   - Database connection pooling');
     console.log('');
   }
 });
@@ -378,5 +494,5 @@ server.listen(PORT, () => {
 // Export for testing
 export default app;
 
-// Export notification service for use in other modules
-export { notificationService };
+// Export services for use in other modules
+export { notificationService, cacheService, performanceMetrics };

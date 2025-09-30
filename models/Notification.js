@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const notificationSchema = new mongoose.Schema({
+  tenantId: {
+    type: String,
+    required: true,
+    index: true
+  },
   recipient: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -101,13 +106,13 @@ const notificationSchema = new mongoose.Schema({
 });
 
 // Indexes
-notificationSchema.index({ recipient: 1, status: 1 });
-notificationSchema.index({ type: 1 });
-notificationSchema.index({ priority: 1 });
-notificationSchema.index({ category: 1 });
-notificationSchema.index({ 'channels.status': 1 });
-notificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-notificationSchema.index({ createdAt: -1 });
+notificationSchema.index({ tenantId: 1, recipient: 1, status: 1 });
+notificationSchema.index({ tenantId: 1, type: 1 });
+notificationSchema.index({ tenantId: 1, priority: 1 });
+notificationSchema.index({ tenantId: 1, category: 1 });
+notificationSchema.index({ tenantId: 1, 'channels.status': 1 });
+notificationSchema.index({ tenantId: 1, expiresAt: 1 }, { expireAfterSeconds: 0 });
+notificationSchema.index({ tenantId: 1, createdAt: -1 });
 
 // Virtual for age
 notificationSchema.virtual('age').get(function() {
@@ -204,9 +209,9 @@ notificationSchema.methods = {
 
 // Static methods
 notificationSchema.statics = {
-  // Get notifications for user
-  getForUser: function(userId, status = null, limit = 50, skip = 0) {
-    const query = { recipient: userId };
+  // Get notifications for user within tenant
+  getForUser: function(userId, tenantId, status = null, limit = 50, skip = 0) {
+    const query = { tenantId, recipient: userId };
     if (status) {
       query.status = status;
     }
@@ -217,9 +222,10 @@ notificationSchema.statics = {
       .skip(skip);
   },
 
-  // Get unread notifications
-  getUnreadForUser: function(userId, limit = 50) {
+  // Get unread notifications for user within tenant
+  getUnreadForUser: function(userId, tenantId, limit = 50) {
     return this.find({
+      tenantId,
       recipient: userId,
       status: 'unread'
     })
@@ -227,32 +233,32 @@ notificationSchema.statics = {
     .limit(limit);
   },
 
-  // Get notifications by type
-  getByType: function(type, limit = 100) {
-    return this.find({ type })
+  // Get notifications by type within tenant
+  getByType: function(type, tenantId, limit = 100) {
+    return this.find({ tenantId, type })
       .sort({ createdAt: -1 })
       .limit(limit);
   },
 
-  // Get notifications by priority
-  getByPriority: function(priority, limit = 100) {
-    return this.find({ priority })
+  // Get notifications by priority within tenant
+  getByPriority: function(priority, tenantId, limit = 100) {
+    return this.find({ tenantId, priority })
       .sort({ createdAt: -1 })
       .limit(limit);
   },
 
-  // Mark all as read for user
-  markAllAsReadForUser: function(userId) {
+  // Mark all as read for user within tenant
+  markAllAsReadForUser: function(userId, tenantId) {
     return this.updateMany(
-      { recipient: userId, status: 'unread' },
+      { tenantId, recipient: userId, status: 'unread' },
       { status: 'read' }
     );
   },
 
-  // Get notification statistics
-  getStatsForUser: function(userId) {
+  // Get notification statistics for user within tenant
+  getStatsForUser: function(userId, tenantId) {
     return this.aggregate([
-      { $match: { recipient: mongoose.Types.ObjectId(userId) } },
+      { $match: { tenantId, recipient: mongoose.Types.ObjectId(userId) } },
       {
         $group: {
           _id: '$status',
@@ -262,9 +268,10 @@ notificationSchema.statics = {
     ]);
   },
 
-  // Get notifications by date range
-  getByDateRange: function(startDate, endDate, type = null) {
+  // Get notifications by date range within tenant
+  getByDateRange: function(startDate, endDate, tenantId, type = null) {
     const query = {
+      tenantId,
       createdAt: {
         $gte: startDate,
         $lte: endDate
@@ -278,16 +285,29 @@ notificationSchema.statics = {
     return this.find(query).sort({ createdAt: -1 });
   },
 
-  // Clean expired notifications
-  cleanExpired: function() {
+  // Clean expired notifications within tenant
+  cleanExpired: function(tenantId) {
     return this.deleteMany({
+      tenantId,
       expiresAt: { $lt: new Date() }
     });
   },
 
-  // Send bulk notifications
-  sendBulk: function(notifications) {
-    return this.insertMany(notifications);
+  // Send bulk notifications within tenant
+  sendBulk: function(notifications, tenantId) {
+    const notificationsWithTenant = notifications.map(notification => ({
+      ...notification,
+      tenantId
+    }));
+    return this.insertMany(notificationsWithTenant);
+  },
+
+  // Get notifications by tenant
+  getByTenant: function(tenantId, limit = 100, skip = 0) {
+    return this.find({ tenantId })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(skip);
   }
 };
 

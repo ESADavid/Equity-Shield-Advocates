@@ -2,3 +2,5 @@
 {"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-09-29T23:59:22.903Z"}
 {"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-09-30T00:00:48.838Z"}
 {"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-09-30T00:03:30.356Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-09-30T00:48:01.861Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-09-30T00:58:55.407Z"}

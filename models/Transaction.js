@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
 
 const transactionSchema = new mongoose.Schema({
+  tenantId: {
+    type: String,
+    required: true,
+    index: true
+  },
   transactionId: {
     type: String,
     required: true,
-    unique: true,
     index: true
   },
   type: {
@@ -134,14 +138,15 @@ const transactionSchema = new mongoose.Schema({
 });
 
 // Indexes for performance
-transactionSchema.index({ 'audit.createdBy': 1 });
-transactionSchema.index({ status: 1 });
-transactionSchema.index({ type: 1 });
-transactionSchema.index({ 'timestamps.initiated': -1 });
-transactionSchema.index({ 'fromAccount.accountId': 1 });
-transactionSchema.index({ 'toAccount.accountId': 1 });
-transactionSchema.index({ 'merchant.merchantId': 1 });
-transactionSchema.index({ 'blockchain.recorded': 1 });
+transactionSchema.index({ tenantId: 1, 'audit.createdBy': 1 });
+transactionSchema.index({ tenantId: 1, status: 1 });
+transactionSchema.index({ tenantId: 1, type: 1 });
+transactionSchema.index({ tenantId: 1, 'timestamps.initiated': -1 });
+transactionSchema.index({ tenantId: 1, 'fromAccount.accountId': 1 });
+transactionSchema.index({ tenantId: 1, 'toAccount.accountId': 1 });
+transactionSchema.index({ tenantId: 1, 'merchant.merchantId': 1 });
+transactionSchema.index({ tenantId: 1, 'blockchain.recorded': 1 });
+transactionSchema.index({ tenantId: 1, transactionId: 1 }, { unique: true });
 
 // Virtual for total amount including fees
 transactionSchema.virtual('totalAmount').get(function() {
@@ -227,9 +232,9 @@ transactionSchema.methods = {
 
 // Static methods
 transactionSchema.statics = {
-  // Get transactions by user
-  getByUser: function(userId, limit = 50, skip = 0) {
-    return this.find({ 'audit.createdBy': userId })
+  // Get transactions by user within tenant
+  getByUser: function(userId, tenantId, limit = 50, skip = 0) {
+    return this.find({ tenantId, 'audit.createdBy': userId })
       .sort({ 'timestamps.initiated': -1 })
       .limit(limit)
       .skip(skip)
@@ -237,16 +242,17 @@ transactionSchema.statics = {
       .populate('audit.approvedBy', 'username firstName lastName');
   },
 
-  // Get transactions by status
-  getByStatus: function(status, limit = 100) {
-    return this.find({ status })
+  // Get transactions by status within tenant
+  getByStatus: function(status, tenantId, limit = 100) {
+    return this.find({ tenantId, status })
       .sort({ 'timestamps.initiated': -1 })
       .limit(limit);
   },
 
-  // Get transactions by date range
-  getByDateRange: function(startDate, endDate, status = null) {
+  // Get transactions by date range within tenant
+  getByDateRange: function(startDate, endDate, tenantId, status = null) {
     const query = {
+      tenantId,
       'timestamps.initiated': {
         $gte: startDate,
         $lte: endDate
@@ -258,19 +264,28 @@ transactionSchema.statics = {
     return this.find(query).sort({ 'timestamps.initiated': -1 });
   },
 
-  // Get high-risk transactions
-  getHighRisk: function(riskThreshold = 70) {
+  // Get high-risk transactions within tenant
+  getHighRisk: function(riskThreshold = 70, tenantId) {
     return this.find({
+      tenantId,
       'risk.score': { $gte: riskThreshold },
       'risk.reviewed': false
     }).sort({ 'risk.score': -1 });
   },
 
-  // Get blockchain-recorded transactions
-  getBlockchainRecorded: function(limit = 100) {
-    return this.find({ 'blockchain.recorded': true })
+  // Get blockchain-recorded transactions within tenant
+  getBlockchainRecorded: function(limit = 100, tenantId) {
+    return this.find({ tenantId, 'blockchain.recorded': true })
       .sort({ 'blockchain.blockIndex': -1 })
       .limit(limit);
+  },
+
+  // Get transactions by tenant
+  getByTenant: function(tenantId, limit = 100, skip = 0) {
+    return this.find({ tenantId })
+      .sort({ 'timestamps.initiated': -1 })
+      .limit(limit)
+      .skip(skip);
   }
 };
 
