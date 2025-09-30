@@ -4,8 +4,7 @@ module.exports = {
   verbose: true,
   setupFilesAfterEnv: ['./jest.setup.js'],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
-    '^.+\\.(js|jsx)$': 'babel-jest',
+    '^.+\\.(ts|tsx|js|jsx)$': 'ts-jest',
   },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
@@ -13,7 +12,8 @@ module.exports = {
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.json',
-      isolatedModules: true
+      isolatedModules: true,
+      useESM: true
     },
   },
   projects: [
@@ -22,7 +22,7 @@ module.exports = {
       testMatch: ["<rootDir>/earnings_dashboard/**/*.test.{ts,tsx,js,jsx}", "<rootDir>/**/*.test.{ts,tsx,js,jsx}", "<rootDir>/FOUR-ERA-AI/test/**/*.ts"],
       testEnvironment: "node",
       transformIgnorePatterns: [
-        "/node_modules/(?!@babel/runtime/helpers/interopRequireDefault|@babel/runtime/helpers/interopRequireDefault|@babel/runtime/helpers/esm/interopRequireDefault|@babel/plugin-transform-runtime|@babel/runtime|@babel/helpers|@babel/runtime/helpers|@babel/plugin-transform-class-properties|@babel/plugin-transform-private-methods|@babel/plugin-syntax-dynamic-import|@babel/plugin-proposal-class-properties|@babel/plugin-proposal-private-methods).+\\.js$"
+        "/node_modules/(?!@babel/runtime/helpers/interopRequireDefault|@babel/runtime/helpers/esm/interopRequireDefault|@babel/plugin-transform-runtime|@babel/runtime|@babel/helpers|@babel/runtime/helpers|@babel/plugin-transform-class-properties|@babel/plugin-transform-private-methods|@babel/plugin-syntax-dynamic-import|@babel/plugin-proposal-class-properties|@babel/plugin-proposal-private-methods).+\\.js$"
       ]
     },
     {

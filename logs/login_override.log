@@ -56,3 +56,6 @@
 {"count":2,"level":"info","message":"Cleaned up expired overrides","service":"login-override","timestamp":"2025-09-30T01:45:30.547Z"}
 =======
 >>>>>>> Stashed changes
+{"expiresAt":"2025-09-30T02:59:47.899Z","level":"warn","message":"EMERGENCY OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759200287899_D1E4A9CA","reason":"emergency_access","service":"login-override","timestamp":"2025-09-30T02:44:47.899Z","userId":"USER_1759200287611_A83C9807"}
+{"adminUserId":"admin@oscarsystem.com","expiresAt":"2025-09-30T02:59:48.160Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759200288160_95EF3249","reason":"technical_issue","service":"login-override","targetUserId":"USER_1759200288150_A45B30F7","timestamp":"2025-09-30T02:44:48.160Z"}
+{"count":2,"level":"info","message":"Cleaned up expired overrides","service":"login-override","timestamp":"2025-09-30T03:13:22.825Z"}

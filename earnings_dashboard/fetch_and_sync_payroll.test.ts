@@ -26,7 +26,7 @@ describe('Payroll API', () => {
         { employeeId: '2', amount: 2000, date: '2024-01-01', source: 'dynamics365' },
       ];
       const mockRevenueData = { payroll: mockPayrollData };
-      (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify(mockRevenueData));
+      jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(mockRevenueData));
 
       const res = await request(app).get('/api/payroll/employees');
 
@@ -36,7 +36,7 @@ describe('Payroll API', () => {
     });
 
     it('should return 500 if reading payroll data fails', async () => {
-      (fs.readFileSync as jest.Mock).mockImplementation(() => {
+      jest.spyOn(fs, 'readFileSync').mockImplementation(() => {
         throw new Error('File read error');
       });
 

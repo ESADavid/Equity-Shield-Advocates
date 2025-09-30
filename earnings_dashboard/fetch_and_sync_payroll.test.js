@@ -45,8 +45,8 @@ describe('fetch_and_sync_payroll', () => {
                 autoFleet: 0
             }
         };
-        fs_1.default.existsSync.mockReturnValue(true);
-        fs_1.default.readFileSync.mockReturnValue(JSON.stringify(mockRevenueData));
+        globals_1.jest.spyOn(fs_1.default, 'existsSync').mockReturnValue(true);
+        globals_1.jest.spyOn(fs_1.default, 'readFileSync').mockReturnValue(JSON.stringify(mockRevenueData));
         const writeFileSyncMock = globals_1.jest.spyOn(fs_1.default, 'writeFileSync').mockImplementation(() => { });
         // Import the actual PayrollIntegration class
         const ActualPayrollIntegration = globals_1.jest.requireActual('../payroll_integration').default;

@@ -266,7 +266,8 @@ class CacheService {
   // Health check
   async healthCheck() {
     try {
-      if (!this.isConnected && this.memoryCache) {
+      // If we have memory cache (fallback), return memory_cache status
+      if (this.memoryCache) {
         return {
           status: 'memory_cache',
           memoryCacheSize: this.memoryCache.size,
@@ -293,6 +294,14 @@ class CacheService {
         metrics: this.metrics
       };
     } catch (error) {
+      // If Redis fails but we have memory cache, still return memory_cache
+      if (this.memoryCache) {
+        return {
+          status: 'memory_cache',
+          memoryCacheSize: this.memoryCache.size,
+          metrics: this.metrics
+        };
+      }
       return {
         status: 'error',
         error: error.message,

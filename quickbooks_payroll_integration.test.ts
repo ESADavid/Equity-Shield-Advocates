@@ -10,7 +10,7 @@ const dummyConfig = {
 };
 
 describe('QuickBooksPayrollIntegration', () => {
-  let integration: QuickBooksPayrollIntegration;
+  let integration;
 
   beforeEach(() => {
     integration = new QuickBooksPayrollIntegration(

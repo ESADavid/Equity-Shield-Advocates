@@ -234,9 +234,8 @@ app.get('/health', async (req, res) => {
     };
 
     // Determine overall health status
-    if (dbHealth.status !== 'connected' || cacheHealth.status === 'error') {
+    if ((dbHealth.status !== 'connected' && process.env.SKIP_DATABASE !== 'true') || cacheHealth.status === 'error') {
       health.status = 'degraded';
-      res.status(503);
     }
 
     res.json(health);

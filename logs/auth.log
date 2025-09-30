@@ -1269,3 +1269,78 @@
 {"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T01:25:36.982Z","userId":"USER_1759195533501_D37F514B","username":"concurrentuser1759195532587"}
 =======
 >>>>>>> Stashed changes
+{"email":"api1759200285862@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:46.121Z","userId":"USER_1759200286120_8B717B98","username":"apiuser1759200285862"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:46.451Z","userId":"USER_1759200286120_8B717B98","username":"apiuser1759200285862"}
+{"level":"info","message":"PASSWORD CHANGED","service":"standard-auth","timestamp":"2025-09-30T02:44:47.001Z","userId":"USER_1759200286120_8B717B98"}
+{"level":"info","message":"MFA ENABLED","service":"standard-auth","timestamp":"2025-09-30T02:44:47.009Z","userId":"USER_1759200286120_8B717B98"}
+{"adminUserId":"admin@oscarsystem.com","level":"info","message":"USER DEACTIVATED","service":"standard-auth","timestamp":"2025-09-30T02:44:47.017Z","userId":"USER_1759200286120_8B717B98"}
+{"email":"invalid-email","error":"Email already exists","level":"error","message":"USER REGISTRATION FAILED","service":"standard-auth","timestamp":"2025-09-30T02:44:47.023Z","username":"edgeuser1759200287020"}
+{"email":"weak@example.com","error":"Email already exists","level":"error","message":"USER REGISTRATION FAILED","service":"standard-auth","timestamp":"2025-09-30T02:44:47.027Z","username":"weakpass1759200287020"}
+{"email":"duplicate@example.com","error":"Email already exists","level":"error","message":"USER REGISTRATION FAILED","service":"standard-auth","timestamp":"2025-09-30T02:44:47.031Z","username":"apiuser1759200287020"}
+{"error":"Invalid credentials","level":"warn","message":"USER LOGIN FAILED","service":"standard-auth","timestamp":"2025-09-30T02:44:47.039Z","usernameOrEmail":"nonexistent"}
+{"email":"accountapi1759200287052@example.com","level":"info","message":"USER REGISTERED","role":"finance","service":"standard-auth","timestamp":"2025-09-30T02:44:47.333Z","userId":"USER_1759200287333_58742540","username":"accountapi1759200287052"}
+{"email":"autofinance1759200287347@example.com","level":"info","message":"USER REGISTERED","role":"finance","service":"standard-auth","timestamp":"2025-09-30T02:44:47.611Z","userId":"USER_1759200287611_A83C9807","username":"autofinance1759200287347"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:47.896Z","userId":"USER_1759200287611_A83C9807","username":"autofinance1759200287347"}
+{"email":"security1759200287901@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:48.150Z","userId":"USER_1759200288150_A45B30F7","username":"securityuser1759200287901"}
+{"level":"info","message":"MFA ENABLED","service":"standard-auth","timestamp":"2025-09-30T02:44:48.156Z","userId":"USER_1759200288150_A45B30F7"}
+{"email":"perf1759200288169_1@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:48.519Z","userId":"USER_1759200288518_C5C553B0","username":"perfuser1759200288169_1"}
+{"email":"perf1759200288169_0@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:48.528Z","userId":"USER_1759200288527_D61A2212","username":"perfuser1759200288169_0"}
+{"email":"perf1759200288169_2@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:48.533Z","userId":"USER_1759200288533_F7E2CE65","username":"perfuser1759200288169_2"}
+{"email":"perf1759200288169_3@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:48.547Z","userId":"USER_1759200288547_35F8D05A","username":"perfuser1759200288169_3"}
+{"email":"perf1759200288169_4@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:48.794Z","userId":"USER_1759200288794_2CD773D4","username":"perfuser1759200288169_4"}
+{"email":"perf1759200288169_5@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:48.842Z","userId":"USER_1759200288842_83151F9A","username":"perfuser1759200288169_5"}
+{"email":"perf1759200288169_6@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:48.849Z","userId":"USER_1759200288849_D0D464CF","username":"perfuser1759200288169_6"}
+{"email":"perf1759200288169_7@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:48.854Z","userId":"USER_1759200288854_3DB8EB40","username":"perfuser1759200288169_7"}
+{"email":"perf1759200288169_8@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:49.037Z","userId":"USER_1759200289037_14D440BD","username":"perfuser1759200288169_8"}
+{"email":"perf1759200288169_9@example.com","level":"info","message":"USER REGISTERED","role":"user","service":"standard-auth","timestamp":"2025-09-30T02:44:49.083Z","userId":"USER_1759200289083_D2C60A61","username":"perfuser1759200288169_9"}
+{"email":"concurrent1759200288169@example.com","level":"info","message":"USER REGISTERED","role":"finance","service":"standard-auth","timestamp":"2025-09-30T02:44:49.372Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:49.685Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:49.698Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:49.721Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:49.737Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:49.946Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:49.954Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:49.961Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:49.968Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.232Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.260Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.277Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.289Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.518Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.538Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.544Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.553Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.755Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.778Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.799Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.809Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:50.981Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.002Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.015Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.022Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.209Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.223Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.232Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.240Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.420Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.448Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.456Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.462Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.653Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.697Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.705Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:51.720Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.059Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.068Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.087Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.097Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.295Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.331Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.354Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.373Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.569Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.602Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.608Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.615Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.828Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-09-30T02:44:52.866Z","userId":"USER_1759200289372_9DB0AC7E","username":"concurrentuser1759200288169"}

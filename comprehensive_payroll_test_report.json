@@ -2,48 +2,48 @@
   "suite": "Payroll Integration Tests",
   "summary": {
     "total": 5,
-    "passed": 4,
-    "failed": 1,
+    "passed": 5,
+    "failed": 0,
     "skipped": 0,
-    "successRate": "80.00%",
-    "duration": 178
+    "successRate": "100.00%",
+    "duration": 2178
   },
   "tests": [
     {
       "name": "Environment Config",
-      "result": "failed",
-      "message": "Health check error: Request failed with status code 503",
+      "result": "passed",
+      "message": "Server is healthy and running",
       "duration": 0,
-      "timestamp": "2025-09-30T02:43:42.735Z"
+      "timestamp": "2025-09-30T04:20:36.113Z"
     },
     {
       "name": "Get Employees",
       "result": "passed",
       "message": "Retrieved 0 employees",
       "duration": 0,
-      "timestamp": "2025-09-30T02:43:42.758Z"
+      "timestamp": "2025-09-30T04:20:36.122Z"
     },
     {
       "name": "Add Employee",
       "result": "passed",
       "message": "Employee added successfully",
       "duration": 0,
-      "timestamp": "2025-09-30T02:43:42.785Z"
+      "timestamp": "2025-09-30T04:20:36.172Z"
     },
     {
       "name": "Calculate Payroll",
       "result": "passed",
       "message": "Payroll calculated correctly",
       "duration": 0,
-      "timestamp": "2025-09-30T02:43:42.804Z"
+      "timestamp": "2025-09-30T04:20:36.185Z"
     },
     {
       "name": "Process Payroll",
       "result": "passed",
       "message": "Processed payroll for 1 employees",
       "duration": 0,
-      "timestamp": "2025-09-30T02:43:42.815Z"
+      "timestamp": "2025-09-30T04:20:36.200Z"
     }
   ],
-  "timestamp": "2025-09-30T02:43:42.829Z"
+  "timestamp": "2025-09-30T04:20:36.214Z"
 }
