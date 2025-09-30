@@ -208,3 +208,7 @@
 ::1 - - [29/Sep/2025:23:25:46 +0000] "POST /api/payroll/calculate HTTP/1.1" 200 236 "-" "axios/1.12.2"
 ::1 - - [29/Sep/2025:23:25:46 +0000] "POST /api/payroll/process HTTP/1.1" 200 163 "-" "axios/1.12.2"
 ::1 - - [29/Sep/2025:23:25:46 +0000] "DELETE /api/payroll/employees/test-emp-1759188346817 HTTP/1.1" 200 58 "-" "axios/1.12.2"
+::1 - - [29/Sep/2025:23:50:23 +0000] "GET /health HTTP/1.1" 200 126 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.6584"
+::1 - - [29/Sep/2025:23:50:34 +0000] "GET /api/status HTTP/1.1" 200 457 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.6584"
+::1 - - [29/Sep/2025:23:57:50 +0000] "GET /api/analytics HTTP/1.1" 200 194 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.6584"
+::1 - - [29/Sep/2025:23:58:52 +0000] "GET /api/analytics HTTP/1.1" 200 194 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.6584"

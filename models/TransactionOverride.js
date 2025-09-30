@@ -67,4 +67,4 @@ class TransactionOverride {
   }
 }
 
-module.exports = TransactionOverride;
+export default TransactionOverride;

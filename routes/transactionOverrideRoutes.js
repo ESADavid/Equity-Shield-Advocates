@@ -3,10 +3,10 @@
  * RESTful endpoints for transaction override operations
  */
 
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const TransactionOverride = require('../models/TransactionOverride');
-const { authorizeOverride, auditOverride } = require('../middleware/authOverride');
+import TransactionOverride from '../models/TransactionOverride.js';
+import { authorizeOverride, auditOverride } from '../middleware/authOverride.js';
 
 // GET /api/transactions/overrides - List all override requests
 router.get('/overrides', authorizeOverride(['admin', 'override_manager']), (req, res) => {
@@ -126,25 +126,29 @@ router.delete('/:id/override', authorizeOverride(['admin']), (req, res) => {
 });
 
 // GET /api/transactions/:id/audit - Get transaction audit trail
-router.get('/:id/audit', authorizeOverride(['admin', 'override_manager']), (req, res) => {
+router.get('/:id/audit', authorizeOverride(['admin', 'override_manager']), async (req, res) => {
   try {
     const { id } = req.params;
 
-    // In production, get audit trail from database
-    const auditTrail = [
-      {
-        action: 'created',
-        user: 'admin',
-        timestamp: new Date().toISOString(),
-        details: 'Initial transaction creation'
-      }
-    ];
+    // Import blockchain service dynamically to avoid circular dependencies
+    const { getBlockchainService } = await import('../blockchain/blockchainService.js');
+    const blockchainService = getBlockchainService();
+
+    const auditResult = await blockchainService.getAuditTrail(id);
+
+    if (!auditResult.success) {
+      return res.status(404).json({
+        success: false,
+        message: 'Transaction audit trail not found in blockchain'
+      });
+    }
 
     res.json({
       success: true,
       data: {
         transactionId: id,
-        auditTrail
+        auditTrail: auditResult.auditTrail,
+        verification: auditResult.verificationStatus
       }
     });
   } catch (error) {
@@ -156,4 +160,4 @@ router.get('/:id/audit', authorizeOverride(['admin', 'override_manager']), (req,
   }
 });
 
-module.exports = router;
+export default router;

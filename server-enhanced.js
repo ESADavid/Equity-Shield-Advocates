@@ -14,7 +14,16 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import winston from 'winston';
+import expressWinston from 'express-winston';
+
+// Import database and services
+import database from './config/database.js';
 import NotificationService from './earnings_dashboard/notification_service.js';
+
+// Import routes
+import authRoutes from './routes/auth.js';
+import transactionRoutes from './routes/transactionOverrideRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,6 +42,15 @@ const io = new Server(server, {
     methods: ['GET', 'POST']
   }
 });
+
+// Initialize database connection
+try {
+  await database.connect();
+  console.log('✅ Database connected successfully');
+} catch (error) {
+  console.error('❌ Database connection failed:', error.message);
+  process.exit(1);
+}
 
 // Initialize notification service
 const notificationService = new NotificationService(io);
@@ -210,6 +228,14 @@ if (notificationRouter) {
   app.use('/api/notifications', notificationRouter);
   console.log('✅ Notification routes mounted at /api/notifications');
 }
+
+// Authentication API Routes
+app.use('/api/auth', authRoutes);
+console.log('✅ Authentication routes mounted at /api/auth');
+
+// Transaction Override API Routes
+app.use('/api/transactions', transactionRoutes);
+console.log('✅ Transaction routes mounted at /api/transactions');
 
 // Webhook endpoint for Stripe
 app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res) => {

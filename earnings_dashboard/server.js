@@ -85,6 +85,66 @@ app.get('/api/earnings/download', (req, res) => {
   }
 });
 
+// Blockchain API endpoints
+import { getBlockchainService } from '../blockchain/blockchainService.js';
+const blockchainService = getBlockchainService();
+
+// GET /api/blockchain/stats - Get blockchain statistics
+app.get('/api/blockchain/stats', async (req, res) => {
+  try {
+    const stats = await blockchainService.getBlockchainStats();
+    res.json(stats);
+  } catch (error) {
+    logger.error('Blockchain stats error: ' + error.message);
+    res.status(500).json({ error: 'Failed to retrieve blockchain stats' });
+  }
+});
+
+// GET /api/blockchain/verify - Verify blockchain integrity
+app.get('/api/blockchain/verify', async (req, res) => {
+  try {
+    const verification = await blockchainService.verifyBlockchainIntegrity();
+    res.json(verification);
+  } catch (error) {
+    logger.error('Blockchain verification error: ' + error.message);
+    res.status(500).json({ error: 'Failed to verify blockchain integrity' });
+  }
+});
+
+// GET /api/blockchain/audit-report - Get comprehensive audit report
+app.get('/api/blockchain/audit-report', async (req, res) => {
+  try {
+    const { start, end } = req.query;
+    const timeRange = {
+      start: start ? parseInt(start) : Date.now() - (30 * 24 * 60 * 60 * 1000), // 30 days ago
+      end: end ? parseInt(end) : Date.now()
+    };
+
+    const report = await blockchainService.getAuditReport(timeRange);
+    res.json(report);
+  } catch (error) {
+    logger.error('Audit report error: ' + error.message);
+    res.status(500).json({ error: 'Failed to generate audit report' });
+  }
+});
+
+// POST /api/blockchain/record-event - Record a system event
+app.post('/api/blockchain/record-event', async (req, res) => {
+  try {
+    const { eventType, eventData, userId } = req.body;
+
+    if (!eventType) {
+      return res.status(400).json({ error: 'Event type is required' });
+    }
+
+    const result = await blockchainService.recordSystemEvent(eventType, eventData || {}, userId || 'system');
+    res.json(result);
+  } catch (error) {
+    logger.error('Record event error: ' + error.message);
+    res.status(500).json({ error: 'Failed to record system event' });
+  }
+});
+
 // 404 handler
 app.use((req, res, next) => {
   res.status(404).json({ error: 'Not Found' });

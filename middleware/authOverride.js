@@ -3,8 +3,8 @@
  * Handles authorization for transaction override operations
  */
 
-const express = require('express');
-const basicAuth = require('express-basic-auth');
+import express from 'express';
+import basicAuth from 'express-basic-auth';
 
 // Enhanced auth configuration for override operations
 const overrideAuthConfig = {
@@ -71,7 +71,7 @@ const auditOverride = (req, res, next) => {
   next();
 };
 
-module.exports = {
+export {
   overrideAuthConfig,
   authorizeOverride,
   auditOverride
