@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run linting
+npm run lint
+
+# Run tests
+npm run test -- --watchAll=false --passWithNoTests
+
+# Run security audit (quick check)
+npm audit --audit-level high --production

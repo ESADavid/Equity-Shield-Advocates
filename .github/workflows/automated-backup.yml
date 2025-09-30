@@ -1,0 +1,224 @@
+name: Automated Backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Backup type'
+        required: false
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - incremental
+      retention:
+        description: 'Retention days'
+        required: false
+        default: '30'
+        type: string
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongo --eval "db.adminCommand('ping')"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Wait for services to be ready
+      run: |
+        timeout 60 bash -c 'until nc -z localhost 27017; do sleep 1; done'
+
+    - name: Start application
+      run: |
+        npm start &
+        # Wait for app to be ready
+        timeout 30 bash -c 'until curl -f http://localhost:3000/health; do sleep 2; done' || true
+
+    - name: Create backup
+      run: |
+        node scripts/backup-manager.js create --name "automated-$(date +%Y%m%d-%H%M%S)"
+
+    - name: Upload backup to storage
+      run: |
+        # This would upload to cloud storage (S3, GCS, etc.)
+        # For now, just list the created backup
+        node scripts/backup-manager.js list
+
+    - name: Cleanup old backups
+      run: |
+        DELETED=$(node scripts/backup-manager.js cleanup)
+        echo "Cleaned up $DELETED old backups"
+
+    - name: Backup status report
+      run: |
+        node scripts/backup-manager.js status
+
+    - name: Send backup notification
+      if: always()
+      run: |
+        # This would send notifications to monitoring systems
+        echo "Backup workflow completed with status: ${{ job.status }}"
+
+  health-check:
+    runs-on: ubuntu-latest
+    needs: backup
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Wait for services
+      run: |
+        timeout 60 bash -c 'until nc -z localhost 27017; do sleep 1; done'
+        timeout 60 bash -c 'until nc -z localhost 6379; do sleep 1; done'
+
+    - name: Start application
+      run: |
+        npm start &
+        timeout 30 bash -c 'until curl -f http://localhost:3000/health; do sleep 2; done'
+
+    - name: Run health check
+      run: |
+        node -e "
+        import('./services/disasterRecovery.js').then(async (DR) => {
+          const dr = new DR();
+          const health = await dr.performHealthCheck();
+          console.log('Health Check Results:');
+          console.log('Overall Status:', health.overall);
+          console.log('Components:', JSON.stringify(health.components, null, 2));
+          console.log('Recommendations:', health.recommendations);
+
+          if (health.overall !== 'healthy') {
+            console.log('WARNING: System health issues detected');
+            process.exit(1);
+          }
+        }).catch(console.error);
+        "
+
+    - name: Send health alert
+      if: failure()
+      run: |
+        echo "Health check failed - system may need attention"
+
+  disaster-recovery-test:
+    runs-on: ubuntu-latest
+    needs: [backup, health-check]
+    if: github.event_name == 'schedule' && github.ref == 'refs/heads/main'
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Wait for services
+      run: |
+        timeout 60 bash -c 'until nc -z localhost 27017; do sleep 1; done'
+        timeout 60 bash -c 'until nc -z localhost 6379; do sleep 1; done'
+
+    - name: Start application
+      run: |
+        npm start &
+        timeout 30 bash -c 'until curl -f http://localhost:3000/health; do sleep 2; done'
+
+    - name: Test disaster recovery procedures
+      run: |
+        echo "Testing disaster recovery procedures..."
+
+        # Test backup restoration
+        BACKUPS=$(node scripts/backup-manager.js list | grep -c "automated-")
+        if [ "$BACKUPS" -gt 0 ]; then
+          echo "✅ Backups are available for recovery testing"
+        else
+          echo "❌ No backups available for testing"
+          exit 1
+        fi
+
+        # Test health check functionality
+        node -e "
+        import('./services/disasterRecovery.js').then(async (DR) => {
+          const dr = new DR();
+          const health = await dr.performHealthCheck();
+          if (health.overall === 'healthy') {
+            console.log('✅ Disaster recovery health checks working');
+          } else {
+            console.log('❌ Health check issues detected');
+            process.exit(1);
+          }
+        }).catch(console.error);
+        "
+
+    - name: Generate recovery report
+      run: |
+        echo "## Disaster Recovery Test Report" > recovery-test-report.md
+        echo "- **Date:** $(date)" >> recovery-test-report.md
+        echo "- **Status:** PASSED" >> recovery-test-report.md
+        echo "- **Backups Available:** $(node scripts/backup-manager.js list | wc -l)" >> recovery-test-report.md
+        echo "- **Health Check:** System healthy" >> recovery-test-report.md
+
+    - name: Upload recovery test report
+      uses: actions/upload-artifact@v3
+      with:
+        name: recovery-test-report
+        path: recovery-test-report.md

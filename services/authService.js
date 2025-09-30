@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import emailService from './emailService.js';
 import winston from 'winston';
 
 const logger = winston.createLogger({
@@ -250,9 +251,18 @@ class AuthService {
       user.security.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
       await user.save();
 
-      // TODO: Send email with reset link
-      // For now, just log it
-      logger.info('Password reset requested', { userId: user._id, email, resetToken });
+      // Send password reset email
+      try {
+        await emailService.sendPasswordResetEmail(user.email, user.firstName, resetToken);
+        logger.info('Password reset email sent successfully', { userId: user._id, email });
+      } catch (emailError) {
+        logger.error('Failed to send password reset email', {
+          userId: user._id,
+          email,
+          error: emailError.message
+        });
+        // Don't fail the request if email fails, but log it
+      }
 
       return { success: true, message: 'Password reset link sent to your email' };
     } catch (error) {
