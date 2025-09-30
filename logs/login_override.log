@@ -29,6 +29,7 @@
 {"expiresAt":"2025-09-29T21:17:13.903Z","level":"warn","message":"EMERGENCY OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759179733902_9A438510","reason":"emergency_access","service":"login-override","timestamp":"2025-09-29T21:02:13.902Z","userId":"USER_1759179733358_EA972431"}
 {"adminUserId":"admin@oscarsystem.com","expiresAt":"2025-09-29T21:17:14.269Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759179734269_3F9F43E0","reason":"technical_issue","service":"login-override","targetUserId":"USER_1759179734260_674C3620","timestamp":"2025-09-29T21:02:14.269Z"}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -53,3 +54,5 @@
 {"expiresAt":"2025-09-30T01:40:32.316Z","level":"warn","message":"EMERGENCY OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759195532316_4FE38B60","reason":"emergency_access","service":"login-override","timestamp":"2025-09-30T01:25:32.316Z","userId":"USER_1759195532053_496E164D"}
 {"adminUserId":"admin@oscarsystem.com","expiresAt":"2025-09-30T01:40:32.579Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759195532579_45ED62A8","reason":"technical_issue","service":"login-override","targetUserId":"USER_1759195532571_8EBBFA79","timestamp":"2025-09-30T01:25:32.579Z"}
 {"count":2,"level":"info","message":"Cleaned up expired overrides","service":"login-override","timestamp":"2025-09-30T01:45:30.547Z"}
+=======
+>>>>>>> Stashed changes
