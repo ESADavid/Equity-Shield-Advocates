@@ -438,6 +438,43 @@
         "payrollTotal": 0,
         "incrementalUpdate": false
       }
+    },
+    {
+      "timestamp": "2025-10-01T23:47:38.764Z",
+      "action": "processRevenue",
+      "details": {
+        "totalProcessed": 3,
+        "totalFailed": 0,
+        "totalAmountProcessed": 1234181891,
+        "processedStreams": [
+          "Sample Repo",
+          "Owlban Investments",
+          "Corporate Ventures"
+        ]
+      }
+    }
+  ],
+  "processedPayments": [
+    {
+      "streamName": "Sample Repo",
+      "paymentId": "mock-payment-1759362457722-cfugahaox",
+      "amount": 617090945,
+      "processedAt": "2025-10-01T23:47:37.730Z",
+      "status": "completed"
+    },
+    {
+      "streamName": "Owlban Investments",
+      "paymentId": "mock-payment-1759362458234-aopofw5pq",
+      "amount": 370254567,
+      "processedAt": "2025-10-01T23:47:38.237Z",
+      "status": "completed"
+    },
+    {
+      "streamName": "Corporate Ventures",
+      "paymentId": "mock-payment-1759362458753-mcfirqddn",
+      "amount": 246836379,
+      "processedAt": "2025-10-01T23:47:38.756Z",
+      "status": "completed"
     }
   ]
 }

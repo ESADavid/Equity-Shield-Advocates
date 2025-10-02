@@ -3,7 +3,6 @@ import path from 'path';
 import updateRevenueData from './update_revenue_data';
 
 const testDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/test_revenue.json');
-const originalDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 
 // Mock data for testing
 const mockRevenueData = {
@@ -30,11 +29,7 @@ const mockRevenueData = {
 describe('updateRevenueData', () => {
   beforeAll(async () => {
     // Create test directory if it doesn't exist
-    try {
-      await fs.mkdir(path.dirname(testDataPath), { recursive: true });
-    } catch (error) {
-      // Directory might already exist
-    }
+    await fs.mkdir(path.dirname(testDataPath), { recursive: true });
   });
 
   beforeEach(async () => {
@@ -44,20 +39,12 @@ describe('updateRevenueData', () => {
 
   afterEach(async () => {
     // Clean up test file
-    try {
-      await fs.unlink(testDataPath);
-    } catch (error) {
-      // File might not exist
-    }
+    await fs.unlink(testDataPath);
   });
 
   afterAll(async () => {
     // Clean up any remaining test files
-    try {
-      await fs.unlink(testDataPath);
-    } catch (error) {
-      // File might not exist
-    }
+    await fs.unlink(testDataPath);
   });
 
   test('should return true when data file exists and is valid', async () => {
@@ -72,18 +59,13 @@ describe('updateRevenueData', () => {
       await fs.rename(testDataPath, tempPath);
 
       // Temporarily mock the path to a non-existent file
-      const originalPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
       // This test would need to be adjusted based on how the path is determined in the actual function
 
       const result = await updateRevenueData(false);
       expect(result).toBe(false);
     } finally {
       // Restore the file
-      try {
-        await fs.rename(tempPath, testDataPath);
-      } catch (error) {
-        // File might not exist
-      }
+      await fs.rename(tempPath, testDataPath);
     }
   });
 
@@ -131,7 +113,8 @@ describe('updateRevenueData', () => {
 
   test('should handle missing purchases object', async () => {
     const dataWithoutPurchases = { ...mockRevenueData };
-    delete (dataWithoutPurchases as any).purchases;
+    const temp = dataWithoutPurchases as any;
+    delete temp.purchases;
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithoutPurchases, null, 2));
 
@@ -188,7 +171,8 @@ describe('updateRevenueData', () => {
 
   test('should handle missing revenueStreamsDetails object', async () => {
     const dataWithoutRevenueStreamsDetails = { ...mockRevenueData };
-    delete (dataWithoutRevenueStreamsDetails as any).revenueStreamsDetails;
+    const temp = dataWithoutRevenueStreamsDetails as any;
+    delete temp.revenueStreamsDetails;
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithoutRevenueStreamsDetails, null, 2));
 

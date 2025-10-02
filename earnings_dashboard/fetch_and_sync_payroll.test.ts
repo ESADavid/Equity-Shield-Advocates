@@ -1,9 +1,9 @@
-import request from 'supertest';
-import express from 'express';
-import payrollApiRouter from './payroll_api.js';
-import fetchAndSyncPayroll from './fetch_and_sync_payroll';
-import fs from 'fs';
-import path from 'path';
+const request = require('supertest');
+const express = require('express');
+const payrollApiRouter = require('./payroll_api.js');
+const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default;
+const fs = require('fs');
+const path = require('path');
 
 jest.mock('./fetch_and_sync_payroll');
 jest.mock('fs');
@@ -30,7 +30,7 @@ describe('Payroll API', () => {
 
       const res = await request(app).get('/api/payroll/employees');
 
-      expect(res.status).toBe(200);
+      expect(res).toHaveProperty('status', 200);
       expect(res.body).toEqual(mockPayrollData);
       expect(fs.readFileSync).toHaveBeenCalledWith(revenueDataPath, 'utf-8');
     });
@@ -42,28 +42,28 @@ describe('Payroll API', () => {
 
       const res = await request(app).get('/api/payroll/employees');
 
-      expect(res.status).toBe(500);
+      expect(res).toHaveProperty('status', 500);
       expect(res.body).toHaveProperty('error');
     });
   });
 
   describe('POST /api/payroll/sync', () => {
     it('should trigger payroll sync and return success', async () => {
-      (fetchAndSyncPayroll as jest.Mock).mockResolvedValue(undefined);
+      fetchAndSyncPayroll.mockResolvedValue(undefined);
 
       const res = await request(app).post('/api/payroll/sync');
 
-      expect(res.status).toBe(200);
+      expect(res).toHaveProperty('status', 200);
       expect(res.body).toEqual({ success: true, message: 'Payroll data sync completed' });
       expect(fetchAndSyncPayroll).toHaveBeenCalled();
     });
 
     it('should return 500 if payroll sync fails', async () => {
-      (fetchAndSyncPayroll as jest.Mock).mockRejectedValue(new Error('Sync error'));
+      fetchAndSyncPayroll.mockRejectedValue(new Error('Sync error'));
 
       const res = await request(app).post('/api/payroll/sync');
 
-      expect(res.status).toBe(500);
+      expect(res).toHaveProperty('status', 500);
       expect(res.body).toEqual({ success: false, message: 'Payroll data sync failed' });
       expect(fetchAndSyncPayroll).toHaveBeenCalled();
     });

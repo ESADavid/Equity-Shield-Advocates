@@ -1,5 +1,5 @@
 {
-  "totalRevenue": 1233240861,
+  "totalRevenue": 1233204847,
   "revenueStreams": {
     "Sample Repo": {
       "amount": 617090945,
@@ -28,8 +28,8 @@
     }
   },
   "purchases": {
-    "corporateHomes": 232017,
-    "autoFleet": 1095012,
+    "corporateHomes": 240024,
+    "autoFleet": 1123019,
     "autoFleetDetails": [
       {
         "model": "2025 ROLLS-ROYCE BLACK BADGE SPECTRA",
@@ -38,7 +38,7 @@
         "cost": 799996,
         "purchaseDate": "2024-06-10T00:00:00.000Z",
         "deliveryStatus": "delivered",
-        "deliveryDate": "2025-09-30T04:42:52.299Z",
+        "deliveryDate": "2025-10-01T23:55:38.369Z",
         "deliveryAddress": "7438 STILLBROOKBEND CT HUNTERSVILLE NC 28078"
       },
       {
@@ -1030,6 +1030,420 @@
           "cost": 1500,
           "purchaseDate": "2025-09-30T04:42:52.308Z"
         }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-10-01T23:52:46.749Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362766749",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-10-01T23:52:46.749Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-01T23:52:47.743Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362767743",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-01T23:52:47.743Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-01T23:52:47.898Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362767898",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-01T23:52:47.898Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-10-01T23:52:56.577Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362776577",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-10-01T23:52:56.577Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-01T23:52:56.764Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362776764",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-01T23:52:56.764Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-01T23:52:56.867Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362776867",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-01T23:52:56.867Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-10-01T23:53:01.972Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362781972",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-10-01T23:53:01.972Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-01T23:53:02.251Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362782251",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-01T23:53:02.251Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-01T23:53:02.312Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362782312",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-01T23:53:02.312Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-10-01T23:53:07.397Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362787397",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-10-01T23:53:07.397Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-01T23:53:07.449Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362787449",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-01T23:53:07.449Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-01T23:53:07.561Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362787561",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-01T23:53:07.561Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-10-01T23:55:17.253Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362917253",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-10-01T23:55:17.253Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-01T23:55:17.300Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362917299",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-01T23:55:17.300Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-01T23:55:17.476Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362917476",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-01T23:55:17.476Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-01T23:55:25.666Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362925666",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-01T23:55:25.666Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-10-01T23:55:25.772Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362925772",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-10-01T23:55:25.772Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-01T23:55:25.803Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362925803",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-01T23:55:25.803Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-10-01T23:55:32.916Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362932916",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-10-01T23:55:32.916Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-01T23:55:33.163Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362933163",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-01T23:55:33.163Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-01T23:55:33.227Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362933227",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-01T23:55:33.227Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-01T23:55:38.305Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362938305",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-01T23:55:38.305Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-01T23:55:38.402Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1759362938402",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-01T23:55:38.402Z"
+        }
       }
     ],
     "corporateHomesDetails": []
@@ -1100,6 +1514,188 @@
         "purchases": {
           "autoFleet": 1052499,
           "corporateHomes": 219004
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:03.639Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:03.664Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:03.714Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:03.732Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:03.768Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:03.832Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:03.906Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:03.986Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:04.042Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:04.150Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:04.182Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:04.229Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:04.253Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-10-02T00:16:04.273Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1233204847,
+        "purchases": {
+          "autoFleet": 1123019,
+          "corporateHomes": 240024
         },
         "payrollTotal": 0,
         "incrementalUpdate": false

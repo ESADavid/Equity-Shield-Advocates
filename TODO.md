@@ -1,21 +1,15 @@
-# TODO: Fix Failing Jest Tests
+# TODO: Fix Jest Test Failures
 
-## Completed Fixes
-- [x] Fixed mocking in earnings_dashboard/fetch_and_sync_payroll.test.js: Changed fs_1.default.existsSync.mockReturnValue to jest.spyOn(fs_1.default, 'existsSync').mockReturnValue
-- [x] Fixed TS syntax in earnings_dashboard/fetch_and_sync_payroll.test.ts: Changed (fs.readFileSync as jest.Mock).mockReturnValue to jest.spyOn(fs, 'readFileSync').mockReturnValue
-- [x] Fixed TS syntax in payroll_server.test.ts: Removed type annotations (e: any) and (p: any)
-- [x] Fixed TS syntax in quickbooks_payroll_integration.test.ts: Removed type annotation let integration: QuickBooksPayrollIntegration;
-- [x] Added dummy environment variables in jest.setup.js to prevent process.exit(1) in tests
-- [x] Updated Jest config to use ts-jest for all JS/TS files with useESM: true to handle ES modules and import.meta
+## Completed
+- [x] Add @babel/preset-typescript to babel.config.js to handle TypeScript syntax in tests
+- [x] Change Jest config to use babel-jest for transforming .ts and .js files
+- [x] Update transformIgnorePatterns to allow @babel/runtime
+- [x] Fix mock syntax in fetch_and_sync_payroll.test.ts from (as jest.Mock) to (as any)
+- [x] Change imports to require in fetch_and_sync_payroll.test.ts for consistency
 
-## Remaining Issues
-- [ ] Check if tests pass after these changes
-- [ ] If any Babel or transform issues remain, adjust transformIgnorePatterns or babel config
-- [ ] Ensure all env vars are set for all integrations (Dynamics365, QuickBooks, JPMorgan, etc.)
-- [ ] Mock any remaining external dependencies if needed
-- [ ] Fix any remaining syntax errors in test files
-
-## Next Steps
-- Run `npm test` or `jest` to verify fixes
-- Address any new errors that appear
-- Ensure all test suites pass
+## Pending
+- [ ] Check if all .ts test files have similar import issues and fix them
+- [ ] Ensure Jest can handle ES modules with import.meta.url if any test files use it
+- [ ] Run Jest tests to verify fixes
+- [ ] Fix any remaining syntax or runtime errors
+- [ ] Update package.json if needed for ES modules support in Jest
