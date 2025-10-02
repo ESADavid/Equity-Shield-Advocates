@@ -2,48 +2,48 @@
   "suite": "Payroll Integration Tests",
   "summary": {
     "total": 5,
-    "passed": 5,
-    "failed": 0,
+    "passed": 0,
+    "failed": 5,
     "skipped": 0,
-    "successRate": "100.00%",
-    "duration": 2178
+    "successRate": "0.00%",
+    "duration": 2197
   },
   "tests": [
     {
       "name": "Environment Config",
-      "result": "passed",
-      "message": "Server is healthy and running",
+      "result": "failed",
+      "message": "Health check error: Error",
       "duration": 0,
-      "timestamp": "2025-09-30T04:20:36.113Z"
+      "timestamp": "2025-10-02T16:35:22.188Z"
     },
     {
       "name": "Get Employees",
-      "result": "passed",
-      "message": "Retrieved 0 employees",
+      "result": "failed",
+      "message": "Request failed: Error",
       "duration": 0,
-      "timestamp": "2025-09-30T04:20:36.122Z"
+      "timestamp": "2025-10-02T16:35:22.219Z"
     },
     {
       "name": "Add Employee",
-      "result": "passed",
-      "message": "Employee added successfully",
+      "result": "failed",
+      "message": "Request failed: Error",
       "duration": 0,
-      "timestamp": "2025-09-30T04:20:36.172Z"
+      "timestamp": "2025-10-02T16:35:22.229Z"
     },
     {
       "name": "Calculate Payroll",
-      "result": "passed",
-      "message": "Payroll calculated correctly",
+      "result": "failed",
+      "message": "Request failed: Error",
       "duration": 0,
-      "timestamp": "2025-09-30T04:20:36.185Z"
+      "timestamp": "2025-10-02T16:35:22.238Z"
     },
     {
       "name": "Process Payroll",
-      "result": "passed",
-      "message": "Processed payroll for 1 employees",
+      "result": "failed",
+      "message": "Request failed: Error",
       "duration": 0,
-      "timestamp": "2025-09-30T04:20:36.200Z"
+      "timestamp": "2025-10-02T16:35:22.248Z"
     }
   ],
-  "timestamp": "2025-09-30T04:20:36.214Z"
+  "timestamp": "2025-10-02T16:35:22.251Z"
 }

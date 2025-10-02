@@ -163,7 +163,8 @@ class ProductionDeployer {
     this.log('Validating configuration...', 'step');
 
     // Load environment variables
-    import('dotenv').then(dotenv => dotenv.config());
+    const dotenv = await import('dotenv');
+    dotenv.config();
 
     let missingRequired = [];
     let missingOptional = [];
@@ -277,13 +278,21 @@ class ProductionDeployer {
         try {
           execSync('pm2 --version', { stdio: 'pipe' });
           usePM2 = true;
-        } catch (e) {
+        } catch {
           this.log('PM2 not available, starting server directly...', 'warning');
         }
 
         if (usePM2) {
-          execSync('pm2 stop oscar-broome-revenue || true', { stdio: 'pipe' });
-          execSync('pm2 delete oscar-broome-revenue || true', { stdio: 'pipe' });
+          try {
+            execSync('pm2 stop oscar-broome-revenue', { stdio: 'pipe' });
+          } catch {
+            // Process may not exist, continue
+          }
+          try {
+            execSync('pm2 delete oscar-broome-revenue', { stdio: 'pipe' });
+          } catch {
+            // Process may not exist, continue
+          }
           execSync('pm2 start server-enhanced.js --name oscar-broome-revenue', { stdio: 'inherit' });
           execSync('pm2 save', { stdio: 'pipe' });
 

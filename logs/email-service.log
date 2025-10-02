@@ -62,3 +62,59 @@
 {"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T03:17:49.949Z"}
 {"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T03:22:20.666Z"}
 {"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T03:22:20.667Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:30:07.794Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:30:07.795Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:30:18.456Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:30:18.457Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:30:27.352Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:30:27.354Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:30:34.254Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:30:34.254Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:30:42.313Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:30:42.314Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:30:50.536Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:30:50.538Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:30:58.182Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:30:58.183Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:31:05.765Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:31:05.767Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:31:13.801Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:31:13.803Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:31:21.289Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:31:21.290Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:34:59.144Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:34:59.145Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:35:07.286Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:35:07.286Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:35:16.154Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:35:16.155Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:35:25.153Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:35:25.153Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:35:33.514Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:35:33.515Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:35:41.395Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:35:41.396Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:35:48.897Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:35:48.898Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:35:56.637Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:35:56.639Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:36:03.723Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:36:03.724Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:36:09.924Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:36:09.925Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:36:17.104Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:36:17.104Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:36:24.742Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:36:24.742Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:36:31.072Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:36:31.072Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:36:39.187Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:36:39.189Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:36:48.118Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:36:48.119Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:36:56.388Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:36:56.389Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:37:04.877Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:37:04.880Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2025-10-02T16:37:12.203Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2025-10-02T16:37:12.204Z"}
