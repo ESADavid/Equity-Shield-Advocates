@@ -8,7 +8,6 @@ class AITranscendence {
     this.models = {};
     this.decisionEngine = new AutonomousDecisionEngine();
     this.quantumOptimizer = new QuantumInspiredOptimizer();
-    this.quantumOptimizer.initialize();
     this.deepLearner = new DeepLearningPredictor();
     this.selfLearner = new SelfLearningSystem();
     this.transcendenceMetrics = {
@@ -257,10 +256,6 @@ class QuantumInspiredOptimizer {
   }
 
   optimizePredictions(predictions) {
-    // Ensure quantum state is initialized
-    if (!this.quantumState) {
-      this.initialize();
-    }
     // Apply quantum-inspired optimization
     return predictions.map(pred => {
       const quantumFactor = this.quantumState.amplitude * Math.cos(this.quantumState.phase);
