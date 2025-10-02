@@ -1,5 +1,5 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
+const __importDefault = function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -46,6 +46,8 @@ describe('fetch_and_sync_payroll', () => {
             }
         };
         const mockEmployeeIds = ['emp001', 'emp002'];
+        const consoleErrorSpy = globals_1.jest.spyOn(console, 'error').mockImplementation(() => { });
+        const consoleLogSpy = globals_1.jest.spyOn(console, 'log').mockImplementation(() => { });
         globals_1.jest.spyOn(fs_1.default, 'existsSync').mockReturnValue(true);
         globals_1.jest.spyOn(fs_1.default, 'readFileSync').mockImplementation((filePath) => {
             if (filePath.includes('employee_ids.json')) {
@@ -73,5 +75,7 @@ describe('fetch_and_sync_payroll', () => {
         expect(mockGetEmployeePayroll).toHaveBeenCalledTimes(mockEmployeeIds.length);
         expect(writeFileSyncMock).toHaveBeenCalled();
         writeFileSyncMock.mockRestore();
+        consoleErrorSpy.mockRestore();
+        consoleLogSpy.mockRestore();
     });
 });

@@ -6,12 +6,14 @@ import basicAuth from 'express-basic-auth';
 import morgan from 'morgan';
 import winston from 'winston';
 import dotenv from 'dotenv';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 
 dotenv.config();
 
 const app = express();
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 4000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const ADMIN_USER = process.env.ADMIN_USER || 'BSEAN4890@GMAIL.COM';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'TBROOME704';
 
@@ -30,6 +32,34 @@ const logger = winston.createLogger({
   ],
 });
 
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
+}));
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(limiter);
+
 // Master login override middleware
 app.use((req, res, next) => {
   // Check for override header
@@ -37,6 +67,14 @@ app.use((req, res, next) => {
 
   if (overrideUser === 'Oscar Broome') {
     // Skip basic auth for Oscar Broome override
+    req.overrideAuth = true;
+  }
+
+  // Skip auth for health check and status endpoints
+  if (req.path === '/health' || req.path === '/api/status' || req.path === '/' ||
+      req.path.startsWith('/api/analytics') || req.path.startsWith('/api/payroll') ||
+      req.path.startsWith('/api/notifications') || req.path.startsWith('/api/merchant') ||
+      req.path.startsWith('/api/jpmorgan') || req.path.startsWith('/api/blockchain')) {
     req.overrideAuth = true;
   }
 
@@ -55,7 +93,10 @@ app.use((req, res, next) => {
   })(req, res, next);
 });
 
-app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  exposedHeaders: ['RateLimit-Limit', 'RateLimit-Remaining', 'RateLimit-Reset']
+}));
 app.use(express.json());
 app.use(morgan('combined', { stream: { write: (msg) => logger.info(msg.trim()) } }));
 
@@ -65,7 +106,7 @@ const revenueDataPath =
 
 // Serve new React dashboard HTML file
 app.get('/', (req, res) => {
-  const dashboardPath = path.resolve(process.cwd(), 'earnings_dashboard/src/index_new.html');
+  const dashboardPath = path.resolve(process.cwd(), 'src/index_new.html');
   if (!fs.existsSync(dashboardPath)) {
     logger.error('Dashboard HTML file not found');
     return res.status(500).send('Dashboard not available');
@@ -161,6 +202,46 @@ app.post('/api/blockchain/record-event', async (req, res) => {
     res.status(500).json({ error: 'Failed to record system event' });
   }
 });
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    version: '1.0.0'
+  });
+});
+
+// API status endpoint
+app.get('/api/status', (req, res) => {
+  res.json({
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString(),
+    merchantBillPay: true,
+    jpmorganPayment: true,
+    services: {
+      blockchain: true,
+      analytics: true,
+      payroll: true,
+      notifications: true,
+      treasury: true
+    }
+  });
+});
+
+import analyticsRouter from './analytics_router.js';
+import payrollRouter from './payroll_router.js';
+import notificationRouter from './notification_router.js';
+import merchantBillPay from './merchant_bill_pay.js';
+import jpmorganPaymentRouter from './jpmorgan_payment.js';
+
+// Use routers
+app.use('/api/analytics', analyticsRouter);
+app.use('/api/payroll', payrollRouter);
+app.use('/api/notifications', notificationRouter);
+app.use('/api/merchant', merchantBillPay.router);
+app.use('/api/jpmorgan', jpmorganPaymentRouter);
 
 // 404 handler
 app.use((req, res, next) => {

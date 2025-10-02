@@ -204,6 +204,83 @@ async function runE2EPerfectionTest() {
       log('System integrations not detected', 'error');
     }
 
+    // Test 9: AI Analytics Validation
+    log('Testing AI Analytics Validation...');
+    const analyticsResponse = await makeRequest({
+      hostname: 'localhost',
+      port: 3000,
+      path: '/api/analytics',
+      method: 'GET'
+    });
+
+    testResults.total++;
+    const hasAnalytics = analyticsResponse.statusCode === 200 &&
+                        analyticsResponse.body?.predictions &&
+                        analyticsResponse.body?.anomalies &&
+                        analyticsResponse.body?.riskAssessment;
+
+    if (hasAnalytics) {
+      testResults.passed++;
+      log('AI analytics are functional');
+    } else {
+      testResults.failed++;
+      log('AI analytics validation failed', 'error');
+    }
+
+    // Test 10: AI Transcendence Validation
+    log('Testing AI Transcendence Validation...');
+    const transcendenceResponse = await makeRequest({
+      hostname: 'localhost',
+      port: 3000,
+      path: '/api/analytics/transcendence',
+      method: 'GET'
+    });
+
+    testResults.total++;
+    const hasTranscendence = transcendenceResponse.statusCode === 200 &&
+                           transcendenceResponse.body?.deepLearning &&
+                           transcendenceResponse.body?.quantumOptimization &&
+                           transcendenceResponse.body?.autonomousDecisions;
+
+    if (hasTranscendence) {
+      testResults.passed++;
+      log('AI transcendence is operational');
+    } else {
+      testResults.failed++;
+      log('AI transcendence validation failed', 'error');
+    }
+
+    // Test 11: Autonomous Revenue Optimization
+    log('Testing Autonomous Revenue Optimization...');
+    const optimizationResponse = await makeRequest({
+      hostname: 'localhost',
+      port: 3000,
+      path: '/api/analytics/optimize',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    }, {
+      currentRevenue: 1750000,
+      marketConditions: {
+        growth: 0.08,
+        volatility: 0.15,
+        competition: 0.2,
+        regulation: 0.1
+      }
+    });
+
+    testResults.total++;
+    const hasOptimization = optimizationResponse.statusCode === 200 &&
+                           optimizationResponse.body?.optimized?.projectedRevenue &&
+                           optimizationResponse.body?.decisions?.actions;
+
+    if (hasOptimization) {
+      testResults.passed++;
+      log('Autonomous revenue optimization is working');
+    } else {
+      testResults.failed++;
+      log('Autonomous revenue optimization failed', 'error');
+    }
+
   } catch (error) {
     log(`Test suite failed with error: ${error.message}`, 'error');
     testResults.failed++;

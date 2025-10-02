@@ -1,5 +1,5 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
+const __importDefault = function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,13 +25,8 @@ function validateEnvironmentVariables() {
 
 function readExistingRevenueData() {
     let revenueData = {};
-    try {
-        const fileContent = fs_1.default.readFileSync(revenueDataPath, 'utf-8');
-        revenueData = JSON.parse(fileContent);
-    }
-    catch (error) {
-        console.warn('Failed to read existing revenue data, starting with empty object.');
-    }
+    const fileContent = fs_1.default.readFileSync(revenueDataPath, 'utf-8');
+    revenueData = JSON.parse(fileContent);
     return revenueData;
 }
 
@@ -40,43 +35,30 @@ function isDuplicatePayrollEntry(revenueData, employeeId, currentDate) {
 }
 
 async function fetchPayrollForEmployee(payrollIntegration, employeeId, revenueData) {
-    try {
-        const response = await payrollIntegration.getEmployeePayroll(employeeId);
-        if (response.success && response.data) {
-            const currentDate = new Date().toISOString().split('T')[0];
-            const existingEntry = isDuplicatePayrollEntry(revenueData, employeeId, currentDate);
-            if (!existingEntry) {
-                return {
-                    employeeId,
-                    amount: response.data.salary,
-                    taxRate: response.data.taxRate,
-                    deductions: response.data.deductions,
-                    bonuses: response.data.bonuses,
-                    date: new Date().toISOString(),
-                };
-            }
-        }
-        else {
-            console.warn(`Payroll data for employee ${employeeId} could not be fetched and will be skipped.`);
+    const response = await payrollIntegration.getEmployeePayroll(employeeId);
+    if (response.success && response.data) {
+        const currentDate = new Date().toISOString().split('T')[0];
+        const existingEntry = isDuplicatePayrollEntry(revenueData, employeeId, currentDate);
+        if (!existingEntry) {
+            return {
+                employeeId,
+                amount: response.data.salary,
+                taxRate: response.data.taxRate,
+                deductions: response.data.deductions,
+                bonuses: response.data.bonuses,
+                date: new Date().toISOString(),
+            };
         }
     }
-    catch (error) {
+    else {
         console.warn(`Payroll data for employee ${employeeId} could not be fetched and will be skipped.`);
     }
     return null;
 }
 
 function writeRevenueData(revenueData) {
-    try {
-        fs_1.default.writeFileSync(revenueDataPath, JSON.stringify(revenueData, null, 2), 'utf-8');
-        console.log('Revenue data updated successfully with payroll data.');
-    }
-    catch (error) {
-        console.error('Failed to write updated revenue data:', error);
-        if (process.env.NODE_ENV !== 'test') {
-            throw error; // Re-throw to let caller handle in non-test environments
-        }
-    }
+    fs_1.default.writeFileSync(revenueDataPath, JSON.stringify(revenueData, null, 2), 'utf-8');
+    console.log('Revenue data updated successfully with payroll data.');
 }
 
 async function fetchAndSyncPayroll() {

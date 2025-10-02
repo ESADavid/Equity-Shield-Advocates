@@ -47,7 +47,7 @@ describe('updateRevenueData', () => {
     try {
       await fs.unlink(testDataPath);
     } catch (error) {
-      // File may not exist, ignore
+      console.warn('Failed to clean up test file:', error);
     }
   });
 

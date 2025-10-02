@@ -65,15 +65,11 @@ class QuantumSecurity {
   }
 
   verifyQuantumToken(token) {
-    try {
-      return jwt.verify(token, this.encryptionKey, {
-        algorithms: ['HS512'],
-        issuer: 'quantum-system',
-        audience: 'quantum-users'
-      });
-    } catch (error) {
-      throw new Error('Quantum token verification failed');
-    }
+    return jwt.verify(token, this.encryptionKey, {
+      algorithms: ['HS512'],
+      issuer: 'quantum-system',
+      audience: 'quantum-users'
+    });
   }
 
   // Zero-trust verification
@@ -112,21 +108,16 @@ class QuantumSecurity {
 
   verifyQuantumSignature(data, signature) {
     // Verify HMAC signature
-    try {
-      const expectedSignature = this.generateQuantumSignature(data);
-      const signatureBuffer = Buffer.from(signature, 'hex');
-      const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+    const expectedSignature = this.generateQuantumSignature(data);
+    const signatureBuffer = Buffer.from(signature, 'hex');
+    const expectedBuffer = Buffer.from(expectedSignature, 'hex');
 
-      // Ensure both buffers have the same length
-      if (signatureBuffer.length !== expectedBuffer.length) {
-        return false;
-      }
-
-      return crypto.timingSafeEqual(signatureBuffer, expectedBuffer);
-    } catch (error) {
-      // If there's any error in buffer creation or comparison, return false
+    // Ensure both buffers have the same length
+    if (signatureBuffer.length !== expectedBuffer.length) {
       return false;
     }
+
+    return crypto.timingSafeEqual(signatureBuffer, expectedBuffer);
   }
 
   verifyBlockchainIntegrity(blockchain) {

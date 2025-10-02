@@ -17,25 +17,7 @@ function validateNumber(value: any, fieldName: string): number {
  */
 const ADD_SAMPLE_DATA = false;
 
-async function updateRevenueData(incremental: boolean = false, filePath?: string): Promise<boolean> {
-  const dataPath = filePath || revenueDataPath;
-  try {
-    await fs.access(dataPath);
-  } catch {
-    console.error('Revenue data file not found at', dataPath);
-    return false;
-  }
-
-  let data;
-  try {
-    const fileContent = await fs.readFile(dataPath, 'utf-8');
-    data = JSON.parse(fileContent);
-  } catch (error) {
-    console.error('Failed to read or parse revenue data JSON:', error);
-    return false;
-  }
-
-  // Ensure purchases object exists
+function ensurePurchasesStructure(data: any): void {
   if (!data.purchases) {
     data.purchases = {
       corporateHomes: 0,
@@ -44,28 +26,22 @@ async function updateRevenueData(incremental: boolean = false, filePath?: string
       autoFleetDetails: []
     };
   } else {
-    // Ensure autoFleetDetails array exists
     if (!Array.isArray(data.purchases.autoFleetDetails)) {
       data.purchases.autoFleetDetails = [];
     }
-    // Ensure corporateHomesDetails array exists
     if (!Array.isArray(data.purchases.corporateHomesDetails)) {
       data.purchases.corporateHomesDetails = [];
     }
   }
+}
 
-  // Validate and sanitize purchase costs
+function validatePurchases(data: any): void {
   data.purchases.autoFleet = validateNumber(data.purchases.autoFleet, 'autoFleet');
   data.purchases.corporateHomes = validateNumber(data.purchases.corporateHomes, 'corporateHomes');
+}
 
-  // Validate totalRevenue before decrementing
-  if (typeof data.totalRevenue !== 'number' || isNaN(data.totalRevenue)) {
-    console.warn('Invalid or missing totalRevenue, defaulting to 0.');
-    data.totalRevenue = 0;
-  }
-
+function addSampleData(data: any, incremental: boolean): void {
   if (!incremental && ADD_SAMPLE_DATA) {
-    // Add a sample auto fleet purchase if none exist
     if (data.purchases.autoFleetDetails.length === 0) {
       data.purchases.autoFleetDetails.push({
         model: 'Sample Model',
@@ -78,7 +54,6 @@ async function updateRevenueData(incremental: boolean = false, filePath?: string
       data.totalRevenue -= 50000;
     }
 
-    // Add a sample corporate home purchase if none exist
     if (data.purchases.corporateHomesDetails.length === 0) {
       data.purchases.corporateHomesDetails.push({
         address: '123 Corporate Blvd',
@@ -91,16 +66,19 @@ async function updateRevenueData(incremental: boolean = false, filePath?: string
       data.totalRevenue -= 250000;
     }
   }
+}
 
-  // Ensure revenueStreamsDetails object exists
+function ensureRevenueStreamsDetails(data: any): void {
   if (!data.revenueStreamsDetails) {
     data.revenueStreamsDetails = {};
   }
 
-  // Add sample transaction details for each revenue stream if missing
   if (!data.revenueStreams) {
     data.revenueStreams = {};
   }
+}
+
+function addTransactionDetails(data: any): void {
   for (const streamName of Object.keys(data.revenueStreams)) {
     if (!Array.isArray(data.revenueStreamsDetails[streamName])) {
       data.revenueStreamsDetails[streamName] = [];
@@ -114,8 +92,9 @@ async function updateRevenueData(incremental: boolean = false, filePath?: string
       });
     }
   }
+}
 
-  // Integrate payroll data if present
+function integratePayroll(data: any): void {
   if (Array.isArray(data.payroll)) {
     let payrollTotal = 0;
     for (const payrollEntry of data.payroll) {
@@ -128,8 +107,9 @@ async function updateRevenueData(incremental: boolean = false, filePath?: string
     data.payrollTotal = payrollTotal;
     console.log(`Integrated payroll data total amount: ${payrollTotal}`);
   }
+}
 
-  // Add audit trail entry
+function addAuditTrail(data: any, incremental: boolean): void {
   if (!Array.isArray(data.auditTrail)) {
     data.auditTrail = [];
   }
@@ -146,15 +126,34 @@ async function updateRevenueData(incremental: boolean = false, filePath?: string
       incrementalUpdate: incremental
     }
   });
+}
 
-  try {
-    await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
-    console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
-    return true;
-  } catch (error) {
-    console.error('Error writing updated revenue data file:', error);
-    throw error;
+async function updateRevenueData(incremental: boolean = false, filePath?: string): Promise<boolean> {
+  const dataPath = filePath || revenueDataPath;
+
+  await fs.access(dataPath);
+
+  let data;
+  const fileContent = await fs.readFile(dataPath, 'utf-8');
+  data = JSON.parse(fileContent);
+
+  ensurePurchasesStructure(data);
+  validatePurchases(data);
+
+  if (typeof data.totalRevenue !== 'number' || isNaN(data.totalRevenue)) {
+    console.warn('Invalid or missing totalRevenue, defaulting to 0.');
+    data.totalRevenue = 0;
   }
+
+  addSampleData(data, incremental);
+  ensureRevenueStreamsDetails(data);
+  addTransactionDetails(data);
+  integratePayroll(data);
+  addAuditTrail(data, incremental);
+
+  await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
+  console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
+  return true;
 }
 
 export default updateRevenueData;
