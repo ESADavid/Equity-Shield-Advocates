@@ -162,4 +162,4 @@ class QuantumSecurity {
   }
 }
 
-export default QuantumSecurity;
+module.exports = QuantumSecurity;

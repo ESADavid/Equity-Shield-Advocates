@@ -44,11 +44,15 @@ describe('updateRevenueData', () => {
 
   afterAll(async () => {
     // Clean up any remaining test files
-    await fs.unlink(testDataPath);
+    try {
+      await fs.unlink(testDataPath);
+    } catch (error) {
+      // File may not exist, ignore
+    }
   });
 
   test('should return true when data file exists and is valid', async () => {
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
   });
 
@@ -58,10 +62,7 @@ describe('updateRevenueData', () => {
     try {
       await fs.rename(testDataPath, tempPath);
 
-      // Temporarily mock the path to a non-existent file
-      // This test would need to be adjusted based on how the path is determined in the actual function
-
-      const result = await updateRevenueData(false);
+      const result = await updateRevenueData(false, testDataPath);
       expect(result).toBe(false);
     } finally {
       // Restore the file
@@ -73,14 +74,14 @@ describe('updateRevenueData', () => {
     // Write invalid JSON
     await fs.writeFile(testDataPath, 'invalid json content');
 
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(false);
   });
 
   test('should add sample purchase data when ADD_SAMPLE_DATA is true and incremental is false', async () => {
     // This test would need to modify the ADD_SAMPLE_DATA flag in the source
     // For now, we'll test with the current configuration
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
 
     // Read the updated data and verify structure
@@ -103,7 +104,7 @@ describe('updateRevenueData', () => {
 
     await fs.writeFile(testDataPath, JSON.stringify(invalidData, null, 2));
 
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -118,7 +119,7 @@ describe('updateRevenueData', () => {
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithoutPurchases, null, 2));
 
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -128,7 +129,7 @@ describe('updateRevenueData', () => {
   });
 
   test('should integrate payroll data correctly', async () => {
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -148,7 +149,7 @@ describe('updateRevenueData', () => {
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithInvalidPayroll, null, 2));
 
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -156,7 +157,7 @@ describe('updateRevenueData', () => {
   });
 
   test('should add audit trail entries', async () => {
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -176,7 +177,7 @@ describe('updateRevenueData', () => {
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithoutRevenueStreamsDetails, null, 2));
 
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -184,7 +185,7 @@ describe('updateRevenueData', () => {
   });
 
   test('should add transaction details for revenue streams', async () => {
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -207,7 +208,7 @@ describe('updateRevenueData', () => {
   test('should handle file write errors gracefully', async () => {
     // This test would require mocking fs.writeFile to throw an error
     // For now, we'll test with valid data
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
   });
 
@@ -219,7 +220,7 @@ describe('updateRevenueData', () => {
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithInvalidRevenue, null, 2));
 
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -238,7 +239,7 @@ describe('updateRevenueData', () => {
 
     await fs.writeFile(testDataPath, JSON.stringify(customData, null, 2));
 
-    const result = await updateRevenueData(false);
+    const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));

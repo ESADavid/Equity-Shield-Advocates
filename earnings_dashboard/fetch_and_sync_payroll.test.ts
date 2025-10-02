@@ -1,9 +1,9 @@
-const request = require('supertest');
-const express = require('express');
-const payrollApiRouter = require('./payroll_api.js');
-const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default;
-const fs = require('fs');
-const path = require('path');
+import request from 'supertest';
+import express from 'express';
+import payrollApiRouter from './payroll_api.js';
+import fetchAndSyncPayroll from './fetch_and_sync_payroll';
+import fs from 'fs';
+import path from 'path';
 
 jest.mock('./fetch_and_sync_payroll');
 jest.mock('fs');
@@ -49,7 +49,7 @@ describe('Payroll API', () => {
 
   describe('POST /api/payroll/sync', () => {
     it('should trigger payroll sync and return success', async () => {
-      fetchAndSyncPayroll.mockResolvedValue(undefined);
+      (fetchAndSyncPayroll as jest.MockedFunction<typeof fetchAndSyncPayroll>).mockResolvedValue(undefined);
 
       const res = await request(app).post('/api/payroll/sync');
 
@@ -59,7 +59,7 @@ describe('Payroll API', () => {
     });
 
     it('should return 500 if payroll sync fails', async () => {
-      fetchAndSyncPayroll.mockRejectedValue(new Error('Sync error'));
+      (fetchAndSyncPayroll as jest.MockedFunction<typeof fetchAndSyncPayroll>).mockRejectedValue(new Error('Sync error'));
 
       const res = await request(app).post('/api/payroll/sync');
 

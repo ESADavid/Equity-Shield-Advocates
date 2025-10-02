@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const revenueDataPath = path_1.default.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 function validateNumber(value, fieldName) {
     if (typeof value !== 'number' || isNaN(value) || value < 0) {
         console.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
@@ -18,7 +17,8 @@ function validateNumber(value, fieldName) {
  * Set to false in production to avoid adding hardcoded sample data.
  */
 const ADD_SAMPLE_DATA = false;
-function updateRevenueData(incremental = false) {
+function updateRevenueData(incremental = false, filePath) {
+    const revenueDataPath = filePath || path_1.default.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
     if (!fs_1.default.existsSync(revenueDataPath)) {
         console.error('Revenue data file not found at', revenueDataPath);
         return false; // Changed from process.exit(1) to return false to indicate failure

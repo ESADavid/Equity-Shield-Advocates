@@ -2,8 +2,8 @@ const request = require('supertest');
 const { app, server } = require('./server_rebuilt');
 
 describe('API Endpoint Tests', () => {
-  afterAll(() => {
-    server.close();
+afterAll(async () => {
+    await new Promise((resolve) => server.close(resolve));
   });
 
   const authHeader = 'Basic ' + Buffer.from('admin:securepassword').toString('base64');

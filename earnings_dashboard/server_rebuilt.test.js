@@ -1,10 +1,15 @@
+// Set dummy environment variables for tests before requiring the server
+process.env.DYNAMICS365_BASE_URL = 'https://dummy.dynamics365.com';
+process.env.DYNAMICS365_ACCESS_TOKEN = 'dummy-token';
+process.env.NODE_ENV = 'test';
+
 const request = require('supertest');
 const { app, server } = require('./server_rebuilt');
 
 const auth = { user: 'admin', pass: 'securepassword' };
 
-afterAll(() => {
-  server.close();
+afterAll(async () => {
+  await new Promise((resolve) => server.close(resolve));
 });
 
 describe('Critical-path API tests for earnings_dashboard/server_rebuilt.js', () => {
@@ -77,12 +82,17 @@ describe('Critical-path API tests for earnings_dashboard/server_rebuilt.js', () 
   });
 
   test('POST /api/sync/all triggers data synchronization', async () => {
+    // Mock syncAllData to avoid environment variable issues in tests
+    const originalSyncAllData = require('./sync_jobs').syncAllData;
+    require('./sync_jobs').syncAllData = jest.fn(async () => {
+      console.log('Mocked syncAllData called');
+    });
+
     const res = await request(app).post('/api/sync/all').auth(auth.user, auth.pass);
-    expect([200, 500]).toContain(res.statusCode);
-    if (res.statusCode === 200) {
-      expect(res.body).toHaveProperty('message');
-    } else {
-      expect(res.body).toHaveProperty('error');
-    }
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Data synchronization completed successfully');
+
+    // Restore original function
+    require('./sync_jobs').syncAllData = originalSyncAllData;
   });
 });

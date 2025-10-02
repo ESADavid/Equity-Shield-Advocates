@@ -2,6 +2,12 @@ const request = require('supertest');
 const app = require('./server'); // Assuming server.js exports the Express app
 
 describe('GET /microsoft/chat', () => {
+  afterAll(async () => {
+    // Close the server if it was started
+    if (app && app.close) {
+      await new Promise((resolve) => app.close(resolve));
+    }
+  });
   it('should return 200 and success message with valid query parameters', async () => {
     const response = await request(app)
       .get('/microsoft/chat')

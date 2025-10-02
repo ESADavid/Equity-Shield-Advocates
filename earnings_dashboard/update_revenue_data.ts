@@ -17,17 +17,18 @@ function validateNumber(value: any, fieldName: string): number {
  */
 const ADD_SAMPLE_DATA = false;
 
-async function updateRevenueData(incremental: boolean = false): Promise<boolean> {
+async function updateRevenueData(incremental: boolean = false, filePath?: string): Promise<boolean> {
+  const dataPath = filePath || revenueDataPath;
   try {
-    await fs.access(revenueDataPath);
+    await fs.access(dataPath);
   } catch {
-    console.error('Revenue data file not found at', revenueDataPath);
+    console.error('Revenue data file not found at', dataPath);
     return false;
   }
 
   let data;
   try {
-    const fileContent = await fs.readFile(revenueDataPath, 'utf-8');
+    const fileContent = await fs.readFile(dataPath, 'utf-8');
     data = JSON.parse(fileContent);
   } catch (error) {
     console.error('Failed to read or parse revenue data JSON:', error);
@@ -147,7 +148,7 @@ async function updateRevenueData(incremental: boolean = false): Promise<boolean>
   });
 
   try {
-    await fs.writeFile(revenueDataPath, JSON.stringify(data, null, 2), 'utf-8');
+    await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
     console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
     return true;
   } catch (error) {

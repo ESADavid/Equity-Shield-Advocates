@@ -45,8 +45,17 @@ describe('fetch_and_sync_payroll', () => {
                 autoFleet: 0
             }
         };
+        const mockEmployeeIds = ['emp001', 'emp002'];
         globals_1.jest.spyOn(fs_1.default, 'existsSync').mockReturnValue(true);
-        globals_1.jest.spyOn(fs_1.default, 'readFileSync').mockReturnValue(JSON.stringify(mockRevenueData));
+        globals_1.jest.spyOn(fs_1.default, 'readFileSync').mockImplementation((filePath) => {
+            if (filePath.includes('employee_ids.json')) {
+                return JSON.stringify(mockEmployeeIds);
+            }
+            else if (filePath.includes('revenue.json')) {
+                return JSON.stringify(mockRevenueData);
+            }
+            return '{}';
+        });
         const writeFileSyncMock = globals_1.jest.spyOn(fs_1.default, 'writeFileSync').mockImplementation(() => { });
         // Import the actual PayrollIntegration class
         const ActualPayrollIntegration = globals_1.jest.requireActual('../payroll_integration').default;
@@ -61,7 +70,7 @@ describe('fetch_and_sync_payroll', () => {
         // Fix for "Argument of type 'PayrollResponse' is not assignable to parameter of type 'never'" error
         globals_1.jest.spyOn(ActualPayrollIntegration.prototype, 'getEmployeePayroll').mockImplementation(mockGetEmployeePayroll);
         await (0, fetch_and_sync_payroll_1.default)();
-        expect(mockGetEmployeePayroll).toHaveBeenCalled();
+        expect(mockGetEmployeePayroll).toHaveBeenCalledTimes(mockEmployeeIds.length);
         expect(writeFileSyncMock).toHaveBeenCalled();
         writeFileSyncMock.mockRestore();
     });

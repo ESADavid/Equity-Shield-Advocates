@@ -2,6 +2,9 @@ global.setImmediate = global.setImmediate || function (fn) {
   return setTimeout(fn, 0);
 };
 
+// Set NODE_ENV to test for test environment detection
+process.env.NODE_ENV = 'test';
+
 // Set dummy environment variables for tests
 process.env.DYNAMICS365_BASE_URL = 'https://dummy.dynamics365.com';
 process.env.DYNAMICS365_ACCESS_TOKEN = 'dummy-token';
