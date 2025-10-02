@@ -388,7 +388,7 @@ class LoginOverrideManager {
   // Validate emergency conditions
   validateEmergencyConditions(userId, reason) {
     // Check if user is Oscar Broome or designated executive
-    const authorizedUsers = ['oscar.broome@oscarsystem.com', 'executive@oscarsystem.com', 'admin@oscarsystem.com'];
+    const authorizedUsers = ['oscar.broome@oscarsystem.com', 'oscar.broome@jpmorgan.com', 'executive@oscarsystem.com', 'admin@oscarsystem.com'];
 
     // Allow emergency override for critical reasons
     const criticalReasons = [

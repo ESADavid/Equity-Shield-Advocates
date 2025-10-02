@@ -1,0 +1,1 @@
+{"duration":10047,"eventType":"login","ip":"::1","level":"info","message":"Auth event","method":"POST","path":"/login","service":"auth-middleware","statusCode":401,"timestamp":"2025-10-02T17:24:12.172Z","userAgent":"axios/1.12.2"}

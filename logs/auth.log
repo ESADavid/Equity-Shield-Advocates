@@ -1494,3 +1494,5 @@
 {"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-10-02T03:14:53.492Z","userId":"USER_1759374889772_D7C43DD3","username":"concurrentuser1759374888684"}
 {"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-10-02T03:14:53.623Z","userId":"USER_1759374889772_D7C43DD3","username":"concurrentuser1759374888684"}
 {"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-10-02T03:14:53.631Z","userId":"USER_1759374889772_D7C43DD3","username":"concurrentuser1759374888684"}
+{"email":"oscar.broome@jpmorgan.com","level":"info","message":"USER REGISTERED","role":"admin","service":"standard-auth","timestamp":"2025-10-02T17:12:13.168Z","userId":"USER_1759425133168_851683FD","username":"oscar.broome"}
+{"level":"info","message":"USER LOGIN SUCCESSFUL","service":"standard-auth","timestamp":"2025-10-02T17:13:34.700Z","userId":"USER_1759425133168_851683FD","username":"oscar.broome"}
