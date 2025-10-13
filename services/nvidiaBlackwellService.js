@@ -3,10 +3,10 @@
  * End-to-end integration of NVIDIA Blackwell GPU architecture
  * Provides quantum-enhanced AI/ML capabilities with Blackwell acceleration
  */
-const { spawn } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
+import { spawn } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
 
 class NvidiaBlackwellService {
   constructor() {
@@ -335,4 +335,4 @@ class NvidiaBlackwellService {
   }
 }
 
-module.exports = NvidiaBlackwellService;
+export default NvidiaBlackwellService;

@@ -2,9 +2,9 @@
  * NVIDIA BLACKWELL GPU ROUTES
  * API endpoints for Blackwell GPU acceleration and quantum hybrid computing
  */
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const NvidiaBlackwellService = require('../services/nvidiaBlackwellService');
+import NvidiaBlackwellService from '../services/nvidiaBlackwellService.js';
 
 const blackwellService = new NvidiaBlackwellService();
 
@@ -218,4 +218,4 @@ router.get('/health', (req, res) => {
   res.json(health);
 });
 
-module.exports = router;
+export default router;
