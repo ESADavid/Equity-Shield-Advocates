@@ -8,10 +8,23 @@ function JPMorganControlCenter() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [controlStatus, setControlStatus] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   useEffect(() => {
     fetchControlStatus();
+    checkMobileDevice();
+
+    // Add resize listener for mobile detection
+    const handleResize = () => checkMobileDevice();
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const checkMobileDevice = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
 
   const fetchControlStatus = async () => {
     try {
@@ -32,47 +45,80 @@ function JPMorganControlCenter() {
   };
 
   const tabs = [
-    { id: 'dashboard', label: 'Control Dashboard', component: ControlDashboard },
-    { id: 'websites', label: 'Website Management', component: WebsiteManagement },
-    { id: 'banking', label: 'Private Banking', component: PrivateBankingControls },
+    { id: 'dashboard', label: 'Dashboard', icon: '📊', component: ControlDashboard },
+    { id: 'banking', label: 'Banking', icon: '🏦', component: PrivateBankingControls },
+    { id: 'websites', label: 'Websites', icon: '🌐', component: WebsiteManagement },
   ];
 
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component || ControlDashboard;
 
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    if (isMobile) {
+      setShowMobileMenu(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="jpmorgan-control-center">
-        <div className="loading">Loading JPMorgan Control Center...</div>
+        <div className="loading">
+          <div className="loading-spinner"></div>
+          <p>Loading JPMorgan Control Center...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="jpmorgan-control-center">
+    <div className={`jpmorgan-control-center ${isMobile ? 'mobile' : ''}`}>
       <header className="control-header">
-        <h1>JPMorgan Control Center</h1>
+        <div className="header-content">
+          <h1>JPMorgan Control Center</h1>
+          {isMobile && (
+            <button
+              className="mobile-menu-toggle"
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              aria-label="Toggle menu"
+            >
+              {showMobileMenu ? '✕' : '☰'}
+            </button>
+          )}
+        </div>
         <div className="status-indicator">
           <span className={`status ${controlStatus?.overallStatus || 'unknown'}`}>
-            Status: {controlStatus?.overallStatus || 'Unknown'}
+            {isMobile ? '●' : 'Status:'} {controlStatus?.overallStatus || 'Unknown'}
           </span>
         </div>
       </header>
 
-      <nav className="control-navigation">
+      <nav className={`control-navigation ${isMobile ? 'mobile' : ''} ${showMobileMenu ? 'open' : ''}`}>
         {tabs.map(tab => (
           <button
             key={tab.id}
-            className={`nav-tab ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
+            className={`nav-tab ${activeTab === tab.id ? 'active' : ''} ${isMobile ? 'mobile' : ''}`}
+            onClick={() => handleTabChange(tab.id)}
           >
-            {tab.label}
+            {isMobile && tab.icon} {tab.label}
           </button>
         ))}
       </nav>
 
-      <main className="control-content">
-        <ActiveComponent controlStatus={controlStatus} onStatusUpdate={fetchControlStatus} />
+      <main className={`control-content ${isMobile ? 'mobile' : ''}`}>
+        <ActiveComponent
+          controlStatus={controlStatus}
+          onStatusUpdate={fetchControlStatus}
+          isMobile={isMobile}
+        />
       </main>
+
+      {/* Mobile overlay for menu */}
+      {isMobile && showMobileMenu && (
+        <div
+          className="mobile-overlay"
+          onClick={() => setShowMobileMenu(false)}
+        ></div>
+      )}
     </div>
   );
 }
