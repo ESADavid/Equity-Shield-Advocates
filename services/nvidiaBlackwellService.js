@@ -3,10 +3,7 @@
  * End-to-end integration of NVIDIA Blackwell GPU architecture
  * Provides quantum-enhanced AI/ML capabilities with Blackwell acceleration
  */
-import { spawn } from 'child_process';
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
+import { randomBytes } from 'node:crypto';
 
 class NvidiaBlackwellService {
   constructor() {
@@ -59,20 +56,20 @@ class NvidiaBlackwellService {
   }
 
   initializeMemoryPools() {
-    this.gpuDevices.forEach(gpu => {
+    for (const gpu of this.gpuDevices) {
       this.memoryPools.set(gpu.id, {
         total: 96 * 1024 * 1024 * 1024, // 96GB in bytes
         used: 0,
         available: 96 * 1024 * 1024 * 1024,
         quantumShared: 0
       });
-    });
+    }
   }
 
   // Blackwell-accelerated AI/ML inference
   async runBlackwellInference(model, input, options = {}) {
     const gpuId = await this.selectOptimalGPU();
-    const kernelId = crypto.randomBytes(16).toString('hex');
+    const kernelId = randomBytes(16).toString('hex');
 
     try {
       // Launch Blackwell kernel
@@ -109,12 +106,12 @@ class NvidiaBlackwellService {
     let optimalGPU = 0;
     let minUtilization = 100;
 
-    this.gpuDevices.forEach((gpu, index) => {
+    for (const [index, gpu] of this.gpuDevices.entries()) {
       if (gpu.utilization < minUtilization && gpu.quantumMode) {
         minUtilization = gpu.utilization;
         optimalGPU = index;
       }
-    });
+    }
 
     return optimalGPU;
   }
@@ -218,7 +215,7 @@ class NvidiaBlackwellService {
 
     return {
       success: true,
-      allocationId: crypto.randomBytes(8).toString('hex'),
+      allocationId: randomBytes(8).toString('hex'),
       gpuId,
       size,
       quantumShared
@@ -235,8 +232,6 @@ class NvidiaBlackwellService {
 
   // Blackwell-quantum hybrid computing
   async runQuantumBlackwellHybrid(quantumCircuit, classicalData) {
-    const gpuId = await this.selectOptimalGPU();
-
     // Combine quantum computing with Blackwell acceleration
     const hybridResult = {
       quantumProcessing: await this.simulateQuantumProcessing(quantumCircuit),
@@ -278,9 +273,9 @@ class NvidiaBlackwellService {
 
   calculateTotalMemory() {
     let total = 0;
-    this.memoryPools.forEach(pool => {
+    for (const pool of this.memoryPools.values()) {
       total += pool.total;
-    });
+    }
     return total;
   }
 
@@ -296,9 +291,9 @@ class NvidiaBlackwellService {
     };
 
     // Apply optimizations
-    this.gpuDevices.forEach(gpu => {
+    for (const gpu of this.gpuDevices) {
       gpu.optimizations = optimizations;
-    });
+    }
 
     return { success: true, optimizations };
   }
