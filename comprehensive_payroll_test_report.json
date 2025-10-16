@@ -6,44 +6,44 @@
     "failed": 0,
     "skipped": 0,
     "successRate": "100.00%",
-    "duration": 2262
+    "duration": 2668
   },
   "tests": [
     {
       "name": "Environment Config",
       "result": "passed",
-      "message": "Server is degraded and running",
+      "message": "Server is healthy and running",
       "duration": 0,
-      "timestamp": "2025-10-16T05:55:23.641Z"
+      "timestamp": "2025-10-16T06:55:58.366Z"
     },
     {
       "name": "Get Employees",
       "result": "passed",
       "message": "Retrieved 0 employees",
       "duration": 0,
-      "timestamp": "2025-10-16T05:55:23.661Z"
+      "timestamp": "2025-10-16T06:55:58.414Z"
     },
     {
       "name": "Add Employee",
       "result": "passed",
       "message": "Employee added successfully",
       "duration": 0,
-      "timestamp": "2025-10-16T05:55:23.685Z"
+      "timestamp": "2025-10-16T06:55:58.442Z"
     },
     {
       "name": "Calculate Payroll",
       "result": "passed",
       "message": "Payroll calculated correctly",
       "duration": 0,
-      "timestamp": "2025-10-16T05:55:23.708Z"
+      "timestamp": "2025-10-16T06:55:58.465Z"
     },
     {
       "name": "Process Payroll",
       "result": "passed",
       "message": "Processed payroll for 1 employees",
       "duration": 0,
-      "timestamp": "2025-10-16T05:55:23.727Z"
+      "timestamp": "2025-10-16T06:55:58.483Z"
     }
   ],
-  "timestamp": "2025-10-16T05:55:23.749Z"
+  "timestamp": "2025-10-16T06:55:58.499Z"
 }

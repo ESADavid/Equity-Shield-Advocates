@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import JPMorganControlCenter from './JPMorganControlCenter.jsx';
+import WalletWebapp from './WalletWebapp.jsx';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -85,10 +86,18 @@ function Dashboard() {
         >
           JPMorgan Control Center
         </button>
+        <button
+          className={`nav-btn ${activeView === 'wallet' ? 'active' : ''}`}
+          onClick={() => setActiveView('wallet')}
+        >
+          Wallet Management
+        </button>
       </nav>
 
       <main className="dashboard-content">
-        {activeView === 'earnings' ? renderEarningsDashboard() : <JPMorganControlCenter />}
+        {activeView === 'earnings' && renderEarningsDashboard()}
+        {activeView === 'control' && <JPMorganControlCenter />}
+        {activeView === 'wallet' && <WalletWebapp />}
       </main>
     </div>
   );

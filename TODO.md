@@ -1,6 +1,17 @@
-# Project TODO List
+# ES Module Conversion Plan
 
-- [x] Fix await expression in production_deploy.mjs by adding spawn import at top and adjusting PM2 logic
-- [x] Fix duplicate child_process imports in production_deploy_simple.mjs
-- [x] Adjust PM2 error handling in both files to avoid SonarLint catch warnings
-- [x] Test the deployment scripts to ensure they still work
+## Completed Tasks
+- [x] Analyze codebase for CommonJS vs ES module usage
+- [x] Create conversion plan
+
+## In Progress
+- [x] Update tsconfig.json to use ES modules
+- [x] Add "type": "module" to package.json (already present)
+- [x] Update Jest configuration for ES modules
+- [ ] Convert CommonJS syntax to ES modules in JS files
+- [ ] Test the conversion
+
+## Pending Tasks
+- [ ] Run tests to verify conversion works
+- [ ] Check for runtime issues or missing dependencies
+- [ ] Update any remaining CommonJS files

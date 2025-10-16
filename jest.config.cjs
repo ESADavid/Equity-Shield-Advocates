@@ -2,9 +2,14 @@ module.exports = {
   testTimeout: 30000,
   verbose: true,
   setupFiles: ['./jest.setup.js'],
-  extensionsToTreatAsEsm: ['.ts'],
+  extensionsToTreatAsEsm: ['.ts', '.js'],
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
+  },
   transform: {
-    '^.+\\.(ts|tsx|js|jsx)$': 'babel-jest',
+    '^.+\\.(ts|tsx|js|jsx)$': ['babel-jest', { presets: ['@babel/preset-env', '@babel/preset-typescript'] }],
   },
   transformIgnorePatterns: [
     "node_modules/(?!(@babel/runtime|jest-runner))/"

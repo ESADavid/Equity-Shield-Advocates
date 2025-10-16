@@ -1,5 +1,5 @@
 {
-  "totalRevenue": 1233093321,
+  "totalRevenue": 1233075319,
   "revenueStreams": {
     "Sample Repo": {
       "amount": 617090945,
@@ -28,8 +28,8 @@
     }
   },
   "purchases": {
-    "corporateHomes": 264037,
-    "autoFleet": 1210532,
+    "corporateHomes": 268038,
+    "autoFleet": 1224533,
     "autoFleetDetails": [
       {
         "model": "2025 ROLLS-ROYCE BLACK BADGE SPECTRA",
@@ -38,7 +38,7 @@
         "cost": 799996,
         "purchaseDate": "2024-06-10T00:00:00.000Z",
         "deliveryStatus": "delivered",
-        "deliveryDate": "2025-10-16T05:21:39.856Z",
+        "deliveryDate": "2025-10-16T17:53:02.159Z",
         "deliveryAddress": "7438 STILLBROOKBEND CT HUNTERSVILLE NC 28078"
       },
       {
@@ -2577,6 +2577,168 @@
           "dealership": "Delivery Dealership",
           "cost": 1500,
           "purchaseDate": "2025-10-16T05:22:02.510Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-10-16T17:53:02.040Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1760637182040",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-10-16T17:53:02.040Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-16T17:53:02.736Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1760637182736",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-16T17:53:02.736Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-16T17:53:02.941Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1760637182941",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-16T17:53:02.941Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-16T17:53:12.543Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1760637192543",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-16T17:53:12.543Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-16T17:53:12.635Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1760637192635",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-16T17:53:12.635Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-16T17:53:20.239Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1760637200239",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-16T17:53:20.239Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-16T17:53:20.314Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1760637200314",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-16T17:53:20.314Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-10-16T17:53:26.210Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1760637206209",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-10-16T17:53:26.210Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-10-16T17:53:26.305Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1760637206305",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-10-16T17:53:26.305Z"
         }
       }
     ],
