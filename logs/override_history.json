@@ -7,7 +7,7 @@
       "reason": "emergency_access",
       "timestamp": "2025-10-16T02:09:08.595Z",
       "expiresAt": "2025-10-16T02:24:08.596Z",
-      "status": "active",
+      "status": "expired",
       "additionalAuth": "account_access_emergency",
       "approvedBy": "SYSTEM_EMERGENCY_PROTOCOL",
       "notificationsSent": []
@@ -21,10 +21,10 @@
       "justification": "User reported login issues",
       "timestamp": "2025-10-16T02:09:09.070Z",
       "expiresAt": "2025-10-16T02:24:09.070Z",
-      "status": "active",
+      "status": "expired",
       "approvedBy": "admin@oscarsystem.com",
       "notificationsSent": []
     }
   },
-  "lastUpdated": "2025-10-16T02:21:17.913Z"
+  "lastUpdated": "2025-10-16T02:26:18.127Z"
 }
