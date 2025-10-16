@@ -169,7 +169,7 @@ This document provides a comprehensive list of all assets, systems, accounts, cr
 ### Primary Administrative Credentials
 
 - **Username**: oscar.broome
-- **Email**: oscar.broome@jpmorgan.com
+- **Email**: <oscar.broome@jpmorgan.com>
 - **Password**: SecurePass2024! (Rotated quarterly)
 - **Role**: System Administrator
 - **Access Level**: Full System Access

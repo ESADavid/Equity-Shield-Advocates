@@ -114,7 +114,7 @@ function JPMorganControlCenter() {
 
       {/* Mobile overlay for menu */}
       {isMobile && showMobileMenu && (
-        <div
+        <button
           className="mobile-overlay"
           onClick={() => setShowMobileMenu(false)}
           onKeyDown={(e) => {
@@ -122,10 +122,9 @@ function JPMorganControlCenter() {
               setShowMobileMenu(false);
             }
           }}
-          tabIndex={0}
-          role="button"
           aria-label="Close mobile menu"
-        ></div>
+          type="button"
+        ></button>
       )}
     </div>
   );

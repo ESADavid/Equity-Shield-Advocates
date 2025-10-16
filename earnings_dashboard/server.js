@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import basicAuth from 'express-basic-auth';
 import morgan from 'morgan';
 import winston from 'winston';
@@ -13,7 +13,7 @@ dotenv.config();
 
 const app = express();
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+const PORT = process.env.PORT ? Number.parseInt(process.env.PORT) : 3000;
 const ADMIN_USER = process.env.ADMIN_USER || 'BSEAN4890@GMAIL.COM';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'TBROOME704';
 
@@ -174,8 +174,8 @@ app.get('/api/blockchain/audit-report', async (req, res) => {
   try {
     const { start, end } = req.query;
     const timeRange = {
-      start: start ? parseInt(start) : Date.now() - (30 * 24 * 60 * 60 * 1000), // 30 days ago
-      end: end ? parseInt(end) : Date.now()
+      start: start ? Number.parseInt(start) : Date.now() - (30 * 24 * 60 * 60 * 1000), // 30 days ago
+      end: end ? Number.parseInt(end) : Date.now()
     };
 
     const report = await blockchainService.getAuditReport(timeRange);

@@ -7,10 +7,9 @@
  * and integration functionality.
  */
 
-import express from 'express';
 import axios from 'axios';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -49,26 +48,31 @@ class TestSuite {
     this.results.total++;
     this.results.tests.push({ name, result, message, timestamp: new Date().toISOString() });
 
+    const logMessage = `${name}: ${result.toUpperCase()}`;
+    const logType = result === 'passed' ? 'success' : result === 'failed' ? 'error' : 'warning';
+
     if (result === 'passed') {
       this.results.passed++;
-      this.log(`${name}: PASSED`, 'success');
     } else if (result === 'failed') {
       this.results.failed++;
-      this.log(`${name}: FAILED - ${message}`, 'error');
     } else if (result === 'skipped') {
       this.results.skipped++;
-      this.log(`${name}: SKIPPED - ${message}`, 'warning');
     }
+
+    this.log(logMessage, logType);
   }
 
   generateReport() {
+    const totalTests = this.results.total;
+    const successRate = totalTests > 0 ? (this.results.passed / totalTests * 100).toFixed(2) : 0;
+
     const report = {
       summary: {
-        total: this.results.total,
+        total: totalTests,
         passed: this.results.passed,
         failed: this.results.failed,
         skipped: this.results.skipped,
-        successRate: this.results.total > 0 ? (this.results.passed / this.results.total * 100).toFixed(2) : 0
+        successRate
       },
       tests: this.results.tests,
       timestamp: new Date().toISOString()
@@ -84,11 +88,12 @@ class TestSuite {
     console.log(`📈 Success Rate: ${report.summary.successRate}%`);
     console.log('='.repeat(60));
 
-    if (report.summary.failed > 0) {
+    const failedTests = this.results.tests.filter(t => t.result === 'failed');
+    if (failedTests.length > 0) {
       console.log('\n❌ FAILED TESTS:');
-      this.results.tests.filter(t => t.result === 'failed').forEach(test => {
+      for (const test of failedTests) {
         console.log(`• ${test.name}: ${test.message}`);
-      });
+      }
     }
 
     return report;
@@ -163,7 +168,7 @@ class MerchantEndpointTests {
       );
 
       if (response.status === 200 && response.data.received) {
-        this.testSuite.addTest('Merchant Webhook', 'passed', 'Webhook processed successfully (Mock: ${isMockMode})');
+        this.testSuite.addTest('Merchant Webhook', 'passed', `Webhook processed successfully (Mock: ${isMockMode})`);
         return true;
       } else {
         this.testSuite.addTest('Merchant Webhook', 'failed', `Unexpected response: ${JSON.stringify(response.data)}`);
@@ -204,10 +209,20 @@ class MerchantEndpointTests {
   async testEnvironmentConfiguration() {
     this.testSuite.log('Testing environment configuration...');
 
-    if (isMockMode) {
-      this.testSuite.addTest('Environment Config', 'passed', 'Mock mode active - Stripe credentials not required');
-    } else {
-      this.testSuite.addTest('Environment Config', 'passed', 'Stripe credentials configured');
+    // Check if server is running in mock mode by testing a health endpoint
+    try {
+      const healthResponse = await axios.get(`${this.baseURL}/health`);
+      const isServerHealthy = healthResponse.data && healthResponse.data.status === 'healthy';
+
+      if (isMockMode && isServerHealthy) {
+        this.testSuite.addTest('Environment Config', 'passed', 'Mock mode active - Stripe credentials not required');
+      } else if (!isMockMode && isServerHealthy) {
+        this.testSuite.addTest('Environment Config', 'passed', 'Stripe credentials configured and server running in live mode');
+      } else {
+        this.testSuite.addTest('Environment Config', 'failed', 'Environment configuration mismatch between client and server');
+      }
+    } catch (error) {
+      this.testSuite.addTest('Environment Config', 'failed', `Could not verify server health: ${error.message}`);
     }
 
     return true;
@@ -229,7 +244,7 @@ async function runComprehensiveMerchantTests() {
   await endpointTests.testEnvironmentConfiguration();
 
   // Test payment intent creation
-  const paymentIntentId = await endpointTests.testCreateMerchantPaymentIntent();
+  await endpointTests.testCreateMerchantPaymentIntent();
 
   // Test webhook endpoint
   await endpointTests.testMerchantWebhook();
@@ -249,16 +264,17 @@ async function runComprehensiveMerchantTests() {
 }
 
 // Run tests if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  runComprehensiveMerchantTests()
-    .then(report => {
+await (async () => {
+  if (import.meta.url === `file://${process.argv[1]}`) {
+    try {
+      const report = await runComprehensiveMerchantTests();
       console.log('\n🏁 Comprehensive merchant testing completed!');
       process.exit(report.summary.failed > 0 ? 1 : 0);
-    })
-    .catch(error => {
+    } catch (error) {
       console.error('❌ Test execution failed:', error);
       process.exit(1);
-    });
-}
+    }
+  }
+})();
 
 export { runComprehensiveMerchantTests, MerchantEndpointTests, TestSuite };

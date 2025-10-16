@@ -10,27 +10,27 @@
     {
       "name": "Environment Config",
       "result": "passed",
-      "message": "Stripe credentials configured",
-      "timestamp": "2025-10-02T16:35:17.931Z"
+      "message": "Mock mode active - Stripe credentials not required",
+      "timestamp": "2025-10-15T23:51:55.018Z"
     },
     {
       "name": "Create Merchant Payment Intent",
       "result": "failed",
-      "message": "Payment intent creation failed: Error",
-      "timestamp": "2025-10-02T16:35:18.018Z"
+      "message": "Payment intent creation failed: Request failed with status code 500",
+      "timestamp": "2025-10-15T23:51:55.434Z"
     },
     {
       "name": "Merchant Webhook",
       "result": "failed",
-      "message": "Webhook test failed: Error",
-      "timestamp": "2025-10-02T16:35:18.053Z"
+      "message": "Webhook test failed: Request failed with status code 400",
+      "timestamp": "2025-10-15T23:51:55.449Z"
     },
     {
       "name": "Payment Intent Validation",
       "result": "failed",
-      "message": "Unexpected error: Error",
-      "timestamp": "2025-10-02T16:35:18.070Z"
+      "message": "Unexpected error: Request failed with status code 500",
+      "timestamp": "2025-10-15T23:51:55.460Z"
     }
   ],
-  "timestamp": "2025-10-02T16:35:18.071Z"
+  "timestamp": "2025-10-15T23:51:55.461Z"
 }

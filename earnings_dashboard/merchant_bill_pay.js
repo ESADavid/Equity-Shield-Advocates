@@ -1,9 +1,9 @@
 import express from 'express';
 import Stripe from 'stripe';
 import nodemailer from 'nodemailer';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,20 +12,33 @@ const router = express.Router();
 
 // Conditionally initialize Stripe only if API key is available
 let stripe = null;
+const isMockMode = !process.env.STRIPE_SECRET_KEY;
+
 if (process.env.STRIPE_SECRET_KEY) {
   stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 } else {
-  console.warn('⚠️  STRIPE_SECRET_KEY not found. Stripe functionality will be disabled for testing.');
+  console.warn('⚠️  STRIPE_SECRET_KEY not found. Running in mock mode for testing.');
   // Create a mock Stripe object for testing
   stripe = {
     paymentIntents: {
-      create: async () => {
-        throw new Error('Stripe not configured - please set STRIPE_SECRET_KEY');
+      create: async (params) => {
+        console.log('Mock Stripe: Creating payment intent', params);
+        return {
+          id: `pi_mock_${Date.now()}`,
+          client_secret: `pi_mock_secret_${Date.now()}`,
+          amount: params.amount,
+          currency: params.currency,
+          metadata: params.metadata || {},
+          description: params.description,
+          status: 'requires_payment_method'
+        };
       }
     },
     webhooks: {
-      constructEvent: () => {
-        throw new Error('Stripe not configured - please set STRIPE_SECRET_KEY');
+      constructEvent: (payload, signature, secret) => {
+        console.log('Mock Stripe: Constructing webhook event');
+        // For testing, accept any payload without signature verification
+        return JSON.parse(payload);
       }
     }
   };
@@ -224,91 +237,86 @@ async function handleMerchantWebhook(req, res) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  switch (event.type) {
-    case 'payment_intent.succeeded': {
-      const paymentIntent = event.data.object;
-      console.log('Merchant PaymentIntent was successful!', paymentIntent.id);
-      // handle successful merchant payment here (e.g., update merchant balance, notify merchant)
-      const data = readRevenueData();
-      if (data) {
-        const merchantId = paymentIntent.metadata?.merchantId;
-        const amount = paymentIntent.amount / 100; // Convert from cents to dollars
-        
-        if (merchantId) {
-          // Update merchant balance in revenue data
-          if (!data.merchants) {
-            data.merchants = {};
-          }
-          
-          if (!data.merchants[merchantId]) {
-            data.merchants[merchantId] = {
-              balance: 0,
-              payments: []
-            };
-          }
-          
-          // Add payment to merchant balance
-          data.merchants[merchantId].balance += amount;
-          
-          // Record payment transaction
-          data.merchants[merchantId].payments.push({
-            paymentIntentId: paymentIntent.id,
-            amount,
-            date: new Date().toISOString(),
-            description: paymentIntent.description || `Payment to merchant ${merchantId}`
-          });
-          
-          writeRevenueData(data);
-          console.log(`Updated merchant ${merchantId} balance: $${data.merchants[merchantId].balance.toFixed(2)}`);
+  if (event.type === 'payment_intent.succeeded') {
+    const paymentIntent = event.data.object;
+    console.log('Merchant PaymentIntent was successful!', paymentIntent.id);
+    // handle successful merchant payment here (e.g., update merchant balance, notify merchant)
+    const data = readRevenueData();
+    if (data) {
+      const merchantId = paymentIntent.metadata?.merchantId;
+      const amount = paymentIntent.amount / 100; // Convert from cents to dollars
 
-          // Send notification to merchant
-          await sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntent.id);
+      if (merchantId) {
+        // Update merchant balance in revenue data
+        if (!data.merchants) {
+          data.merchants = {};
         }
-      }
-      break;
-    }
-    case 'payment_intent.payment_failed': {
-      const failedIntent = event.data.object;
-      console.log('Merchant PaymentIntent failed:', failedIntent.last_payment_error && failedIntent.last_payment_error.message);
-      // handle failed merchant payment here
-      const data = readRevenueData();
-      if (data) {
-        const merchantId = failedIntent.metadata?.merchantId;
-        
-        if (merchantId) {
-          // Record failed payment attempt for merchant
-          if (!data.merchants) {
-            data.merchants = {};
-          }
-          
-          if (!data.merchants[merchantId]) {
-            data.merchants[merchantId] = {
-              balance: 0,
-              payments: [],
-              failedPayments: []
-            };
-          }
-          
-          // Record failed payment
-          data.merchants[merchantId].failedPayments = data.merchants[merchantId].failedPayments || [];
-          data.merchants[merchantId].failedPayments.push({
-            paymentIntentId: failedIntent.id,
-            date: new Date().toISOString(),
-            error: failedIntent.last_payment_error?.message || 'Unknown error',
-            amount: failedIntent.amount / 100
-          });
-          
-          writeRevenueData(data);
-          console.log(`Recorded failed payment for merchant ${merchantId}`);
 
-          // Send failure notification to merchant
-          await sendMerchantPaymentFailureNotification(merchantId, failedIntent.amount / 100, failedIntent.id, failedIntent.last_payment_error?.message || 'Unknown error');
+        if (!data.merchants[merchantId]) {
+          data.merchants[merchantId] = {
+            balance: 0,
+            payments: []
+          };
         }
+
+        // Add payment to merchant balance
+        data.merchants[merchantId].balance += amount;
+
+        // Record payment transaction
+        data.merchants[merchantId].payments.push({
+          paymentIntentId: paymentIntent.id,
+          amount,
+          date: new Date().toISOString(),
+          description: paymentIntent.description || `Payment to merchant ${merchantId}`
+        });
+
+        writeRevenueData(data);
+        console.log(`Updated merchant ${merchantId} balance: $${data.merchants[merchantId].balance.toFixed(2)}`);
+
+        // Send notification to merchant
+        await sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntent.id);
       }
-      break;
     }
-    default:
-      console.log(`Unhandled merchant event type ${event.type}`);
+  } else if (event.type === 'payment_intent.payment_failed') {
+    const failedIntent = event.data.object;
+    console.log('Merchant PaymentIntent failed:', failedIntent.last_payment_error && failedIntent.last_payment_error.message);
+    // handle failed merchant payment here
+    const data = readRevenueData();
+    if (data) {
+      const merchantId = failedIntent.metadata?.merchantId;
+
+      if (merchantId) {
+        // Record failed payment attempt for merchant
+        if (!data.merchants) {
+          data.merchants = {};
+        }
+
+        if (!data.merchants[merchantId]) {
+          data.merchants[merchantId] = {
+            balance: 0,
+            payments: [],
+            failedPayments: []
+          };
+        }
+
+        // Record failed payment
+        data.merchants[merchantId].failedPayments = data.merchants[merchantId].failedPayments || [];
+        data.merchants[merchantId].failedPayments.push({
+          paymentIntentId: failedIntent.id,
+          date: new Date().toISOString(),
+          error: failedIntent.last_payment_error?.message || 'Unknown error',
+          amount: failedIntent.amount / 100
+        });
+
+        writeRevenueData(data);
+        console.log(`Recorded failed payment for merchant ${merchantId}`);
+
+        // Send failure notification to merchant
+        await sendMerchantPaymentFailureNotification(merchantId, failedIntent.amount / 100, failedIntent.id, failedIntent.last_payment_error?.message || 'Unknown error');
+      }
+    }
+  } else {
+    console.log(`Unhandled merchant event type ${event.type}`);
   }
 
   res.json({ received: true });
@@ -357,83 +365,76 @@ router.post('/create-merchant-payment-intent', async (req, res) => {
   }
 });
 
-// Express route for webhook
-router.post('/merchant-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  try {
-    // Mock mode check
-    const isMockMode = !process.env.STRIPE_SECRET_KEY;
-    console.log('Merchant webhook - Mock mode:', isMockMode);
+// Helper function to process mock webhook event
+function processMockWebhookEvent() {
+  const mockEvent = {
+    type: 'payment_intent.succeeded',
+    data: {
+      object: {
+        id: `pi_mock_${Date.now()}`,
+        amount: 1000,
+        metadata: { merchantId: 'merchant_001' },
+        description: 'Mock payment for testing',
+        last_payment_error: null
+      }
+    }
+  };
 
-    if (isMockMode) {
-      // Skip signature verification in mock mode
-      console.log('Mock webhook received, processing without signature verification');
+  const paymentIntent = mockEvent.data.object;
+  console.log('Mock PaymentIntent was successful!', paymentIntent.id);
 
-      // Mock successful payment event
-      const mockEvent = {
-        type: 'payment_intent.succeeded',
-        data: {
-          object: {
-            id: `pi_mock_${Date.now()}`,
-            amount: 1000,
-            metadata: { merchantId: 'merchant_001' },
-            description: 'Mock payment for testing',
-            last_payment_error: null
-          }
-        }
-      };
+  const data = readRevenueData();
+  if (data) {
+    const merchantId = paymentIntent.metadata?.merchantId;
+    const amount = paymentIntent.amount / 100; // Convert from cents to dollars
 
-      // Process the mock event
-      switch (mockEvent.type) {
-        case 'payment_intent.succeeded': {
-          const paymentIntent = mockEvent.data.object;
-          console.log('Mock PaymentIntent was successful!', paymentIntent.id);
-
-          // Update revenue data with mock payment
-          const data = readRevenueData();
-          if (data) {
-            const merchantId = paymentIntent.metadata?.merchantId;
-            const amount = paymentIntent.amount / 100; // Convert from cents to dollars
-
-            if (merchantId) {
-              if (!data.merchants) {
-                data.merchants = {};
-              }
-
-              if (!data.merchants[merchantId]) {
-                data.merchants[merchantId] = {
-                  balance: 0,
-                  payments: []
-                };
-              }
-
-              data.merchants[merchantId].balance += amount;
-              data.merchants[merchantId].payments.push({
-                paymentIntentId: paymentIntent.id,
-                amount,
-                date: new Date().toISOString(),
-                description: paymentIntent.description || `Payment to merchant ${merchantId}`
-              });
-
-              writeRevenueData(data);
-              console.log(`Mock updated merchant ${merchantId} balance: $${data.merchants[merchantId].balance.toFixed(2)}`);
-
-              // Send mock notification
-              await sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntent.id);
-            }
-          }
-          break;
-        }
+    if (merchantId) {
+      if (!data.merchants) {
+        data.merchants = {};
       }
 
-      return res.json({ received: true, mock: true });
-    }
+      if (!data.merchants[merchantId]) {
+        data.merchants[merchantId] = {
+          balance: 0,
+          payments: []
+        };
+      }
 
-    // Real webhook processing
-    await handleMerchantWebhook(req, res);
-  } catch (error) {
-    console.error('Error in merchant webhook:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+      data.merchants[merchantId].balance += amount;
+      data.merchants[merchantId].payments.push({
+        paymentIntentId: paymentIntent.id,
+        amount,
+        date: new Date().toISOString(),
+        description: paymentIntent.description || `Payment to merchant ${merchantId}`
+      });
+
+      writeRevenueData(data);
+      console.log(`Mock updated merchant ${merchantId} balance: $${data.merchants[merchantId].balance.toFixed(2)}`);
+
+      // Send mock notification
+      sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntent.id);
+    }
   }
+}
+
+// Express route for webhook
+router.post('/merchant-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const isMockMode = !process.env.STRIPE_SECRET_KEY;
+  console.log('Merchant webhook - Mock mode:', isMockMode);
+
+  if (isMockMode) {
+    console.log('Mock webhook received, processing without signature verification');
+    try {
+      processMockWebhookEvent();
+      return res.json({ received: true, mock: true });
+    } catch (error) {
+      console.error('Error in mock webhook processing:', error);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  // Real webhook processing
+  await handleMerchantWebhook(req, res);
 });
 
 export default {

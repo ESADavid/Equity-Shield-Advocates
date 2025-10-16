@@ -6,44 +6,44 @@
     "failed": 5,
     "skipped": 0,
     "successRate": "0.00%",
-    "duration": 2197
+    "duration": 2519
   },
   "tests": [
     {
       "name": "Environment Config",
       "result": "failed",
-      "message": "Health check error: Error",
+      "message": "Server health check failed - status: undefined",
       "duration": 0,
-      "timestamp": "2025-10-02T16:35:22.188Z"
+      "timestamp": "2025-10-15T23:24:11.698Z"
     },
     {
       "name": "Get Employees",
       "result": "failed",
-      "message": "Request failed: Error",
+      "message": "Request failed: Request failed with status code 401",
       "duration": 0,
-      "timestamp": "2025-10-02T16:35:22.219Z"
+      "timestamp": "2025-10-15T23:24:11.844Z"
     },
     {
       "name": "Add Employee",
       "result": "failed",
-      "message": "Request failed: Error",
+      "message": "Request failed: Request failed with status code 401",
       "duration": 0,
-      "timestamp": "2025-10-02T16:35:22.229Z"
+      "timestamp": "2025-10-15T23:24:11.856Z"
     },
     {
       "name": "Calculate Payroll",
       "result": "failed",
-      "message": "Request failed: Error",
+      "message": "Request failed: Request failed with status code 401",
       "duration": 0,
-      "timestamp": "2025-10-02T16:35:22.238Z"
+      "timestamp": "2025-10-15T23:24:11.865Z"
     },
     {
       "name": "Process Payroll",
       "result": "failed",
-      "message": "Request failed: Error",
+      "message": "Request failed: Request failed with status code 401",
       "duration": 0,
-      "timestamp": "2025-10-02T16:35:22.248Z"
+      "timestamp": "2025-10-15T23:24:11.884Z"
     }
   ],
-  "timestamp": "2025-10-02T16:35:22.251Z"
+  "timestamp": "2025-10-15T23:24:11.893Z"
 }
