@@ -363,6 +363,7 @@ class EnhancedDatabase {
         active: stats.connections?.active || 0
       };
     } catch (error) {
+      logger.warn('Failed to get connection pool stats', { error: error.message });
       return {
         poolSize: 0,
         available: 0,
@@ -384,6 +385,7 @@ class EnhancedDatabase {
         indexSize: stats.indexSize || 0
       };
     } catch (error) {
+      logger.warn('Failed to get database stats', { error: error.message });
       return {};
     }
   }
@@ -431,7 +433,7 @@ class EnhancedDatabase {
   // Backup and restore methods
   async createBackup(backupPath) {
     try {
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const timestamp = new Date().toISOString().replaceAll(/[:.]/g, '-');
       const filename = `backup-${timestamp}.gz`;
       const fullPath = `${backupPath}/${filename}`;
 

@@ -71,7 +71,7 @@ if (process.env.SKIP_DATABASE !== 'true') {
     console.log('   - SSL/TLS encryption support');
     console.log('   - Replica set support');
     console.log('   - Connection monitoring and alerting');
-    process.exit(1);
+    // Don't exit - continue with graceful degradation
   }
 } else {
   console.log('⚠️ Skipping database connection as SKIP_DATABASE=true');
@@ -295,7 +295,7 @@ app.get('/api/status', (req, res) => {
     },
     jpmorganPayment: {
       loaded: !!jpmorganRouter,
-      functions: jpmorganRouter ? Object.keys(jpmorganRouter).filter(key => typeof jpmorganRouter[key] === 'function') : []
+      functions: jpmorganRouter ? Object.keys(jpmorganRouter).filter((key) => typeof jpmorganRouter[key] === 'function') : []
     },
     environment: {
       nodeVersion: process.version,
