@@ -2,48 +2,48 @@
   "suite": "Payroll Integration Tests",
   "summary": {
     "total": 5,
-    "passed": 0,
-    "failed": 5,
+    "passed": 5,
+    "failed": 0,
     "skipped": 0,
-    "successRate": "0.00%",
-    "duration": 2519
+    "successRate": "100.00%",
+    "duration": 2277
   },
   "tests": [
     {
       "name": "Environment Config",
-      "result": "failed",
-      "message": "Server health check failed - status: undefined",
+      "result": "passed",
+      "message": "Server is healthy and running",
       "duration": 0,
-      "timestamp": "2025-10-15T23:24:11.698Z"
+      "timestamp": "2025-10-16T00:40:24.586Z"
     },
     {
       "name": "Get Employees",
-      "result": "failed",
-      "message": "Request failed: Request failed with status code 401",
+      "result": "passed",
+      "message": "Retrieved 0 employees",
       "duration": 0,
-      "timestamp": "2025-10-15T23:24:11.844Z"
+      "timestamp": "2025-10-16T00:40:24.600Z"
     },
     {
       "name": "Add Employee",
-      "result": "failed",
-      "message": "Request failed: Request failed with status code 401",
+      "result": "passed",
+      "message": "Employee added successfully",
       "duration": 0,
-      "timestamp": "2025-10-15T23:24:11.856Z"
+      "timestamp": "2025-10-16T00:40:24.613Z"
     },
     {
       "name": "Calculate Payroll",
-      "result": "failed",
-      "message": "Request failed: Request failed with status code 401",
+      "result": "passed",
+      "message": "Payroll calculated correctly",
       "duration": 0,
-      "timestamp": "2025-10-15T23:24:11.865Z"
+      "timestamp": "2025-10-16T00:40:24.622Z"
     },
     {
       "name": "Process Payroll",
-      "result": "failed",
-      "message": "Request failed: Request failed with status code 401",
+      "result": "passed",
+      "message": "Processed payroll for 1 employees",
       "duration": 0,
-      "timestamp": "2025-10-15T23:24:11.884Z"
+      "timestamp": "2025-10-16T00:40:24.635Z"
     }
   ],
-  "timestamp": "2025-10-15T23:24:11.893Z"
+  "timestamp": "2025-10-16T00:40:24.653Z"
 }
