@@ -403,7 +403,7 @@
   },
   "merchants": {
     "merchant_001": {
-      "balance": 70,
+      "balance": 80,
       "payments": [
         {
           "paymentIntentId": "pi_mock_1759168645974",
@@ -445,6 +445,12 @@
           "paymentIntentId": "pi_mock_1760590955716",
           "amount": 10,
           "date": "2025-10-16T05:02:35.723Z",
+          "description": "Mock payment for testing"
+        },
+        {
+          "paymentIntentId": "pi_mock_1760594061943",
+          "amount": 10,
+          "date": "2025-10-16T05:54:21.954Z",
           "description": "Mock payment for testing"
         }
       ]

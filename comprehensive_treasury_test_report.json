@@ -1,53 +1,14 @@
 {
-  "timestamp": "2025-10-16T05:18:56.576Z",
+  "timestamp": "2025-10-16T05:49:30.128Z",
   "environment": "staging",
   "summary": {
     "total": 9,
-    "passed": 0,
-    "failed": 9,
-    "successRate": "0.00%"
+    "passed": 9,
+    "failed": 0,
+    "successRate": "100.00%"
   },
-  "errors": [
-    {
-      "test": "Treasury Health",
-      "error": "Error"
-    },
-    {
-      "test": "Cash Positions",
-      "error": "Error"
-    },
-    {
-      "test": "FX Rates",
-      "error": "Error"
-    },
-    {
-      "test": "Liquidity Forecast",
-      "error": "Error"
-    },
-    {
-      "test": "Risk Exposure",
-      "error": "Error"
-    },
-    {
-      "test": "Investment Instruction",
-      "error": "Error"
-    },
-    {
-      "test": "Portfolio Performance",
-      "error": "Error"
-    },
-    {
-      "test": "Cash Flow Analytics",
-      "error": "Error"
-    },
-    {
-      "test": "Concurrent Operations",
-      "error": "Only 0/6 operations succeeded"
-    }
-  ],
+  "errors": [],
   "recommendations": [
-    "Review failed tests and fix underlying issues",
-    "Check JPMorgan API connectivity and credentials",
-    "Verify database connections and schema"
+    "All treasury tests passed - system is ready for production"
   ]
 }

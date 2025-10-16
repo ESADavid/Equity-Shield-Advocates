@@ -26,7 +26,7 @@
     "migrate": "node scripts/migrate.js",
     "migrate:staging": "cross-env NODE_ENV=staging npm run migrate",
     "deploy:staging": "node staging_deployment.js",
-    "start:staging": "cross-env NODE_ENV=staging npm start",
+    "start:staging": "cross-env NODE_ENV=staging PORT=3001 npm start",
     "docker:build:staging": "docker build -f Dockerfile.staging -t oscar-broome-revenue:staging .",
     "docker:run:staging": "docker run -p 3001:3000 --env-file .env.staging oscar-broome-revenue:staging",
     "frontend:start": "serve -s frontend -l 5173",

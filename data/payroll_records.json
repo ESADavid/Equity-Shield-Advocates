@@ -110,5 +110,13 @@
     "bonuses": 100,
     "netPay": null,
     "payDate": "2025-10-16T05:02:39.962Z"
+  },
+  {
+    "employeeId": "test-emp-1760594123665",
+    "taxAmount": null,
+    "deductions": 50,
+    "bonuses": 100,
+    "netPay": null,
+    "payDate": "2025-10-16T05:55:23.720Z"
   }
 ]

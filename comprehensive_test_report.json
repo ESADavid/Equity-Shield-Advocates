@@ -11,56 +11,56 @@
       "name": "Environment Config",
       "result": "passed",
       "message": "Mock mode active - environment config not required",
-      "timestamp": "2025-10-16T05:02:33.656Z"
+      "timestamp": "2025-10-16T05:53:43.865Z"
     },
     {
       "name": "Health Endpoint",
       "result": "passed",
       "message": "Health check successful",
-      "timestamp": "2025-10-16T05:02:33.927Z"
+      "timestamp": "2025-10-16T05:53:44.305Z"
     },
     {
       "name": "Create Payment",
       "result": "passed",
-      "message": "Payment created: mock-payment-1760590954031-hg9a3bi7w (Mock: true)",
-      "timestamp": "2025-10-16T05:02:34.039Z"
+      "message": "Payment created: mock-payment-1760594024397-jb12mafqw (Mock: true)",
+      "timestamp": "2025-10-16T05:53:44.402Z"
     },
     {
       "name": "Payment Status",
       "result": "passed",
       "message": "Status: AUTHORIZED (Mock: true)",
-      "timestamp": "2025-10-16T05:02:34.053Z"
+      "timestamp": "2025-10-16T05:53:44.415Z"
     },
     {
       "name": "Refund Payment",
       "result": "passed",
-      "message": "Refund created: mock-txn-1760590954061-0qv7tl8j3 (Mock: true)",
-      "timestamp": "2025-10-16T05:02:34.064Z"
+      "message": "Refund created: mock-txn-1760594024433-r9ewvo445 (Mock: true)",
+      "timestamp": "2025-10-16T05:53:44.441Z"
     },
     {
       "name": "Capture Payment",
       "result": "passed",
-      "message": "Payment captured: mock-txn-1760590954072-nkxqw1j55 (Mock: true)",
-      "timestamp": "2025-10-16T05:02:34.079Z"
+      "message": "Payment captured: mock-txn-1760594024457-32jx2kzbw (Mock: true)",
+      "timestamp": "2025-10-16T05:53:44.463Z"
     },
     {
       "name": "Void Payment",
       "result": "passed",
-      "message": "Payment voided: mock-txn-1760590954092-m4tqsk0gq (Mock: true)",
-      "timestamp": "2025-10-16T05:02:34.096Z"
+      "message": "Payment voided: mock-txn-1760594024477-gbgdf9z9g (Mock: true)",
+      "timestamp": "2025-10-16T05:53:44.483Z"
     },
     {
       "name": "Get Transactions",
       "result": "passed",
       "message": "Retrieved 10 transactions (Mock: true)",
-      "timestamp": "2025-10-16T05:02:34.155Z"
+      "timestamp": "2025-10-16T05:53:44.548Z"
     },
     {
       "name": "Webhook Endpoint",
       "result": "passed",
       "message": "Webhook processed successfully (Mock: ${isMockMode})",
-      "timestamp": "2025-10-16T05:02:34.166Z"
+      "timestamp": "2025-10-16T05:53:44.567Z"
     }
   ],
-  "timestamp": "2025-10-16T05:02:34.167Z"
+  "timestamp": "2025-10-16T05:53:44.570Z"
 }
