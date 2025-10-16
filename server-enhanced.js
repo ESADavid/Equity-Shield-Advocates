@@ -54,7 +54,9 @@ const io = new Server(server, {
 });
 
 // Initialize database connection with enhanced retry logic
-if (process.env.SKIP_DATABASE !== 'true') {
+if (process.env.SKIP_DATABASE === 'true') {
+  console.log('⚠️ Skipping database connection as SKIP_DATABASE=true');
+} else {
   try {
     await database.connect();
     console.log('✅ Database connected successfully');
@@ -73,8 +75,6 @@ if (process.env.SKIP_DATABASE !== 'true') {
     console.log('   - Connection monitoring and alerting');
     // Don't exit - continue with graceful degradation
   }
-} else {
-  console.log('⚠️ Skipping database connection as SKIP_DATABASE=true');
 }
 
 // Initialize cache service
@@ -198,13 +198,7 @@ app.use('/api/auth/', createRateLimit(15 * 60 * 1000, 5, 'Too many authenticatio
 // Compression with custom settings
 app.use(compression({
   level: 6, // Balanced compression level
-  threshold: 1024, // Only compress responses > 1KB
-  filter: (req, res) => {
-    if (req.headers['x-no-compression']) {
-      return false;
-    }
-    return compression.filter(req, res);
-  }
+  threshold: 1024 // Only compress responses > 1KB
 }));
 
 // Logging
@@ -288,14 +282,26 @@ app.get('/metrics', (req, res) => {
 
 // API status endpoint
 app.get('/api/status', (req, res) => {
+  const getFunctions = (obj) => {
+    const functions = [];
+    if (obj) {
+      for (const key in obj) {
+        if (typeof obj[key] === 'function') {
+          functions.push(key);
+        }
+      }
+    }
+    return functions;
+  };
+
   const status = {
     merchantBillPay: {
       loaded: !!merchantBillPay,
-      functions: merchantBillPay ? Object.keys(merchantBillPay).filter(key => typeof merchantBillPay[key] === 'function') : []
+      functions: getFunctions(merchantBillPay)
     },
     jpmorganPayment: {
       loaded: !!jpmorganRouter,
-      functions: jpmorganRouter ? Object.keys(jpmorganRouter).filter((key) => typeof jpmorganRouter[key] === 'function') : []
+      functions: getFunctions(jpmorganRouter)
     },
     environment: {
       nodeVersion: process.version,
