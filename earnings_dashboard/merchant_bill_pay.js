@@ -226,10 +226,84 @@ async function createMerchantPaymentIntent({ amount, currency = 'usd', merchantI
   return paymentIntent;
 }
 
+// Helper function to initialize merchant data structure
+function initializeMerchantData(data, merchantId) {
+  if (!data.merchants) {
+    data.merchants = {};
+  }
+
+  if (!data.merchants[merchantId]) {
+    data.merchants[merchantId] = {
+      balance: 0,
+      payments: [],
+      failedPayments: []
+    };
+  }
+
+  return data.merchants[merchantId];
+}
+
+// Helper function to process successful payment event
+async function processSuccessfulPayment(paymentIntent) {
+  const data = readRevenueData();
+  if (!data) return;
+
+  const merchantId = paymentIntent.metadata?.merchantId;
+  const amount = paymentIntent.amount / 100; // Convert from cents to dollars
+
+  if (!merchantId) return;
+
+  const merchantData = initializeMerchantData(data, merchantId);
+
+  // Add payment to merchant balance
+  merchantData.balance += amount;
+
+  // Record payment transaction
+  merchantData.payments.push({
+    paymentIntentId: paymentIntent.id,
+    amount,
+    date: new Date().toISOString(),
+    description: paymentIntent.description || `Payment to merchant ${merchantId}`
+  });
+
+  writeRevenueData(data);
+  console.log(`Updated merchant ${merchantId} balance: $${merchantData.balance.toFixed(2)}`);
+
+  // Send notification to merchant
+  await sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntent.id);
+}
+
+// Helper function to process failed payment event
+async function processFailedPayment(failedIntent) {
+  const data = readRevenueData();
+  if (!data) return;
+
+  const merchantId = failedIntent.metadata?.merchantId;
+  if (!merchantId) return;
+
+  const merchantData = initializeMerchantData(data, merchantId);
+
+  // Record failed payment
+  merchantData.failedPayments = merchantData.failedPayments || [];
+  merchantData.failedPayments.push({
+    paymentIntentId: failedIntent.id,
+    date: new Date().toISOString(),
+    error: failedIntent.last_payment_error?.message || 'Unknown error',
+    amount: failedIntent.amount / 100
+  });
+
+  writeRevenueData(data);
+  console.log(`Recorded failed payment for merchant ${merchantId}`);
+
+  // Send failure notification to merchant
+  await sendMerchantPaymentFailureNotification(merchantId, failedIntent.amount / 100, failedIntent.id, failedIntent.last_payment_error?.message || 'Unknown error');
+}
+
 // Reusable function to handle Stripe webhook events for merchant payments
 async function handleMerchantWebhook(req, res) {
   const sig = req.headers['stripe-signature'];
   let event;
+
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
@@ -237,89 +311,24 @@ async function handleMerchantWebhook(req, res) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  if (event.type === 'payment_intent.succeeded') {
-    const paymentIntent = event.data.object;
-    console.log('Merchant PaymentIntent was successful!', paymentIntent.id);
-    // handle successful merchant payment here (e.g., update merchant balance, notify merchant)
-    const data = readRevenueData();
-    if (data) {
-      const merchantId = paymentIntent.metadata?.merchantId;
-      const amount = paymentIntent.amount / 100; // Convert from cents to dollars
-
-      if (merchantId) {
-        // Update merchant balance in revenue data
-        if (!data.merchants) {
-          data.merchants = {};
-        }
-
-        if (!data.merchants[merchantId]) {
-          data.merchants[merchantId] = {
-            balance: 0,
-            payments: []
-          };
-        }
-
-        // Add payment to merchant balance
-        data.merchants[merchantId].balance += amount;
-
-        // Record payment transaction
-        data.merchants[merchantId].payments.push({
-          paymentIntentId: paymentIntent.id,
-          amount,
-          date: new Date().toISOString(),
-          description: paymentIntent.description || `Payment to merchant ${merchantId}`
-        });
-
-        writeRevenueData(data);
-        console.log(`Updated merchant ${merchantId} balance: $${data.merchants[merchantId].balance.toFixed(2)}`);
-
-        // Send notification to merchant
-        await sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntent.id);
-      }
+  try {
+    if (event.type === 'payment_intent.succeeded') {
+      const paymentIntent = event.data.object;
+      console.log('Merchant PaymentIntent was successful!', paymentIntent.id);
+      await processSuccessfulPayment(paymentIntent);
+    } else if (event.type === 'payment_intent.payment_failed') {
+      const failedIntent = event.data.object;
+      console.log('Merchant PaymentIntent failed:', failedIntent.last_payment_error?.message);
+      await processFailedPayment(failedIntent);
+    } else {
+      console.log(`Unhandled merchant event type ${event.type}`);
     }
-  } else if (event.type === 'payment_intent.payment_failed') {
-    const failedIntent = event.data.object;
-    console.log('Merchant PaymentIntent failed:', failedIntent.last_payment_error && failedIntent.last_payment_error.message);
-    // handle failed merchant payment here
-    const data = readRevenueData();
-    if (data) {
-      const merchantId = failedIntent.metadata?.merchantId;
 
-      if (merchantId) {
-        // Record failed payment attempt for merchant
-        if (!data.merchants) {
-          data.merchants = {};
-        }
-
-        if (!data.merchants[merchantId]) {
-          data.merchants[merchantId] = {
-            balance: 0,
-            payments: [],
-            failedPayments: []
-          };
-        }
-
-        // Record failed payment
-        data.merchants[merchantId].failedPayments = data.merchants[merchantId].failedPayments || [];
-        data.merchants[merchantId].failedPayments.push({
-          paymentIntentId: failedIntent.id,
-          date: new Date().toISOString(),
-          error: failedIntent.last_payment_error?.message || 'Unknown error',
-          amount: failedIntent.amount / 100
-        });
-
-        writeRevenueData(data);
-        console.log(`Recorded failed payment for merchant ${merchantId}`);
-
-        // Send failure notification to merchant
-        await sendMerchantPaymentFailureNotification(merchantId, failedIntent.amount / 100, failedIntent.id, failedIntent.last_payment_error?.message || 'Unknown error');
-      }
-    }
-  } else {
-    console.log(`Unhandled merchant event type ${event.type}`);
+    res.json({ received: true });
+  } catch (error) {
+    console.error('Error processing merchant webhook event:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-
-  res.json({ received: true });
 }
 
 // Express route to create payment intent

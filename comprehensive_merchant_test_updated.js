@@ -40,7 +40,16 @@ class TestSuite {
 
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️';
+    let prefix;
+    if (type === 'error') {
+      prefix = '❌';
+    } else if (type === 'success') {
+      prefix = '✅';
+    } else if (type === 'warning') {
+      prefix = '⚠️';
+    } else {
+      prefix = 'ℹ️';
+    }
     console.log(`[${timestamp}] ${prefix} ${message}`);
   }
 
@@ -49,13 +58,24 @@ class TestSuite {
     this.results.tests.push({ name, result, message, timestamp: new Date().toISOString() });
 
     const logMessage = `${name}: ${result.toUpperCase()}`;
-    const logType = result === 'passed' ? 'success' : result === 'failed' ? 'error' : 'warning';
-
+    let logType;
     if (result === 'passed') {
-      this.results.passed++;
+      logType = 'success';
     } else if (result === 'failed') {
+      logType = 'error';
+    } else {
+      logType = 'warning';
+    }
+
+    const isPassed = result === 'passed';
+    const isFailed = result === 'failed';
+    const isSkipped = result === 'skipped';
+
+    if (isPassed) {
+      this.results.passed++;
+    } else if (isFailed) {
       this.results.failed++;
-    } else if (result === 'skipped') {
+    } else if (isSkipped) {
       this.results.skipped++;
     }
 
@@ -185,14 +205,17 @@ class MerchantEndpointTests {
       this.testSuite.log('Testing payment intent validation...');
 
       // Test missing amount
+      const testRequest = {
+        merchantId: 'merchant_001'
+      };
+
       try {
-        await axios.post(`${this.baseURL}/api/merchant/create-merchant-payment-intent`, {
-          merchantId: 'merchant_001'
-        });
+        await axios.post(`${this.baseURL}/api/merchant/create-merchant-payment-intent`, testRequest);
         this.testSuite.addTest('Payment Intent Validation', 'failed', 'Should have rejected missing amount');
         return false;
       } catch (error) {
-        if (error.response?.status === 400) {
+        const isBadRequest = error.response?.status === 400;
+        if (isBadRequest) {
           this.testSuite.addTest('Payment Intent Validation', 'passed', 'Properly validates required fields');
           return true;
         } else {

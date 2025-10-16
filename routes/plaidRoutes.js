@@ -115,8 +115,8 @@ router.get('/transactions/:accessToken', async (req, res) => {
     }
 
     const transactions = await plaidService.getTransactions(accessToken, startDate, endDate, {
-      count: parseInt(count) || 100,
-      offset: parseInt(offset) || 0
+      count: Number.parseInt(count) || 100,
+      offset: Number.parseInt(offset) || 0
     });
 
     res.json({

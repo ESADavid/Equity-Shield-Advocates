@@ -6,7 +6,7 @@
     "failed": 0,
     "skipped": 0,
     "successRate": "100.00%",
-    "duration": 2277
+    "duration": 2290
   },
   "tests": [
     {
@@ -14,36 +14,36 @@
       "result": "passed",
       "message": "Server is healthy and running",
       "duration": 0,
-      "timestamp": "2025-10-16T00:40:24.586Z"
+      "timestamp": "2025-10-16T02:07:55.188Z"
     },
     {
       "name": "Get Employees",
       "result": "passed",
       "message": "Retrieved 0 employees",
       "duration": 0,
-      "timestamp": "2025-10-16T00:40:24.600Z"
+      "timestamp": "2025-10-16T02:07:55.204Z"
     },
     {
       "name": "Add Employee",
       "result": "passed",
       "message": "Employee added successfully",
       "duration": 0,
-      "timestamp": "2025-10-16T00:40:24.613Z"
+      "timestamp": "2025-10-16T02:07:55.242Z"
     },
     {
       "name": "Calculate Payroll",
       "result": "passed",
       "message": "Payroll calculated correctly",
       "duration": 0,
-      "timestamp": "2025-10-16T00:40:24.622Z"
+      "timestamp": "2025-10-16T02:07:55.317Z"
     },
     {
       "name": "Process Payroll",
       "result": "passed",
       "message": "Processed payroll for 1 employees",
       "duration": 0,
-      "timestamp": "2025-10-16T00:40:24.635Z"
+      "timestamp": "2025-10-16T02:07:55.341Z"
     }
   ],
-  "timestamp": "2025-10-16T00:40:24.653Z"
+  "timestamp": "2025-10-16T02:07:55.365Z"
 }

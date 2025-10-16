@@ -104,9 +104,12 @@ app.use(morgan('combined', { stream: { write: (msg) => logger.info(msg.trim()) }
 const revenueDataPath =
   process.env.REVENUE_DATA_PATH || path.resolve(process.cwd(), 'owlban_repos/aggregated_revenue.json');
 
+// Serve static files from public directory
+app.use(express.static(path.join(process.cwd(), 'public')));
+
 // Serve new React dashboard HTML file
 app.get('/', (req, res) => {
-  const dashboardPath = path.resolve(process.cwd(), 'src/index_new.html');
+  const dashboardPath = path.resolve(process.cwd(), 'public/index.html');
   if (!fs.existsSync(dashboardPath)) {
     logger.error('Dashboard HTML file not found');
     return res.status(500).send('Dashboard not available');

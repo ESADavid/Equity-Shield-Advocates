@@ -11,56 +11,56 @@
       "name": "Environment Config",
       "result": "passed",
       "message": "Mock mode active - environment config not required",
-      "timestamp": "2025-10-16T00:40:18.812Z"
+      "timestamp": "2025-10-16T02:07:47.698Z"
     },
     {
       "name": "Health Endpoint",
       "result": "failed",
       "message": "Health check failed: Request failed with status code 401",
-      "timestamp": "2025-10-16T00:40:19.306Z"
+      "timestamp": "2025-10-16T02:07:48.080Z"
     },
     {
       "name": "Create Payment",
       "result": "failed",
       "message": "Payment creation failed: Request failed with status code 401",
-      "timestamp": "2025-10-16T00:40:19.326Z"
+      "timestamp": "2025-10-16T02:07:48.099Z"
     },
     {
       "name": "Payment Status",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2025-10-16T00:40:19.330Z"
+      "timestamp": "2025-10-16T02:07:48.100Z"
     },
     {
       "name": "Refund Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2025-10-16T00:40:19.330Z"
+      "timestamp": "2025-10-16T02:07:48.105Z"
     },
     {
       "name": "Capture Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2025-10-16T00:40:19.331Z"
+      "timestamp": "2025-10-16T02:07:48.108Z"
     },
     {
       "name": "Void Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2025-10-16T00:40:19.331Z"
+      "timestamp": "2025-10-16T02:07:48.112Z"
     },
     {
       "name": "Get Transactions",
       "result": "failed",
       "message": "Transactions fetch failed: Request failed with status code 401",
-      "timestamp": "2025-10-16T00:40:19.347Z"
+      "timestamp": "2025-10-16T02:07:48.147Z"
     },
     {
       "name": "Webhook Endpoint",
       "result": "failed",
       "message": "Webhook test failed: Request failed with status code 401",
-      "timestamp": "2025-10-16T00:40:19.357Z"
+      "timestamp": "2025-10-16T02:07:48.159Z"
     }
   ],
-  "timestamp": "2025-10-16T00:40:19.359Z"
+  "timestamp": "2025-10-16T02:07:48.161Z"
 }

@@ -7,18 +7,21 @@ This integration provides secure access to bank account data through Plaid's API
 ## Features
 
 ### 🔐 Proof of Funds Verification
+
 - **Real-time Balance Checking**: Verify account balances against required amounts
 - **Multi-Account Support**: Check balances across multiple linked accounts
 - **Automated Verification**: Scheduled balance confirmations
 - **Compliance Reporting**: Generate proof of funds documentation
 
 ### 💰 Income Verification
+
 - **Transaction Analysis**: Analyze income patterns and consistency
 - **Income Source Validation**: Verify employment and income sources
 - **Historical Data**: Access up to 2 years of transaction history
 - **Automated Reporting**: Generate income verification reports
 
 ### 🛡️ Security & Compliance
+
 - **Bank-Level Security**: SOC 2 Type II and PCI DSS compliant
 - **Data Encryption**: End-to-end encryption for all financial data
 - **Access Controls**: Granular permissions and audit trails
@@ -27,6 +30,7 @@ This integration provides secure access to bank account data through Plaid's API
 ## API Endpoints
 
 ### Link Token Creation
+
 ```http
 POST /api/plaid/create-link-token
 Content-Type: application/json
@@ -38,6 +42,7 @@ Content-Type: application/json
 ```
 
 ### Public Token Exchange
+
 ```http
 POST /api/plaid/exchange-public-token
 Content-Type: application/json
@@ -48,6 +53,7 @@ Content-Type: application/json
 ```
 
 ### Account Verification
+
 ```http
 POST /api/plaid/verify-ownership/{accessToken}/{accountId}
 Content-Type: application/json
@@ -58,6 +64,7 @@ Content-Type: application/json
 ```
 
 ### Income Data Retrieval
+
 ```http
 GET /api/plaid/income/{accessToken}
 ```
@@ -105,16 +112,19 @@ const linkHandler = Plaid.create({
 ## Use Cases
 
 ### Investment Account Verification
+
 - Verify minimum balance requirements
 - Confirm account ownership
 - Generate compliance reports
 
 ### Loan Application Processing
+
 - Income verification for loan qualification
 - Asset verification for collateral
 - Automated document collection
 
 ### Regulatory Compliance
+
 - KYC/AML verification
 - Anti-money laundering checks
 - Transaction monitoring
@@ -122,16 +132,19 @@ const linkHandler = Plaid.create({
 ## Data Security
 
 ### Encryption Standards
+
 - **At Rest**: AES-256-GCM encryption
 - **In Transit**: TLS 1.3 encryption
 - **Key Management**: AWS KMS or equivalent
 
 ### Data Retention
+
 - **Transaction Data**: 2 years maximum
 - **Access Tokens**: 30 days expiration
 - **Audit Logs**: 7 years retention
 
 ### Access Controls
+
 - **Role-Based Access**: Admin, User, Read-only
 - **IP Whitelisting**: Restricted access locations
 - **MFA Required**: Multi-factor authentication for all users
@@ -198,9 +211,9 @@ GET /api/plaid/health
 
 ### Support Channels
 
-- **Technical Support**: support@plaid.com
-- **Documentation**: https://plaid.com/docs
-- **Status Page**: https://status.plaid.com
+- **Technical Support**: <support@plaid.com>
+- **Documentation**: <https://plaid.com/docs>
+- **Status Page**: <https://status.plaid.com>
 
 ## Compliance & Legal
 
@@ -253,15 +266,17 @@ process.env.PLAID_DEBUG = 'true';
 
 ## Contact Information
 
-**Oscar Broome Revenue System**
+#### Oscar Broome Revenue System
+
 - **Technical Lead**: Oscar Broome
-- **Email**: oscar.broome@jpmorgan.com
+- **Email**: <oscar.broome@jpmorgan.com>
 - **Phone**: +1-212-270-6000
 
-**Plaid Support**
-- **Website**: https://plaid.com
-- **Documentation**: https://plaid.com/docs
-- **Support**: https://support.plaid.com
+#### Plaid Support
+
+- **Website**: <https://plaid.com>
+- **Documentation**: <https://plaid.com/docs>
+- **Support**: <https://support.plaid.com>
 
 ---
 
