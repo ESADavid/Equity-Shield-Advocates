@@ -266,13 +266,13 @@ process.env.PLAID_DEBUG = 'true';
 
 ## Contact Information
 
-#### Oscar Broome Revenue System
+### Oscar Broome Revenue System
 
 - **Technical Lead**: Oscar Broome
 - **Email**: <oscar.broome@jpmorgan.com>
 - **Phone**: +1-212-270-6000
 
-#### Plaid Support
+### Plaid Support
 
 - **Website**: <https://plaid.com>
 - **Documentation**: <https://plaid.com/docs>

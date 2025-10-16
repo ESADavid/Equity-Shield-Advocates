@@ -357,3 +357,36 @@
 {"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T00:46:24.542Z"}
 {"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T02:13:38.947Z"}
 {"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T02:14:56.873Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T02:27:07.365Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T02:27:38.388Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T02:29:13.182Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T02:29:55.428Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T03:25:51.153Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T03:34:28.164Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T03:38:04.561Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T03:40:20.755Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","message":"MongoDB connection failed","service":"database","timestamp":"2025-10-16T03:43:01.827Z"}
+{"error":"options buffermaxentries, sslvalidate are not supported","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":0,"service":"database-enhanced","timestamp":"2025-10-16T03:55:10.085Z"}
+{"error":"options buffermaxentries, sslvalidate are not supported","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":1,"service":"database-enhanced","timestamp":"2025-10-16T03:55:11.109Z"}
+{"error":"options buffermaxentries, sslvalidate are not supported","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":2,"service":"database-enhanced","timestamp":"2025-10-16T03:55:13.115Z"}
+{"error":"options buffermaxentries, sslvalidate are not supported","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":3,"service":"database-enhanced","timestamp":"2025-10-16T03:55:17.137Z"}
+{"error":"options buffermaxentries, sslvalidate are not supported","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":4,"service":"database-enhanced","timestamp":"2025-10-16T03:55:25.163Z"}
+{"error":"options buffermaxentries, sslvalidate are not supported","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":5,"service":"database-enhanced","timestamp":"2025-10-16T03:55:41.173Z"}
+{"error":"Username required for mechanism 'SCRAM-SHA-256'","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":0,"service":"database-enhanced","timestamp":"2025-10-16T03:57:04.441Z"}
+{"error":"Username required for mechanism 'SCRAM-SHA-256'","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":1,"service":"database-enhanced","timestamp":"2025-10-16T03:57:05.451Z"}
+{"error":"Username required for mechanism 'SCRAM-SHA-256'","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":2,"service":"database-enhanced","timestamp":"2025-10-16T03:57:07.467Z"}
+{"error":"Username required for mechanism 'SCRAM-SHA-256'","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":3,"service":"database-enhanced","timestamp":"2025-10-16T03:57:11.521Z"}
+{"error":"Username required for mechanism 'SCRAM-SHA-256'","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":4,"service":"database-enhanced","timestamp":"2025-10-16T03:57:19.544Z"}
+{"error":"Username required for mechanism 'SCRAM-SHA-256'","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":5,"service":"database-enhanced","timestamp":"2025-10-16T03:57:35.585Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":0,"service":"database-enhanced","timestamp":"2025-10-16T03:58:42.323Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":1,"service":"database-enhanced","timestamp":"2025-10-16T03:58:48.363Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":2,"service":"database-enhanced","timestamp":"2025-10-16T03:58:55.384Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":3,"service":"database-enhanced","timestamp":"2025-10-16T03:59:04.419Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":4,"service":"database-enhanced","timestamp":"2025-10-16T03:59:17.445Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":5,"service":"database-enhanced","timestamp":"2025-10-16T03:59:38.467Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":0,"service":"database-enhanced","timestamp":"2025-10-16T04:00:14.952Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":1,"service":"database-enhanced","timestamp":"2025-10-16T04:00:20.980Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":2,"service":"database-enhanced","timestamp":"2025-10-16T04:00:28.042Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":3,"service":"database-enhanced","timestamp":"2025-10-16T04:00:37.074Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":4,"service":"database-enhanced","timestamp":"2025-10-16T04:00:50.109Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:27017","level":"error","maxRetries":5,"message":"MongoDB connection failed","retryCount":5,"service":"database-enhanced","timestamp":"2025-10-16T04:01:11.149Z"}

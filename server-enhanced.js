@@ -9,24 +9,21 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { createServer } from 'http';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createServer } from 'node:http';
 import { Server } from 'socket.io';
-import winston from 'winston';
-import expressWinston from 'express-winston';
 import responseTime from 'response-time';
 
 // Import database and services
-import database from './config/database.js';
+import database from './config/database_enhanced.js';
 import NotificationService from './earnings_dashboard/notification_service.js';
 import cacheService from './services/cacheService.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
 import transactionRoutes from './routes/transactionOverrideRoutes.js';
-import blackwellRoutes from './routes/blackwellRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,13 +53,28 @@ const io = new Server(server, {
   }
 });
 
-// Initialize database connection
-try {
-  await database.connect();
-  console.log('✅ Database connected successfully');
-} catch (error) {
-  console.error('❌ Database connection failed:', error.message);
-  process.exit(1);
+// Initialize database connection with enhanced retry logic
+if (process.env.SKIP_DATABASE !== 'true') {
+  try {
+    await database.connect();
+    console.log('✅ Database connected successfully');
+  } catch (error) {
+    console.error('❌ Database connection failed:', error.message);
+    console.log('💡 Enhanced database features available:');
+    console.log('   - Automatic retry with exponential backoff');
+    console.log('   - Connection pooling optimizations');
+    console.log('   - Health monitoring and metrics');
+    console.log('   - Query performance monitoring');
+    console.log('   - Backup and restore capabilities');
+    console.log('   - Multi-database support');
+    console.log('   - Transaction support');
+    console.log('   - SSL/TLS encryption support');
+    console.log('   - Replica set support');
+    console.log('   - Connection monitoring and alerting');
+    process.exit(1);
+  }
+} else {
+  console.log('⚠️ Skipping database connection as SKIP_DATABASE=true');
 }
 
 // Initialize cache service
@@ -357,7 +369,7 @@ app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), asyn
   }
 });
 
-import mime from 'mime';
+
 
 // Static file serving with caching headers
 app.use(express.static(path.join(__dirname, 'public'), {
@@ -499,4 +511,5 @@ server.listen(PORT, () => {
 export default app;
 
 // Export services for use in other modules
-export { notificationService, cacheService, performanceMetrics };
+export { default as cacheService } from './services/cacheService.js';
+export { notificationService, performanceMetrics };
