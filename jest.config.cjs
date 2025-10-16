@@ -2,7 +2,7 @@ module.exports = {
   testTimeout: 30000,
   verbose: true,
   setupFiles: ['./jest.setup.js'],
-  extensionsToTreatAsEsm: ['.ts', '.js'],
+  extensionsToTreatAsEsm: ['.ts'],
   globals: {
     'ts-jest': {
       useESM: true,
