@@ -47,11 +47,18 @@ jobs:
 
       - name: Set up JPMorgan test credentials
         run: |
-          echo "JPMORGAN_CLIENT_ID=${{ secrets.JPMORGAN_SANDBOX_CLIENT_ID }}" >> $GITHUB_ENV
-          echo "JPMORGAN_CLIENT_SECRET=${{ secrets.JPMORGAN_SANDBOX_CLIENT_SECRET }}" >> $GITHUB_ENV
-          echo "JPMORGAN_API_KEY=${{ secrets.JPMORGAN_SANDBOX_API_KEY }}" >> $GITHUB_ENV
+          if [ "${{ github.event.inputs.environment || 'sandbox' }}" = "production" ]; then
+            echo "JPMORGAN_CLIENT_ID=${{ secrets.JPMORGAN_PROD_CLIENT_ID }}" >> $GITHUB_ENV
+            echo "JPMORGAN_CLIENT_SECRET=${{ secrets.JPMORGAN_PROD_CLIENT_SECRET }}" >> $GITHUB_ENV
+            echo "JPMORGAN_API_KEY=${{ secrets.JPMORGAN_PROD_API_KEY }}" >> $GITHUB_ENV
+            echo "JPMORGAN_WEBHOOK_SECRET=${{ secrets.JPMORGAN_PROD_WEBHOOK_SECRET }}" >> $GITHUB_ENV
+          else
+            echo "JPMORGAN_CLIENT_ID=${{ secrets.JPMORGAN_SANDBOX_CLIENT_ID }}" >> $GITHUB_ENV
+            echo "JPMORGAN_CLIENT_SECRET=${{ secrets.JPMORGAN_SANDBOX_CLIENT_SECRET }}" >> $GITHUB_ENV
+            echo "JPMORGAN_API_KEY=${{ secrets.JPMORGAN_SANDBOX_API_KEY }}" >> $GITHUB_ENV
+            echo "JPMORGAN_WEBHOOK_SECRET=${{ secrets.JPMORGAN_WEBHOOK_SECRET }}" >> $GITHUB_ENV
+          fi
           echo "JPMORGAN_PRIVATE_KEY_PATH=/tmp/jpmorgan_private_key.pem" >> $GITHUB_ENV
-          echo "JPMORGAN_WEBHOOK_SECRET=${{ secrets.JPMORGAN_WEBHOOK_SECRET }}" >> $GITHUB_ENV
 
       - name: Create test private key
         run: |
@@ -138,11 +145,53 @@ jobs:
         run: |
           echo "Production deployment requires manual approval"
           echo "Please review the sandbox deployment and approve if ready"
+          # Note: In a real scenario, use GitHub Environments with required reviewers for approval
 
-      - name: Deploy to JPMorgan production
+      - name: Configure AWS credentials for production
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_PROD_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_PROD_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push Docker image for production
+        id: build-prod
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: equity-shield-jpmorgan-prod
+          IMAGE_TAG: ${{ github.sha }}-prod
         run: |
-          # Production deployment logic here
-          echo "Deploying to JPMorgan production environment"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      - name: Update JPMorgan production deployment
+        run: |
+          aws ecs update-service \
+            --cluster jpmorgan-production-cluster \
+            --service equity-shield-jpmorgan-prod-service \
+            --force-new-deployment \
+            --region us-east-1
+
+      - name: Wait for production deployment to complete
+        run: |
+          aws ecs wait services-stable \
+            --cluster jpmorgan-production-cluster \
+            --services equity-shield-jpmorgan-prod-service \
+            --region us-east-1
+
+      - name: Run post-deployment tests for production
+        run: |
+          # Test API connectivity
+          curl -f https://api.equity-shield-advocates.com/health || exit 1
+
+          # Test JPMorgan integration endpoints
+          curl -H "X-API-KEY: ${{ secrets.JPMORGAN_PROD_API_KEY }}" \
+               https://api.equity-shield-advocates.com/api/jpmorgan/accounts || exit 1
 
   notify-jpmorgan:
     needs: [test-jpmorgan-integration, deploy-to-jpmorgan-sandbox]
