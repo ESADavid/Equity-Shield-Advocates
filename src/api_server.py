@@ -10,6 +10,9 @@ import os
 from typing import Optional, Dict, List, Any
 import json
 from src.bank_communication import get_account_info, validate_routing_number, initiate_transfer
+from src.jpmorgan_client import jpmorgan_client
+from src.jpmorgan_sync import jpmorgan_sync
+from src.jpmorgan_webhooks import webhook_handler
 
 # Configure logging first
 logging.basicConfig(
@@ -452,6 +455,34 @@ def get_banking_info():
 @limiter.limit("30/minute")
 def get_bank_account(bank_name):
     """Get bank account information"""
+    # Enhanced integration: Use JPMorgan API for JPMorgan accounts
+    if 'jpmorgan' in bank_name.lower():
+        try:
+            # Extract account ID from request or use default
+            account_id = request.args.get('account_id', 'default_account')
+            account_info = jpmorgan_client.get_account_balance(account_id)
+            return jsonify({
+                'status': 'success',
+                'data': account_info,
+                'integration': 'jpmorgan_api'
+            })
+        except Exception as e:
+            logger.error(f"JPMorgan account fetch failed: {str(e)}")
+            # Fallback to existing method
+            account_info = get_account_info(bank_name)
+            if not account_info:
+                return jsonify({
+                    'status': 'error',
+                    'error': f'Bank {bank_name} not found',
+                    'message': f'Bank {bank_name} not found'
+                }), 404
+            return jsonify({
+                'status': 'success',
+                'data': account_info,
+                'integration': 'fallback'
+            })
+
+    # Standard account fetch for other banks
     account_info = get_account_info(bank_name)
     if not account_info:
         return jsonify({
@@ -489,22 +520,159 @@ def transfer():
     """Initiate a bank transfer"""
     data = request.get_json()
     required_fields = ['from_bank', 'to_bank', 'amount', 'currency']
-    
+
     if not data or not all(field in data for field in required_fields):
         return jsonify({
             'status': 'error',
             'error': f'Missing required fields',
             'message': f'Required fields: {", ".join(required_fields)}'
         }), 400
-    
+
+    # Enhanced integration: If JPMorgan is involved, use JPMorgan API
+    if 'jpmorgan' in data['from_bank'].lower() or 'jpmorgan' in data['to_bank'].lower():
+        try:
+            result = jpmorgan_client.initiate_transfer(
+                data['from_bank'],
+                data['to_bank'],
+                data['amount'],
+                data['currency']
+            )
+            return jsonify({
+                'status': 'success',
+                'data': result,
+                'integration': 'jpmorgan_api'
+            })
+        except Exception as e:
+            logger.error(f"JPMorgan transfer failed: {str(e)}")
+            # Fallback to existing transfer method
+            result = initiate_transfer(
+                data['from_bank'],
+                data['to_bank'],
+                data['amount'],
+                data['currency']
+            )
+            return jsonify({
+                'status': 'success',
+                'data': result,
+                'integration': 'fallback'
+            })
+
+    # Standard transfer for other banks
     result = initiate_transfer(
         data['from_bank'],
         data['to_bank'],
         data['amount'],
         data['currency']
     )
-    
+
     return jsonify(result)
+
+@app.route('/api/jpmorgan/sync', methods=['POST'])
+@require_api_key
+@limiter.limit("10/minute")
+def sync_jpmorgan_data():
+    """Manually trigger JPMorgan data synchronization"""
+    try:
+        results = jpmorgan_sync.perform_full_sync()
+        return jsonify({
+            'status': 'success',
+            'message': 'JPMorgan data synchronization completed',
+            'results': results
+        })
+    except Exception as e:
+        logger.error(f"JPMorgan sync failed: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': 'JPMorgan data synchronization failed',
+            'error': str(e)
+        }), 500
+
+@app.route('/api/jpmorgan/accounts')
+@require_api_key
+@cache.cached(timeout=300)
+@limiter.limit("30/minute")
+def get_jpmorgan_accounts():
+    """Get JPMorgan corporate accounts"""
+    try:
+        client_id = os.getenv('JPMORGAN_CLIENT_ID')
+        if not client_id:
+            return jsonify({
+                'status': 'error',
+                'message': 'JPMorgan client ID not configured'
+            }), 500
+
+        accounts = jpmorgan_client.get_corporate_accounts(client_id)
+        return jsonify({
+            'status': 'success',
+            'data': accounts
+        })
+    except Exception as e:
+        logger.error(f"Failed to fetch JPMorgan accounts: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': 'Failed to fetch JPMorgan accounts',
+            'error': str(e)
+        }), 500
+
+@app.route('/api/jpmorgan/portfolio/<account_id>')
+@require_api_key
+@cache.cached(timeout=300)
+@limiter.limit("30/minute")
+def get_jpmorgan_portfolio(account_id):
+    """Get JPMorgan investment portfolio for account"""
+    try:
+        portfolio = jpmorgan_client.get_investment_portfolio(account_id)
+        return jsonify({
+            'status': 'success',
+            'data': portfolio
+        })
+    except Exception as e:
+        logger.error(f"Failed to fetch JPMorgan portfolio: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': 'Failed to fetch JPMorgan portfolio',
+            'error': str(e)
+        }), 500
+
+@app.route('/api/webhooks/jpmorgan', methods=['POST'])
+def jpmorgan_webhook():
+    """Handle incoming webhooks from JPMorgan systems"""
+    try:
+        # Get raw payload
+        payload = request.get_data(as_text=True)
+
+        # Verify signature if provided
+        signature = request.headers.get('X-JPMorgan-Signature')
+        if signature and not webhook_handler.verify_webhook_signature(payload, signature):
+            logger.warning("Invalid webhook signature received")
+            return jsonify({'status': 'error', 'message': 'Invalid signature'}), 401
+
+        # Parse JSON payload
+        try:
+            webhook_data = json.loads(payload)
+        except json.JSONDecodeError:
+            return jsonify({'status': 'error', 'message': 'Invalid JSON payload'}), 400
+
+        # Extract event type
+        event_type = webhook_data.get('event_type') or webhook_data.get('type')
+        if not event_type:
+            return jsonify({'status': 'error', 'message': 'Missing event_type'}), 400
+
+        # Process webhook
+        result = webhook_handler.process_webhook(event_type, webhook_data)
+
+        # Return appropriate response
+        if result['status'] == 'success':
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 500
+
+    except Exception as e:
+        logger.error(f"Webhook processing error: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': 'Internal server error'
+        }), 500
 
 if __name__ == '__main__':
     logger.info("Starting API server on port 5001...")
