@@ -210,6 +210,7 @@ class JPMorganDataSync:
                             results[f'portfolio_{account_id}'] = self.sync_investment_portfolio(account_id)
 
         logger.info(f"Full synchronization completed: {results}")
+        self.last_sync_time = datetime.now()
         return results
 
 # Global sync instance

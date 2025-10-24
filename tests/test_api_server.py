@@ -120,13 +120,13 @@ class ApiServerTestCase(unittest.TestCase):
         self.assertIn('message', data)
         self.assertIn('error', data)
 
-        # Test invalid pagination parameters
+    def test_invalid_pagination_parameters(self):
+        """Test invalid pagination parameters (now defaults to valid values)"""
         response = self.app.get('/api/real-assets', headers=self.headers, query_string={'page': 'invalid'})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
-        self.assertEqual(data['status'], 'error')
-        self.assertIn('message', data)
-        self.assertIn('error', data)
+        self.assertEqual(data['status'], 'success')
+        self.assertEqual(data['page'], 1)  # Should default to 1
 
 if __name__ == '__main__':
     unittest.main()

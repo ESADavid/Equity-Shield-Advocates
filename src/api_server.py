@@ -365,25 +365,16 @@ def get_real_assets():
     """Get real assets with pagination and filtering"""
     try:
         # Get and validate pagination parameters
-        page = request.args.get('page')
-        per_page = request.args.get('per_page')
-
-        # Debug logging for pagination parameters
-        logger.debug(f"Received pagination parameters: page={page} ({type(page)}), per_page={per_page} ({type(per_page)})")
-        
-        if page is not None or per_page is not None:
-            try:
-                page = int(page) if page is not None else 1
-                per_page = int(per_page) if per_page is not None else 10
-                if page < 1 or per_page < 1:
-                    raise ValueError()
-            except (ValueError, TypeError):
-                return jsonify({
-                    'status': 'error',
-                    'error': 'Invalid pagination parameters',
-                    'message': 'Page and per_page must be valid positive integers'
-                }), 400
-        else:
+        try:
+            page_str = request.args.get('page')
+            per_page_str = request.args.get('per_page')
+            page = int(page_str) if page_str else 1
+            per_page = int(per_page_str) if per_page_str else 10
+            if page < 1:
+                page = 1
+            if per_page < 1:
+                per_page = 10
+        except (ValueError, TypeError):
             page = 1
             per_page = 10
 

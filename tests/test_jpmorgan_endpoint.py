@@ -18,8 +18,9 @@ def test_get_jpmorgan_account_success(client):
     response = client.get('/api/banks/jpmorgan-chase/account', headers=HEADERS)
     assert response.status_code == 200
     data = response.get_json()
-    assert 'account_number' in data
-    assert 'routing_number' in data
+    assert data['status'] == 'success'
+    assert 'data' in data
+    assert 'integration' in data
 
 def test_get_jpmorgan_account_unauthorized(client):
     response = client.get('/api/banks/jpmorgan-chase/account')

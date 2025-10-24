@@ -53,11 +53,34 @@ class IntegrationTestCase(unittest.TestCase):
     @patch('src.api_server.load_json_file')
     def test_edge_case_empty_corporate_structure(self, mock_load):
         mock_load.return_value = {}
+        # Clear Flask-Caching cache to ensure mock takes effect
+        from flask_caching import Cache
+        cache = Cache(app)
+        cache.clear()
         response = self.app.get('/api/corporate-structure', headers=self.headers)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         self.assertEqual(data['status'], 'success')
+        # Note: The endpoint returns empty dict when structure_data is empty
         self.assertEqual(data['data'], {})
+
+    @patch('src.api_server.load_json_file')
+    def test_real_assets_flow(self, mock_load):
+        mock_data = {
+            'MSFT': {'market_cap': 1000, 'revenue': 500, 'last_updated': '2023-01-01'},
+            'GOOG': {'market_cap': 2000, 'revenue': 800, 'last_updated': '2023-01-01'}
+        }
+        mock_load.return_value = mock_data
+        response = self.app.get('/api/real-assets', headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.data)
+        self.assertEqual(data['status'], 'success')
+        self.assertIn('data', data)
+        self.assertIsInstance(data['data'], list)
+        self.assertIn('page', data)
+        self.assertIn('per_page', data)
+        self.assertIn('total', data)
+        self.assertIn('total_pages', data)
 
     def test_edge_case_invalid_sector(self):
         response = self.app.get('/api/companies/InvalidSector', headers=self.headers)
