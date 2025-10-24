@@ -17,3 +17,8 @@ PyJWT==2.8.0
 pytest-mock==3.11.1
 jsonschema==4.17.3
 tenacity==8.2.3
+cryptography==41.0.4
+boto3==1.28.57
+pyotp==2.9.0
+structlog==23.2.0
+python-json-logger==2.0.7
