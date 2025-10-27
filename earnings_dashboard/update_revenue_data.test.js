@@ -52,7 +52,7 @@ describe('update_revenue_data', () => {
             const e = error;
             expect(e.message).toBe('process.exit called');
         }
-        expect(consoleErrorMock).toHaveBeenCalledWith(expect.stringContaining('Revenue data file not found'));
+        expect(consoleErrorMock).toHaveBeenCalledWith('Revenue data file not found at', expect.any(String));
         expect(processExitMock).toHaveBeenCalled();
         consoleErrorMock.mockRestore();
         processExitMock.mockRestore();
