@@ -6,6 +6,10 @@ import os
 from typing import Dict, Any, Optional
 from flask import request, jsonify
 from src.jpmorgan_sync import jpmorgan_sync
+from src.jpmorgan_client import jpmorgan_client
+
+# Check if JPMorgan client is available
+JPMORGAN_AVAILABLE = jpmorgan_client is not None
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -80,8 +84,12 @@ class JPMorganWebhookHandler:
 
         logger.info(f"Processing account update for: {account_id}")
 
-        # Trigger sync for the specific account
-        sync_result = jpmorgan_sync.sync_investment_portfolio(account_id)
+        # Trigger sync for the specific account if JPMorgan is available
+        if JPMORGAN_AVAILABLE:
+            sync_result = jpmorgan_sync.sync_investment_portfolio(account_id)
+        else:
+            logger.warning("JPMorgan client not available, skipping portfolio sync")
+            sync_result = False
 
         return {
             'account_id': account_id,
@@ -97,8 +105,12 @@ class JPMorganWebhookHandler:
 
         logger.info(f"Processing transaction completion: {transaction_id}")
 
-        # Update account balance in sync
-        sync_result = jpmorgan_sync.sync_corporate_accounts()
+        # Update account balance in sync if JPMorgan is available
+        if JPMORGAN_AVAILABLE:
+            sync_result = jpmorgan_sync.sync_corporate_accounts()
+        else:
+            logger.warning("JPMorgan client not available, skipping account sync")
+            sync_result = False
 
         return {
             'transaction_id': transaction_id,
@@ -141,8 +153,12 @@ class JPMorganWebhookHandler:
 
         logger.info(f"Processing market data update for symbols: {symbols}")
 
-        # Trigger market data sync
-        sync_result = jpmorgan_sync.sync_market_data()
+        # Trigger market data sync if JPMorgan is available
+        if JPMORGAN_AVAILABLE:
+            sync_result = jpmorgan_sync.sync_market_data()
+        else:
+            logger.warning("JPMorgan client not available, skipping market data sync")
+            sync_result = False
 
         return {
             'symbols': symbols,
@@ -157,8 +173,12 @@ class JPMorganWebhookHandler:
 
         logger.info(f"Processing portfolio change for account {account_id}: {change_type}")
 
-        # Sync portfolio data
-        sync_result = jpmorgan_sync.sync_investment_portfolio(account_id)
+        # Sync portfolio data if JPMorgan is available
+        if JPMORGAN_AVAILABLE:
+            sync_result = jpmorgan_sync.sync_investment_portfolio(account_id)
+        else:
+            logger.warning("JPMorgan client not available, skipping portfolio sync")
+            sync_result = False
 
         return {
             'account_id': account_id,

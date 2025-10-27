@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-from src.jpmorgan_sync import JPMorganDataSync
+from src.jpmorgan_sync import JPMorganDataSync, JPMORGAN_AVAILABLE
 
 class TestJPMorganDataSync:
     """Test cases for JPMorgan data synchronization"""
@@ -38,6 +38,7 @@ class TestJPMorganDataSync:
         os.rmdir(self.temp_dir)
 
     @patch('src.jpmorgan_sync.jpmorgan_client')
+    @patch('src.jpmorgan_sync.JPMORGAN_AVAILABLE', True)
     def test_sync_corporate_accounts_success(self, mock_client):
         """Test successful corporate accounts synchronization"""
         # Mock JPMorgan client
@@ -56,6 +57,15 @@ class TestJPMorganDataSync:
             result = sync.sync_corporate_accounts()
 
         assert result == True
+
+    @patch('src.jpmorgan_sync.JPMORGAN_AVAILABLE', False)
+    def test_sync_corporate_accounts_unavailable(self):
+        """Test corporate accounts sync when client unavailable"""
+        sync = JPMorganDataSync()
+
+        result = sync.sync_corporate_accounts()
+
+        assert result == False
 
         # Verify data was updated
         with open(self.data_file, 'r') as f:
@@ -78,6 +88,7 @@ class TestJPMorganDataSync:
         mock_client.get_corporate_accounts.assert_not_called()
 
     @patch('src.jpmorgan_sync.jpmorgan_client')
+    @patch('src.jpmorgan_sync.JPMORGAN_AVAILABLE', True)
     def test_sync_investment_portfolio(self, mock_client):
         """Test investment portfolio synchronization"""
         mock_client.get_investment_portfolio.return_value = {
@@ -95,6 +106,15 @@ class TestJPMorganDataSync:
 
         assert result == True
 
+    @patch('src.jpmorgan_sync.JPMORGAN_AVAILABLE', False)
+    def test_sync_investment_portfolio_unavailable(self):
+        """Test investment portfolio sync when client unavailable"""
+        sync = JPMorganDataSync()
+
+        result = sync.sync_investment_portfolio('ACC001')
+
+        assert result == False
+
         # Verify portfolio data was added
         with open(self.data_file, 'r') as f:
             data = json.load(f)
@@ -105,6 +125,7 @@ class TestJPMorganDataSync:
         assert jpm_entry['portfolios']['ACC001']['total_value'] == 500000.00
 
     @patch('src.jpmorgan_sync.jpmorgan_client')
+    @patch('src.jpmorgan_sync.JPMORGAN_AVAILABLE', True)
     def test_sync_market_data(self, mock_client):
         """Test market data synchronization"""
         mock_client.get_market_data.return_value = {
@@ -118,6 +139,15 @@ class TestJPMorganDataSync:
         result = sync.sync_market_data()
 
         assert result == True
+
+    @patch('src.jpmorgan_sync.JPMORGAN_AVAILABLE', False)
+    def test_sync_market_data_unavailable(self):
+        """Test market data sync when client unavailable"""
+        sync = JPMorganDataSync()
+
+        result = sync.sync_market_data()
+
+        assert result == False
 
         # Verify market data was added
         with open(self.data_file, 'r') as f:

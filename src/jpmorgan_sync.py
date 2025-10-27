@@ -5,6 +5,9 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from src.jpmorgan_client import jpmorgan_client
 
+# Check if JPMorgan client is available
+JPMORGAN_AVAILABLE = jpmorgan_client is not None
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -44,6 +47,10 @@ class JPMorganDataSync:
         Synchronize corporate account data with JPMorgan.
         Returns True if sync was successful, False otherwise.
         """
+        if not JPMORGAN_AVAILABLE:
+            logger.warning("JPMorgan client not available, skipping corporate account sync")
+            return False
+
         try:
             logger.info("Starting corporate account synchronization with JPMorgan")
 
@@ -103,6 +110,10 @@ class JPMorganDataSync:
         """
         Synchronize investment portfolio data for a specific account.
         """
+        if not JPMORGAN_AVAILABLE:
+            logger.warning("JPMorgan client not available, skipping portfolio sync")
+            return False
+
         try:
             logger.info(f"Syncing investment portfolio for account: {account_id}")
 
@@ -136,6 +147,10 @@ class JPMorganDataSync:
         """
         Synchronize market data for tracked companies.
         """
+        if not JPMORGAN_AVAILABLE:
+            logger.warning("JPMorgan client not available, skipping market data sync")
+            return False
+
         try:
             logger.info("Syncing market data")
 

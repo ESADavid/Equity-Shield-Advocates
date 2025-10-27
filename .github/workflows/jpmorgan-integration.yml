@@ -65,17 +65,29 @@ jobs:
           echo "${{ secrets.JPMORGAN_PRIVATE_KEY }}" > /tmp/jpmorgan_private_key.pem
           chmod 600 /tmp/jpmorgan_private_key.pem
 
+      - name: Create test credentials file
+        run: |
+          cat > test_credentials.json << EOF
+          {
+            "client_id": "test_client_id",
+            "client_secret": "test_client_secret",
+            "api_key": "test_api_key",
+            "private_key_path": "/tmp/jpmorgan_private_key.pem"
+          }
+          EOF
+          echo "CREDENTIALS_FILE=test_credentials.json" >> $GITHUB_ENV
+
       - name: Run JPMorgan integration tests
         run: |
-          python -m pytest tests/test_jpmorgan_integration.py -v
+          python -m pytest tests/test_jpmorgan_integration.py -v --tb=short
 
       - name: Run webhook tests
         run: |
-          python -m pytest tests/test_jpmorgan_webhooks.py -v
+          python -m pytest tests/test_jpmorgan_webhooks.py -v --tb=short
 
       - name: Run sync tests
         run: |
-          python -m pytest tests/test_jpmorgan_sync.py -v
+          python -m pytest tests/test_jpmorgan_sync.py -v --tb=short
 
   deploy-to-jpmorgan-sandbox:
     needs: test-jpmorgan-integration

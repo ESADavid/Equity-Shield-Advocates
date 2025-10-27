@@ -465,6 +465,10 @@ class JPMorganAPIClient:
 # Global client instance - only create if configuration is available
 try:
     jpmorgan_client = JPMorganAPIClient()
-except ValueError as e:
+    logger.info("JPMorgan client initialized successfully")
+except (ValueError, FileNotFoundError) as e:
     logger.warning(f"JPMorgan client initialization failed: {str(e)}. JPMorgan features will be disabled.")
+    jpmorgan_client = None
+except Exception as e:
+    logger.error(f"Unexpected error initializing JPMorgan client: {str(e)}")
     jpmorgan_client = None

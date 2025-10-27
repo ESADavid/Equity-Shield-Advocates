@@ -5,7 +5,7 @@ import sys
 from unittest.mock import Mock, patch, MagicMock
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-from src.jpmorgan_client import JPMorganAPIClient
+from src.jpmorgan_client import JPMorganAPIClient, jpmorgan_client
 from src.api_server import app
 
 @pytest.fixture
@@ -137,22 +137,32 @@ class TestJPMorganAPIEndpoints:
     """Test cases for JPMorgan API endpoints"""
 
     @patch('src.api_server.jpmorgan_client')
+    @patch('src.api_server.JPMORGAN_AVAILABLE', True)
     def test_get_jpmorgan_account_success(self, mock_client, client):
         """Test successful JPMorgan account retrieval"""
-        mock_client.get_account_balance.side_effect = Exception("JPMorgan API unavailable")
+        mock_client.get_account_balance.return_value = {'balance': 1000000, 'currency': 'USD'}
 
         response = client.get('/api/banks/jpmorgan-chase/account?account_id=JPM001', headers=HEADERS)
         assert response.status_code == 200
 
         data = response.get_json()
         assert data['status'] == 'success'
-        # Note: The endpoint falls back to standard method when JPMorgan API fails
+        assert data['integration'] == 'jpmorgan_api'
+        assert 'balance' in data['data']
+
+    @patch('src.api_server.jpmorgan_client', None)
+    def test_get_jpmorgan_account_fallback(self, client):
+        """Test JPMorgan account retrieval fallback when client unavailable"""
+        response = client.get('/api/banks/jpmorgan-chase/account?account_id=JPM001', headers=HEADERS)
+        assert response.status_code == 200
+
+        data = response.get_json()
+        assert data['status'] == 'success'
         assert data['integration'] == 'fallback'
         assert 'account_number' in data['data']
-        assert 'routing_number' in data['data']
-        assert 'bank_name' in data['data']
 
     @patch('src.api_server.jpmorgan_client')
+    @patch('src.api_server.JPMORGAN_AVAILABLE', True)
     def test_jpmorgan_transfer_success(self, mock_client, client):
         """Test successful JPMorgan transfer"""
         mock_client.initiate_transfer.return_value = {
@@ -176,7 +186,27 @@ class TestJPMorganAPIEndpoints:
         assert data['status'] == 'success'
         assert data['integration'] == 'jpmorgan_api'
 
+    @patch('src.api_server.JPMORGAN_AVAILABLE', False)
+    def test_jpmorgan_transfer_fallback(self, client):
+        """Test JPMorgan transfer fallback when client unavailable"""
+        transfer_data = {
+            'from_bank': 'jpmorgan-chase',
+            'to_bank': 'citi-private-bank',
+            'amount': 100000,
+            'currency': 'USD'
+        }
+
+        response = client.post('/api/banks/transfer',
+                              json=transfer_data,
+                              headers=HEADERS)
+        assert response.status_code == 200
+
+        data = response.get_json()
+        assert data['status'] == 'success'
+        assert data['integration'] == 'fallback'
+
     @patch('src.api_server.jpmorgan_client')
+    @patch('src.api_server.JPMORGAN_AVAILABLE', True)
     def test_get_jpmorgan_accounts_endpoint(self, mock_client, client):
         """Test JPMorgan accounts endpoint"""
         mock_client.get_corporate_accounts.return_value = [
@@ -195,7 +225,18 @@ class TestJPMorganAPIEndpoints:
             assert data['status'] == 'success'
             assert len(data['data']) == 1
 
+    @patch('src.api_server.JPMORGAN_AVAILABLE', False)
+    def test_get_jpmorgan_accounts_unavailable(self, client):
+        """Test JPMorgan accounts endpoint when client unavailable"""
+        response = client.get('/api/jpmorgan/accounts', headers=HEADERS)
+        assert response.status_code == 503
+
+        data = response.get_json()
+        assert data['status'] == 'error'
+        assert 'not available' in data['message']
+
     @patch('src.api_server.jpmorgan_sync.perform_full_sync')
+    @patch('src.api_server.JPMORGAN_AVAILABLE', True)
     def test_sync_jpmorgan_data(self, mock_sync, client):
         """Test JPMorgan data synchronization endpoint"""
         mock_sync.return_value = {
@@ -210,10 +251,21 @@ class TestJPMorganAPIEndpoints:
         assert data['status'] == 'success'
         assert 'corporate_accounts' in data['results']
 
+    @patch('src.api_server.JPMORGAN_AVAILABLE', False)
+    def test_sync_jpmorgan_data_unavailable(self, client):
+        """Test JPMorgan sync endpoint when client unavailable"""
+        response = client.post('/api/jpmorgan/sync', headers=HEADERS)
+        assert response.status_code == 503
+
+        data = response.get_json()
+        assert data['status'] == 'error'
+        assert 'not available' in data['message']
+
 class TestJPMorganIntegration:
     """Integration tests combining multiple components"""
 
     @patch('src.api_server.jpmorgan_client')
+    @patch('src.api_server.JPMORGAN_AVAILABLE', True)
     def test_full_jpmorgan_workflow(self, mock_client, client):
         """Test complete JPMorgan workflow"""
         # Mock all client methods

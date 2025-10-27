@@ -13,6 +13,9 @@ from src.bank_communication import get_account_info, validate_routing_number, in
 from src.jpmorgan_client import jpmorgan_client
 from src.jpmorgan_sync import jpmorgan_sync
 from src.jpmorgan_webhooks import webhook_handler
+
+# Check if JPMorgan client is available
+JPMORGAN_AVAILABLE = jpmorgan_client is not None
 from src.auth_middleware import auth_middleware
 from src.mfa_handler import mfa_handler
 from src.audit_logger import audit_logger
@@ -509,6 +512,22 @@ def get_bank_account(bank_name):
     """Get bank account information"""
     # Enhanced integration: Use JPMorgan API for JPMorgan accounts
     if 'jpmorgan' in bank_name.lower():
+        if not JPMORGAN_AVAILABLE:
+            logger.warning("JPMorgan client not available, using fallback")
+            # Fallback to existing method
+            account_info = get_account_info(bank_name)
+            if not account_info:
+                return jsonify({
+                    'status': 'error',
+                    'error': f'Bank {bank_name} not found',
+                    'message': f'Bank {bank_name} not found'
+                }), 404
+            return jsonify({
+                'status': 'success',
+                'data': account_info,
+                'integration': 'fallback'
+            })
+
         try:
             # Extract account ID from request or use default
             account_id = request.args.get('account_id', 'default_account')
@@ -582,6 +601,21 @@ def transfer():
 
     # Enhanced integration: If JPMorgan is involved, use JPMorgan API
     if 'jpmorgan' in data['from_bank'].lower() or 'jpmorgan' in data['to_bank'].lower():
+        if not JPMORGAN_AVAILABLE:
+            logger.warning("JPMorgan client not available, using fallback")
+            # Fallback to existing transfer method
+            result = initiate_transfer(
+                data['from_bank'],
+                data['to_bank'],
+                data['amount'],
+                data['currency']
+            )
+            return jsonify({
+                'status': 'success',
+                'data': result,
+                'integration': 'fallback'
+            })
+
         try:
             result = jpmorgan_client.initiate_transfer(
                 data['from_bank'],
@@ -624,6 +658,12 @@ def transfer():
 @limiter.limit("10/minute")
 def sync_jpmorgan_data():
     """Manually trigger JPMorgan data synchronization"""
+    if not JPMORGAN_AVAILABLE:
+        return jsonify({
+            'status': 'error',
+            'message': 'JPMorgan integration not available - client not configured'
+        }), 503
+
     try:
         results = jpmorgan_sync.perform_full_sync()
         return jsonify({
@@ -645,6 +685,12 @@ def sync_jpmorgan_data():
 @limiter.limit("30/minute")
 def get_jpmorgan_accounts():
     """Get JPMorgan corporate accounts"""
+    if not JPMORGAN_AVAILABLE:
+        return jsonify({
+            'status': 'error',
+            'message': 'JPMorgan integration not available - client not configured'
+        }), 503
+
     try:
         client_id = os.getenv('JPMORGAN_CLIENT_ID')
         if not client_id:
@@ -672,6 +718,12 @@ def get_jpmorgan_accounts():
 @limiter.limit("30/minute")
 def get_jpmorgan_portfolio(account_id):
     """Get JPMorgan investment portfolio for account"""
+    if not JPMORGAN_AVAILABLE:
+        return jsonify({
+            'status': 'error',
+            'message': 'JPMorgan integration not available - client not configured'
+        }), 503
+
     try:
         portfolio = jpmorgan_client.get_investment_portfolio(account_id)
         return jsonify({

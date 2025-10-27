@@ -7,7 +7,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-from src.jpmorgan_webhooks import JPMorganWebhookHandler
+from src.jpmorgan_webhooks import JPMorganWebhookHandler, JPMORGAN_AVAILABLE
 from src.api_server import app
 
 @pytest.fixture
@@ -53,6 +53,7 @@ class TestJPMorganWebhookHandler:
         assert handler.verify_webhook_signature(payload, signature) == False
 
     @patch('src.jpmorgan_webhooks.jpmorgan_sync.sync_investment_portfolio')
+    @patch('src.jpmorgan_webhooks.JPMORGAN_AVAILABLE', True)
     def test_handle_account_update(self, mock_sync):
         """Test account update event handling"""
         mock_sync.return_value = True
@@ -70,7 +71,23 @@ class TestJPMorganWebhookHandler:
         assert result['action'] == 'portfolio_sync_triggered'
         mock_sync.assert_called_once_with('ACC001')
 
+    @patch('src.jpmorgan_webhooks.JPMORGAN_AVAILABLE', False)
+    def test_handle_account_update_unavailable(self):
+        """Test account update when client unavailable"""
+        handler = JPMorganWebhookHandler()
+        payload = {
+            'account_id': 'ACC001',
+            'event_type': 'account.updated'
+        }
+
+        result = handler._handle_account_update(payload)
+
+        assert result['account_id'] == 'ACC001'
+        assert result['sync_result'] == False
+        assert result['action'] == 'portfolio_sync_triggered'
+
     @patch('src.jpmorgan_webhooks.jpmorgan_sync.sync_corporate_accounts')
+    @patch('src.jpmorgan_webhooks.JPMORGAN_AVAILABLE', True)
     def test_handle_transaction_complete(self, mock_sync):
         """Test transaction completion event handling"""
         mock_sync.return_value = True
@@ -89,6 +106,23 @@ class TestJPMorganWebhookHandler:
         assert result['amount'] == 50000.00
         assert result['sync_result'] == True
         mock_sync.assert_called_once()
+
+    @patch('src.jpmorgan_webhooks.JPMORGAN_AVAILABLE', False)
+    def test_handle_transaction_complete_unavailable(self):
+        """Test transaction complete when client unavailable"""
+        handler = JPMorganWebhookHandler()
+        payload = {
+            'transaction_id': 'TRX001',
+            'account_id': 'ACC001',
+            'amount': 50000.00
+        }
+
+        result = handler._handle_transaction_complete(payload)
+
+        assert result['transaction_id'] == 'TRX001'
+        assert result['account_id'] == 'ACC001'
+        assert result['amount'] == 50000.00
+        assert result['sync_result'] == False
 
     def test_handle_compliance_alert(self):
         """Test compliance alert event handling"""
@@ -111,6 +145,7 @@ class TestJPMorganWebhookHandler:
         assert result['action'] == 'alert_logged'
 
     @patch('src.jpmorgan_webhooks.jpmorgan_sync.sync_market_data')
+    @patch('src.jpmorgan_webhooks.JPMORGAN_AVAILABLE', True)
     def test_handle_market_data_update(self, mock_sync):
         """Test market data update event handling"""
         mock_sync.return_value = True
@@ -127,7 +162,22 @@ class TestJPMorganWebhookHandler:
         assert result['action'] == 'market_data_synced'
         mock_sync.assert_called_once()
 
+    @patch('src.jpmorgan_webhooks.JPMORGAN_AVAILABLE', False)
+    def test_handle_market_data_update_unavailable(self):
+        """Test market data update when client unavailable"""
+        handler = JPMorganWebhookHandler()
+        payload = {
+            'symbols': ['JPM', 'BAC', 'MSFT']
+        }
+
+        result = handler._handle_market_data_update(payload)
+
+        assert result['symbols'] == ['JPM', 'BAC', 'MSFT']
+        assert result['sync_result'] == False
+        assert result['action'] == 'market_data_synced'
+
     @patch('src.jpmorgan_webhooks.jpmorgan_sync.sync_investment_portfolio')
+    @patch('src.jpmorgan_webhooks.JPMORGAN_AVAILABLE', True)
     def test_handle_portfolio_change(self, mock_sync):
         """Test portfolio change event handling"""
         mock_sync.return_value = True
@@ -145,6 +195,22 @@ class TestJPMorganWebhookHandler:
         assert result['sync_result'] == True
         assert result['action'] == 'portfolio_synced'
         mock_sync.assert_called_once_with('ACC001')
+
+    @patch('src.jpmorgan_webhooks.JPMORGAN_AVAILABLE', False)
+    def test_handle_portfolio_change_unavailable(self):
+        """Test portfolio change when client unavailable"""
+        handler = JPMorganWebhookHandler()
+        payload = {
+            'account_id': 'ACC001',
+            'change_type': 'rebalance'
+        }
+
+        result = handler._handle_portfolio_change(payload)
+
+        assert result['account_id'] == 'ACC001'
+        assert result['change_type'] == 'rebalance'
+        assert result['sync_result'] == False
+        assert result['action'] == 'portfolio_synced'
 
     def test_process_webhook_unknown_event(self):
         """Test processing unknown webhook event"""
