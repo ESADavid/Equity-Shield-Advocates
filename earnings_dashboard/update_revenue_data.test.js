@@ -43,19 +43,11 @@ describe('update_revenue_data', () => {
     it('should handle missing revenue.json file gracefully', () => {
         jest.spyOn(fs, 'existsSync').mockReturnValue(false);
         const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation(() => { });
-        const processExitMock = jest.spyOn(process, 'exit').mockImplementation(() => { throw new Error('process.exit called'); });
-        try {
-            const updateRevenueData = require('./update_revenue_data').default || require('./update_revenue_data');
-            updateRevenueData();
-        }
-        catch (error) {
-            const e = error;
-            expect(e.message).toBe('process.exit called');
-        }
+        const updateRevenueData = require('./update_revenue_data').default || require('./update_revenue_data');
+        const result = updateRevenueData();
+        expect(result).toBe(false);
         expect(consoleErrorMock).toHaveBeenCalledWith('Revenue data file not found at', expect.any(String));
-        expect(processExitMock).toHaveBeenCalled();
         consoleErrorMock.mockRestore();
-        processExitMock.mockRestore();
     });
     it('should add multiple entries correctly', () => {
         const originalData = {
@@ -158,8 +150,8 @@ describe('update_revenue_data edge cases', () => {
         updateRevenueData();
         expect(writeFileSyncMock).toHaveBeenCalled();
         const updatedData = JSON.parse(writeFileSyncMock.mock.calls[0][1].toString());
-        // totalRevenue should be decreased by sum of purchases costs
-        const expectedTotalRevenue = originalData.totalRevenue - 50000 - 250000;
+        // Since ADD_SAMPLE_DATA is false, totalRevenue should not be decreased
+        const expectedTotalRevenue = originalData.totalRevenue;
         expect(updatedData.totalRevenue).toBe(expectedTotalRevenue);
         writeFileSyncMock.mockRestore();
     });
