@@ -1,6 +1,15 @@
-# Project TODO List
+# TypeScript Error Fixes for payrollSystem.ts
 
-- [x] Fix await expression in production_deploy.mjs by adding spawn import at top and adjusting PM2 logic
-- [x] Fix duplicate child_process imports in production_deploy_simple.mjs
-- [x] Adjust PM2 error handling in both files to avoid SonarLint catch warnings
-- [x] Test the deployment scripts to ensure they still work
+## Issues to Fix
+
+1. **Module system mismatch**: `import.meta.url` requires ES modules, but tsconfig uses CommonJS
+2. **exactOptionalPropertyTypes errors**: Optional properties cannot be assigned `string | undefined`
+3. **Unused imports**: Remove `isValidEmployeeId` and `PayrollValidationError`
+
+## Tasks
+
+- [ ] Update tsconfig.json module setting to ES2020
+- [ ] Fix employee object creation in addEmployee method
+- [ ] Fix employee object creation in updateEmployee method
+- [ ] Remove unused imports from payrollSystem.ts
+- [ ] Verify TypeScript compilation passes
