@@ -206,6 +206,23 @@ app.post('/api/blockchain/record-event', async (req, res) => {
   }
 });
 
+// Welcome endpoint with request logging
+app.get('/api/welcome', (req, res) => {
+  // Log request metadata
+  logger.info(`Request received: ${req.method} ${req.path} from ${req.ip}`);
+
+  res.json({
+    message: 'Welcome to the Earnings Dashboard API!',
+    timestamp: new Date().toISOString(),
+    request: {
+      method: req.method,
+      path: req.path,
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    }
+  });
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({

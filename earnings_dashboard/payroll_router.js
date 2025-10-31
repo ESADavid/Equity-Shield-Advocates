@@ -1,8 +1,7 @@
 import express from 'express';
-import PayrollSystem from '../payroll_system.js';
+import { payrollSystem } from '../payrollSystem.js';
 
 const router = express.Router();
-const payrollSystem = new PayrollSystem();
 
 // Middleware for special login override for Oscar Broome
 router.use((req, res, next) => {

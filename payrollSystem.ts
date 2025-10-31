@@ -5,7 +5,6 @@
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 import {
   Employee,
@@ -28,11 +27,10 @@ import {
   isSalariedEmployee
 } from './utils/payrollCalculator.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const EMPLOYEES_FILE = path.resolve(__dirname, 'data/employees.json');
-const PAYROLL_RECORDS_FILE = path.resolve(__dirname, 'data/payroll_records.json');
+// Use process.cwd() for data directory - works in both Node.js and Jest
+const DATA_DIR = path.join(process.cwd(), 'data');
+const EMPLOYEES_FILE = path.join(DATA_DIR, 'employees.json');
+const PAYROLL_RECORDS_FILE = path.join(DATA_DIR, 'payroll_records.json');
 
 export class PayrollSystem {
   private employees: Map<string, Employee> = new Map();
