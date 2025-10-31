@@ -2,17 +2,16 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ES2020",
-    "lib": ["ES2020"],
+    "lib": ["ES2021"],
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "types": ["jest", "node"],
     "typeRoots": ["./node_modules/@types", "./types"],
-    "baseUrl": ".",
-    "ignoreDeprecations": "6.0",
     "outDir": "./dist",
     "rootDir": ".",
     "declaration": true,
@@ -27,7 +26,8 @@
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": false,
-    "noUncheckedIndexedAccess": false
+    "noUncheckedIndexedAccess": false,
+    "ignoreDeprecations": "6.0"
   },
   "include": [
     "**/*.ts",

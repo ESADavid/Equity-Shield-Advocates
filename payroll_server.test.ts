@@ -25,7 +25,7 @@ describe('Payroll Server API', () => {
     const res = await request(app).get('/api/payroll/employees');
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.find((e) => e.id === employeeId)).toBeDefined();
+    expect(res.body.find((e: any) => e.id === employeeId)).toBeDefined();
   });
 
   it('should update an existing employee', async () => {
@@ -70,7 +70,7 @@ describe('Payroll Server API', () => {
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBeGreaterThan(0);
-    const payrollRecord = res.body.find((p) => p.employeeId === employeeId);
+    const payrollRecord = res.body.find((p: any) => p.employeeId === employeeId);
     expect(payrollRecord).toBeDefined();
     expect(payrollRecord.netPay).toBeCloseTo(50000 - 50000 * 0.2 - 1000 + 500);
   });

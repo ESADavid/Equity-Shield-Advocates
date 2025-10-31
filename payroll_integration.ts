@@ -21,8 +21,8 @@ export interface PayrollResponse {
 }
 
 class PayrollIntegration {
-  private dynamicsBaseUrl: string;
-  private accessToken: string;
+  private readonly dynamicsBaseUrl: string;
+  private readonly accessToken: string;
 
   constructor(baseUrl: string, accessToken: string) {
     this.dynamicsBaseUrl = baseUrl;
@@ -104,7 +104,7 @@ class PayrollIntegration {
         return { success: false, message };
       }
       // Simulate banking API validation call
-      const isValid = await this.simulateBankValidation(employee.accountNumber, employee.routingNumber);
+      const isValid = await this.simulateBankValidation(employee.accountNumber);
       if (!isValid) {
         return { success: false, message: 'Invalid bank account or routing number' };
       }
@@ -116,7 +116,7 @@ class PayrollIntegration {
   }
 
   // New method: Check transaction status from banking API (simulated)
-  async getTransactionStatus(transactionId: string): Promise<{ success: boolean; status: string; message?: string }> {
+  async getTransactionStatus(): Promise<{ success: boolean; status: string; message?: string }> {
     try {
       // Simulate async call to banking API for transaction status
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -143,7 +143,7 @@ class PayrollIntegration {
     }
   }
 
-  private async simulateBankValidation(accountNumber: string, routingNumber: string): Promise<boolean> {
+  private async simulateBankValidation(accountNumber: string): Promise<boolean> {
     // Simulate async validation logic, e.g., call to external banking API
     await new Promise((resolve) => setTimeout(resolve, 500));
     // For demo, assume all account numbers starting with '0' are invalid

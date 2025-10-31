@@ -7,70 +7,52 @@ import {
   Employee,
   EmployeeInput,
   PayrollCalculationInput,
-  PayrollValidationError,
   PAYROLL_CONSTANTS
 } from '../types/payroll.js';
 
 export class PayrollValidationError extends Error {
-  constructor(
-    public field: string,
-    message: string,
-    public value?: any
-  ) {
+  public field: string;
+  public value?: any;
+
+  constructor(field: string, message: string, value?: any) {
     super(message);
     this.name = 'PayrollValidationError';
+    this.field = field;
+    this.value = value;
   }
 }
 
 /**
- * Validates employee input data
+ * Validates a required string field
  */
-export function validateEmployeeInput(input: EmployeeInput): PayrollValidationError[] {
-  const errors: PayrollValidationError[] = [];
-
-  // Required fields
-  if (!input.name || typeof input.name !== 'string' || input.name.trim().length === 0) {
-    errors.push(new PayrollValidationError('name', 'Employee name is required and must be a non-empty string'));
+function validateRequiredString(value: any, fieldName: string, errors: PayrollValidationError[]): void {
+  if (!value || typeof value !== 'string' || value.trim().length === 0) {
+    errors.push(new PayrollValidationError(fieldName, `${fieldName} is required and must be a non-empty string`));
   }
+}
 
-  if (typeof input.taxRate !== 'number' || input.taxRate < PAYROLL_CONSTANTS.MIN_TAX_RATE || input.taxRate > PAYROLL_CONSTANTS.MAX_TAX_RATE) {
-    errors.push(new PayrollValidationError('taxRate', `Tax rate must be between ${PAYROLL_CONSTANTS.MIN_TAX_RATE} and ${PAYROLL_CONSTANTS.MAX_TAX_RATE}`, input.taxRate));
+/**
+ * Validates a numeric field within bounds
+ */
+function validateNumericField(value: any, fieldName: string, min: number, max: number, errors: PayrollValidationError[]): void {
+  if (typeof value !== 'number' || value < min || value > max) {
+    errors.push(new PayrollValidationError(fieldName, `${fieldName} must be between ${min} and ${max}`, value));
   }
+}
 
-  if (typeof input.deductions !== 'number' || input.deductions < 0 || input.deductions > PAYROLL_CONSTANTS.MAX_DEDUCTIONS) {
-    errors.push(new PayrollValidationError('deductions', `Deductions must be between 0 and ${PAYROLL_CONSTANTS.MAX_DEDUCTIONS}`, input.deductions));
+/**
+ * Validates an optional numeric field
+ */
+function validateOptionalNumericField(value: any, fieldName: string, min: number, max: number, errors: PayrollValidationError[]): void {
+  if (value !== undefined) {
+    validateNumericField(value, fieldName, min, max, errors);
   }
+}
 
-  if (typeof input.bonuses !== 'number' || input.bonuses < 0 || input.bonuses > PAYROLL_CONSTANTS.MAX_BONUSES) {
-    errors.push(new PayrollValidationError('bonuses', `Bonuses must be between 0 and ${PAYROLL_CONSTANTS.MAX_BONUSES}`, input.bonuses));
-  }
-
-  // Optional numeric fields
-  if (input.hourlyRate !== undefined) {
-    if (typeof input.hourlyRate !== 'number' || input.hourlyRate < 0 || input.hourlyRate > PAYROLL_CONSTANTS.MAX_HOURLY_RATE) {
-      errors.push(new PayrollValidationError('hourlyRate', `Hourly rate must be between 0 and ${PAYROLL_CONSTANTS.MAX_HOURLY_RATE}`, input.hourlyRate));
-    }
-  }
-
-  if (input.hoursWorked !== undefined) {
-    if (typeof input.hoursWorked !== 'number' || input.hoursWorked < 0 || input.hoursWorked > PAYROLL_CONSTANTS.MAX_HOURS_WORKED) {
-      errors.push(new PayrollValidationError('hoursWorked', `Hours worked must be between 0 and ${PAYROLL_CONSTANTS.MAX_HOURS_WORKED}`, input.hoursWorked));
-    }
-  }
-
-  if (input.overtimeHours !== undefined) {
-    if (typeof input.overtimeHours !== 'number' || input.overtimeHours < 0 || input.overtimeHours > PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS) {
-      errors.push(new PayrollValidationError('overtimeHours', `Overtime hours must be between 0 and ${PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS}`, input.overtimeHours));
-    }
-  }
-
-  if (input.salary !== undefined) {
-    if (typeof input.salary !== 'number' || input.salary < 0) {
-      errors.push(new PayrollValidationError('salary', 'Salary must be a positive number', input.salary));
-    }
-  }
-
-  // Banking information validation
+/**
+ * Validates banking information
+ */
+function validateBankingInfo(input: EmployeeInput, errors: PayrollValidationError[]): void {
   if (input.accountNumber !== undefined) {
     if (typeof input.accountNumber !== 'string' || !/^\d{8,17}$/.test(input.accountNumber)) {
       errors.push(new PayrollValidationError('accountNumber', 'Account number must be 8-17 digits', input.accountNumber));
@@ -82,6 +64,33 @@ export function validateEmployeeInput(input: EmployeeInput): PayrollValidationEr
       errors.push(new PayrollValidationError('routingNumber', 'Routing number must be 9 digits', input.routingNumber));
     }
   }
+}
+
+/**
+ * Validates employee input data
+ */
+export function validateEmployeeInput(input: EmployeeInput): PayrollValidationError[] {
+  const errors: PayrollValidationError[] = [];
+
+  // Required fields
+  validateRequiredString(input.name, 'name', errors);
+  validateNumericField(input.taxRate, 'taxRate', PAYROLL_CONSTANTS.MIN_TAX_RATE, PAYROLL_CONSTANTS.MAX_TAX_RATE, errors);
+  validateNumericField(input.deductions, 'deductions', 0, PAYROLL_CONSTANTS.MAX_DEDUCTIONS, errors);
+  validateNumericField(input.bonuses, 'bonuses', 0, PAYROLL_CONSTANTS.MAX_BONUSES, errors);
+
+  // Optional numeric fields
+  validateOptionalNumericField(input.hourlyRate, 'hourlyRate', 0, PAYROLL_CONSTANTS.MAX_HOURLY_RATE, errors);
+  validateOptionalNumericField(input.hoursWorked, 'hoursWorked', 0, PAYROLL_CONSTANTS.MAX_HOURS_WORKED, errors);
+  validateOptionalNumericField(input.overtimeHours, 'overtimeHours', 0, PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS, errors);
+
+  if (input.salary !== undefined) {
+    if (typeof input.salary !== 'number' || input.salary < 0) {
+      errors.push(new PayrollValidationError('salary', 'Salary must be a positive number', input.salary));
+    }
+  }
+
+  // Banking information validation
+  validateBankingInfo(input, errors);
 
   return errors;
 }
@@ -92,46 +101,16 @@ export function validateEmployeeInput(input: EmployeeInput): PayrollValidationEr
 export function validatePayrollCalculationInput(input: PayrollCalculationInput): PayrollValidationError[] {
   const errors: PayrollValidationError[] = [];
 
-  if (!input.employeeId || typeof input.employeeId !== 'string' || input.employeeId.trim().length === 0) {
-    errors.push(new PayrollValidationError('employeeId', 'Employee ID is required'));
-  }
+  // Required field
+  validateRequiredString(input.employeeId, 'employeeId', errors);
 
   // Optional fields with validation
-  if (input.hoursWorked !== undefined) {
-    if (typeof input.hoursWorked !== 'number' || input.hoursWorked < 0 || input.hoursWorked > PAYROLL_CONSTANTS.MAX_HOURS_WORKED) {
-      errors.push(new PayrollValidationError('hoursWorked', `Hours worked must be between 0 and ${PAYROLL_CONSTANTS.MAX_HOURS_WORKED}`, input.hoursWorked));
-    }
-  }
-
-  if (input.hourlyRate !== undefined) {
-    if (typeof input.hourlyRate !== 'number' || input.hourlyRate < 0 || input.hourlyRate > PAYROLL_CONSTANTS.MAX_HOURLY_RATE) {
-      errors.push(new PayrollValidationError('hourlyRate', `Hourly rate must be between 0 and ${PAYROLL_CONSTANTS.MAX_HOURLY_RATE}`, input.hourlyRate));
-    }
-  }
-
-  if (input.overtimeHours !== undefined) {
-    if (typeof input.overtimeHours !== 'number' || input.overtimeHours < 0 || input.overtimeHours > PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS) {
-      errors.push(new PayrollValidationError('overtimeHours', `Overtime hours must be between 0 and ${PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS}`, input.overtimeHours));
-    }
-  }
-
-  if (input.taxRate !== undefined) {
-    if (typeof input.taxRate !== 'number' || input.taxRate < PAYROLL_CONSTANTS.MIN_TAX_RATE || input.taxRate > PAYROLL_CONSTANTS.MAX_TAX_RATE) {
-      errors.push(new PayrollValidationError('taxRate', `Tax rate must be between ${PAYROLL_CONSTANTS.MIN_TAX_RATE} and ${PAYROLL_CONSTANTS.MAX_TAX_RATE}`, input.taxRate));
-    }
-  }
-
-  if (input.deductions !== undefined) {
-    if (typeof input.deductions !== 'number' || input.deductions < 0 || input.deductions > PAYROLL_CONSTANTS.MAX_DEDUCTIONS) {
-      errors.push(new PayrollValidationError('deductions', `Deductions must be between 0 and ${PAYROLL_CONSTANTS.MAX_DEDUCTIONS}`, input.deductions));
-    }
-  }
-
-  if (input.bonuses !== undefined) {
-    if (typeof input.bonuses !== 'number' || input.bonuses < 0 || input.bonuses > PAYROLL_CONSTANTS.MAX_BONUSES) {
-      errors.push(new PayrollValidationError('bonuses', `Bonuses must be between 0 and ${PAYROLL_CONSTANTS.MAX_BONUSES}`, input.bonuses));
-    }
-  }
+  validateOptionalNumericField(input.hoursWorked, 'hoursWorked', 0, PAYROLL_CONSTANTS.MAX_HOURS_WORKED, errors);
+  validateOptionalNumericField(input.hourlyRate, 'hourlyRate', 0, PAYROLL_CONSTANTS.MAX_HOURLY_RATE, errors);
+  validateOptionalNumericField(input.overtimeHours, 'overtimeHours', 0, PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS, errors);
+  validateOptionalNumericField(input.taxRate, 'taxRate', PAYROLL_CONSTANTS.MIN_TAX_RATE, PAYROLL_CONSTANTS.MAX_TAX_RATE, errors);
+  validateOptionalNumericField(input.deductions, 'deductions', 0, PAYROLL_CONSTANTS.MAX_DEDUCTIONS, errors);
+  validateOptionalNumericField(input.bonuses, 'bonuses', 0, PAYROLL_CONSTANTS.MAX_BONUSES, errors);
 
   return errors;
 }
@@ -147,14 +126,30 @@ export function validateEmployee(employee: Employee): PayrollValidationError[] {
  * Sanitizes and normalizes employee input data
  */
 export function sanitizeEmployeeInput(input: EmployeeInput): EmployeeInput {
-  return {
+  const sanitized: EmployeeInput = {
     ...input,
-    name: input.name?.trim(),
-    position: input.position?.trim(),
-    department: input.department?.trim(),
-    accountNumber: input.accountNumber?.replace(/\D/g, ''), // Remove non-digits
-    routingNumber: input.routingNumber?.replace(/\D/g, '') // Remove non-digits
+    name: input.name?.trim()
   };
+
+  const accountNumber = input.accountNumber?.replaceAll(/\D/g, '');
+  if (accountNumber) {
+    sanitized.accountNumber = accountNumber;
+  }
+
+  const routingNumber = input.routingNumber?.replaceAll(/\D/g, '');
+  if (routingNumber) {
+    sanitized.routingNumber = routingNumber;
+  }
+
+  if (input.position !== undefined) {
+    sanitized.position = input.position.trim();
+  }
+
+  if (input.department !== undefined) {
+    sanitized.department = input.department.trim();
+  }
+
+  return sanitized;
 }
 
 /**
@@ -172,5 +167,5 @@ export function isValidEmployeeId(employeeId: string): boolean {
  */
 export function isValidPayPeriod(payPeriod: string): boolean {
   const date = new Date(payPeriod);
-  return !isNaN(date.getTime()) && payPeriod === date.toISOString().split('T')[0];
+  return Number.isNaN(date.getTime()) === false && payPeriod === date.toISOString().split('T')[0];
 }
