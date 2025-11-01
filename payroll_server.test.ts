@@ -149,4 +149,14 @@ describe('Payroll Server API', () => {
     // Net pay: 1287.5 - 193.125 - 200 = 894.375
     expect(payrollRecord.netPay).toBeCloseTo(894.38, 2);
   });
+
+  it('should return welcome message with request logging', async () => {
+    const res = await request(app).get('/api/payroll/welcome');
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.message).toBe('Welcome to the Payroll API Service!');
+    expect(res.body.timestamp).toBeDefined();
+    expect(res.body.request).toBeDefined();
+    expect(res.body.request.method).toBe('GET');
+    expect(res.body.request.path).toBe('/api/payroll/welcome');
+  });
 });

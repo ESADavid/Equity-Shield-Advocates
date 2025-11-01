@@ -108,6 +108,23 @@ router.get('/employees/:id/payroll', (req, res) => {
   }
 });
 
+// Welcome endpoint with request logging
+router.get('/welcome', (req, res) => {
+  // Log request metadata
+  console.log(`Request received: ${req.method} ${req.path} from ${req.ip} at ${new Date().toISOString()}`);
+
+  res.json({
+    message: 'Welcome to the Payroll API Service!',
+    timestamp: new Date().toISOString(),
+    request: {
+      method: req.method,
+      path: req.path,
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    }
+  });
+});
+
 // Calculate payroll for specific employee
 router.post('/calculate', (req, res) => {
   const { employeeId, hoursWorked, hourlyRate, overtimeHours, taxRate, deductions, bonuses } = req.body;

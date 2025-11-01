@@ -77,6 +77,23 @@ app.delete('/api/payroll/employees/:id', (req, res) => {
   }
 });
 
+// Welcome endpoint with request logging
+app.get('/api/payroll/welcome', (req, res) => {
+  // Log request metadata
+  console.log(`Request received: ${req.method} ${req.path} from ${req.ip} at ${new Date().toISOString()}`);
+
+  res.json({
+    message: 'Welcome to the Payroll API Service!',
+    timestamp: new Date().toISOString(),
+    request: {
+      method: req.method,
+      path: req.path,
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    }
+  });
+});
+
 // Process payroll for today
 app.post('/api/payroll/process', (_req, res) => {
   const payDate = new Date().toISOString();
