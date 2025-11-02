@@ -250,6 +250,43 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+// Microsoft chat endpoint for profile/auth redirect
+app.get('/microsoft/chat', (req, res) => {
+  try {
+    const { auth, origin, origindomain, redirectOrgId, redirectUserId } = req.query;
+
+    // Validate required parameters
+    if (!auth || !origin || !origindomain || !redirectOrgId || !redirectUserId) {
+      return res.status(400).json({
+        error: 'Missing required query parameters: auth, origin, origindomain, redirectOrgId, redirectUserId'
+      });
+    }
+
+    // Log the Microsoft chat/profile auth redirect
+    logger.info(`Microsoft chat/profile auth redirect received: auth=${auth}, origin=${origin}, origindomain=${origindomain}, redirectOrgId=${redirectOrgId}, redirectUserId=${redirectUserId}`);
+
+    res.json({
+      message: 'Microsoft chat/profile auth redirect received',
+      query: {
+        auth,
+        origin,
+        origindomain,
+        redirectOrgId,
+        redirectUserId
+      },
+      timestamp: new Date().toISOString(),
+      status: 'processed'
+    });
+
+  } catch (error) {
+    logger.error('Microsoft chat endpoint error:', error.message);
+    res.status(500).json({
+      error: 'Internal server error processing Microsoft chat request',
+      details: error.message
+    });
+  }
+});
+
 import analyticsRouter from './analytics_router.js';
 import payrollRouter from './payroll_router.js';
 import notificationRouter from './notification_router.js';
@@ -276,8 +313,11 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-app.listen(PORT, () => {
-  logger.info(`Earnings dashboard running at http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    logger.info(`Earnings dashboard running at http://localhost:${PORT}`);
+  });
+}
 
 export { app };
+export default app;

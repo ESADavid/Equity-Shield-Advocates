@@ -1,12 +1,8 @@
-import express from 'express';
-import axios from 'axios';
-import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require('express');
+const axios = require('axios');
+const crypto = require('node:crypto');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const router = express.Router();
 
@@ -662,7 +658,7 @@ function generateMockTransactionId() {
   return `mock-txn-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
-import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration.js';
+const QuickBooksPayrollIntegration = require('../quickbooks_payroll_integration.js');
 
 // Example function to sync payments with QuickBooks payroll
 async function syncPaymentsWithQuickBooks() {
@@ -1687,4 +1683,4 @@ router.post('/control/banking-action', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;
