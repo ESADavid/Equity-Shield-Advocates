@@ -1,5 +1,5 @@
 import express from 'express';
-import { payrollSystem } from '../payrollSystem.js';
+import { payrollSystem } from '../payrollSystem.ts';
 
 const router = express.Router();
 
