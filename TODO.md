@@ -1,3 +1,3 @@
-- [x] Fix sanitizeEmployeeInput in payrollValidation.ts to handle exactOptionalPropertyTypes
-- [x] Remove unused _res parameter in payroll_server.ts middleware
-- [x] Add error logging in catch blocks in payroll_server.ts routes
+- [ ] Fix sanitizeEmployeeInput in payrollValidation.ts to handle exactOptionalPropertyTypes
+- [ ] Remove unused _res parameter in payroll_server.ts middleware
+- [ ] Add error logging in catch blocks in payroll_server.ts routes

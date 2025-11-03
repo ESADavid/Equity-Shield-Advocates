@@ -127,9 +127,27 @@ export function validateEmployee(employee: Employee): PayrollValidationError[] {
  */
 export function sanitizeEmployeeInput(input: EmployeeInput): EmployeeInput {
   const sanitized: EmployeeInput = {
-    ...input,
-    name: input.name?.trim()
+    name: input.name?.trim(),
+    taxRate: input.taxRate,
+    deductions: input.deductions,
+    bonuses: input.bonuses
   };
+
+  if (input.hourlyRate !== undefined) {
+    sanitized.hourlyRate = input.hourlyRate;
+  }
+
+  if (input.hoursWorked !== undefined) {
+    sanitized.hoursWorked = input.hoursWorked;
+  }
+
+  if (input.overtimeHours !== undefined) {
+    sanitized.overtimeHours = input.overtimeHours;
+  }
+
+  if (input.salary !== undefined) {
+    sanitized.salary = input.salary;
+  }
 
   const accountNumber = input.accountNumber?.replaceAll(/\D/g, '');
   if (accountNumber) {

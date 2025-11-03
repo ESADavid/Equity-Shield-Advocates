@@ -2,7 +2,7 @@
  * QUANTUM OPTIMIZER - Performance perfection system
  * Provides quantum-level performance optimization and self-healing capabilities
  */
-const { performance } = require('perf_hooks');
+const { performance } = require('node:perf_hooks');
 
 class QuantumOptimizer {
   constructor() {
@@ -149,22 +149,18 @@ class QuantumOptimizer {
   }
 
   predictNextHour() {
-    return {
-      expectedLoad: 'quantum-predicted',
-      optimizationNeeded: false,
-      selfHealing: 'not-required'
-    };
+    return this.getPredictionResult();
   }
 
   predictNextDay() {
-    return {
-      expectedLoad: 'quantum-predicted',
-      optimizationNeeded: false,
-      selfHealing: 'not-required'
-    };
+    return this.getPredictionResult();
   }
 
   predictNextWeek() {
+    return this.getPredictionResult();
+  }
+
+  getPredictionResult() {
     return {
       expectedLoad: 'quantum-predicted',
       optimizationNeeded: false,

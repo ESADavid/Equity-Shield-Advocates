@@ -252,9 +252,8 @@ if (require.main === module) {
   console.log('🚀 Running Quantum Critical Tests...');
   const { TestRunner } = require('jest');
   const runner = new TestRunner();
-  
-  runner.runTests().then(results => {
-    console.log('✅ Quantum tests completed');
-    console.log('🎯 System is quantumly perfect');
-  });
+
+  await runner.runTests();
+  console.log('✅ Quantum tests completed');
+  console.log('🎯 System is quantumly perfect');
 }

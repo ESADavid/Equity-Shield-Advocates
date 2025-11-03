@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
+import { logger } from '../config/logger.js';
 import { payrollSystem } from './payrollSystem';
 
 const app = express();
@@ -56,7 +57,7 @@ app.post('/api/payroll/employees', (req, res) => {
       }
     }
   } catch (error) {
-    console.error('Error adding/updating employee:', error);
+    logger.error('Error adding/updating employee:', { error: (error as Error).message, stack: (error as Error).stack });
     return res.status(400).json({ error: (error as Error).message });
   }
 });
@@ -72,7 +73,7 @@ app.delete('/api/payroll/employees/:id', (req, res) => {
       res.status(400).json({ error: deleteResult.error });
     }
   } catch (error) {
-    console.error('Error deleting employee:', error);
+    logger.error('Error deleting employee:', { error: (error as Error).message, stack: (error as Error).stack });
     res.status(400).json({ error: (error as Error).message });
   }
 });
@@ -105,7 +106,7 @@ app.post('/api/payroll/process', (_req, res) => {
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
-    console.error('Error processing payroll:', error);
+    logger.error('Error processing payroll:', { error: (error as Error).message, stack: (error as Error).stack });
     res.status(500).json({ error: 'Failed to process payroll' });
   }
 });

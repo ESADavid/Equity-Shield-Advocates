@@ -22,7 +22,7 @@ describe('Authentication and Access Control Tests', () => {
       .get('/api/earnings')
       .auth(adminUser, adminPass);
     expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('totalRevenue');
+    expect(res.body).toHaveProperty('totalAnnualRevenue');
   });
 
   test('Allows masterLoginOverride with special header', async () => {
@@ -30,13 +30,13 @@ describe('Authentication and Access Control Tests', () => {
       .get('/api/earnings')
       .set('x-override-user', 'Oscar Broome');
     expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('totalRevenue');
+    expect(res.body).toHaveProperty('totalAnnualRevenue');
   });
 
   test('Allows masterLoginOverride with query param', async () => {
     const res = await request(app)
       .get('/api/earnings?overrideUser=Oscar Broome');
     expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('totalRevenue');
+    expect(res.body).toHaveProperty('totalAnnualRevenue');
   });
 });

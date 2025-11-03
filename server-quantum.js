@@ -7,7 +7,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
-const { createServer } = require('http');
+const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 
 // Quantum imports
@@ -62,7 +62,7 @@ app.use(quantumLimiter);
 // Quantum security middleware
 app.use((req, res, next) => {
   // Quantum security verification - simplified for testing
-  const isSecure = quantumSecurity.verifyZeroTrust({
+  quantumSecurity.verifyZeroTrust({
     ip: req.ip || '127.0.0.1',
     userAgent: req.get('User-Agent') || 'test-agent',
     timestamp: Date.now(),

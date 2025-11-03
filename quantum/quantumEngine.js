@@ -2,9 +2,9 @@
  * QUANTUM ENGINE - Core perfection system
  * Provides quantum-level performance, security, and reliability
  */
-const EventEmitter = require('events');
-const crypto = require('crypto');
-const { performance } = require('perf_hooks');
+const EventEmitter = require('node:events');
+const crypto = require('node:crypto');
+const { performance } = require('node:perf_hooks');
 
 class QuantumEngine extends EventEmitter {
   constructor() {
@@ -100,7 +100,7 @@ class QuantumEngine extends EventEmitter {
     let totalStates = 0;
     let corruptedStates = 0;
 
-    for (const [key, state] of this.quantumState) {
+    for (const [, state] of this.quantumState) {
       totalStates++;
       if (!this.verifyQuantumIntegrity(state)) {
         corruptedStates++;
