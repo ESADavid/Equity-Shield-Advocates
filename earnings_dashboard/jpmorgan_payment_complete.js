@@ -1,8 +1,35 @@
-2// Apply global security middleware
+import express from 'express';
+import crypto from 'node:crypto';
+import axios from 'axios';
+const router = express.Router();
+
+// Import middleware
+import { securityHeaders, createRateLimit, validateInput } from '../../config/security.js';
+import {
+  validatePaymentCreation,
+  validatePaymentId,
+  validateRefund,
+  validateTransactionsQuery
+} from '../../middleware/validation.js';
+
+// Environment variables
+const JPMORGAN_CLIENT_ID = process.env.JPMORGAN_CLIENT_ID;
+const JPMORGAN_CLIENT_SECRET = process.env.JPMORGAN_CLIENT_SECRET;
+const JPMORGAN_BASE_URL = process.env.JPMORGAN_BASE_URL || 'https://api-mock.payments.jpmorgan.com';
+const JPMORGAN_ORGANIZATION_ID = process.env.JPMORGAN_ORGANIZATION_ID;
+const JPMORGAN_PROJECT_ID = process.env.JPMORGAN_PROJECT_ID || 'DK2MQSR1FS7V';
+const JPMORGAN_MERCHANT_ID = process.env.JPMORGAN_MERCHANT_ID;
+const JPMORGAN_TERMINAL_ID = process.env.JPMORGAN_TERMINAL_ID;
+
+// Rate limiters
+const createPaymentLimiter = createRateLimit(15 * 60 * 1000, 10); // 10 requests per 15 minutes
+const generalLimiter = createRateLimit(15 * 60 * 1000, 100);
+const webhookLimiter = createRateLimit(60 * 1000, 10); // 10 requests per minute
+
+// Apply global security middleware
 router.use(securityHeaders);
-router.use(requestSizeLimiter());
 router.use(express.json());
-router.use(sanitizeInput);
+router.use(validateInput);
 
 // Generate JPMorgan authentication headers
 function generateAuthHeaders() {
@@ -79,7 +106,7 @@ router.post('/wallet-encrypt', async (req, res) => {
     const headers = generateAuthHeaders();
 
     const encryptPayload = {
-      cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces
+      cardNumber: cardNumber.replaceAll(/\s/g, ''), // Remove spaces
       expiryDate: expiryDate,
       cvv: cvv,
       cardholderName: cardholderName,
@@ -164,7 +191,7 @@ router.post('/wallet-tokenize', async (req, res) => {
     const headers = generateAuthHeaders();
 
     const tokenizePayload = {
-      cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces
+      cardNumber: cardNumber.replaceAll(/\s/g, ''), // Remove spaces
       expiryDate: expiryDate,
       cvv: cvv,
       cardholderName: cardholderName,
@@ -554,4 +581,4 @@ router.post('/webhook', webhookLimiter, express.json(), verifyWebhookSignature, 
   }
 });
 
-module.exports = router;
+export default router;
