@@ -7,10 +7,11 @@
 - [x] Refactor `validatePayrollCalculationInput` in `utils/payrollValidation.ts` to reduce cognitive complexity by extracting validation logic
 - [x] Change `String.replace` to `replaceAll` in `sanitizeEmployeeInput` function
 - [x] Change `isNaN` to `Number.isNaN` in `isValidPayPeriod` function
-- [x] Update `tsconfig.json` to remove deprecated `moduleResolution` and `baseUrl` options and add `"ignoreDeprecations": "6.0"`
+- [x] Update `tsconfig.json` to remove deprecated `moduleResolution` and `baseUrl` options and add `"ignoreDeprecations": "5.0"`
 - [x] Make `dynamicsBaseUrl` and `accessToken` readonly in `payroll_integration.ts`
 - [x] Remove unused `res` parameter in middleware in `payroll_server.ts`
 - [x] Fix test in `quickbooks_payroll_integration.test.ts` to throw Error instead of string for rejection
+- [x] Fix module declaration issues in `config/logger.d.ts` and `earnings_dashboard/payroll_api.d.ts`
 
 ## Followup Steps
 

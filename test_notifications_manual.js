@@ -137,8 +137,8 @@ async function runManualTests() {
     const requiredEnvVars = ['STRIPE_SECRET_KEY'];
     const optionalEnvVars = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'TWILIO_SID', 'TWILIO_AUTH_TOKEN'];
 
-    let missingRequired = [];
-    let presentOptional = [];
+    const missingRequired = [];
+    const presentOptional = [];
 
     requiredEnvVars.forEach(varName => {
       if (!process.env[varName]) {
@@ -182,7 +182,7 @@ async function runManualTests() {
       './earnings_report_updated.json'
     ];
 
-    let missingFiles = [];
+    const missingFiles = [];
 
     requiredFiles.forEach(filePath => {
       const fullPath = path.resolve(__dirname, filePath);

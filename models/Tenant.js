@@ -168,7 +168,7 @@ tenantSchema.virtual('usageStats').get(async function() {
 // Pre-save middleware to hash API keys
 tenantSchema.pre('save', async function(next) {
   if (this.isModified('apiKeys')) {
-    for (let apiKey of this.apiKeys) {
+    for (const apiKey of this.apiKeys) {
       if (apiKey.key && !apiKey.key.startsWith('$2a$')) {
         apiKey.key = await bcrypt.hash(apiKey.key, 12);
       }
@@ -181,7 +181,7 @@ tenantSchema.pre('save', async function(next) {
 tenantSchema.methods = {
   // Verify API key
   async verifyApiKey(key) {
-    for (let apiKey of this.apiKeys) {
+    for (const apiKey of this.apiKeys) {
       if (apiKey.isActive && await bcrypt.compare(key, apiKey.key)) {
         apiKey.lastUsed = new Date();
         await this.save();

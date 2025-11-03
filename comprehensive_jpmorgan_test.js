@@ -404,7 +404,7 @@ class JPMorganEndpointTests {
         }
       };
 
-      let headers = {
+      const headers = {
         'Content-Type': 'application/json'
       };
 

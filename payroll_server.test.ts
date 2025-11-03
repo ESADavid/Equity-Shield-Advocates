@@ -2,7 +2,7 @@ import request from 'supertest';
 import app from './payroll_server';
 
 describe('Payroll Server API', () => {
-  let employeeId = 'emp1';
+  const employeeId = 'emp1';
 
   beforeAll(async () => {
     // Clean up any existing server

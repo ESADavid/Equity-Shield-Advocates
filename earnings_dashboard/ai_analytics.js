@@ -16,9 +16,9 @@ const riskFactors = {
   regulatoryChanges: 0.05
 };
 
-let linearModel = null;
-let seasonalModel = null;
-let arimaModel = null;
+const linearModel = null;
+const seasonalModel = null;
+const arimaModel = null;
 
 class AdvancedAnalytics {
   constructor() {
