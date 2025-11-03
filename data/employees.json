@@ -82,5 +82,89 @@
     "hourlyRate": 25,
     "hoursWorked": 40,
     "overtimeHours": 5
+  },
+  {
+    "id": "EMPMHJHT1HK",
+    "name": "John Doe",
+    "taxRate": 0.2,
+    "deductions": 1000,
+    "bonuses": 500,
+    "hireDate": "2025-11-03T18:47:55.592Z",
+    "isActive": true,
+    "salary": 50000,
+    "accountNumber": "123456789",
+    "routingNumber": "987654321"
+  },
+  {
+    "id": "EMPMHJHT1HZ",
+    "name": "John Doe",
+    "taxRate": 0.2,
+    "deductions": 1000,
+    "bonuses": 500,
+    "hireDate": "2025-11-03T18:47:55.607Z",
+    "isActive": true,
+    "salary": 50000,
+    "accountNumber": "123456789",
+    "routingNumber": "987654321"
+  },
+  {
+    "id": "EMPMHJHT1J0",
+    "name": "John Doe",
+    "taxRate": 0.2,
+    "deductions": 1000,
+    "bonuses": 500,
+    "hireDate": "2025-11-03T18:47:55.644Z",
+    "isActive": true,
+    "salary": 50000,
+    "accountNumber": "123456789",
+    "routingNumber": "987654321"
+  },
+  {
+    "id": "EMPMHJHT1JB",
+    "name": "John Doe Updated",
+    "taxRate": 0.22,
+    "deductions": 1200,
+    "bonuses": 600,
+    "hireDate": "2025-11-03T18:47:55.655Z",
+    "isActive": true,
+    "salary": 55000,
+    "accountNumber": "123456789",
+    "routingNumber": "987654321"
+  },
+  {
+    "id": "EMPMHJHT1JP",
+    "name": "John Doe",
+    "taxRate": 0.2,
+    "deductions": 1000,
+    "bonuses": 500,
+    "hireDate": "2025-11-03T18:47:55.669Z",
+    "isActive": true,
+    "salary": 50000,
+    "accountNumber": "123456789",
+    "routingNumber": "987654321"
+  },
+  {
+    "id": "EMPMHJHT1KN",
+    "name": "John Doe",
+    "taxRate": 0.2,
+    "deductions": 1000,
+    "bonuses": 500,
+    "hireDate": "2025-11-03T18:47:55.703Z",
+    "isActive": true,
+    "salary": 50000,
+    "accountNumber": "123456789",
+    "routingNumber": "987654321"
+  },
+  {
+    "id": "EMPMHJHT1MR",
+    "name": "Jane Smith",
+    "taxRate": 0.15,
+    "deductions": 200,
+    "bonuses": 100,
+    "hireDate": "2025-11-03T18:47:55.779Z",
+    "isActive": true,
+    "hourlyRate": 25,
+    "hoursWorked": 40,
+    "overtimeHours": 5
   }
 ]

@@ -28,6 +28,8 @@ class QuantumEngine extends EventEmitter {
       entangled: false
     });
     this.entangleState(key);
+    // Backup for error correction
+    this.errorCorrector.backup(key, this.quantumState.get(key));
     return quantumHash;
   }
 
