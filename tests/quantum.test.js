@@ -3,10 +3,10 @@
  * Tests core quantum system components and server endpoints
  */
 const request = require('supertest');
-const { app, server, quantumEngine, quantumSecurity, quantumOptimizer } = require('../server-quantum');
-const QuantumEngine = require('../quantum/quantumEngine');
-const QuantumSecurity = require('../quantum/quantumSecurity');
-const QuantumOptimizer = require('../quantum/quantumOptimizer');
+const { app, server, quantumEngine, quantumSecurity, quantumOptimizer } = require('../server-quantum.js');
+const { QuantumEngine } = require('../quantum/quantumEngine.js');
+const { QuantumSecurity } = require('../quantum/quantumSecurity.js');
+const { QuantumOptimizer } = require('../quantum/quantumOptimizer.js');
 
 describe('🚀 Quantum System Critical Testing', () => {
   let testServer;

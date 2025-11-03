@@ -219,4 +219,4 @@ class QuantumOptimizer {
   }
 }
 
-module.exports = QuantumOptimizer;
+module.exports = { QuantumOptimizer };
