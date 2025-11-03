@@ -89,12 +89,12 @@ class QuantumSecurity {
     return Object.values(verification).every(v => v === true);
   }
 
-  verifyIPAddress(ip) {
+  verifyIPAddress(_ip) {
     // Implement IP reputation and geolocation verification
     return true; // Simplified for demo
   }
 
-  verifyUserAgent(userAgent) {
+  verifyUserAgent(_userAgent) {
     // Implement device fingerprinting
     return true; // Simplified for demo
   }
@@ -124,7 +124,7 @@ class QuantumSecurity {
     return crypto.timingSafeEqual(signatureBuffer, expectedBuffer);
   }
 
-  verifyBlockchainIntegrity(blockchain) {
+  verifyBlockchainIntegrity(_blockchain) {
     // Verify blockchain audit trail
     return true; // Simplified for demo
   }
@@ -132,26 +132,26 @@ class QuantumSecurity {
   // Quantum intrusion detection
   detectIntrusion(request) {
     const anomalies = [];
-    
+
     // Check for quantum anomalies
     if (this.isQuantumAnomaly(request)) {
       anomalies.push('quantum-anomaly');
     }
-    
+
     // Check for behavioral anomalies
     if (this.isBehavioralAnomaly(request)) {
       anomalies.push('behavioral-anomaly');
     }
-    
+
     return anomalies;
   }
 
-  isQuantumAnomaly(request) {
+  isQuantumAnomaly(_request) {
     // Implement quantum anomaly detection
     return false; // Simplified for demo
   }
 
-  isBehavioralAnomaly(request) {
+  isBehavioralAnomaly(_request) {
     // Implement behavioral analysis
     return false; // Simplified for demo
   }

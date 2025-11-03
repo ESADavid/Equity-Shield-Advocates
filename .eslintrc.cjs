@@ -16,8 +16,8 @@ module.exports = {
   },
   plugins: ['@typescript-eslint'],
   rules: {
-    'no-unused-vars': 'warn',
-    '@typescript-eslint/no-unused-vars': 'warn',
+    'no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
+    '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-require-imports': 'off', // Allow require() for now
     'no-undef': 'error',
@@ -33,6 +33,10 @@ module.exports = {
       files: ['*.js'],
       parserOptions: {
         sourceType: 'script', // Allow require() in .js files
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        'no-unused-vars': 'off',
       },
     },
   ],

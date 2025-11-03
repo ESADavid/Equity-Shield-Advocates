@@ -27,8 +27,8 @@ import {
   isSalariedEmployee
 } from './utils/payrollCalculator.js';
 
-// Use process.cwd() for data directory - works in both Node.js and Jest
-const DATA_DIR = path.join(process.cwd(), 'data');
+// Use module directory for data directory - works in both Node.js and Jest
+const DATA_DIR = path.join(__dirname, 'data');
 const EMPLOYEES_FILE = path.join(DATA_DIR, 'employees.json');
 const PAYROLL_RECORDS_FILE = path.join(DATA_DIR, 'payroll_records.json');
 

@@ -3,6 +3,16 @@ import app from './payroll_server';
 
 describe('Payroll Server API', () => {
   const employeeId = 'emp1';
+  const testEmployee = {
+    id: employeeId,
+    name: 'John Doe',
+    salary: 50000,
+    taxRate: 0.2,
+    deductions: 1000,
+    bonuses: 500,
+    accountNumber: '123456789',
+    routingNumber: '987654321',
+  };
 
   beforeAll(async () => {
     // Clean up any existing server
@@ -12,38 +22,19 @@ describe('Payroll Server API', () => {
   });
 
   it('should add a new employee', async () => {
-    // First, delete the employee if it exists to ensure clean state
-    await request(app).delete(`/api/payroll/employees/${employeeId}`);
-
     const res = await request(app)
       .post('/api/payroll/employees')
-      .send({
-        id: employeeId,
-        name: 'John Doe',
-        salary: 50000,
-        taxRate: 0.2,
-        deductions: 1000,
-        bonuses: 500,
-        accountNumber: '123456789',
-        routingNumber: '987654321',
-      });
+      .send(testEmployee);
     expect(res.statusCode).toEqual(200);
     expect(res.body.message).toBe('Employee added successfully');
   });
 
-  afterEach(async () => {
-    // Clean up data between tests
-    const employeesResult = await request(app).get('/api/payroll/employees');
-    if (employeesResult.body && Array.isArray(employeesResult.body)) {
-      for (const emp of employeesResult.body) {
-        if (emp.id !== employeeId) {
-          await request(app).delete(`/api/payroll/employees/${emp.id}`);
-        }
-      }
-    }
-  });
-
   it('should get all employees', async () => {
+    // First add an employee for this test
+    await request(app)
+      .post('/api/payroll/employees')
+      .send(testEmployee);
+
     const res = await request(app).get('/api/payroll/employees');
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -51,23 +42,33 @@ describe('Payroll Server API', () => {
   });
 
   it('should update an existing employee', async () => {
+    // First add an employee
+    await request(app)
+      .post('/api/payroll/employees')
+      .send(testEmployee);
+
+    // Now update it
     const res = await request(app)
       .post('/api/payroll/employees')
       .send({
-        id: employeeId,
+        ...testEmployee,
         name: 'John Doe Updated',
         salary: 55000,
         taxRate: 0.22,
         deductions: 1200,
         bonuses: 600,
-        accountNumber: '123456789',
-        routingNumber: '987654321',
       });
     expect(res.statusCode).toEqual(200);
     expect(res.body.message).toBe('Employee updated successfully');
   });
 
   it('should delete an employee', async () => {
+    // First add an employee
+    await request(app)
+      .post('/api/payroll/employees')
+      .send(testEmployee);
+
+    // Now delete it
     const res = await request(app).delete(`/api/payroll/employees/${employeeId}`);
     expect(res.statusCode).toEqual(200);
     expect(res.body.message).toBe('Employee deleted successfully');
@@ -77,16 +78,7 @@ describe('Payroll Server API', () => {
     // Add employee first
     await request(app)
       .post('/api/payroll/employees')
-      .send({
-        id: employeeId,
-        name: 'John Doe',
-        salary: 50000,
-        taxRate: 0.2,
-        deductions: 1000,
-        bonuses: 500,
-        accountNumber: '123456789',
-        routingNumber: '987654321',
-      });
+      .send(testEmployee);
 
     const res = await request(app).post('/api/payroll/process');
     expect(res.statusCode).toEqual(200);
@@ -125,18 +117,21 @@ describe('Payroll Server API', () => {
 
   it('should handle hourly employee payroll calculation', async () => {
     const hourlyEmployeeId = 'emp-hourly';
+    const hourlyEmployee = {
+      id: hourlyEmployeeId,
+      name: 'Jane Smith',
+      hourlyRate: 25,
+      hoursWorked: 40,
+      overtimeHours: 5,
+      taxRate: 0.15,
+      deductions: 200,
+      bonuses: 100,
+    };
+
+    // Add hourly employee
     await request(app)
       .post('/api/payroll/employees')
-      .send({
-        id: hourlyEmployeeId,
-        name: 'Jane Smith',
-        hourlyRate: 25,
-        hoursWorked: 40,
-        overtimeHours: 5,
-        taxRate: 0.15,
-        deductions: 200,
-        bonuses: 100,
-      });
+      .send(hourlyEmployee);
 
     const res = await request(app).post('/api/payroll/process');
     expect(res.statusCode).toEqual(200);

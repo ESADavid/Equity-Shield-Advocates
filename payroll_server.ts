@@ -23,11 +23,17 @@ app.use(function (_req: Request, _res: Response, next: NextFunction) {
 
 // Get all employees
 app.get('/api/payroll/employees', (_req, res) => {
-  const result = payrollSystem.getEmployees();
-  if (result.success) {
-    res.json(result.data);
-  } else {
-    res.status(500).json({ error: result.error });
+  try {
+    const result = payrollSystem.getEmployees();
+    if (result.success) {
+      res.json(result.data);
+    } else {
+      logger.error('Error getting employees:', result.error);
+      res.status(500).json({ error: result.error });
+    }
+  } catch (error) {
+    logger.error('Error getting employees:', { error: (error as Error).message, stack: (error as Error).stack });
+    res.status(500).json({ error: 'Failed to get employees' });
   }
 });
 
