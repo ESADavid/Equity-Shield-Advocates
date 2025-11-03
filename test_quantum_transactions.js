@@ -3,7 +3,7 @@
  * Demonstrates the quantum transaction engine processing various transaction types
  */
 
-const { QuantumTransactionEngine } = require('./quantum/quantumTransactionEngine.js');
+import { QuantumTransactionEngine } from './quantum/quantumTransactionEngine.js';
 
 async function demonstrateQuantumTransactions() {
   console.log('🚀 Initializing Quantum Transaction Engine...');
@@ -164,9 +164,8 @@ async function demonstrateQuantumTransactions() {
   }
 }
 
-// Run the demo
-if (require.main === module) {
+export { demonstrateQuantumTransactions };
+
+if (import.meta.url === `file://${process.argv[1]}`) {
   demonstrateQuantumTransactions().catch(console.error);
 }
-
-module.exports = { demonstrateQuantumTransactions };

@@ -4,14 +4,14 @@
  * Handles all transaction types with quantum security and AI intelligence
  */
 
-const EventEmitter = require('node:events');
-const crypto = require('node:crypto');
-const { performance } = require('node:perf_hooks');
+import EventEmitter from 'node:events';
+import crypto from 'node:crypto';
+import { performance } from 'node:perf_hooks';
 
 // Import quantum systems
-const { QuantumEngine } = require('./quantumEngine');
-const { QuantumSecurity } = require('./quantumSecurity');
-const { QuantumOptimizer } = require('./quantumOptimizer');
+import { QuantumEngine } from './quantumEngine.js';
+import { QuantumSecurity } from './quantumSecurity.js';
+import { QuantumOptimizer } from './quantumOptimizer.js';
 
 class QuantumTransactionEngine extends EventEmitter {
   constructor() {
@@ -507,4 +507,4 @@ class QuantumTransactionEngine extends EventEmitter {
   }
 }
 
-module.exports = { QuantumTransactionEngine };
+export { QuantumTransactionEngine };

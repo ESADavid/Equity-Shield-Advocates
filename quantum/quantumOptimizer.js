@@ -2,7 +2,7 @@
  * QUANTUM OPTIMIZER - Performance perfection system
  * Provides quantum-level performance optimization and self-healing capabilities
  */
-const { performance } = require('node:perf_hooks');
+import { performance } from 'node:perf_hooks';
 
 class QuantumOptimizer {
   constructor() {
@@ -215,4 +215,4 @@ class QuantumOptimizer {
   }
 }
 
-module.exports = { QuantumOptimizer };
+export { QuantumOptimizer };
