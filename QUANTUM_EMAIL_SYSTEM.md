@@ -37,7 +37,7 @@ The Quantum Email System is an enterprise-grade email platform with quantum-leve
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                  Quantum Email System                        │
 ├─────────────────────────────────────────────────────────────┤

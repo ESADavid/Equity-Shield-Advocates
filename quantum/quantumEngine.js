@@ -25,7 +25,8 @@ class QuantumEngine extends EventEmitter {
       value,
       quantumHash,
       timestamp,
-      entangled: false
+      entangled: false,
+      encryptionKey: this.securityLayer.encryptionKey
     });
     this.entangleState(key);
     // Backup for error correction
@@ -83,14 +84,14 @@ class QuantumEngine extends EventEmitter {
 
   // Quantum security verification
   verifySecurity() {
-    return this.securityLayer.verifySecurity();
+    return this.securityLayer.verify();
   }
 
   // Get real-time metrics for monitoring
   getRealTimeMetrics() {
     return {
       performance: this.performanceOptimizer.optimize(),
-      security: this.securityLayer.verifySecurity(),
+      security: this.securityLayer.verify(),
       stateIntegrity: this.getStateIntegrityMetrics(),
       entanglement: this.entanglementNodes.size,
       uptime: performance.now(),

@@ -11,9 +11,7 @@ const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 
 // Quantum imports
-const { QuantumEngine } = require('./quantum/quantumEngine');
-const { QuantumSecurity } = require('./quantum/quantumSecurity');
-const { QuantumOptimizer } = require('./quantum/quantumOptimizer');
+const { QuantumEngine, QuantumSecurity, QuantumOptimizer } = require('./quantum/quantumEngine');
 const quantumConfig = require('./quantum.config');
 
 // Initialize quantum systems
