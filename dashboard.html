@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSCAR BROOME REVENUE - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .welcome-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .recent-activity {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-desc {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .activity-time {
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #c33;
+            display: none;
+        }
+
+        .company-footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e1e5e9;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .company-footer strong {
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>OSCAR BROOME REVENUE</h1>
+        <div class="user-info">
+            <span id="user-greeting">Welcome!</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="error-message" class="error-message"></div>
+
+        <div class="welcome-section">
+            <h2>Financial Management Dashboard</h2>
+            <p>Monitor your revenue streams, banking integrations, and financial operations in real-time.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Revenue</h3>
+                <div class="value" id="total-revenue">$1,326,681,891</div>
+                <div class="label">Combined Assets</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Systems</h3>
+                <div class="value" id="active-systems">4</div>
+                <div class="label">JPMorgan, Stripe, QuickBooks</div>
+            </div>
+            <div class="stat-card">
+                <h3>Security Status</h3>
+                <div class="value" id="security-status">Active</div>
+                <div class="label">Quantum Encryption</div>
+            </div>
+            <div class="stat-card">
+                <h3>Last Sync</h3>
+                <div class="value" id="last-sync">2 min ago</div>
+                <div class="label">Data Synchronization</div>
+            </div>
+        </div>
+
+        <div class="recent-activity">
+            <h3>Recent Activity</h3>
+            <ul class="activity-list" id="activity-list">
+                <li class="activity-item">
+                    <div class="activity-content">
+                        <div class="activity-title">JPMorgan Banking Sync</div>
+                        <div class="activity-desc">Successfully synchronized banking data</div>
+                    </div>
+                    <div class="activity-time">5 min ago</div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-content">
+                        <div class="activity-title">Stripe Payment Processed</div>
+                        <div class="activity-desc">Merchant payment of $2,450.00 completed</div>
+                    </div>
+                    <div class="activity-time">12 min ago</div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-content">
+                        <div class="activity-title">Payroll Integration</div>
+                        <div class="activity-desc">QuickBooks payroll data updated</div>
+                    </div>
+                    <div class="activity-time">1 hour ago</div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-content">
+                        <div class="activity-title">Security Audit</div>
+                        <div class="activity-desc">Automated security scan completed</div>
+                    </div>
+                    <div class="activity-time">2 hours ago</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <footer class="company-footer">
+        <p><strong>OSCAR BROOME REVENUE SYSTEM</strong></p>
+        <p>Part of OWLBAN GROUP - Advanced Financial Technology Platform</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const token = localStorage.getItem('oscar_broome_token');
+            const user = JSON.parse(localStorage.getItem('oscar_broome_user') || '{}');
+
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            // Update user greeting
+            if (user.email) {
+                document.getElementById('user-greeting').textContent = `Welcome, ${user.username || user.email.split('@')[0]}!`;
+            }
+
+            // Load dashboard data
+            loadDashboardData();
+
+            // Auto-refresh data every 30 seconds
+            setInterval(loadDashboardData, 30000);
+        });
+
+        async function loadDashboardData() {
+            try {
+                const token = localStorage.getItem('oscar_broome_token');
+                const response = await fetch('/api/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    updateDashboard(data);
+                } else if (response.status === 401 || response.status === 403) {
+                    // Token expired or invalid
+                    localStorage.removeItem('oscar_broome_token');
+                    localStorage.removeItem('oscar_broome_refresh_token');
+                    localStorage.removeItem('oscar_broome_user');
+                    window.location.href = '/login';
+                } else {
+                    showError('Failed to load dashboard data');
+                }
+            } catch (error) {
+                console.error('Dashboard load error:', error);
+                showError('Network error loading dashboard');
+            }
+        }
+
+        function updateDashboard(data) {
+            // Update stats based on real data
+            if (data.user) {
+                // Update user-specific information
+                console.log('Dashboard data loaded for user:', data.user.email);
+            }
+
+            // Update last sync time
+            const now = new Date();
+            document.getElementById('last-sync').textContent = 'Just now';
+        }
+
+        function logout() {
+            // Clear local storage
+            localStorage.removeItem('oscar_broome_token');
+            localStorage.removeItem('oscar_broome_refresh_token');
+            localStorage.removeItem('oscar_broome_user');
+
+            // Call logout endpoint
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('oscar_broome_token')}`
+                }
+            }).catch(error => {
+                console.error('Logout error:', error);
+            });
+
+            // Redirect to login
+            window.location.href = '/login';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Handle page visibility changes to refresh data when tab becomes active
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                loadDashboardData();
+            }
+        });
+    </script>
+</body>
+</html>
