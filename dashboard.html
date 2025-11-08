@@ -19,7 +19,6 @@
 
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -29,6 +28,8 @@
 
         .header h1 {
             font-size: 1.5rem;
+            color: #ffffff !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 5px rgba(0, 0, 0, 0.5);
         }
 
         .user-info {
@@ -39,16 +40,29 @@
 
         .logout-btn {
             background: rgba(255, 255, 255, 0.2);
-            color: white;
+            color: #000000 !important;
             border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 0.5rem 1rem;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
         }
 
         .logout-btn:hover {
             background: rgba(255, 255, 255, 0.3);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         .container {
@@ -278,27 +292,27 @@
             </div>
 
             <div class="actions-grid">
-            <button class="action-card" onclick="navigateTo('accounts')" onkeydown="handleKeyDown(event, 'accounts')">
+                <button class="action-card" onclick="navigateTo('accounts')" onkeydown="handleKeyDown(event, 'accounts')" aria-label="Navigate to Accounts section" tabindex="0">
                     <h4>💳 Accounts</h4>
                     <p>View and manage your bank accounts</p>
                 </button>
-                <button class="action-card" onclick="navigateTo('transactions')" onkeydown="handleKeyDown(event, 'transactions')">
+                <button class="action-card" onclick="navigateTo('transactions')" onkeydown="handleKeyDown(event, 'transactions')" aria-label="Navigate to Transactions section" tabindex="0">
                     <h4>📊 Transactions</h4>
                     <p>Review your transaction history</p>
                 </button>
-                <button class="action-card" onclick="navigateTo('payments')" onkeydown="handleKeyDown(event, 'payments')">
+                <button class="action-card" onclick="navigateTo('payments')" onkeydown="handleKeyDown(event, 'payments')" aria-label="Navigate to Payments section" tabindex="0">
                     <h4>💸 Payments</h4>
                     <p>Send money and pay bills</p>
                 </button>
-                <button class="action-card" onclick="navigateTo('ai-chat')" onkeydown="handleKeyDown(event, 'ai-chat')">
+                <button class="action-card" onclick="navigateTo('ai-chat')" onkeydown="handleKeyDown(event, 'ai-chat')" aria-label="Navigate to AI Assistant section" tabindex="0">
                     <h4>🤖 AI Assistant</h4>
                     <p>Get help with banking questions</p>
                 </button>
-                <button class="action-card" onclick="navigateTo('security')" onkeydown="handleKeyDown(event, 'security')">
+                <button class="action-card" onclick="navigateTo('security')" onkeydown="handleKeyDown(event, 'security')" aria-label="Navigate to Security section" tabindex="0">
                     <h4>🔒 Security</h4>
                     <p>Manage security settings</p>
                 </button>
-                <button class="action-card" onclick="navigateTo('profile')" onkeydown="handleKeyDown(event, 'profile')">
+                <button class="action-card" onclick="navigateTo('profile')" onkeydown="handleKeyDown(event, 'profile')" aria-label="Navigate to Profile section" tabindex="0">
                     <h4>👤 Profile</h4>
                     <p>Update your account information</p>
                 </button>
