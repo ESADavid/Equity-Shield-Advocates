@@ -2,7 +2,7 @@
  * QUANTUM PERFECTION CONFIGURATION
  * Advanced system configuration for maximum performance & security
  */
-module.exports = {
+const quantumConfig = {
   quantum: {
     // Quantum entanglement for instant state sync
     entanglement: {
@@ -66,3 +66,5 @@ module.exports = {
     quantumML: true
   }
 };
+
+export default quantumConfig;

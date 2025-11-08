@@ -65,6 +65,11 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
+        .welcome-section h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -85,7 +90,7 @@
             margin-bottom: 0.5rem;
             font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         .stat-card .value {
@@ -97,14 +102,51 @@
 
         .stat-card .label {
             color: #666;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
 
-        .recent-activity {
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-card {
             background: white;
             padding: 1.5rem;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-card h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .recent-activity {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .recent-activity h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
         }
 
         .activity-list {
@@ -123,29 +165,35 @@
             border-bottom: none;
         }
 
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
         .activity-desc {
-            color: #666;
-            font-size: 0.9rem;
+            font-weight: 500;
         }
 
         .activity-time {
-            color: #999;
-            font-size: 0.8rem;
+            color: #666;
+            font-size: 0.9rem;
         }
 
         .loading {
             text-align: center;
             padding: 2rem;
-            color: #666;
+            display: none;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .error-message {
@@ -156,19 +204,6 @@
             margin-bottom: 1rem;
             border-left: 4px solid #c33;
             display: none;
-        }
-
-        .company-footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #e1e5e9;
-            color: #666;
-            font-size: 0.8rem;
-        }
-
-        .company-footer strong {
-            color: #333;
         }
 
         @media (max-width: 768px) {
@@ -185,88 +220,97 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <header class="header">
+    <div class="header">
         <h1>OSCAR BROOME REVENUE</h1>
         <div class="user-info">
             <span id="user-greeting">Welcome!</span>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
-    </header>
+    </div>
 
     <div class="container">
         <div id="error-message" class="error-message"></div>
 
-        <div class="welcome-section">
-            <h2>Financial Management Dashboard</h2>
-            <p>Monitor your revenue streams, banking integrations, and financial operations in real-time.</p>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading your dashboard...</p>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Total Revenue</h3>
-                <div class="value" id="total-revenue">$1,326,681,891</div>
-                <div class="label">Combined Assets</div>
+        <div id="dashboard-content" style="display: none;">
+            <div class="welcome-section">
+                <h2 id="welcome-message">Welcome to Your Dashboard</h2>
+                <p>Manage your accounts, view transactions, and access all your banking features from anywhere.</p>
             </div>
-            <div class="stat-card">
-                <h3>Active Systems</h3>
-                <div class="value" id="active-systems">4</div>
-                <div class="label">JPMorgan, Stripe, QuickBooks</div>
-            </div>
-            <div class="stat-card">
-                <h3>Security Status</h3>
-                <div class="value" id="security-status">Active</div>
-                <div class="label">Quantum Encryption</div>
-            </div>
-            <div class="stat-card">
-                <h3>Last Sync</h3>
-                <div class="value" id="last-sync">2 min ago</div>
-                <div class="label">Data Synchronization</div>
-            </div>
-        </div>
 
-        <div class="recent-activity">
-            <h3>Recent Activity</h3>
-            <ul class="activity-list" id="activity-list">
-                <li class="activity-item">
-                    <div class="activity-content">
-                        <div class="activity-title">JPMorgan Banking Sync</div>
-                        <div class="activity-desc">Successfully synchronized banking data</div>
-                    </div>
-                    <div class="activity-time">5 min ago</div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-content">
-                        <div class="activity-title">Stripe Payment Processed</div>
-                        <div class="activity-desc">Merchant payment of $2,450.00 completed</div>
-                    </div>
-                    <div class="activity-time">12 min ago</div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-content">
-                        <div class="activity-title">Payroll Integration</div>
-                        <div class="activity-desc">QuickBooks payroll data updated</div>
-                    </div>
-                    <div class="activity-time">1 hour ago</div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-content">
-                        <div class="activity-title">Security Audit</div>
-                        <div class="activity-desc">Automated security scan completed</div>
-                    </div>
-                    <div class="activity-time">2 hours ago</div>
-                </li>
-            </ul>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Account Balance</h3>
+                    <div class="value" id="account-balance">$0.00</div>
+                    <div class="label">Available Funds</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Recent Transactions</h3>
+                    <div class="value" id="transaction-count">0</div>
+                    <div class="label">This Month</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Security Status</h3>
+                    <div class="value" id="security-status">Active</div>
+                    <div class="label">2FA Enabled</div>
+                </div>
+                <div class="stat-card">
+                    <h3>AI Assistant</h3>
+                    <div class="value" id="ai-status">Online</div>
+                    <div class="label">Ready to Help</div>
+                </div>
+            </div>
+
+            <div class="actions-grid">
+                <div class="action-card" onclick="navigateTo('accounts')">
+                    <h4>💳 Accounts</h4>
+                    <p>View and manage your bank accounts</p>
+                </div>
+                <div class="action-card" onclick="navigateTo('transactions')">
+                    <h4>📊 Transactions</h4>
+                    <p>Review your transaction history</p>
+                </div>
+                <div class="action-card" onclick="navigateTo('payments')">
+                    <h4>💸 Payments</h4>
+                    <p>Send money and pay bills</p>
+                </div>
+                <div class="action-card" onclick="navigateTo('ai-chat')">
+                    <h4>🤖 AI Assistant</h4>
+                    <p>Get help with banking questions</p>
+                </div>
+                <div class="action-card" onclick="navigateTo('security')">
+                    <h4>🔒 Security</h4>
+                    <p>Manage security settings</p>
+                </div>
+                <div class="action-card" onclick="navigateTo('profile')">
+                    <h4>👤 Profile</h4>
+                    <p>Update your account information</p>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h3>Recent Activity</h3>
+                <ul class="activity-list" id="activity-list">
+                    <li class="activity-item">
+                        <span class="activity-desc">Welcome to OSCAR BROOME REVENUE!</span>
+                        <span class="activity-time">Just now</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-
-    <footer class="company-footer">
-        <p><strong>OSCAR BROOME REVENUE SYSTEM</strong></p>
-        <p>Part of OWLBAN GROUP - Advanced Financial Technology Platform</p>
-    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -279,74 +323,85 @@
                 return;
             }
 
-            // Update user greeting
-            if (user.email) {
-                document.getElementById('user-greeting').textContent = `Welcome, ${user.username || user.email.split('@')[0]}!`;
+            // Update UI with user info
+            if (user.username) {
+                document.getElementById('user-greeting').textContent = `Welcome, ${user.firstName || user.username}!`;
+                document.getElementById('welcome-message').textContent = `Welcome back, ${user.firstName || user.username}!`;
             }
 
             // Load dashboard data
-            loadDashboardData();
-
-            // Auto-refresh data every 30 seconds
-            setInterval(loadDashboardData, 30000);
+            loadDashboardData(token);
         });
 
-        async function loadDashboardData() {
+        async function loadDashboardData(token) {
+            const loading = document.getElementById('loading');
+            const content = document.getElementById('dashboard-content');
+
+            loading.style.display = 'block';
+
             try {
-                const token = localStorage.getItem('oscar_broome_token');
-                const response = await fetch('/api/dashboard', {
+                // Load user profile
+                const profileResponse = await fetch('/api/users/profile', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    updateDashboard(data);
-                } else if (response.status === 401 || response.status === 403) {
-                    // Token expired or invalid
-                    localStorage.removeItem('oscar_broome_token');
-                    localStorage.removeItem('oscar_broome_refresh_token');
-                    localStorage.removeItem('oscar_broome_user');
-                    window.location.href = '/login';
-                } else {
-                    showError('Failed to load dashboard data');
+                if (profileResponse.ok) {
+                    const profile = await profileResponse.json();
+
+                    // Update greeting with real name
+                    document.getElementById('user-greeting').textContent = `Welcome, ${profile.firstName}!`;
+                    document.getElementById('welcome-message').textContent = `Welcome back, ${profile.firstName}!`;
                 }
+
+                // Load account balance (mock data for now)
+                document.getElementById('account-balance').textContent = '$2,500.00';
+
+                // Load transaction count (mock data)
+                document.getElementById('transaction-count').textContent = '12';
+
+                // Load security status
+                document.getElementById('security-status').textContent = 'Active';
+
+                // Load AI status
+                document.getElementById('ai-status').textContent = 'Online';
+
+                // Load recent activity (mock data)
+                const activityList = document.getElementById('activity-list');
+                activityList.innerHTML = `
+                    <li class="activity-item">
+                        <span class="activity-desc">Account login from new device</span>
+                        <span class="activity-time">2 hours ago</span>
+                    </li>
+                    <li class="activity-item">
+                        <span class="activity-desc">Security settings updated</span>
+                        <span class="activity-time">1 day ago</span>
+                    </li>
+                    <li class="activity-item">
+                        <span class="activity-desc">Welcome to OSCAR BROOME REVENUE!</span>
+                        <span class="activity-time">1 week ago</span>
+                    </li>
+                `;
+
             } catch (error) {
-                console.error('Dashboard load error:', error);
-                showError('Network error loading dashboard');
+                console.error('Error loading dashboard data:', error);
+                showError('Failed to load dashboard data. Please refresh the page.');
+            } finally {
+                loading.style.display = 'none';
+                content.style.display = 'block';
             }
         }
 
-        function updateDashboard(data) {
-            // Update stats based on real data
-            if (data.user) {
-                // Update user-specific information
-                console.log('Dashboard data loaded for user:', data.user.email);
-            }
-
-            // Update last sync time
-            const now = new Date();
-            document.getElementById('last-sync').textContent = 'Just now';
+        function navigateTo(section) {
+            // For now, just show an alert. In a real app, this would navigate to different pages
+            alert(`Navigating to ${section} section. This feature is coming soon!`);
         }
 
         function logout() {
-            // Clear local storage
             localStorage.removeItem('oscar_broome_token');
             localStorage.removeItem('oscar_broome_refresh_token');
             localStorage.removeItem('oscar_broome_user');
-
-            // Call logout endpoint
-            fetch('/api/auth/logout', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('oscar_broome_token')}`
-                }
-            }).catch(error => {
-                console.error('Logout error:', error);
-            });
-
-            // Redirect to login
             window.location.href = '/login';
         }
 
@@ -354,19 +409,7 @@
             const errorDiv = document.getElementById('error-message');
             errorDiv.textContent = message;
             errorDiv.style.display = 'block';
-
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
         }
-
-        // Handle page visibility changes to refresh data when tab becomes active
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                loadDashboardData();
-            }
-        });
     </script>
 </body>
 </html>

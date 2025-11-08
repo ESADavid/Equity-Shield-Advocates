@@ -2,18 +2,18 @@
  * QUANTUM-ENHANCED SERVER - Perfection-level system
  * Integrates quantum engine, security, and optimization
  */
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const compression = require('compression');
-const rateLimit = require('express-rate-limit');
-const { createServer } = require('node:http');
-const { Server } = require('socket.io');
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
+import rateLimit from 'express-rate-limit';
+import { createServer } from 'node:http';
+import { Server } from 'socket.io';
 
 // Quantum imports
-const { QuantumEngine, QuantumSecurity, QuantumOptimizer } = require('./quantum/quantumEngine');
-const { QuantumSecurity: QuantumSecurityModule } = require('./quantum/quantumSecurity');
-const quantumConfig = require('./quantum.config');
+import { QuantumEngine, QuantumSecurity, QuantumOptimizer } from './quantum/quantumEngine.js';
+import { QuantumSecurity as QuantumSecurityModule } from './quantum/quantumSecurity.js';
+import quantumConfig from './quantum.config.js';
 
 // Initialize quantum systems
 const quantumEngine = new QuantumEngine();
@@ -144,7 +144,7 @@ app.get('/quantum/health', (req, res) => {
 });
 
 // Start quantum server
-const PORT = process.env.QUANTUM_PORT || 8080;
+const PORT = process.env.QUANTUM_PORT || 8081;
 
 server.listen(PORT, () => {
   console.log(`🚀 Quantum server running on port ${PORT}`);
@@ -169,4 +169,4 @@ process.on('SIGTERM', () => {
   });
 });
 
-module.exports = { app, server, io, quantumEngine, quantumSecurity, quantumOptimizer };
+export { app, server, io, quantumEngine, quantumSecurity, quantumOptimizer };
