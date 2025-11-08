@@ -66,7 +66,7 @@
         }
 
         .welcome-section h2 {
-            color: #667eea;
+            color: #0f1419;
             margin-bottom: 1rem;
         }
 
@@ -206,6 +206,10 @@
             display: none;
         }
 
+        .dashboard-content {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
@@ -244,7 +248,7 @@
             <p>Loading your dashboard...</p>
         </div>
 
-        <div id="dashboard-content" style="display: none;">
+        <div id="dashboard-content" class="dashboard-content">
             <div class="welcome-section">
                 <h2 id="welcome-message">Welcome to Your Dashboard</h2>
                 <p>Manage your accounts, view transactions, and access all your banking features from anywhere.</p>
@@ -274,30 +278,30 @@
             </div>
 
             <div class="actions-grid">
-                <div class="action-card" onclick="navigateTo('accounts')">
+            <button class="action-card" onclick="navigateTo('accounts')" onkeydown="handleKeyDown(event, 'accounts')">
                     <h4>💳 Accounts</h4>
                     <p>View and manage your bank accounts</p>
-                </div>
-                <div class="action-card" onclick="navigateTo('transactions')">
+                </button>
+                <button class="action-card" onclick="navigateTo('transactions')" onkeydown="handleKeyDown(event, 'transactions')">
                     <h4>📊 Transactions</h4>
                     <p>Review your transaction history</p>
-                </div>
-                <div class="action-card" onclick="navigateTo('payments')">
+                </button>
+                <button class="action-card" onclick="navigateTo('payments')" onkeydown="handleKeyDown(event, 'payments')">
                     <h4>💸 Payments</h4>
                     <p>Send money and pay bills</p>
-                </div>
-                <div class="action-card" onclick="navigateTo('ai-chat')">
+                </button>
+                <button class="action-card" onclick="navigateTo('ai-chat')" onkeydown="handleKeyDown(event, 'ai-chat')">
                     <h4>🤖 AI Assistant</h4>
                     <p>Get help with banking questions</p>
-                </div>
-                <div class="action-card" onclick="navigateTo('security')">
+                </button>
+                <button class="action-card" onclick="navigateTo('security')" onkeydown="handleKeyDown(event, 'security')">
                     <h4>🔒 Security</h4>
                     <p>Manage security settings</p>
-                </div>
-                <div class="action-card" onclick="navigateTo('profile')">
+                </button>
+                <button class="action-card" onclick="navigateTo('profile')" onkeydown="handleKeyDown(event, 'profile')">
                     <h4>👤 Profile</h4>
                     <p>Update your account information</p>
-                </div>
+                </button>
             </div>
 
             <div class="recent-activity">
@@ -319,7 +323,7 @@
             const user = JSON.parse(localStorage.getItem('oscar_broome_user') || '{}');
 
             if (!token) {
-                window.location.href = '/login';
+                globalThis.location.href = '/login';
                 return;
             }
 
@@ -398,11 +402,18 @@
             alert(`Navigating to ${section} section. This feature is coming soon!`);
         }
 
+        function handleKeyDown(event, section) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                navigateTo(section);
+            }
+        }
+
         function logout() {
             localStorage.removeItem('oscar_broome_token');
             localStorage.removeItem('oscar_broome_refresh_token');
             localStorage.removeItem('oscar_broome_user');
-            window.location.href = '/login';
+            globalThis.location.href = '/login';
         }
 
         function showError(message) {

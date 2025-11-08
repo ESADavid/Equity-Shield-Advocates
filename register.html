@@ -41,7 +41,7 @@
         }
 
         .logo p {
-            color: #666;
+            color: #2d3748;
             font-size: 0.9rem;
         }
 
@@ -307,7 +307,7 @@
 
                         // Redirect to login after short delay
                         setTimeout(() => {
-                            window.location.href = '/login';
+                            globalThis.location.href = '/login';
                         }, 2000);
                     } else {
                         showError(data.message || 'Registration failed');
@@ -344,10 +344,10 @@
                 }
             }
 
-            function isValidEmail(email) {
+            const isValidEmail = (email) => {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 return emailRegex.test(email);
-            }
+            };
 
             // Auto-focus username field
             document.getElementById('username').focus();

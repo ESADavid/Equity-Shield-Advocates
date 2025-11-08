@@ -11,9 +11,8 @@ import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 
 // Quantum imports
-import { QuantumEngine, QuantumSecurity, QuantumOptimizer } from './quantum/quantumEngine.js';
+import { QuantumEngine, QuantumOptimizer } from './quantum/quantumEngine.js';
 import { QuantumSecurity as QuantumSecurityModule } from './quantum/quantumSecurity.js';
-import quantumConfig from './quantum.config.js';
 
 // Initialize quantum systems
 const quantumEngine = new QuantumEngine();
@@ -86,11 +85,11 @@ app.get('/quantum/status', (req, res) => {
     quantum: true,
     engine: quantumEngine.getRealTimeMetrics(),
     security: quantumSecurity.getSecurityMetrics(),
-    optimizer: quantumOptimizer.getRealTimeMetrics(),
+    optimizer: quantumOptimizer.optimize(),
     uptime: process.uptime(),
     memory: process.memoryUsage()
   };
-  
+
   res.json(status);
 });
 
@@ -107,12 +106,12 @@ app.get('/quantum/security', (req, res) => {
 // Quantum WebSocket for real-time updates
 io.on('connection', (socket) => {
   console.log('Quantum client connected');
-  
+
   // Send quantum updates every millisecond
   const quantumInterval = setInterval(() => {
     socket.emit('quantum-update', {
       timestamp: Date.now(),
-      metrics: quantumOptimizer.getRealTimeMetrics(),
+      metrics: quantumOptimizer.optimize(),
       security: quantumSecurity.getSecurityMetrics()
     });
   }, 1);
@@ -126,9 +125,9 @@ io.on('connection', (socket) => {
 // Quantum error handling
 app.use((err, req, res, next) => {
   console.error('Quantum error:', err);
-  res.status(500).json({ 
+  res.status(500).json({
     error: 'Quantum perfection maintained',
-    quantum: true 
+    quantum: true
   });
 });
 
@@ -139,12 +138,12 @@ app.get('/quantum/health', (req, res) => {
     quantum: true,
     uptime: process.uptime(),
     memory: process.memoryUsage(),
-    performance: quantumOptimizer.getRealTimeMetrics()
+    performance: quantumOptimizer.optimize()
   });
 });
 
 // Start quantum server
-const PORT = process.env.QUANTUM_PORT || 8081;
+const PORT = process.env.QUANTUM_PORT || 8082;
 
 server.listen(PORT, () => {
   console.log(`🚀 Quantum server running on port ${PORT}`);
