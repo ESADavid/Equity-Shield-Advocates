@@ -3,14 +3,14 @@ module.exports = {
   verbose: true,
   setupFiles: ['./jest.setup.js'],
   preset: 'ts-jest/presets/default-esm',
-  extensionsToTreatAsEsm: ['.ts'],
+  extensionsToTreatAsEsm: ['.ts', '.js'],
   globals: {
     'ts-jest': {
       useESM: true,
     },
   },
   transform: {
-    '^.+\\.(ts|tsx|js|jsx)$': 'babel-jest',
+    '^.+\\.(ts|tsx|js|jsx|mjs)$': 'babel-jest',
   },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
@@ -18,14 +18,15 @@ module.exports = {
   },
   testEnvironment: "node",
   testMatch: [
-    "<rootDir>/**/*.test.{ts,tsx,js,jsx}",
-    "<rootDir>/test/**/*.test.{js,jsx,ts,tsx}"
+    "<rootDir>/**/*.test.{ts,tsx,js,jsx,mjs}",
+    "<rootDir>/test/**/*.test.{js,jsx,ts,tsx,mjs}"
   ],
   moduleFileExtensions: [
     "js",
     "jsx",
     "ts",
     "tsx",
+    "mjs",
     "json",
     "node"
   ]
