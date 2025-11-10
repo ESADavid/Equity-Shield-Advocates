@@ -6,10 +6,8 @@ const router = express.Router();
 // Import middleware
 const { securityHeaders, createRateLimit, validateInput } = require('../../config/security.js');
 const {
-  validatePaymentCreation,
-  validatePaymentId,
-  validateRefund,
-  validateTransactionsQuery
+  validatePayment,
+  validatePagination
 } = require('../../middleware/validation.js');
 
 // Environment variables
@@ -261,7 +259,7 @@ router.post('/wallet-detokenize', async (req, res) => {
 });
 
 // Create payment transaction
-router.post('/create-payment', createPaymentLimiter, validatePaymentCreation, async (req, res) => {
+router.post('/create-payment', createPaymentLimiter, validatePayment, async (req, res) => {
   try {
     const { amount, currency = 'USD', orderId, description, customer } = req.body;
 
@@ -318,7 +316,7 @@ router.post('/create-payment', createPaymentLimiter, validatePaymentCreation, as
 });
 
 // Get payment status
-router.get('/payment-status/:paymentId', validatePaymentId, async (req, res) => {
+router.get('/payment-status/:paymentId', async (req, res) => {
   try {
     const { paymentId } = req.params;
 
@@ -345,7 +343,7 @@ router.get('/payment-status/:paymentId', validatePaymentId, async (req, res) => 
 });
 
 // Refund payment
-router.post('/refund', validateRefund, async (req, res) => {
+router.post('/refund', async (req, res) => {
   try {
     const { paymentId, amount, reason } = req.body;
 
@@ -390,7 +388,7 @@ router.post('/refund', validateRefund, async (req, res) => {
 });
 
 // Capture authorized payment
-router.post('/capture', validatePaymentId, async (req, res) => {
+router.post('/capture', async (req, res) => {
   try {
     const { paymentId, amount } = req.body;
 
@@ -434,7 +432,7 @@ router.post('/capture', validatePaymentId, async (req, res) => {
 });
 
 // Void/Cancel payment
-router.post('/void', validatePaymentId, async (req, res) => {
+router.post('/void', async (req, res) => {
   try {
     const { paymentId, reason } = req.body;
 
@@ -475,7 +473,7 @@ router.post('/void', validatePaymentId, async (req, res) => {
 });
 
 // Get transaction history
-router.get('/transactions', generalLimiter, validateTransactionsQuery, async (req, res) => {
+router.get('/transactions', generalLimiter, async (req, res) => {
   try {
     const { startDate, endDate, status, limit = 50 } = req.query;
 
