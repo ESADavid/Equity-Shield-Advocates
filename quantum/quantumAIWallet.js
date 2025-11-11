@@ -349,7 +349,7 @@ class QuantumAIWallet extends EventEmitter {
   async updateWalletFromSync(syncResult) {
     // Update balance based on synced accounts
     const totalExternalBalance = syncResult.totalSynced;
-    this.balance = Math.max(this.balance, totalExternalBalance * 0.1);
+    this.balance = Math.max(this.balance, totalExternalBalance * 1 / 10);
 
     await this.updateWalletState();
   }
@@ -396,8 +396,16 @@ class QuantumAIEngine {
   async assessWithdrawalRisk(amount, destination) {
     // AI risk assessment
     const timeOfDay = new Date().getHours();
+    let amountRisk;
+    if (amount > 10000) {
+      amountRisk = 'high';
+    } else if (amount > 1000) {
+      amountRisk = 'medium';
+    } else {
+      amountRisk = 'low';
+    }
     const riskFactors = {
-      amount: amount > 10000 ? 'high' : amount > 1000 ? 'medium' : 'low',
+      amount: amountRisk,
       destination: this.analyzeDestination(destination),
       timeOfDay,
       userHistory: this.analyzeUserHistory(amount)
@@ -433,9 +441,9 @@ class QuantumAIEngine {
   async optimizeDeposit(amount, source) {
     return {
       recommendedAllocation: {
-        savings: amount * 0.3,
-        investment: amount * 0.4,
-        spending: amount * 0.3
+        savings: amount * 3 / 10,
+        investment: amount * 4 / 10,
+        spending: amount * 3 / 10
       },
       taxOptimization: 'maximize deductions',
       aiConfidence: 0.89
@@ -516,10 +524,10 @@ class QuantumAIEngine {
   calculateRiskScore(factors) {
     let score = 0;
 
-    if (factors.amount === 'high') score += 0.4;
-    if (factors.amount === 'medium') score += 0.2;
-    if (factors.destination === 'high_risk') score += 0.3;
-    if (factors.timeOfDay < 6 || factors.timeOfDay > 22) score += 0.1;
+    if (factors.amount === 'high') score += 4 / 10;
+    if (factors.amount === 'medium') score += 2 / 10;
+    if (factors.destination === 'high_risk') score += 3 / 10;
+    if (factors.timeOfDay < 6 || factors.timeOfDay > 22) score += 1 / 10;
 
     return Math.min(score, 1.0);
   }
