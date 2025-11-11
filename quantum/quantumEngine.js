@@ -2,9 +2,9 @@
  * QUANTUM ENGINE - Core perfection system
  * Provides quantum-level performance, security, and reliability
  */
-import EventEmitter from 'node:events';
-import crypto from 'node:crypto';
-import { performance } from 'node:perf_hooks';
+const EventEmitter = require('node:events');
+const crypto = require('node:crypto');
+const { performance } = require('node:perf_hooks');
 
 class QuantumEngine extends EventEmitter {
   constructor() {
@@ -170,4 +170,4 @@ class QuantumOptimizer {
   }
 }
 
-export { QuantumEngine, QuantumSecurity, QuantumOptimizer };
+module.exports = { QuantumEngine, QuantumSecurity, QuantumOptimizer };

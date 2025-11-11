@@ -8,9 +8,9 @@ const crypto = require('node:crypto');
 const { performance } = require('node:perf_hooks');
 
 // Import quantum systems
-const { QuantumEngine } = require('./quantum/quantumEngine');
-const { QuantumSecurity } = require('./quantum/quantumSecurity');
-const { QuantumOptimizer } = require('./quantum/quantumOptimizer');
+const { QuantumEngine } = require('./quantumEngine');
+const { QuantumSecurity } = require('./quantumSecurity');
+const { QuantumOptimizer } = require('./quantumOptimizer');
 
 class QuantumAIWallet extends EventEmitter {
   constructor(userId, userEmail) {
