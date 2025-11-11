@@ -288,8 +288,6 @@ class QuantumAIWallet extends EventEmitter {
 
   async processInstantPayment(transaction) {
     // Simulate instant payment processing with quantum security
-    const encryptedTransaction = this.quantumSecurity.encrypt(transaction);
-
     // In real implementation, this would integrate with payment processors
     // For demo, simulate successful processing
     await new Promise(resolve => setTimeout(resolve, 10)); // 10ms instant processing
@@ -351,7 +349,7 @@ class QuantumAIWallet extends EventEmitter {
   async updateWalletFromSync(syncResult) {
     // Update balance based on synced accounts
     const totalExternalBalance = syncResult.totalSynced;
-    this.balance = Math.max(this.balance, totalExternalBalance * 0.1); // 10% liquidity
+    this.balance = Math.max(this.balance, totalExternalBalance * 0.1);
 
     await this.updateWalletState();
   }
@@ -397,10 +395,11 @@ class QuantumAIEngine {
 
   async assessWithdrawalRisk(amount, destination) {
     // AI risk assessment
+    const timeOfDay = new Date().getHours();
     const riskFactors = {
       amount: amount > 10000 ? 'high' : amount > 1000 ? 'medium' : 'low',
       destination: this.analyzeDestination(destination),
-      timeOfDay: new Date().getHours(),
+      timeOfDay,
       userHistory: this.analyzeUserHistory(amount)
     };
 
@@ -454,13 +453,13 @@ class QuantumAIEngine {
     };
 
     // Analyze transactions
-    transactions.forEach(txn => {
+    for (const txn of transactions) {
       if (txn.type === 'deposit') {
         analysis.totalIncome += txn.amount;
       } else {
         analysis.totalExpenses += txn.amount;
       }
-    });
+    }
 
     analysis.netWorth = analysis.totalIncome - analysis.totalExpenses;
 
@@ -526,10 +525,11 @@ class QuantumAIEngine {
   }
 
   generateRiskInsights(factors) {
+    const isUnusualTime = factors.timeOfDay < 6 || factors.timeOfDay > 22;
     return {
       amountRisk: factors.amount,
       destinationRisk: factors.destination,
-      timingRisk: factors.timeOfDay < 6 || factors.timeOfDay > 22 ? 'unusual' : 'normal',
+      timingRisk: isUnusualTime ? 'unusual' : 'normal',
       recommendations: ['Enable 2FA', 'Monitor account regularly']
     };
   }
