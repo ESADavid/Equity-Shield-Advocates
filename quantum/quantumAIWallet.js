@@ -8,9 +8,9 @@ const crypto = require('node:crypto');
 const { performance } = require('node:perf_hooks');
 
 // Import quantum systems
-const { QuantumEngine } = require('./quantum/quantumEngine');
-const { QuantumSecurity } = require('./quantum/quantumSecurity');
-const { QuantumOptimizer } = require('./quantum/quantumOptimizer');
+const { QuantumEngine } = require('./quantumEngine');
+const { QuantumSecurity } = require('./quantumSecurity');
+const { QuantumOptimizer } = require('./quantumOptimizer');
 
 class QuantumAIWallet extends EventEmitter {
   constructor(userId, userEmail) {
@@ -288,8 +288,6 @@ class QuantumAIWallet extends EventEmitter {
 
   async processInstantPayment(transaction) {
     // Simulate instant payment processing with quantum security
-    const encryptedTransaction = this.quantumSecurity.encrypt(transaction);
-
     // In real implementation, this would integrate with payment processors
     // For demo, simulate successful processing
     await new Promise(resolve => setTimeout(resolve, 10)); // 10ms instant processing
@@ -351,7 +349,7 @@ class QuantumAIWallet extends EventEmitter {
   async updateWalletFromSync(syncResult) {
     // Update balance based on synced accounts
     const totalExternalBalance = syncResult.totalSynced;
-    this.balance = Math.max(this.balance, totalExternalBalance * 0.1); // 10% liquidity
+    this.balance = Math.max(this.balance, totalExternalBalance * 1 / 10);
 
     await this.updateWalletState();
   }
@@ -397,10 +395,19 @@ class QuantumAIEngine {
 
   async assessWithdrawalRisk(amount, destination) {
     // AI risk assessment
+    const timeOfDay = new Date().getHours();
+    let amountRisk;
+    if (amount > 10000) {
+      amountRisk = 'high';
+    } else if (amount > 1000) {
+      amountRisk = 'medium';
+    } else {
+      amountRisk = 'low';
+    }
     const riskFactors = {
-      amount: amount > 10000 ? 'high' : amount > 1000 ? 'medium' : 'low',
+      amount: amountRisk,
       destination: this.analyzeDestination(destination),
-      timeOfDay: new Date().getHours(),
+      timeOfDay,
       userHistory: this.analyzeUserHistory(amount)
     };
 
@@ -434,9 +441,9 @@ class QuantumAIEngine {
   async optimizeDeposit(amount, source) {
     return {
       recommendedAllocation: {
-        savings: amount * 0.3,
-        investment: amount * 0.4,
-        spending: amount * 0.3
+        savings: amount * 3 / 10,
+        investment: amount * 4 / 10,
+        spending: amount * 3 / 10
       },
       taxOptimization: 'maximize deductions',
       aiConfidence: 0.89
@@ -454,13 +461,13 @@ class QuantumAIEngine {
     };
 
     // Analyze transactions
-    transactions.forEach(txn => {
+    for (const txn of transactions) {
       if (txn.type === 'deposit') {
         analysis.totalIncome += txn.amount;
       } else {
         analysis.totalExpenses += txn.amount;
       }
-    });
+    }
 
     analysis.netWorth = analysis.totalIncome - analysis.totalExpenses;
 
@@ -517,19 +524,20 @@ class QuantumAIEngine {
   calculateRiskScore(factors) {
     let score = 0;
 
-    if (factors.amount === 'high') score += 0.4;
-    if (factors.amount === 'medium') score += 0.2;
-    if (factors.destination === 'high_risk') score += 0.3;
-    if (factors.timeOfDay < 6 || factors.timeOfDay > 22) score += 0.1;
+    if (factors.amount === 'high') score += 4 / 10;
+    if (factors.amount === 'medium') score += 2 / 10;
+    if (factors.destination === 'high_risk') score += 3 / 10;
+    if (factors.timeOfDay < 6 || factors.timeOfDay > 22) score += 1 / 10;
 
     return Math.min(score, 1.0);
   }
 
   generateRiskInsights(factors) {
+    const isUnusualTime = factors.timeOfDay < 6 || factors.timeOfDay > 22;
     return {
       amountRisk: factors.amount,
       destinationRisk: factors.destination,
-      timingRisk: factors.timeOfDay < 6 || factors.timeOfDay > 22 ? 'unusual' : 'normal',
+      timingRisk: isUnusualTime ? 'unusual' : 'normal',
       recommendations: ['Enable 2FA', 'Monitor account regularly']
     };
   }
