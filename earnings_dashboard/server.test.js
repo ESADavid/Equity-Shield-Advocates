@@ -1,5 +1,5 @@
 "use strict";
-const __importDefault = function (mod) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -14,7 +14,7 @@ describe('OSCAR Earnings Dashboard API Tests', () => {
         it('should return earnings data with status 200', async () => {
             const response = await (0, supertest_1.default)(server_1.app)
                 .get('/api/earnings')
-                .auth('BSEAN4890@GMAIL.COM', 'TBROOME704');
+                .auth('admin', 'securepassword');
             expect(response.status).toBe(200);
             expect(response.body).toHaveProperty('totalAnnualRevenue');
             expect(response.body).toHaveProperty('totalDailyRevenue');
@@ -33,7 +33,7 @@ describe('OSCAR Earnings Dashboard API Tests', () => {
         it('should return a JSON file with earnings data', async () => {
             const response = await (0, supertest_1.default)(server_1.app)
                 .get('/api/earnings/download')
-                .auth('BSEAN4890@GMAIL.COM', 'TBROOME704');
+                .auth('admin', 'securepassword');
             expect(response.status).toBe(200);
             expect(response.headers['content-type']).toMatch(/application\/json/);
             expect(response.headers['content-disposition']).toMatch(/attachment/);
@@ -55,7 +55,7 @@ describe('OSCAR Earnings Dashboard API Tests', () => {
         it('should return the HTML dashboard', async () => {
             const response = await (0, supertest_1.default)(server_1.app)
                 .get('/')
-                .auth('BSEAN4890@GMAIL.COM', 'TBROOME704');
+                .auth('admin', 'securepassword');
             expect(response.status).toBe(200);
             expect(response.text).toMatch(/OWLban Earnings Dashboard/);
         });
@@ -68,7 +68,7 @@ describe('OSCAR Earnings Dashboard API Tests', () => {
             wealthEngine.getRevenueReport = () => { throw new Error('Test error'); };
             const response = await (0, supertest_1.default)(server_1.app)
                 .get('/api/earnings')
-                .auth('BSEAN4890@GMAIL.COM', 'TBROOME704');
+                .auth('admin', 'securepassword');
             expect(response.status).toBe(500);
             wealthEngine.getRevenueReport = originalGetRevenueReport;
         });
@@ -77,7 +77,7 @@ describe('OSCAR Earnings Dashboard API Tests', () => {
         it('should return 404 for unknown route', async () => {
             const response = await (0, supertest_1.default)(server_1.app)
                 .get('/invalid-route')
-                .auth('BSEAN4890@GMAIL.COM', 'TBROOME704');
+                .auth('admin', 'securepassword');
             expect(response.status).toBe(404);
         });
     });
@@ -85,7 +85,7 @@ describe('OSCAR Earnings Dashboard API Tests', () => {
         it('should return 404 or 405 for POST method', async () => {
             const response = await (0, supertest_1.default)(server_1.app)
                 .post('/api/earnings')
-                .auth('BSEAN4890@GMAIL.COM', 'TBROOME704');
+                .auth('admin', 'securepassword');
             expect([404, 405]).toContain(response.status);
         });
     });
@@ -96,3 +96,4 @@ describe('OSCAR Earnings Dashboard API Tests', () => {
         });
     });
 });
+//# sourceMappingURL=server.test.js.map

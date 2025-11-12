@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const update_revenue_data_1 = __importDefault(require("../update_revenue_data"));
 async function runUpdate() {
     try {
-        const success = (0, update_revenue_data_1.default)();
+        const success = await (0, update_revenue_data_1.default)(false); // Pass false for incremental update
         if (success) {
             console.log('Revenue data updated successfully.');
         }
@@ -21,3 +21,4 @@ async function runUpdate() {
     }
 }
 runUpdate();
+//# sourceMappingURL=run_update_revenue.js.map

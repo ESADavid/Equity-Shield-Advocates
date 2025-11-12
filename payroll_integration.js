@@ -77,7 +77,7 @@ class PayrollIntegration {
                 return { success: false, message };
             }
             // Simulate banking API validation call
-            const isValid = await this.simulateBankValidation(employee.accountNumber, employee.routingNumber);
+            const isValid = await this.simulateBankValidation(employee.accountNumber);
             if (!isValid) {
                 return { success: false, message: 'Invalid bank account or routing number' };
             }
@@ -89,7 +89,7 @@ class PayrollIntegration {
         }
     }
     // New method: Check transaction status from banking API (simulated)
-    async getTransactionStatus(transactionId) {
+    async getTransactionStatus() {
         try {
             // Simulate async call to banking API for transaction status
             await new Promise((resolve) => setTimeout(resolve, 500));
@@ -116,7 +116,7 @@ class PayrollIntegration {
             return { success: false, reconciledCount: 0, message: 'Failed to reconcile transactions' };
         }
     }
-    async simulateBankValidation(accountNumber, routingNumber) {
+    async simulateBankValidation(accountNumber) {
         // Simulate async validation logic, e.g., call to external banking API
         await new Promise((resolve) => setTimeout(resolve, 500));
         // For demo, assume all account numbers starting with '0' are invalid
@@ -127,3 +127,4 @@ class PayrollIntegration {
     }
 }
 exports.default = PayrollIntegration;
+//# sourceMappingURL=payroll_integration.js.map

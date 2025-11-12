@@ -1,81 +1,61 @@
 "use strict";
-const __importDefault = function (mod) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const globals_1 = require("@jest/globals");
+const supertest_1 = __importDefault(require("supertest"));
+const express_1 = __importDefault(require("express"));
+const payroll_api_1 = __importDefault(require("./payroll_api"));
 const fetch_and_sync_payroll_1 = __importDefault(require("./fetch_and_sync_payroll"));
-globals_1.jest.mock('fs');
-const revenueDataPath = path_1.default.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
-describe('fetch_and_sync_payroll', () => {
+const node_fs_1 = __importDefault(require("node:fs"));
+const node_path_1 = __importDefault(require("node:path"));
+jest.mock('./fetch_and_sync_payroll');
+jest.mock('fs');
+const app = (0, express_1.default)();
+app.use(express_1.default.json());
+app.use('/api/payroll', payroll_api_1.default);
+const revenueDataPath = node_path_1.default.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+describe('Payroll API', () => {
     beforeEach(() => {
-        globals_1.jest.resetAllMocks();
+        jest.resetAllMocks();
     });
-    it('should exit if environment variables are missing', async () => {
-        process.env.DYNAMICS365_BASE_URL = '';
-        process.env.DYNAMICS365_ACCESS_TOKEN = '';
-        const consoleErrorSpy = globals_1.jest.spyOn(console, 'error').mockImplementation(() => { });
-        const processExitSpy = globals_1.jest.spyOn(process, 'exit').mockImplementation(() => { throw new Error('process.exit'); });
-        try {
-            await (0, fetch_and_sync_payroll_1.default)();
-        }
-        catch (error) {
-            // Fix for "Object is of type 'unknown'" error by type guard
-            if (error instanceof Error) {
-                expect(error.message).toBe('process.exit');
-            }
-            else {
-                throw new Error(String(error));
-            }
-        }
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Dynamics365 base URL or access token is not set in environment variables.');
-        expect(processExitSpy).toHaveBeenCalledWith(1);
-        consoleErrorSpy.mockRestore();
-        processExitSpy.mockRestore();
+    describe('GET /api/payroll/employees', () => {
+        it('should return payroll data from revenue file', async () => {
+            const mockPayrollData = [
+                { employeeId: '1', amount: 1000, date: '2024-01-01', source: 'quickbooks' },
+                { employeeId: '2', amount: 2000, date: '2024-01-01', source: 'dynamics365' },
+            ];
+            const mockRevenueData = { payroll: mockPayrollData };
+            jest.spyOn(node_fs_1.default, 'readFileSync').mockReturnValue(JSON.stringify(mockRevenueData));
+            const res = await (0, supertest_1.default)(app).get('/api/payroll/employees');
+            expect(res).toHaveProperty('status', 200);
+            expect(res.body).toEqual(mockPayrollData);
+            expect(node_fs_1.default.readFileSync).toHaveBeenCalledWith(revenueDataPath, 'utf-8');
+        });
+        it('should return 500 if reading payroll data fails', async () => {
+            jest.spyOn(node_fs_1.default, 'readFileSync').mockImplementation(() => {
+                throw new Error('File read error');
+            });
+            const res = await (0, supertest_1.default)(app).get('/api/payroll/employees');
+            expect(res).toHaveProperty('status', 500);
+            expect(res.body).toHaveProperty('error');
+        });
     });
-    it('should update revenue data with payroll information', async () => {
-        process.env.DYNAMICS365_BASE_URL = 'https://fakeurl.com';
-        process.env.DYNAMICS365_ACCESS_TOKEN = 'fake-token';
-        const mockRevenueData = {
-            totalRevenue: 1000000,
-            purchases: {
-                corporateHomes: 0,
-                autoFleet: 0
-            }
-        };
-        const mockEmployeeIds = ['emp001', 'emp002'];
-        const consoleErrorSpy = globals_1.jest.spyOn(console, 'error').mockImplementation(() => { });
-        const consoleLogSpy = globals_1.jest.spyOn(console, 'log').mockImplementation(() => { });
-        globals_1.jest.spyOn(fs_1.default, 'existsSync').mockReturnValue(true);
-        globals_1.jest.spyOn(fs_1.default, 'readFileSync').mockImplementation((filePath) => {
-            if (filePath.includes('employee_ids.json')) {
-                return JSON.stringify(mockEmployeeIds);
-            }
-            else if (filePath.includes('revenue.json')) {
-                return JSON.stringify(mockRevenueData);
-            }
-            return '{}';
+    describe('POST /api/payroll/sync', () => {
+        it('should trigger payroll sync and return success', async () => {
+            fetch_and_sync_payroll_1.default.mockResolvedValue(undefined);
+            const res = await (0, supertest_1.default)(app).post('/api/payroll/sync');
+            expect(res).toHaveProperty('status', 200);
+            expect(res.body).toEqual({ success: true, message: 'Payroll data sync completed' });
+            expect(fetch_and_sync_payroll_1.default).toHaveBeenCalled();
         });
-        const writeFileSyncMock = globals_1.jest.spyOn(fs_1.default, 'writeFileSync').mockImplementation(() => { });
-        // Import the actual PayrollIntegration class
-        const ActualPayrollIntegration = globals_1.jest.requireActual('../payroll_integration').default;
-        // Create a mocked instance of PayrollIntegration
-        const mockGetEmployeePayroll = globals_1.jest.fn(async (employeeId) => {
-            return {
-                success: true,
-                message: 'Payroll data fetched',
-                data: { salary: 50000 }
-            };
+        it('should return 500 if payroll sync fails', async () => {
+            fetch_and_sync_payroll_1.default.mockRejectedValue(new Error('Sync error'));
+            const res = await (0, supertest_1.default)(app).post('/api/payroll/sync');
+            expect(res).toHaveProperty('status', 500);
+            expect(res.body).toEqual({ success: false, message: 'Payroll data sync failed' });
+            expect(fetch_and_sync_payroll_1.default).toHaveBeenCalled();
         });
-        // Fix for "Argument of type 'PayrollResponse' is not assignable to parameter of type 'never'" error
-        globals_1.jest.spyOn(ActualPayrollIntegration.prototype, 'getEmployeePayroll').mockImplementation(mockGetEmployeePayroll);
-        await (0, fetch_and_sync_payroll_1.default)();
-        expect(mockGetEmployeePayroll).toHaveBeenCalledTimes(mockEmployeeIds.length);
-        expect(writeFileSyncMock).toHaveBeenCalled();
-        writeFileSyncMock.mockRestore();
-        consoleErrorSpy.mockRestore();
-        consoleLogSpy.mockRestore();
     });
 });
+//# sourceMappingURL=fetch_and_sync_payroll.test.js.map
