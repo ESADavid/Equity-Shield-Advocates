@@ -16,6 +16,11 @@ class QuantumSecurity {
     return crypto.randomBytes(32).toString('hex');
   }
 
+  // Store key in quantum state object for integrity verification
+  getEncryptionKey() {
+    return this.encryptionKey;
+  }
+
   generateJWTKey() {
     // Generate 512-bit key for JWT signing (64 bytes)
     return crypto.randomBytes(64).toString('hex');

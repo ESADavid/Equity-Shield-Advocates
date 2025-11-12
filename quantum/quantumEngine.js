@@ -87,6 +87,11 @@ class QuantumEngine extends EventEmitter {
     return this.securityLayer.verifySecurity();
   }
 
+  // Store key in quantum state object for integrity verification
+  getEncryptionKey() {
+    return this.securityLayer.getEncryptionKey();
+  }
+
   // Get real-time metrics for monitoring
   getRealTimeMetrics() {
     return {
