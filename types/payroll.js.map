@@ -1,0 +1,1 @@
+{"version":3,"file":"payroll.js","sourceRoot":"","sources":["payroll.ts"],"names":[],"mappings":";AAAA;;;GAGG;;;AAsGH,2BAA2B;AACd,QAAA,iBAAiB,GAAG;IAC/B,eAAe,EAAE,IAAI;IACrB,gBAAgB,EAAE,GAAG,EAAE,kBAAkB;IACzC,kBAAkB,EAAE,EAAE;IACtB,YAAY,EAAE,GAAG;IACjB,YAAY,EAAE,GAAG;IACjB,cAAc,EAAE,KAAK;IACrB,WAAW,EAAE,KAAK;IAClB,mBAAmB,EAAE,GAAG;CAChB,CAAC"}
