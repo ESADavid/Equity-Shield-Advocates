@@ -84,14 +84,14 @@ class QuantumEngine extends EventEmitter {
 
   // Quantum security verification
   verifySecurity() {
-    return this.securityLayer.verify();
+    return this.securityLayer.verifySecurity();
   }
 
   // Get real-time metrics for monitoring
   getRealTimeMetrics() {
     return {
       performance: this.performanceOptimizer.optimize(),
-      security: this.securityLayer.verify(),
+      security: this.securityLayer.verifySecurity(),
       stateIntegrity: this.getStateIntegrityMetrics(),
       entanglement: this.entanglementNodes.size,
       uptime: performance.now(),
