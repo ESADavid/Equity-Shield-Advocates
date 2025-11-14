@@ -1,6 +1,6 @@
 /** @jest-environment node */
 import request from 'supertest';
-import { app, server } from './server';
+import { app, server } from './server.js';
 
 afterAll(() => {
   server.close();

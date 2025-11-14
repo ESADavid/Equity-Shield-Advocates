@@ -1,4 +1,4 @@
-import updateRevenueData from '../update_revenue_data';
+import updateRevenueData from '../update_revenue_data.js';
 
 async function runUpdate() {
   try {

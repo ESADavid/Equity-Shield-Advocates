@@ -1,4 +1,4 @@
-import QuickBooksPayrollIntegration from './quickbooks_payroll_integration';
+import QuickBooksPayrollIntegration from './quickbooks_payroll_integration.js';
 
 const dummyConfig = {
   baseUrl: 'https://quickbooks.api.intuit.com',

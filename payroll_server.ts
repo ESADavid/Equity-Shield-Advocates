@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import { logger } from '../config/logger.js';
-import { payrollSystem } from './payrollSystem';
+import { payrollSystem } from './payrollSystem.js';
 
 const app = express();
 const port = 5000;

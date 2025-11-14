@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from './payroll_server';
+import app from './payroll_server.js';
 
 describe('Payroll Server API', () => {
   const employeeId = 'emp1';

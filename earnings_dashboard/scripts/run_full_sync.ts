@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import { syncAllData } from '../sync_jobs';
+import { syncAllData } from '../sync_jobs.js';
 
 config(); // Load environment variables from .env file
 

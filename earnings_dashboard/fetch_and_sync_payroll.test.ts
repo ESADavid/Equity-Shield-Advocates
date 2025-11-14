@@ -1,7 +1,7 @@
 import request from 'supertest';
 import express from 'express';
-import payrollApiRouter from './payroll_api';
-import fetchAndSyncPayroll from './fetch_and_sync_payroll';
+import payrollApiRouter from './payroll_api.js';
+import fetchAndSyncPayroll from './fetch_and_sync_payroll.js';
 import fs from 'node:fs';
 import path from 'node:path';
 
