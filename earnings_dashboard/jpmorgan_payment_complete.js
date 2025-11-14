@@ -1,14 +1,15 @@
-const express = require('express');
-const crypto = require('node:crypto');
-const axios = require('axios');
+import express from 'express';
+import crypto from 'node:crypto';
+import axios from 'axios';
+
 const router = express.Router();
 
 // Import middleware
-const { securityHeaders, createRateLimit, validateInput } = require('../../config/security.js');
-const {
+import { securityHeaders, createRateLimit, validateInput } from '../../config/security.js';
+import {
   validatePayment,
   validatePagination
-} = require('../../middleware/validation.js');
+} from '../../middleware/validation.js';
 
 // Environment variables
 const JPMORGAN_CLIENT_ID = process.env.JPMORGAN_CLIENT_ID;
@@ -579,4 +580,4 @@ router.post('/webhook', webhookLimiter, express.json(), verifyWebhookSignature, 
   }
 });
 
-module.exports = router;
+export default router;
