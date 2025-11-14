@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+/** @jsx React.createElement */
 import App from './App';
 import './App.css';
 
