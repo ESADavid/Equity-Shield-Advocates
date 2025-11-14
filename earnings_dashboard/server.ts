@@ -96,19 +96,16 @@ app.get('/api/earnings', (_req: Request, res: Response): void => {
 
 // API endpoint to download earnings report as JSON file
 app.get('/api/earnings/download', (_req: Request, res: Response): void => {
-  try {
-    if (!fs.existsSync(revenueDataPath)) {
-      logger.warn('Earnings data not found at ' + revenueDataPath);
-      res.status(404).json({ error: 'Earnings data not found' });
-      return;
-    }
-    res.download(revenueDataPath, 'earnings_report.json');
-    return;
-  } catch (error) {
-    logger.error('Error sending earnings report: ' + (error as Error).message);
-    res.status(500).json({ error: 'Failed to download earnings report' });
+  const data = getEarningsData();
+  if (!data) {
+    logger.warn('Earnings data not found at ' + revenueDataPath);
+    res.status(404).json({ error: 'Earnings data not found' });
     return;
   }
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Disposition', 'attachment; filename="earnings_report.json"');
+  res.json(data);
+  return;
 });
 
 // 404 handler

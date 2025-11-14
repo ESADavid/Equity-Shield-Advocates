@@ -13,7 +13,7 @@ describe('OSCAR Earnings Dashboard API Tests', () => {
         .get('/api/earnings')
         .auth('admin', 'securepassword');
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('totalRevenue');
+      expect(response.body).toHaveProperty('totalAnnualRevenue');
       expect(response.body).toHaveProperty('revenueStreams');
       for (const stream of Object.values(response.body.revenueStreams)) {
         expect(stream).toHaveProperty('amount');
