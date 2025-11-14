@@ -1,7 +1,7 @@
 ﻿{
   "compilerOptions": {
     "target": "ES2021",
-    "module": "ES2020",
+    "module": "Node16",
     "lib": ["ES2021"],
     "strict": true,
     "esModuleInterop": true,
@@ -26,7 +26,8 @@
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": false,
-    "noUncheckedIndexedAccess": false
+    "noUncheckedIndexedAccess": false,
+    "ignoreDeprecations": "5.0"
   },
   "include": [
     "**/*.ts",

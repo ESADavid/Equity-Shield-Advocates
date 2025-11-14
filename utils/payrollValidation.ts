@@ -67,6 +67,29 @@ function validateBankingInfo(input: EmployeeInput, errors: PayrollValidationErro
 }
 
 /**
+ * Validates salary field
+ */
+function validateSalaryField(input: EmployeeInput, errors: PayrollValidationError[]): void {
+  if (input.salary !== undefined) {
+    if (typeof input.salary !== 'number' || input.salary < 0) {
+      errors.push(new PayrollValidationError('salary', 'Salary must be a positive number', input.salary));
+    }
+  }
+}
+
+/**
+ * Validates optional payroll calculation fields
+ */
+function validateOptionalPayrollFields(input: PayrollCalculationInput, errors: PayrollValidationError[]): void {
+  validateOptionalNumericField(input.hoursWorked, 'hoursWorked', 0, PAYROLL_CONSTANTS.MAX_HOURS_WORKED, errors);
+  validateOptionalNumericField(input.hourlyRate, 'hourlyRate', 0, PAYROLL_CONSTANTS.MAX_HOURLY_RATE, errors);
+  validateOptionalNumericField(input.overtimeHours, 'overtimeHours', 0, PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS, errors);
+  validateOptionalNumericField(input.taxRate, 'taxRate', PAYROLL_CONSTANTS.MIN_TAX_RATE, PAYROLL_CONSTANTS.MAX_TAX_RATE, errors);
+  validateOptionalNumericField(input.deductions, 'deductions', 0, PAYROLL_CONSTANTS.MAX_DEDUCTIONS, errors);
+  validateOptionalNumericField(input.bonuses, 'bonuses', 0, PAYROLL_CONSTANTS.MAX_BONUSES, errors);
+}
+
+/**
  * Validates employee input data
  */
 export function validateEmployeeInput(input: EmployeeInput): PayrollValidationError[] {
@@ -83,11 +106,8 @@ export function validateEmployeeInput(input: EmployeeInput): PayrollValidationEr
   validateOptionalNumericField(input.hoursWorked, 'hoursWorked', 0, PAYROLL_CONSTANTS.MAX_HOURS_WORKED, errors);
   validateOptionalNumericField(input.overtimeHours, 'overtimeHours', 0, PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS, errors);
 
-  if (input.salary !== undefined) {
-    if (typeof input.salary !== 'number' || input.salary < 0) {
-      errors.push(new PayrollValidationError('salary', 'Salary must be a positive number', input.salary));
-    }
-  }
+  // Salary validation
+  validateSalaryField(input, errors);
 
   // Banking information validation
   validateBankingInfo(input, errors);
@@ -105,12 +125,7 @@ export function validatePayrollCalculationInput(input: PayrollCalculationInput):
   validateRequiredString(input.employeeId, 'employeeId', errors);
 
   // Optional fields with validation
-  validateOptionalNumericField(input.hoursWorked, 'hoursWorked', 0, PAYROLL_CONSTANTS.MAX_HOURS_WORKED, errors);
-  validateOptionalNumericField(input.hourlyRate, 'hourlyRate', 0, PAYROLL_CONSTANTS.MAX_HOURLY_RATE, errors);
-  validateOptionalNumericField(input.overtimeHours, 'overtimeHours', 0, PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS, errors);
-  validateOptionalNumericField(input.taxRate, 'taxRate', PAYROLL_CONSTANTS.MIN_TAX_RATE, PAYROLL_CONSTANTS.MAX_TAX_RATE, errors);
-  validateOptionalNumericField(input.deductions, 'deductions', 0, PAYROLL_CONSTANTS.MAX_DEDUCTIONS, errors);
-  validateOptionalNumericField(input.bonuses, 'bonuses', 0, PAYROLL_CONSTANTS.MAX_BONUSES, errors);
+  validateOptionalPayrollFields(input, errors);
 
   return errors;
 }
@@ -149,12 +164,12 @@ export function sanitizeEmployeeInput(input: EmployeeInput): EmployeeInput {
     sanitized.salary = input.salary;
   }
 
-  const accountNumber = input.accountNumber?.replaceAll(/\D/g, '');
+  const accountNumber = input.accountNumber?.replace(/\D/g, '');
   if (accountNumber) {
     sanitized.accountNumber = accountNumber;
   }
 
-  const routingNumber = input.routingNumber?.replaceAll(/\D/g, '');
+  const routingNumber = input.routingNumber?.replace(/\D/g, '');
   if (routingNumber) {
     sanitized.routingNumber = routingNumber;
   }
@@ -185,5 +200,5 @@ export function isValidEmployeeId(employeeId: string): boolean {
  */
 export function isValidPayPeriod(payPeriod: string): boolean {
   const date = new Date(payPeriod);
-  return Number.isNaN(date.getTime()) === false && payPeriod === date.toISOString().split('T')[0];
+  return !Number.isNaN(date.getTime()) && payPeriod === date.toISOString().split('T')[0];
 }

