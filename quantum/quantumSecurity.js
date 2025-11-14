@@ -2,8 +2,8 @@
  * QUANTUM SECURITY LAYER - Unbreakable protection system
  * Implements post-quantum cryptography and zero-trust architecture
  */
-import crypto from 'node:crypto';
-import jwt from 'jsonwebtoken';
+const crypto = require('node:crypto');
+const jwt = require('jsonwebtoken');
 
 class QuantumSecurity {
   algorithm = 'CRYSTALS-Dilithium-3';
@@ -185,4 +185,4 @@ class QuantumSecurity {
   }
 }
 
-export { QuantumSecurity };
+module.exports = { QuantumSecurity };

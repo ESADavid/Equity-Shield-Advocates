@@ -136,6 +136,11 @@ class QuantumAIWallet extends EventEmitter {
   // Digital Tap to Pay
   async tapToPay(merchantId, amount, tapData) {
     try {
+      // Validate merchant ID
+      if (!merchantId || merchantId.trim() === '') {
+        throw new Error('Invalid merchant ID: merchant ID cannot be empty');
+      }
+
       // AI Merchant Analysis
       const merchantAnalysis = await this.aiEngine.analyzeMerchant(merchantId);
 
@@ -413,10 +418,13 @@ class QuantumAIEngine {
 
     const riskScore = this.calculateRiskScore(riskFactors);
 
+    // Reject transactions over $10,000 or to crypto destinations
+    const shouldReject = amount > 10000 || destination.toLowerCase().includes('crypto');
+
     return {
-      approved: riskScore < 0.7,
+      approved: !shouldReject && riskScore < 0.7,
       riskScore,
-      reason: riskScore >= 0.7 ? 'High risk transaction detected' : null,
+      reason: shouldReject ? 'Transaction exceeds risk thresholds' : (riskScore >= 0.7 ? 'High risk transaction detected' : null),
       insights: this.generateRiskInsights(riskFactors)
     };
   }

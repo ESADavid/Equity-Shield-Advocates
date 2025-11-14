@@ -124,24 +124,28 @@ function addAuditTrail(data, incremental) {
 }
 async function updateRevenueData(incremental = false, filePath) {
     const dataPath = filePath || revenueDataPath;
-    await promises_1.default.access(dataPath);
-    let data;
-    const fileContent = await promises_1.default.readFile(dataPath, 'utf-8');
-    data = JSON.parse(fileContent);
-    ensurePurchasesStructure(data);
-    validatePurchases(data);
-    if (typeof data.totalRevenue !== 'number' || isNaN(data.totalRevenue)) {
-        console.warn('Invalid or missing totalRevenue, defaulting to 0.');
-        data.totalRevenue = 0;
+    try {
+        await promises_1.default.access(dataPath);
+        const fileContent = await promises_1.default.readFile(dataPath, 'utf-8');
+        const data = JSON.parse(fileContent);
+        ensurePurchasesStructure(data);
+        validatePurchases(data);
+        if (typeof data.totalRevenue !== 'number' || isNaN(data.totalRevenue)) {
+            console.warn('Invalid or missing totalRevenue, defaulting to 0.');
+            data.totalRevenue = 0;
+        }
+        addSampleData(data, incremental);
+        ensureRevenueStreamsDetails(data);
+        addTransactionDetails(data);
+        integratePayroll(data);
+        addAuditTrail(data, incremental);
+        await promises_1.default.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
+        console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
+        return true;
+    } catch (error) {
+        console.error('Error accessing, parsing, or updating revenue data file:', error.message);
+        return false;
     }
-    addSampleData(data, incremental);
-    ensureRevenueStreamsDetails(data);
-    addTransactionDetails(data);
-    integratePayroll(data);
-    addAuditTrail(data, incremental);
-    await promises_1.default.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
-    console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
-    return true;
 }
 exports.default = updateRevenueData;
 //# sourceMappingURL=update_revenue_data.js.map

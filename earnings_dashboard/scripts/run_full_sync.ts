@@ -9,7 +9,12 @@ async function runFullSync() {
     console.log('Full data synchronization completed successfully.');
   } catch (error) {
     console.error('Error during full data synchronization:', error);
-    process.exit(1);
+    // Only exit in non-test environments
+    if (process.env.NODE_ENV !== 'test' && !process.env.JEST_WORKER_ID) {
+      process.exit(1);
+    }
+    // In test environments, re-throw the error instead of exiting
+    throw error;
   }
 }
 
