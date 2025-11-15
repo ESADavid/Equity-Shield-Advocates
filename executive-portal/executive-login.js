@@ -14,372 +14,155 @@ class ExecutiveLoginPortal {
     }
 
     setupEventListeners() {
-        const form = document.getElementById('executiveLoginForm');
-        const loginBtn = document.getElementById('loginBtn');
-        const passwordInput = document.getElementById('executivePassword');
-        const togglePassword = document.querySelector('.toggle-password');
-        const resendCodeBtn = document.getElementById('resendCode');
-
-        form.addEventListener('submit', (e) => this.handleLogin(e));
-        passwordInput.addEventListener('input', (e) => this.updatePasswordStrength(e));
-        togglePassword.addEventListener('click', () => this.togglePasswordVisibility());
-        resendCodeBtn.addEventListener('click', () => this.resendTwoFactorCode());
+        // Setup event listeners for login form
+        const loginForm = document.getElementById('executive-login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', this.handleLogin.bind(this));
+        }
     }
 
     setupFormValidation() {
-        const inputs = document.querySelectorAll('.input-group input');
-        inputs.forEach(input => {
-            input.addEventListener('blur', () => this.validateField(input));
-            input.addEventListener('focus', () => this.clearFieldError(input));
-        });
+        // Setup form validation
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        if (emailInput) {
+            emailInput.addEventListener('blur', this.validateEmail.bind(this));
+        }
+        if (passwordInput) {
+            passwordInput.addEventListener('input', this.validatePassword.bind(this));
+        }
     }
 
     setupPasswordStrength() {
-        const passwordInput = document.getElementById('executivePassword');
-        const strengthIndicator = document.getElementById('passwordStrength');
-        
-        passwordInput.addEventListener('input', (e) => {
-            this.updatePasswordStrength(e);
-        });
+        // Setup password strength indicator
+        const passwordInput = document.getElementById('password');
+        const strengthIndicator = document.getElementById('password-strength');
+
+        if (passwordInput && strengthIndicator) {
+            passwordInput.addEventListener('input', () => {
+                const strength = this.calculatePasswordStrength(passwordInput.value);
+                strengthIndicator.textContent = `Strength: ${strength}`;
+                this.updateStrengthColor(strengthIndicator, strength);
+            });
+        }
     }
 
     setupTwoFactorAuth() {
-        // Simulate 2FA setup
-        this.generateTwoFactorCode();
-    }
-
-    validateField(field) {
-        const value = field.value.trim();
-        const fieldName = field.name;
-        
-        let isValid = true;
-        let errorMessage = '';
-
-        switch (fieldName) {
-            case 'email':
-                if (!this.isValidEmail(value)) {
-                    isValid = false;
-                    errorMessage = 'Please enter a valid executive email address';
-                }
-                break;
-            case 'password':
-                if (value.length < 8) {
-                    isValid = false;
-                    errorMessage = 'Password must be at least 8 characters';
-                }
-                break;
-            case 'mfaCode':
-                if (!/^\d{6}$/.test(value)) {
-                    isValid = false;
-                    errorMessage = 'Please enter a valid 6-digit code';
-                }
-                break;
-        }
-
-        if (!isValid) {
-            this.showFieldError(field, errorMessage);
-        }
-
-        return isValid;
-    }
-
-    validateField(field) {
-        const value = field.value.trim();
-        const fieldName = field.name;
-        
-        let isValid = true;
-        let errorMessage = '';
-
-        switch (fieldName) {
-            case 'email':
-                if (!this.isValidEmail(value)) {
-                    isValid = false;
-                    errorMessage = 'Please enter a valid executive email address';
-                }
-                break;
-            case 'password':
-                if (value.length < 8) {
-                    isValid = false;
-                    errorMessage = 'Password must be at least 8 characters';
-                }
-                break;
-            case 'mfaCode':
-                if (!/^\d{6}$/.test(value)) {
-                    isValid = false;
-                    errorMessage = 'Please enter a valid 6-digit code';
-                }
-                break;
-        }
-
-        if (!isValid) {
-            this.showFieldError(field, errorMessage);
-        }
-
-        return isValid;
-    }
-
-    isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    showFieldError(field, message) {
-        const formGroup = field.closest('.form-group');
-        const errorDiv = formGroup.querySelector('.error-message') || document.createElement('div');
-        
-        if (!formGroup.querySelector('.error-message')) {
-            errorDiv.className = 'error-message';
-            formGroup.appendChild(errorDiv);
-        }
-        
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-    }
-
-    clearFieldError(field) {
-        const formGroup = field.closest('.form-group');
-        const errorDiv = formGroup.querySelector('.error-message');
-        if (errorDiv) {
-            errorDiv.style.display = 'none';
+        // Setup 2FA input handling
+        const twoFactorInput = document.getElementById('two-factor-code');
+        if (twoFactorInput) {
+            twoFactorInput.addEventListener('input', this.validateTwoFactorCode.bind(this));
         }
     }
 
-    updatePasswordStrength(event) {
-        const password = event.target.value;
-        const strengthIndicator = document.getElementById('passwordStrength');
-        
-        if (!strengthIndicator) return;
-
-        let strength = 0;
-        
-        if (password.length >= 8) strength += 1;
-        if (/[a-z]/.test(password)) strength += 1;
-        if (/[A-Z]/.test(password)) strength += 1;
-        if (/[0-9]/.test(password)) strength += 1;
-        if (/[^A-Za-z0-9]/.test(password)) strength += 1;
-
-        let strengthClass = '';
-        let strengthText = '';
-
-        if (strength <= 2) {
-            strengthClass = 'weak';
-            strengthText = 'Weak';
-        } else if (strength <= 4) {
-            strengthClass = 'medium';
-            strengthText = 'Medium';
-        } else {
-            strengthClass = 'strong';
-            strengthText = 'Strong';
-        }
-
-        strengthIndicator.className = `password-strength ${strengthClass}`;
-        strengthIndicator.textContent = strengthText;
-    }
-
-    togglePasswordVisibility() {
-        const passwordInput = document.getElementById('executivePassword');
-        const toggleIcon = document.querySelector('.toggle-password');
-        
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            toggleIcon.classList.remove('fa-eye');
-            toggleIcon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            toggleIcon.classList.remove('fa-eye-slash');
-            toggleIcon.classList.add('fa-eye');
-        }
-    }
-
-    async handleLogin(event) {
+    handleLogin(event) {
         event.preventDefault();
-        
-        const form = event.target;
-        const loginBtn = document.getElementById('loginBtn');
-        const btnText = loginBtn.querySelector('.btn-text');
-        const spinner = loginBtn.querySelector('.fa-spinner');
-        
-        // Disable button and show spinner
-        loginBtn.disabled = true;
-        btnText.style.display = 'none';
-        spinner.style.display = 'inline-block';
-        
-        try {
-            // Validate form
-            const email = document.getElementById('executiveEmail').value.trim();
-            const password = document.getElementById('executivePassword').value;
-            const mfaCode = document.getElementById('mfaCode').value.trim();
-            const rememberMe = document.getElementById('rememberMe').checked;
-            
-            if (!this.validateForm()) {
-                throw new Error('Please correct the errors in the form');
-            }
-            
-            // Simulate API call
-            const response = await this.performLogin(email, password, mfaCode, rememberMe);
-            
-            if (response.success) {
-                this.handleSuccessfulLogin(response, rememberMe);
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const twoFactorCode = document.getElementById('two-factor-code').value;
+
+        if (this.validateLogin(email, password, twoFactorCode)) {
+            // Simulate login success
+            alert('Login successful! Redirecting to executive dashboard...');
+            // Redirect to dashboard
+            globalThis.location.href = '/executive-dashboard';
+        }
+    }
+
+    validateEmail() {
+        const email = document.getElementById('email').value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isValid = emailRegex.test(email);
+        this.showValidationMessage('email', isValid, 'Please enter a valid email address');
+        return isValid;
+    }
+
+    validatePassword() {
+        const password = document.getElementById('password').value;
+        const isValid = password.length >= 8;
+        this.showValidationMessage('password', isValid, 'Password must be at least 8 characters long');
+        return isValid;
+    }
+
+    validateTwoFactorCode() {
+        const code = document.getElementById('two-factor-code').value;
+        const isValid = /^\d{6}$/.test(code);
+        this.showValidationMessage('two-factor-code', isValid, 'Please enter a valid 6-digit code');
+        return isValid;
+    }
+
+    validateLogin(email, password, twoFactorCode) {
+        return this.validateEmail() && this.validatePassword() && this.validateTwoFactorCode();
+    }
+
+    calculatePasswordStrength(password) {
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/\d/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+        switch (strength) {
+            case 0:
+            case 1: return 'Very Weak';
+            case 2: return 'Weak';
+            case 3: return 'Medium';
+            case 4: return 'Strong';
+            case 5: return 'Very Strong';
+            default: return 'Unknown';
+        }
+    }
+
+    updateStrengthColor(element, strength) {
+        // Remove existing strength classes
+        element.classList.remove('very-weak', 'weak', 'medium', 'strong', 'very-strong');
+
+        // Add appropriate class
+        switch (strength) {
+            case 'Very Weak':
+                element.classList.add('very-weak');
+                break;
+            case 'Weak':
+                element.classList.add('weak');
+                break;
+            case 'Medium':
+                element.classList.add('medium');
+                break;
+            case 'Strong':
+                element.classList.add('strong');
+                break;
+            case 'Very Strong':
+                element.classList.add('very-strong');
+                break;
+        }
+    }
+
+    showValidationMessage(fieldId, isValid, message) {
+        const field = document.getElementById(fieldId);
+        const errorElement = document.getElementById(`${fieldId}-error`);
+
+        if (errorElement) {
+            if (isValid) {
+                errorElement.style.display = 'none';
             } else {
-                this.handleLoginError(response.message);
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
             }
-            
-        } catch (error) {
-            this.handleLoginError(error.message);
-        } finally {
-            // Re-enable button and hide spinner
-            loginBtn.disabled = false;
-            btnText.style.display = 'inline-block';
-            spinner.style.display = 'none';
         }
-    }
 
-    validateForm() {
-        const email = document.getElementById('executiveEmail').value.trim();
-        const password = document.getElementById('executivePassword').value;
-        const mfaCode = document.getElementById('mfaCode').value.trim();
-        
-        if (!this.isValidEmail(email)) {
-            this.showFieldError(document.getElementById('executiveEmail'), 'Please enter a valid email');
-            return false;
+        if (field) {
+            if (isValid) {
+                field.classList.remove('invalid');
+            } else {
+                field.classList.add('invalid');
+            }
         }
-        
-        if (password.length < 8) {
-            this.showFieldError(document.getElementById('executivePassword'), 'Password must be at least 8 characters');
-            return false;
-        }
-        
-        if (!/^\d{6}$/.test(mfaCode)) {
-            this.showFieldError(document.getElementById('mfaCode'), 'Please enter a valid 6-digit code');
-            return false;
-        }
-        
-        return true;
-    }
-
-    async performLogin(email, password, mfaCode, rememberMe) {
-        // Simulate API call
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                // Simulate successful login
-                if (email.includes('executive') && password.length >= 8 && mfaCode === '123456') {
-                    resolve({
-                        success: true,
-                        token: 'mock-jwt-token',
-                        user: {
-                            email: email,
-                            role: 'executive',
-                            name: 'Oscar Broome'
-                        }
-                    });
-                } else {
-                    resolve({
-                        success: false,
-                        message: 'Invalid credentials or 2FA code'
-                    });
-                }
-            }, 2000);
-        });
-    }
-
-    handleSuccessfulLogin(response, rememberMe) {
-        // Store token and user info
-        localStorage.setItem('executiveToken', response.token);
-        localStorage.setItem('executiveUser', JSON.stringify(response.user));
-        
-        if (rememberMe) {
-            localStorage.setItem('rememberMe', 'true');
-        }
-        
-        // Redirect to dashboard
-        window.location.href = '/executive-portal/dashboard.html';
-    }
-
-    handleLoginError(message) {
-        this.showError(message);
-    }
-
-    showError(message) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-        
-        const form = document.getElementById('executiveLoginForm');
-        form.appendChild(errorDiv);
-        
-        setTimeout(() => {
-            errorDiv.remove();
-        }, 5000);
-    }
-
-    async resendTwoFactorCode() {
-        const resendBtn = document.getElementById('resendCode');
-        resendBtn.disabled = true;
-        resendBtn.textContent = 'Sending...';
-        
-        setTimeout(() => {
-            resendBtn.disabled = false;
-            resendBtn.textContent = 'Resend Code';
-            this.showSuccess('2FA code resent to your registered device');
-        }, 2000);
-    }
-
-    showSuccess(message) {
-        const successDiv = document.createElement('div');
-        successDiv.className = 'success-message';
-        successDiv.textContent = message;
-        successDiv.style.display = 'block';
-        
-        const form = document.getElementById('executiveLoginForm');
-        form.appendChild(successDiv);
-        
-        setTimeout(() => {
-            successDiv.remove();
-        }, 3000);
-    }
-
-    generateTwoFactorCode() {
-        // Simulate 2FA code generation
-        console.log('2FA code generated: 123456');
     }
 }
 
-// Initialize the portal
+// Initialize the portal when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new ExecutiveLoginPortal();
+    globalThis.portal = new ExecutiveLoginPortal(); // Initialize the executive login portal
 });
-
-// Additional utility functions
-const Utils = {
-    formatCurrency: (amount) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD'
-        }).format(amount);
-    },
-    
-    formatDate: (date) => {
-        return new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        }).format(new Date(date));
-    },
-    
-    debounce: (func, wait) => {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-};
-
-// Export for use in other modules
-window.ExecutiveLoginPortal = ExecutiveLoginPortal;
-window.Utils = Utils;
