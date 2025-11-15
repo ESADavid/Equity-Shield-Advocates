@@ -91,11 +91,11 @@ class ExecutiveLoginPortal {
         return isValid;
     }
 
-    validateLogin(email, password, twoFactorCode) {
+    validateLogin(_email, _password, _twoFactorCode) {
         return this.validateEmail() && this.validatePassword() && this.validateTwoFactorCode();
     }
 
-    calculatePasswordStrength(password) {
+    calculatePasswordStrengthNested(password) {
         let strength = 0;
         if (password.length >= 8) strength++;
         if (/[A-Z]/.test(password)) strength++;

@@ -31,6 +31,7 @@ module.exports = {
   overrides: [
     {
       files: ['*.js'],
+      parser: 'espree',
       parserOptions: {
         sourceType: 'script', // Allow require() in .js files
       },
