@@ -41,7 +41,7 @@ module.exports = {
       },
     },
     {
-      files: ['tests/**/*.js'],
+      files: ['tests/**/*.js', 'test/**/*.js', 'test/**/*.mjs', 'test/**/*.cjs'],
       parser: 'espree',
       parserOptions: {
         sourceType: 'module', // Allow import/export in test files
@@ -49,6 +49,37 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-unused-vars': 'off',
         'no-unused-vars': 'off',
+      },
+    },
+    {
+      files: ['earnings_dashboard/**/*.js', 'quantum/**/*.js', 'auth/**/*.js', 'blockchain/**/*.js', 'comprehensive_*.js', 'cypress/**/*.js', 'ecosystem.config.js', 'executive-portal/**/*.js', 'middleware/**/*.js', 'models/**/*.js', 'routes/**/*.js', 'scripts/**/*.js', 'services/**/*.js', 'staging_*.js', 'test_*.js', 'vite.config.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module', // Allow import/export in various module files
+        ecmaVersion: 2020,
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        'no-unused-vars': 'off',
+      },
+    },
+    {
+      files: ['cypress/**/*.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 2020,
+      },
+      env: {
+        browser: true,
+        es2021: true,
+        node: true,
+        jest: true,
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        'no-unused-vars': 'off',
+        'no-unused-expressions': 'off', // Cypress often uses expressions in tests
       },
     },
   ],

@@ -95,7 +95,7 @@ class ExecutiveLoginPortal {
         return this.validateEmail() && this.validatePassword() && this.validateTwoFactorCode();
     }
 
-    calculatePasswordStrengthNested(password) {
+    calculatePasswordStrength(password) {
         let strength = 0;
         if (password.length >= 8) strength++;
         if (/[A-Z]/.test(password)) strength++;
