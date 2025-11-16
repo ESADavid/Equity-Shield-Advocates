@@ -1,5 +1,5 @@
-const request = require('supertest');
-const app = require('../server-enhanced');
+import request from 'supertest';
+import app from '../server-enhanced';
 
 const authHeader = 'Basic ' + Buffer.from('admin:securepassword').toString('base64');
 

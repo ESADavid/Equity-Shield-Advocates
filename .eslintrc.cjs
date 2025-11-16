@@ -40,5 +40,16 @@ module.exports = {
         'no-unused-vars': 'off',
       },
     },
+    {
+      files: ['tests/**/*.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module', // Allow import/export in test files
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        'no-unused-vars': 'off',
+      },
+    },
   ],
 };

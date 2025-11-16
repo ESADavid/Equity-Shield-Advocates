@@ -8,9 +8,9 @@ const crypto = require('node:crypto');
 const { performance } = require('node:perf_hooks');
 
 // Import quantum systems
-const { QuantumEngine } = require('./quantumEngine');
-const { QuantumSecurity } = require('./quantumSecurity');
-const { QuantumOptimizer } = require('./quantumOptimizer');
+const { QuantumEngine } = require('./quantumEngine.js');
+const { QuantumSecurity } = require('./quantumSecurity.js');
+const { QuantumOptimizer } = require('./quantumOptimizer.js');
 
 class QuantumAIWallet extends EventEmitter {
   constructor(userId, userEmail) {
@@ -443,7 +443,7 @@ class QuantumAIEngine {
 
   async predictBalanceAfterWithdrawal(amount) {
     // Simple balance prediction (in real AI, this would be ML model)
-    return this.currentBalance - amount;
+    return this.balance - amount;
   }
 
   async optimizeDeposit(amount, source) {

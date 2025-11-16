@@ -2,26 +2,18 @@
  * QUANTUM AI WALLET CRITICAL TESTING
  * Tests the advanced AI-powered wallet system
  */
-const request = require('supertest');
-const { app, server, quantumEngine, quantumSecurity, quantumOptimizer } = require('../server-quantum.js');
 const { QuantumAIWallet, QuantumAIEngine } = require('../quantum/quantumAIWallet.js');
 
 describe('🚀 Quantum AI Wallet Critical Testing', () => {
-  let testServer;
   let oscarWallet;
 
   beforeAll(async () => {
-    // Server is already started in server-quantum.js
-    testServer = server;
-
     // Create Oscar Broome's quantum AI wallet
     oscarWallet = new QuantumAIWallet('USER_1759425133168_851683FD', 'oscar.broome@jpmorgan.com');
   });
 
   afterAll(async () => {
-    if (testServer) {
-      testServer.close();
-    }
+    // Cleanup if needed
   });
 
   describe('🔐 Quantum AI Wallet Initialization', () => {
@@ -194,7 +186,7 @@ describe('🚀 Quantum AI Wallet Critical Testing', () => {
 
       const results = await Promise.all(operations);
 
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.success).toBe(true);
       });
     });

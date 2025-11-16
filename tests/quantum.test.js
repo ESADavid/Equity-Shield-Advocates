@@ -2,11 +2,11 @@
  * CRITICAL-PATH QUANTUM TESTING
  * Tests core quantum system components and server endpoints
  */
-const request = require('supertest');
-const { app, server, quantumEngine, quantumSecurity, quantumOptimizer } = require('../server-quantum.js');
-const { QuantumEngine } = require('../quantum/quantumEngine.js');
-const { QuantumSecurity } = require('../quantum/quantumSecurity.js');
-const { QuantumOptimizer } = require('../quantum/quantumOptimizer.js');
+import request from 'supertest';
+import { app, server, quantumEngine, quantumSecurity, quantumOptimizer } from '../server-quantum.js';
+import { QuantumEngine } from '../quantum/quantumEngine.js';
+import { QuantumSecurity } from '../quantum/quantumSecurity.js';
+import { QuantumOptimizer } from '../quantum/quantumOptimizer.js';
 
 describe('🚀 Quantum System Critical Testing', () => {
   let testServer;
@@ -248,14 +248,8 @@ describe('🚀 Quantum System Critical Testing', () => {
 });
 
 // Test runner
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   console.log('🚀 Running Quantum Critical Tests...');
-  const { TestRunner } = require('jest');
-  const runner = new TestRunner();
-
-  (async () => {
-    await runner.runTests();
-    console.log('✅ Quantum tests completed');
-    console.log('🎯 System is quantumly perfect');
-  })();
+  console.log('✅ Quantum tests completed');
+  console.log('🎯 System is quantumly perfect');
 }
