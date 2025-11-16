@@ -2,7 +2,7 @@
  * QUANTUM AI WALLET CRITICAL TESTING
  * Tests the advanced AI-powered wallet system
  */
-const { QuantumAIWallet, QuantumAIEngine } = require('../quantum/quantumAIWallet.js');
+import { QuantumAIWallet, QuantumAIEngine } from '../quantum/quantumAIWallet.js';
 
 describe('🚀 Quantum AI Wallet Critical Testing', () => {
   let oscarWallet;

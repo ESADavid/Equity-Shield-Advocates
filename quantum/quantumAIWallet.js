@@ -3,14 +3,14 @@
  * Advanced AI-powered wallet system with quantum-level security and instant payments
  */
 
-const EventEmitter = require('node:events');
-const crypto = require('node:crypto');
-const { performance } = require('node:perf_hooks');
+import EventEmitter from 'node:events';
+import crypto from 'node:crypto';
+import { performance } from 'node:perf_hooks';
 
 // Import quantum systems
-const { QuantumEngine } = require('./quantumEngine.js');
-const { QuantumSecurity } = require('./quantumSecurity.js');
-const { QuantumOptimizer } = require('./quantumOptimizer.js');
+import { QuantumEngine } from './quantumEngine.js';
+import { QuantumSecurity } from './quantumSecurity.js';
+import { QuantumOptimizer } from './quantumOptimizer.js';
 
 class QuantumAIWallet extends EventEmitter {
   constructor(userId, userEmail) {
@@ -560,4 +560,4 @@ class QuantumAIEngine {
   }
 }
 
-module.exports = { QuantumAIWallet, QuantumAIEngine };
+export { QuantumAIWallet, QuantumAIEngine };
