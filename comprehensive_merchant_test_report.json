@@ -1,36 +1,36 @@
 {
   "summary": {
     "total": 4,
-    "passed": 4,
-    "failed": 0,
+    "passed": 0,
+    "failed": 4,
     "skipped": 0,
-    "successRate": "100.00"
+    "successRate": "0.00"
   },
   "tests": [
     {
       "name": "Environment Config",
-      "result": "passed",
-      "message": "Mock mode active - Stripe credentials not required",
-      "timestamp": "2025-10-16T06:56:22.538Z"
+      "result": "failed",
+      "message": "Could not verify server health: Error",
+      "timestamp": "2025-11-17T19:09:04.975Z"
     },
     {
       "name": "Create Merchant Payment Intent",
-      "result": "passed",
-      "message": "Payment intent created: pi_mock_1760597782592 (Mock: true)",
-      "timestamp": "2025-10-16T06:56:22.594Z"
+      "result": "failed",
+      "message": "Payment intent creation failed: Error",
+      "timestamp": "2025-11-17T19:09:05.003Z"
     },
     {
       "name": "Merchant Webhook",
-      "result": "passed",
-      "message": "Webhook processed successfully (Mock: true)",
-      "timestamp": "2025-10-16T06:56:22.836Z"
+      "result": "failed",
+      "message": "Webhook test failed: Error",
+      "timestamp": "2025-11-17T19:09:05.023Z"
     },
     {
       "name": "Payment Intent Validation",
-      "result": "passed",
-      "message": "Properly validates required fields",
-      "timestamp": "2025-10-16T06:56:22.854Z"
+      "result": "failed",
+      "message": "Unexpected error: Error",
+      "timestamp": "2025-11-17T19:09:05.038Z"
     }
   ],
-  "timestamp": "2025-10-16T06:56:22.855Z"
+  "timestamp": "2025-11-17T19:09:05.040Z"
 }

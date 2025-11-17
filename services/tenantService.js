@@ -247,8 +247,28 @@ class TenantService {
           await tenant.suspend('Subscription expired');
           logger.info('Tenant suspended due to expired subscription', { tenantId: tenant.tenantId });
         } else {
-          // TODO: Implement auto-renewal logic
-          logger.info('Auto-renewal needed for tenant', { tenantId: tenant.tenantId });
+          // Implement auto-renewal logic
+          try {
+            const renewalResult = await this.processAutoRenewal(tenant);
+            if (renewalResult.success) {
+              logger.info('Auto-renewal processed successfully', {
+                tenantId: tenant.tenantId,
+                newEndDate: renewalResult.newEndDate
+              });
+            } else {
+              logger.warn('Auto-renewal failed, suspending tenant', {
+                tenantId: tenant.tenantId,
+                reason: renewalResult.reason
+              });
+              await tenant.suspend('Auto-renewal failed');
+            }
+          } catch (renewalError) {
+            logger.error('Error during auto-renewal', {
+              tenantId: tenant.tenantId,
+              error: renewalError.message
+            });
+            await tenant.suspend('Auto-renewal error');
+          }
         }
       }
 
@@ -256,6 +276,57 @@ class TenantService {
     } catch (error) {
       logger.error('Error processing expired subscriptions', { error: error.message });
       throw error;
+    }
+  }
+
+  // Process auto-renewal for a tenant
+  async processAutoRenewal(tenant) {
+    try {
+      // Get current subscription details
+      const currentPlan = tenant.subscription.plan;
+      const currentEndDate = tenant.subscription.endDate;
+
+      // Calculate new end date (extend by subscription period)
+      const planDurations = {
+        starter: 30, // 30 days
+        professional: 365, // 1 year
+        enterprise: 365 // 1 year
+      };
+
+      const extensionDays = planDurations[currentPlan] || 365;
+      const newEndDate = new Date(currentEndDate);
+      newEndDate.setDate(newEndDate.getDate() + extensionDays);
+
+      // Update tenant subscription
+      tenant.subscription.endDate = newEndDate;
+      tenant.subscription.status = 'active';
+      tenant.audit.updatedAt = new Date();
+      tenant.audit.updatedBy = 'auto-renewal-system';
+
+      await tenant.save();
+
+      logger.info('Auto-renewal completed', {
+        tenantId: tenant.tenantId,
+        plan: currentPlan,
+        oldEndDate: currentEndDate,
+        newEndDate: newEndDate
+      });
+
+      return {
+        success: true,
+        newEndDate: newEndDate,
+        plan: currentPlan
+      };
+    } catch (error) {
+      logger.error('Auto-renewal processing failed', {
+        tenantId: tenant.tenantId,
+        error: error.message
+      });
+
+      return {
+        success: false,
+        reason: error.message
+      };
     }
   }
 

@@ -1,16 +1,12 @@
 const request = require('supertest');
-const app = require('./server'); // Assuming server.js exports the Express app
+const { app } = require('./server'); // Import the app from server.js
 
 describe('GET /microsoft/chat', () => {
-  afterAll(async () => {
-    // Close the server if it was started
-    if (app && app.close) {
-      await new Promise((resolve) => app.close(resolve));
-    }
-  });
+  // No need to close server as we're using the app directly
   it('should return 200 and success message with valid query parameters', async () => {
     const response = await request(app)
       .get('/microsoft/chat')
+      .auth('BSEAN4890@GMAIL.COM', 'TBROOME704')
       .query({
         auth: '2',
         origin: 'ProfileAboutMe',
@@ -33,6 +29,7 @@ describe('GET /microsoft/chat', () => {
   it('should return 400 error if required query parameters are missing', async () => {
     const response = await request(app)
       .get('/microsoft/chat')
+      .auth('BSEAN4890@GMAIL.COM', 'TBROOME704')
       .query({
         auth: '2',
         origin: 'ProfileAboutMe'
@@ -46,6 +43,7 @@ describe('GET /microsoft/chat', () => {
     // Simulate error by sending invalid query param type or other means
     const response = await request(app)
       .get('/microsoft/chat')
+      .auth('BSEAN4890@GMAIL.COM', 'TBROOME704')
       .query(null); // invalid query
     expect([400, 500]).toContain(response.statusCode);
   });

@@ -134,7 +134,7 @@ function testHTMLStructure() {
         'recentCalculationsList'
     ];
 
-    let missingElements = [];
+    const missingElements = [];
     requiredElements.forEach(element => {
         if (!htmlContent.includes(`id="${element}"`)) {
             missingElements.push(element);
@@ -166,7 +166,7 @@ function testCSSStyles() {
         '.recent-calculations'
     ];
 
-    let missingStyles = [];
+    const missingStyles = [];
     requiredStyles.forEach(style => {
         if (!cssContent.includes(style)) {
             missingStyles.push(style);
@@ -195,7 +195,7 @@ function testAPIEndpoints() {
         "router.post('/calculate'"
     ];
 
-    let missingEndpoints = [];
+    const missingEndpoints = [];
     requiredEndpoints.forEach(endpoint => {
         if (!apiContent.includes(endpoint)) {
             missingEndpoints.push(endpoint);
@@ -223,7 +223,7 @@ function testDashboardIntegration() {
         'payroll-section'
     ];
 
-    let missingIntegrations = [];
+    const missingIntegrations = [];
     requiredIntegrations.forEach(integration => {
         if (!dashboardContent.includes(integration)) {
             missingIntegrations.push(integration);
@@ -252,7 +252,7 @@ function runAllTests() {
     ];
 
     let passedTests = 0;
-    let totalTests = tests.length;
+    const totalTests = tests.length;
 
     tests.forEach(test => {
         try {

@@ -23,3 +23,4 @@ node_cron_1.default.schedule('0 2 * * *', () => {
     console.log('Running scheduled daily data synchronization...');
     syncAllData();
 });
+//# sourceMappingURL=sync_jobs.js.map

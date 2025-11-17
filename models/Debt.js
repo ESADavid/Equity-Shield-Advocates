@@ -190,14 +190,14 @@ debtSchema.index({ tenantId: 1, debtId: 1 }, { unique: true });
 
 // Virtual for unrealized gain/loss
 debtSchema.virtual('unrealizedGainLoss').get(function() {
-  const current = parseFloat(this.currentValue.toString());
-  const acquired = parseFloat(this.acquiredValue.toString());
+  const current = Number.parseFloat(this.currentValue.toString());
+  const acquired = Number.parseFloat(this.acquiredValue.toString());
   return current - acquired;
 });
 
 // Virtual for unrealized gain/loss percentage
 debtSchema.virtual('unrealizedGainLossPercent').get(function() {
-  const acquired = parseFloat(this.acquiredValue.toString());
+  const acquired = Number.parseFloat(this.acquiredValue.toString());
   if (acquired === 0) return 0;
   return ((this.unrealizedGainLoss / acquired) * 100);
 });
@@ -212,9 +212,9 @@ debtSchema.virtual('timeToMaturity').get(function() {
 // Virtual for yield to maturity
 debtSchema.virtual('yieldToMaturity').get(function() {
   // Simplified YTM calculation
-  const face = parseFloat(this.faceValue.toString());
-  const current = parseFloat(this.currentValue.toString());
-  const coupon = parseFloat(this.interestRate.toString());
+  const face = Number.parseFloat(this.faceValue.toString());
+  const current = Number.parseFloat(this.currentValue.toString());
+  const coupon = Number.parseFloat(this.interestRate.toString());
   const years = this.timeToMaturity / 365;
 
   if (years === 0) return 0;
@@ -227,7 +227,7 @@ debtSchema.virtual('yieldToMaturity').get(function() {
 debtSchema.methods = {
   // Update valuation
   updateValuation: function(newValue, assessedBy, marketData = {}) {
-    const oldValue = parseFloat(this.currentValue.toString());
+    const oldValue = Number.parseFloat(this.currentValue.toString());
     const change = newValue - oldValue;
     const changePercent = oldValue > 0 ? (change / oldValue) * 100 : 0;
 
@@ -328,7 +328,7 @@ debtSchema.methods = {
 // Static methods
 debtSchema.statics = {
   // Get debts by tenant
-  getByTenant: function(tenantId, limit = 100, skip = 0) {
+  getByTenant: function(tenantId, skip = 0, limit = 100) {
     return this.find({ tenantId })
       .sort({ acquisitionDate: -1 })
       .limit(limit)
@@ -359,7 +359,7 @@ debtSchema.statics = {
   },
 
   // Get maturing debts within tenant
-  getMaturingSoon: function(days = 90, tenantId) {
+  getMaturingSoon: function(tenantId, days = 90) {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() + days);
 
@@ -371,7 +371,7 @@ debtSchema.statics = {
   },
 
   // Get high-risk debts within tenant
-  getHighRisk: function(riskThreshold = 50, tenantId) {
+  getHighRisk: function(tenantId, riskThreshold = 50) {
     return this.find({
       tenantId,
       'risk.score': { $gte: riskThreshold },
@@ -384,37 +384,37 @@ debtSchema.statics = {
     const debts = await this.find({ tenantId, status: 'active' });
 
     const totalAcquiredValue = debts.reduce((sum, debt) =>
-      sum + parseFloat(debt.acquiredValue.toString()), 0);
+      sum + Number.parseFloat(debt.acquiredValue.toString()), 0);
 
     const totalCurrentValue = debts.reduce((sum, debt) =>
-      sum + parseFloat(debt.currentValue.toString()), 0);
+      sum + Number.parseFloat(debt.currentValue.toString()), 0);
 
     const totalUnrealizedGainLoss = totalCurrentValue - totalAcquiredValue;
 
     const weightedYield = debts.reduce((sum, debt) => {
-      const weight = parseFloat(debt.acquiredValue.toString()) / totalAcquiredValue;
-      return sum + (parseFloat(debt.expectedYield.toString()) * weight);
+      const weight = Number.parseFloat(debt.acquiredValue.toString()) / totalAcquiredValue;
+      return sum + (Number.parseFloat(debt.expectedYield.toString()) * weight);
     }, 0);
 
     // Geographic distribution
     const geographicDistribution = {};
-    debts.forEach(debt => {
+    for (const debt of debts) {
       if (!geographicDistribution[debt.country]) {
         geographicDistribution[debt.country] = { value: 0, count: 0 };
       }
-      geographicDistribution[debt.country].value += parseFloat(debt.acquiredValue.toString());
+      geographicDistribution[debt.country].value += Number.parseFloat(debt.acquiredValue.toString());
       geographicDistribution[debt.country].count += 1;
-    });
+    }
 
     // Entity type distribution
     const entityTypeDistribution = {};
-    debts.forEach(debt => {
+    for (const debt of debts) {
       if (!entityTypeDistribution[debt.entityType]) {
         entityTypeDistribution[debt.entityType] = { value: 0, count: 0 };
       }
-      entityTypeDistribution[debt.entityType].value += parseFloat(debt.acquiredValue.toString());
+      entityTypeDistribution[debt.entityType].value += Number.parseFloat(debt.acquiredValue.toString());
       entityTypeDistribution[debt.entityType].count += 1;
-    });
+    }
 
     return {
       totalDebts: debts.length,

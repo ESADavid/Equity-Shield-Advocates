@@ -1,8 +1,8 @@
 // Additional Wallet Management Endpoints for JPMorgan Integration
-const express = require('express');
+import express from 'express';
+import axios from 'axios';
+import crypto from 'node:crypto';
 const router = express.Router();
-const axios = require('axios');
-const crypto = require('crypto');
 
 // JPMorgan Payments API Configuration
 const JPMORGAN_BASE_URL = process.env.JPMORGAN_BASE_URL || 'https://api.payments.jpmorgan.com';
@@ -49,7 +49,7 @@ router.post('/wallet-encrypt', async (req, res) => {
     const headers = generateAuthHeaders();
 
     const encryptPayload = {
-      cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces
+      cardNumber: cardNumber.replaceAll(/\s/g, ''), // Remove spaces
       expiryDate: expiryDate,
       cvv: cvv,
       cardholderName: cardholderName,
@@ -134,7 +134,7 @@ router.post('/wallet-tokenize', async (req, res) => {
     const headers = generateAuthHeaders();
 
     const tokenizePayload = {
-      cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces
+      cardNumber: cardNumber.replaceAll(/\s/g, ''), // Remove spaces
       expiryDate: expiryDate,
       cvv: cvv,
       cardholderName: cardholderName,
@@ -203,4 +203,4 @@ router.post('/wallet-detokenize', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

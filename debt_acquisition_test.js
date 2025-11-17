@@ -78,7 +78,7 @@ describe('Debt Acquisition Service', () => {
 
   test('should get portfolio analytics', async () => {
     // Add multiple debts
-    const debt1 = await debtService.acquireDebt({
+    await debtService.acquireDebt({
       entity: 'US Treasury',
       entityType: 'sovereign',
       country: 'United States',
@@ -93,7 +93,7 @@ describe('Debt Acquisition Service', () => {
       riskRating: 'AAA'
     }, 'user123', 'tenant123');
 
-    const debt2 = await debtService.acquireDebt({
+    await debtService.acquireDebt({
       entity: 'EU Bond',
       entityType: 'sovereign',
       country: 'Germany',
@@ -117,7 +117,7 @@ describe('Debt Acquisition Service', () => {
   });
 
   test('should identify high-risk debts', async () => {
-    const highRiskDebt = await debtService.acquireDebt({
+    await debtService.acquireDebt({
       entity: 'Risky Corp',
       entityType: 'corporate',
       country: 'Emerging Market',
@@ -139,7 +139,7 @@ describe('Debt Acquisition Service', () => {
   });
 
   test('should handle debt maturity', async () => {
-    const maturingDebt = await debtService.acquireDebt({
+    await debtService.acquireDebt({
       entity: 'Short Term Bond',
       entityType: 'corporate',
       country: 'United States',

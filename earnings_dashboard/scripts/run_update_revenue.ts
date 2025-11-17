@@ -1,4 +1,4 @@
-import updateRevenueData from '../update_revenue_data';
+import updateRevenueData from '../update_revenue_data.js';
 
 async function runUpdate() {
   try {
@@ -7,11 +7,21 @@ async function runUpdate() {
       console.log('Revenue data updated successfully.');
     } else {
       console.error('Revenue data update failed.');
-      process.exit(1);
+      // Only exit in non-test environments
+      if (process.env.NODE_ENV !== 'test' && !process.env.JEST_WORKER_ID) {
+        process.exit(1);
+      }
+      // In test environments, throw error instead of exiting
+      throw new Error('Revenue data update failed');
     }
   } catch (error) {
     console.error('Error during revenue update:', error);
-    process.exit(1);
+    // Only exit in non-test environments
+    if (process.env.NODE_ENV !== 'test' && !process.env.JEST_WORKER_ID) {
+      process.exit(1);
+    }
+    // In test environments, re-throw the error instead of exiting
+    throw error;
   }
 }
 

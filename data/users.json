@@ -3254,7 +3254,7 @@
     "password": "$2b$12$6igA2jB4Hs6.mb3r1/xSLepFzkFo5awu6jW.vO/y20x6tTWd9f46q",
     "role": "admin",
     "createdAt": "2025-10-02T17:12:13.168Z",
-    "lastLogin": "2025-10-02T17:25:02.033Z",
+    "lastLogin": "2025-11-03T19:20:08.954Z",
     "isActive": true,
     "loginAttempts": 0,
     "lockoutUntil": null,

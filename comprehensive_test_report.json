@@ -1,66 +1,66 @@
 {
   "summary": {
     "total": 9,
-    "passed": 9,
-    "failed": 0,
-    "skipped": 0,
-    "successRate": "100.00"
+    "passed": 0,
+    "failed": 5,
+    "skipped": 4,
+    "successRate": "0.00"
   },
   "tests": [
     {
       "name": "Environment Config",
-      "result": "passed",
-      "message": "Mock mode active - environment config not required",
-      "timestamp": "2025-10-16T05:53:43.865Z"
+      "result": "failed",
+      "message": "Missing variables: JPMORGAN_BASE_URL",
+      "timestamp": "2025-11-17T19:09:03.154Z"
     },
     {
       "name": "Health Endpoint",
-      "result": "passed",
-      "message": "Health check successful",
-      "timestamp": "2025-10-16T05:53:44.305Z"
+      "result": "failed",
+      "message": "Health check failed: Error",
+      "timestamp": "2025-11-17T19:09:03.256Z"
     },
     {
       "name": "Create Payment",
-      "result": "passed",
-      "message": "Payment created: mock-payment-1760594024397-jb12mafqw (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.402Z"
+      "result": "failed",
+      "message": "Payment creation failed: Error",
+      "timestamp": "2025-11-17T19:09:03.280Z"
     },
     {
       "name": "Payment Status",
-      "result": "passed",
-      "message": "Status: AUTHORIZED (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.415Z"
+      "result": "skipped",
+      "message": "Payment creation failed",
+      "timestamp": "2025-11-17T19:09:03.281Z"
     },
     {
       "name": "Refund Payment",
-      "result": "passed",
-      "message": "Refund created: mock-txn-1760594024433-r9ewvo445 (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.441Z"
+      "result": "skipped",
+      "message": "Payment creation failed",
+      "timestamp": "2025-11-17T19:09:03.282Z"
     },
     {
       "name": "Capture Payment",
-      "result": "passed",
-      "message": "Payment captured: mock-txn-1760594024457-32jx2kzbw (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.463Z"
+      "result": "skipped",
+      "message": "Payment creation failed",
+      "timestamp": "2025-11-17T19:09:03.283Z"
     },
     {
       "name": "Void Payment",
-      "result": "passed",
-      "message": "Payment voided: mock-txn-1760594024477-gbgdf9z9g (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.483Z"
+      "result": "skipped",
+      "message": "Payment creation failed",
+      "timestamp": "2025-11-17T19:09:03.283Z"
     },
     {
       "name": "Get Transactions",
-      "result": "passed",
-      "message": "Retrieved 10 transactions (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.548Z"
+      "result": "failed",
+      "message": "Transactions fetch failed: Error",
+      "timestamp": "2025-11-17T19:09:03.300Z"
     },
     {
       "name": "Webhook Endpoint",
-      "result": "passed",
-      "message": "Webhook processed successfully (Mock: ${isMockMode})",
-      "timestamp": "2025-10-16T05:53:44.567Z"
+      "result": "failed",
+      "message": "Webhook test failed: Error",
+      "timestamp": "2025-11-17T19:09:03.310Z"
     }
   ],
-  "timestamp": "2025-10-16T05:53:44.570Z"
+  "timestamp": "2025-11-17T19:09:03.313Z"
 }

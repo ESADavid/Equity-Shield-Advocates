@@ -4,8 +4,8 @@
  * Provides comprehensive asset tracking and performance analysis
  */
 
-import { randomBytes } from 'node:crypto';
-import DebtAcquisitionService from './debtAcquisitionService.js';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,13 +42,13 @@ class AssetManagementService {
           { symbol: 'GOOGL', shares: 15000, price: 200.00, value: 3000000 }
         ],
         performance: {
-          daily: 0.012,
-          weekly: 0.034,
-          monthly: 0.045,
-          quarterly: 0.089,
-          yearly: 0.128,
-          volatility: 0.18,
-          sharpeRatio: 0.71
+          daily: .012,
+          weekly: .034,
+          monthly: .045,
+          quarterly: .089,
+          yearly: .128,
+          volatility: .18,
+          sharpeRatio: .71
         }
       },
       {
@@ -58,20 +58,20 @@ class AssetManagementService {
         region: 'International',
         value: 15000000,
         currency: 'USD',
-        allocation: 0.20,
+        allocation: .20,
         benchmark: 'MSCI World ex-US',
         holdings: [
           { symbol: 'TSM', shares: 20000, price: 80.00, value: 1600000 },
           { symbol: 'ASML.AS', shares: 5000, price: 400.00, value: 2000000 }
         ],
         performance: {
-          daily: 0.008,
-          weekly: 0.022,
-          monthly: 0.031,
-          quarterly: 0.065,
-          yearly: 0.095,
-          volatility: 0.22,
-          sharpeRatio: 0.43
+          daily: .008,
+          weekly: .022,
+          monthly: .031,
+          quarterly: .065,
+          yearly: .095,
+          volatility: .22,
+          sharpeRatio: .43
         }
       },
       {
@@ -81,21 +81,21 @@ class AssetManagementService {
         region: 'Global',
         value: 20000000,
         currency: 'USD',
-        allocation: 0.25,
+        allocation: .25,
         benchmark: 'Bloomberg Barclays Global Aggregate',
         holdings: [
-          { name: 'US Treasury 10Y', value: 10000000, yield: 0.045, duration: 8.5 },
-          { name: 'US Treasury 30Y', value: 5000000, yield: 0.048, duration: 18.2 },
-          { name: 'Corporate Bonds', value: 5000000, yield: 0.038, duration: 6.8 }
+          { name: 'US Treasury 10Y', value: 10000000, yield: .045, duration: 8.5 },
+          { name: 'US Treasury 30Y', value: 5000000, yield: .048, duration: 18.2 },
+          { name: 'Corporate Bonds', value: 5000000, yield: .038, duration: 6.8 }
         ],
         performance: {
-          daily: 0.003,
-          weekly: 0.008,
-          monthly: 0.012,
-          quarterly: 0.028,
-          yearly: 0.042,
-          volatility: 0.08,
-          sharpeRatio: 0.53
+          daily: .003,
+          weekly: .008,
+          monthly: .012,
+          quarterly: .028,
+          yearly: .042,
+          volatility: .08,
+          sharpeRatio: .53
         }
       },
       {
@@ -105,7 +105,7 @@ class AssetManagementService {
         region: 'Global',
         value: 10000000,
         currency: 'USD',
-        allocation: 0.12,
+        allocation: .12,
         benchmark: 'HFRX Global Hedge Fund Index',
         holdings: [
           { name: 'Private Equity Fund A', value: 4000000, vintage: 2020 },
@@ -113,13 +113,13 @@ class AssetManagementService {
           { name: 'Infrastructure Fund', value: 3000000, vintage: 2019 }
         ],
         performance: {
-          daily: 0.005,
-          weekly: 0.015,
-          monthly: 0.025,
-          quarterly: 0.045,
-          yearly: 0.089,
-          volatility: 0.15,
-          sharpeRatio: 0.59
+          daily: .005,
+          weekly: .015,
+          monthly: .025,
+          quarterly: .045,
+          yearly: .089,
+          volatility: .15,
+          sharpeRatio: .59
         }
       },
       {
@@ -129,19 +129,19 @@ class AssetManagementService {
         region: 'US',
         value: 5000000,
         currency: 'USD',
-        allocation: 0.08,
+        allocation: .08,
         benchmark: '3-Month T-Bill',
         holdings: [
-          { name: 'Money Market Fund', value: 3000000, yield: 0.052 },
-          { name: 'Commercial Paper', value: 2000000, yield: 0.048 }
+          { name: 'Money Market Fund', value: 3000000, yield: .052 },
+          { name: 'Commercial Paper', value: 2000000, yield: .048 }
         ],
         performance: {
-          daily: 0.001,
-          weekly: 0.003,
-          monthly: 0.005,
-          quarterly: 0.012,
-          yearly: 0.025,
-          volatility: 0.02,
+          daily: .001,
+          weekly: .003,
+          monthly: .005,
+          quarterly: .012,
+          yearly: .025,
+          volatility: .02,
           sharpeRatio: 1.25
         }
       }
@@ -149,7 +149,7 @@ class AssetManagementService {
 
     const portfolioToInitialize = portfolioData.length > 0 ? portfolioData : defaultPortfolio;
 
-    portfolioToInitialize.forEach(asset => {
+    for (const asset of portfolioToInitialize) {
       this.portfolio.set(asset.id, {
         ...asset,
         lastUpdated: new Date().toISOString(),
@@ -158,7 +158,7 @@ class AssetManagementService {
 
       // Initialize performance history
       this.performanceHistory.set(asset.id, []);
-    });
+    }
 
     console.log(`Initialized portfolio with ${portfolioToInitialize.length} asset classes`);
   }
@@ -230,7 +230,7 @@ class AssetManagementService {
 
     // Keep only last 1000 entries
     if (history.length > 1000) {
-      this.performanceHistory.set(assetId, history.slice(history.length - 1000));
+      this.performanceHistory.set(assetId, history.slice(-1000));
     } else {
       this.performanceHistory.set(assetId, history);
     }
@@ -480,10 +480,10 @@ class AssetManagementService {
    */
   getTargetAllocation(assetType) {
     const targets = {
-      'equity': 0.55,
-      'fixed_income': 0.30,
+      'equity': .55,
+      'fixed_income': .30,
       'alternative': 0.10,
-      'cash': 0.05
+      'cash': .05
     };
 
     return targets[assetType] || 0.10;

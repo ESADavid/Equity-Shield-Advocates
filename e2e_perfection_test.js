@@ -4,7 +4,7 @@ import http from 'http';
 import https from 'https';
 
 const BASE_URL = 'http://localhost:3000';
-let testResults = { passed: 0, failed: 0, total: 0 };
+const testResults = { passed: 0, failed: 0, total: 0 };
 
 function log(message, type = 'info') {
   const timestamp = new Date().toISOString();

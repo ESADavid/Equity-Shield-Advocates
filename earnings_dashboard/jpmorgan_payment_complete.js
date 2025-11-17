@@ -1,8 +1,34 @@
-2// Apply global security middleware
+import express from 'express';
+import crypto from 'node:crypto';
+import axios from 'axios';
+
+const router = express.Router();
+
+// Import middleware
+import { securityHeaders, createRateLimit, validateInput } from '../../config/security.js';
+import {
+  validatePayment,
+  validatePagination
+} from '../../middleware/validation.js';
+
+// Environment variables
+const JPMORGAN_CLIENT_ID = process.env.JPMORGAN_CLIENT_ID;
+const JPMORGAN_CLIENT_SECRET = process.env.JPMORGAN_CLIENT_SECRET;
+const JPMORGAN_BASE_URL = process.env.JPMORGAN_BASE_URL || 'https://api-mock.payments.jpmorgan.com';
+const JPMORGAN_ORGANIZATION_ID = process.env.JPMORGAN_ORGANIZATION_ID;
+const JPMORGAN_PROJECT_ID = process.env.JPMORGAN_PROJECT_ID || 'DK2MQSR1FS7V';
+const JPMORGAN_MERCHANT_ID = process.env.JPMORGAN_MERCHANT_ID;
+const JPMORGAN_TERMINAL_ID = process.env.JPMORGAN_TERMINAL_ID;
+
+// Rate limiters
+const createPaymentLimiter = createRateLimit(15 * 60 * 1000, 10); // 10 requests per 15 minutes
+const generalLimiter = createRateLimit(15 * 60 * 1000, 100);
+const webhookLimiter = createRateLimit(60 * 1000, 10); // 10 requests per minute
+
+// Apply global security middleware
 router.use(securityHeaders);
-router.use(requestSizeLimiter());
 router.use(express.json());
-router.use(sanitizeInput);
+router.use(validateInput);
 
 // Generate JPMorgan authentication headers
 function generateAuthHeaders() {
@@ -79,7 +105,7 @@ router.post('/wallet-encrypt', async (req, res) => {
     const headers = generateAuthHeaders();
 
     const encryptPayload = {
-      cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces
+      cardNumber: cardNumber.replaceAll(/\s/g, ''), // Remove spaces
       expiryDate: expiryDate,
       cvv: cvv,
       cardholderName: cardholderName,
@@ -164,7 +190,7 @@ router.post('/wallet-tokenize', async (req, res) => {
     const headers = generateAuthHeaders();
 
     const tokenizePayload = {
-      cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces
+      cardNumber: cardNumber.replaceAll(/\s/g, ''), // Remove spaces
       expiryDate: expiryDate,
       cvv: cvv,
       cardholderName: cardholderName,
@@ -234,7 +260,7 @@ router.post('/wallet-detokenize', async (req, res) => {
 });
 
 // Create payment transaction
-router.post('/create-payment', createPaymentLimiter, validatePaymentCreation, async (req, res) => {
+router.post('/create-payment', createPaymentLimiter, validatePayment, async (req, res) => {
   try {
     const { amount, currency = 'USD', orderId, description, customer } = req.body;
 
@@ -291,7 +317,7 @@ router.post('/create-payment', createPaymentLimiter, validatePaymentCreation, as
 });
 
 // Get payment status
-router.get('/payment-status/:paymentId', validatePaymentId, async (req, res) => {
+router.get('/payment-status/:paymentId', async (req, res) => {
   try {
     const { paymentId } = req.params;
 
@@ -318,7 +344,7 @@ router.get('/payment-status/:paymentId', validatePaymentId, async (req, res) => 
 });
 
 // Refund payment
-router.post('/refund', validateRefund, async (req, res) => {
+router.post('/refund', async (req, res) => {
   try {
     const { paymentId, amount, reason } = req.body;
 
@@ -363,7 +389,7 @@ router.post('/refund', validateRefund, async (req, res) => {
 });
 
 // Capture authorized payment
-router.post('/capture', validatePaymentId, async (req, res) => {
+router.post('/capture', async (req, res) => {
   try {
     const { paymentId, amount } = req.body;
 
@@ -407,7 +433,7 @@ router.post('/capture', validatePaymentId, async (req, res) => {
 });
 
 // Void/Cancel payment
-router.post('/void', validatePaymentId, async (req, res) => {
+router.post('/void', async (req, res) => {
   try {
     const { paymentId, reason } = req.body;
 
@@ -448,7 +474,7 @@ router.post('/void', validatePaymentId, async (req, res) => {
 });
 
 // Get transaction history
-router.get('/transactions', generalLimiter, validateTransactionsQuery, async (req, res) => {
+router.get('/transactions', generalLimiter, async (req, res) => {
   try {
     const { startDate, endDate, status, limit = 50 } = req.query;
 
@@ -554,4 +580,4 @@ router.post('/webhook', webhookLimiter, express.json(), verifyWebhookSignature, 
   }
 });
 
-module.exports = router;
+export default router;

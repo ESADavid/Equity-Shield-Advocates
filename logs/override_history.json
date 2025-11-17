@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "activeOverrides": {
     "OVERRIDE_1760597603077_857BEEE5": {
       "id": "OVERRIDE_1760597603077_857BEEE5",
@@ -27,4 +28,8 @@
     }
   },
   "lastUpdated": "2025-10-16T18:04:01.217Z"
+=======
+  "activeOverrides": {},
+  "lastUpdated": "2025-11-03T21:00:09.101Z"
+>>>>>>> 6fc293f7133ff0c5134064004b73c444e6d2e488
 }

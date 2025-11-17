@@ -1,7 +1,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { fetchEmployeeIds } from './fetch_employee_ids';
+import { fetchEmployeeIds } from './fetch_employee_ids.js';
 
 // Type definitions for payroll integrations
 interface PayrollResponse {

@@ -1,5 +1,5 @@
-import fetchAndSyncPayroll from './fetch_and_sync_payroll';
-import updateRevenueData from './update_revenue_data';
+import fetchAndSyncPayroll from './fetch_and_sync_payroll.js';
+import updateRevenueData from './update_revenue_data.js';
 
 import cron from 'node-cron';
 

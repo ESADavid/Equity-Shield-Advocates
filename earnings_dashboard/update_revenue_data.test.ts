@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import updateRevenueData from './update_revenue_data';
+import updateRevenueData from './update_revenue_data.js';
 
 const testDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/test_revenue.json');
 

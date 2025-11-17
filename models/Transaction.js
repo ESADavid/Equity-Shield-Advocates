@@ -150,7 +150,7 @@ transactionSchema.index({ tenantId: 1, transactionId: 1 }, { unique: true });
 
 // Virtual for total amount including fees
 transactionSchema.virtual('totalAmount').get(function() {
-  return parseFloat(this.amount.toString()) + parseFloat(this.fees.totalFees.toString());
+  return Number.parseFloat(this.amount.toString()) + Number.parseFloat(this.fees.totalFees.toString());
 });
 
 // Virtual for duration
@@ -265,7 +265,7 @@ transactionSchema.statics = {
   },
 
   // Get high-risk transactions within tenant
-  getHighRisk: function(riskThreshold = 70, tenantId) {
+  getHighRisk: function(tenantId, riskThreshold = 70) {
     return this.find({
       tenantId,
       'risk.score': { $gte: riskThreshold },
@@ -274,7 +274,7 @@ transactionSchema.statics = {
   },
 
   // Get blockchain-recorded transactions within tenant
-  getBlockchainRecorded: function(limit = 100, tenantId) {
+  getBlockchainRecorded: function(tenantId, limit = 100) {
     return this.find({ tenantId, 'blockchain.recorded': true })
       .sort({ 'blockchain.blockIndex': -1 })
       .limit(limit);

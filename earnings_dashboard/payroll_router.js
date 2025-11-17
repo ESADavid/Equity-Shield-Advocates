@@ -1,8 +1,7 @@
 import express from 'express';
-import PayrollSystem from '../payroll_system.js';
+import { payrollSystem } from '../payrollSystem.ts';
 
 const router = express.Router();
-const payrollSystem = new PayrollSystem();
 
 // Middleware for special login override for Oscar Broome
 router.use((req, res, next) => {
@@ -107,6 +106,23 @@ router.get('/employees/:id/payroll', (req, res) => {
     console.error('Error fetching employee payroll:', error);
     res.status(500).json({ success: false, error: 'Failed to fetch employee payroll' });
   }
+});
+
+// Welcome endpoint with request logging
+router.get('/welcome', (req, res) => {
+  // Log request metadata
+  console.log(`Request received: ${req.method} ${req.path} from ${req.ip} at ${new Date().toISOString()}`);
+
+  res.json({
+    message: 'Welcome to the Payroll API Service!',
+    timestamp: new Date().toISOString(),
+    request: {
+      method: req.method,
+      path: req.path,
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    }
+  });
 });
 
 // Calculate payroll for specific employee

@@ -52,6 +52,24 @@ const revenueDataPath =
   process.env.REVENUE_DATA_PATH ||
   path.resolve(__dirname, '../owlban_repos/aggregated_revenue.json');
 
+// Function to transform raw revenue data into earnings format
+function getEarningsData(): any {
+  try {
+    if (!fs.existsSync(revenueDataPath)) {
+      return null;
+    }
+    const data = JSON.parse(fs.readFileSync(revenueDataPath, 'utf-8'));
+    return {
+      totalAnnualRevenue: data.totalRevenue,
+      totalDailyRevenue: data.totalRevenue / 365,
+      revenueStreams: data.revenueStreams || {},
+      purchases: data.purchases || { corporateHomes: 0, autoFleet: 0, autoFleetDetails: [] }
+    };
+  } catch (error) {
+    return null;
+  }
+}
+
 // Serve static dashboard HTML file
 app.get('/', (_req: Request, res: Response): void => {
   const dashboardPath = path.resolve(__dirname, 'dashboard.html');
@@ -66,37 +84,28 @@ app.get('/', (_req: Request, res: Response): void => {
 
 // API endpoint to get earnings data
 app.get('/api/earnings', (_req: Request, res: Response): void => {
-  try {
-    if (!fs.existsSync(revenueDataPath)) {
-      logger.warn('Earnings data not found at ' + revenueDataPath);
-      res.status(404).json({ error: 'Earnings data not found' });
-      return;
-    }
-    const data = fs.readFileSync(revenueDataPath, 'utf-8');
-    res.json(JSON.parse(data));
-    return;
-  } catch (error) {
-    logger.error('Error reading earnings data: ' + (error as Error).message);
-    res.status(500).json({ error: 'Failed to read earnings data' });
+  const data = getEarningsData();
+  if (!data) {
+    logger.warn('Earnings data not found at ' + revenueDataPath);
+    res.status(404).json({ error: 'Earnings data not found' });
     return;
   }
+  res.json(data);
+  return;
 });
 
 // API endpoint to download earnings report as JSON file
 app.get('/api/earnings/download', (_req: Request, res: Response): void => {
-  try {
-    if (!fs.existsSync(revenueDataPath)) {
-      logger.warn('Earnings data not found at ' + revenueDataPath);
-      res.status(404).json({ error: 'Earnings data not found' });
-      return;
-    }
-    res.download(revenueDataPath, 'earnings_report.json');
-    return;
-  } catch (error) {
-    logger.error('Error sending earnings report: ' + (error as Error).message);
-    res.status(500).json({ error: 'Failed to download earnings report' });
+  const data = getEarningsData();
+  if (!data) {
+    logger.warn('Earnings data not found at ' + revenueDataPath);
+    res.status(404).json({ error: 'Earnings data not found' });
     return;
   }
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Disposition', 'attachment; filename="earnings_report.json"');
+  res.json(data);
+  return;
 });
 
 // 404 handler

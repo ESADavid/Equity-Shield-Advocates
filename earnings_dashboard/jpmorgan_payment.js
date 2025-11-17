@@ -1,9 +1,9 @@
 import express from 'express';
 import axios from 'axios';
-import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -455,7 +455,7 @@ router.get('/transactions', async (req, res) => {
       console.log('Mock transactions requested');
 
       const mockTransactions = [];
-      const count = Math.min(parseInt(limit) || 10, 50);
+      const count = Math.min(Number.parseInt(limit) || 10, 50);
 
       for (let i = 0; i < count; i++) {
         mockTransactions.push({
@@ -662,6 +662,56 @@ function generateMockTransactionId() {
   return `mock-txn-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
+// Generate dynamic mock balances for treasury and banking
+function generateMockTreasuryBalances() {
+  const baseBalances = {
+    checking: { min: 4000000, max: 6000000, variance: 200000 },
+    savings: { min: 2000000, max: 3000000, variance: 100000 }
+  };
+
+  const checkingBalance = baseBalances.checking.min + Math.random() * (baseBalances.checking.max - baseBalances.checking.min);
+  const savingsBalance = baseBalances.savings.min + Math.random() * (baseBalances.savings.max - baseBalances.savings.min);
+
+  return {
+    checking: {
+      balance: Math.round(checkingBalance * 100) / 100,
+      availableBalance: Math.round((checkingBalance - Math.random() * baseBalances.checking.variance) * 100) / 100
+    },
+    savings: {
+      balance: Math.round(savingsBalance * 100) / 100,
+      availableBalance: Math.round((savingsBalance - Math.random() * baseBalances.savings.variance) * 100) / 100
+    },
+    total: Math.round((checkingBalance + savingsBalance) * 100) / 100
+  };
+}
+
+function generateMockBankingBalances() {
+  const baseBalances = {
+    checking: { min: 2000000, max: 3000000, variance: 100000 },
+    investment: { min: 12000000, max: 18000000, variance: 200000 },
+    savings: { min: 40000000, max: 60000000, variance: 500000 }
+  };
+
+  const checkingBalance = baseBalances.checking.min + Math.random() * (baseBalances.checking.max - baseBalances.checking.min);
+  const investmentBalance = baseBalances.investment.min + Math.random() * (baseBalances.investment.max - baseBalances.investment.min);
+  const savingsBalance = baseBalances.savings.min + Math.random() * (baseBalances.savings.max - baseBalances.savings.min);
+
+  return {
+    checking: {
+      balance: Math.round(checkingBalance * 100) / 100,
+      availableBalance: Math.round((checkingBalance - Math.random() * baseBalances.checking.variance) * 100) / 100
+    },
+    investment: {
+      balance: Math.round(investmentBalance * 100) / 100,
+      availableBalance: Math.round((investmentBalance - Math.random() * baseBalances.investment.variance) * 100) / 100
+    },
+    savings: {
+      balance: Math.round(savingsBalance * 100) / 100,
+      availableBalance: Math.round((savingsBalance - Math.random() * baseBalances.savings.variance) * 100) / 100
+    }
+  };
+}
+
 import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration.js';
 
 // Example function to sync payments with QuickBooks payroll
@@ -733,27 +783,29 @@ router.get('/treasury/cash-positions', async (req, res) => {
     if (isMockMode()) {
       console.log('Mock treasury cash positions requested');
 
+      const mockBalances = generateMockTreasuryBalances();
+
       return res.json({
         success: true,
         cashPositions: [
           {
             accountId: 'ACC001',
             currency: currency,
-            balance: 5000000.00,
-            availableBalance: 4800000.00,
+            balance: mockBalances.checking.balance,
+            availableBalance: mockBalances.checking.availableBalance,
             accountType: accountType || 'checking',
             lastUpdated: new Date().toISOString()
           },
           {
             accountId: 'ACC002',
             currency: currency,
-            balance: 2500000.00,
-            availableBalance: 2400000.00,
+            balance: mockBalances.savings.balance,
+            availableBalance: mockBalances.savings.availableBalance,
             accountType: 'savings',
             lastUpdated: new Date().toISOString()
           }
         ],
-        totalBalance: 7500000.00,
+        totalBalance: mockBalances.total,
         timestamp: new Date().toISOString()
       });
     }
@@ -795,13 +847,14 @@ router.get('/treasury/fx-rates', async (req, res) => {
       console.log('Mock treasury FX rates requested');
 
       const mockRates = {};
-      const currencies = ['EUR', 'GBP', 'JPY', 'CAD', 'AUD'];
-      currencies.forEach(currency => {
+      const allCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'];
+      const currencies = allCurrencies.filter(currency => currency !== baseCurrency);
+      for (const currency of currencies) {
         mockRates[`${baseCurrency}/${currency}`] = {
           rate: (0.8 + Math.random() * 0.4).toFixed(4),
           timestamp: new Date().toISOString()
         };
-      });
+      }
 
       return res.json({
         success: true,
@@ -849,7 +902,7 @@ router.get('/treasury/liquidity-forecast', async (req, res) => {
       console.log('Mock treasury liquidity forecast requested');
 
       const forecast = [];
-      const daysCount = Math.min(parseInt(days) || 30, 90);
+      const daysCount = Math.min(Number.parseInt(days) || 30, 90);
 
       for (let i = 0; i < daysCount; i++) {
         forecast.push({
@@ -1602,8 +1655,8 @@ router.get('/control/banking/accounts', async (req, res) => {
         number: '****1234',
         type: 'Checking',
         currency: 'USD',
-        balance: 2500000.00,
-        availableBalance: 2400000.00,
+        balance: 2500000,
+        availableBalance: 2400000,
         status: 'active',
         lastTransaction: new Date(Date.now() - 86400000).toISOString(),
         settings: {
@@ -1618,8 +1671,8 @@ router.get('/control/banking/accounts', async (req, res) => {
         number: '****5678',
         type: 'Investment',
         currency: 'USD',
-        balance: 15000000.00,
-        availableBalance: 14800000.00,
+        balance: 15000000,
+        availableBalance: 14800000,
         status: 'active',
         lastTransaction: new Date(Date.now() - 43200000).toISOString(),
         settings: {
@@ -1634,8 +1687,8 @@ router.get('/control/banking/accounts', async (req, res) => {
         number: '****9012',
         type: 'Savings',
         currency: 'USD',
-        balance: 50000000.00,
-        availableBalance: 49500000.00,
+        balance: 50000000,
+        availableBalance: 49500000,
         status: 'active',
         lastTransaction: new Date(Date.now() - 21600000).toISOString(),
         settings: {
@@ -1687,4 +1740,4 @@ router.post('/control/banking-action', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

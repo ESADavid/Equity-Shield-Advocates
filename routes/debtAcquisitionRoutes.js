@@ -12,7 +12,7 @@ import { authenticate, authorize } from '../middleware/auth.js';
 router.get('/', authenticate, authorize(['admin', 'portfolio_manager', 'analyst']), async (req, res) => {
   try {
     const { page = 1, limit = 50, status, entityType, riskRating, country } = req.query;
-    const skip = (page - 1) * limit;
+    const skip = (Number.parseInt(page) - 1) * Number.parseInt(limit);
 
     // Build query
     const query = { tenantId: req.tenantId };
@@ -34,8 +34,8 @@ router.get('/', authenticate, authorize(['admin', 'portfolio_manager', 'analyst'
       success: true,
       data: debts.map(debt => debt.toPublicJSON()),
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page: Number.parseInt(page),
+        limit: Number.parseInt(limit),
         total,
         pages: Math.ceil(total / limit)
       }

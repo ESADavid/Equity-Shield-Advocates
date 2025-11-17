@@ -3,8 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(require("fs"));
+const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
+const revenueDataPath = path_1.default.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 function validateNumber(value, fieldName) {
     if (typeof value !== 'number' || isNaN(value) || value < 0) {
         console.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
@@ -17,21 +18,7 @@ function validateNumber(value, fieldName) {
  * Set to false in production to avoid adding hardcoded sample data.
  */
 const ADD_SAMPLE_DATA = false;
-function updateRevenueData(incremental = false, filePath) {
-    const revenueDataPath = filePath || path_1.default.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
-    if (!fs_1.default.existsSync(revenueDataPath)) {
-        console.error('Revenue data file not found at', revenueDataPath);
-        return false; // Changed from process.exit(1) to return false to indicate failure
-    }
-    let data;
-    try {
-        data = JSON.parse(fs_1.default.readFileSync(revenueDataPath, 'utf-8'));
-    }
-    catch (error) {
-        console.error('Failed to parse revenue data JSON:', error);
-        return false;
-    }
-    // Ensure purchases object exists
+function ensurePurchasesStructure(data) {
     if (!data.purchases) {
         data.purchases = {
             corporateHomes: 0,
@@ -41,25 +28,20 @@ function updateRevenueData(incremental = false, filePath) {
         };
     }
     else {
-        // Ensure autoFleetDetails array exists
         if (!Array.isArray(data.purchases.autoFleetDetails)) {
             data.purchases.autoFleetDetails = [];
         }
-        // Ensure corporateHomesDetails array exists
         if (!Array.isArray(data.purchases.corporateHomesDetails)) {
             data.purchases.corporateHomesDetails = [];
         }
     }
-    // Validate and sanitize purchase costs
+}
+function validatePurchases(data) {
     data.purchases.autoFleet = validateNumber(data.purchases.autoFleet, 'autoFleet');
     data.purchases.corporateHomes = validateNumber(data.purchases.corporateHomes, 'corporateHomes');
-    // Validate totalRevenue before decrementing
-    if (typeof data.totalRevenue !== 'number' || isNaN(data.totalRevenue)) {
-        console.warn('Invalid or missing totalRevenue, defaulting to 0.');
-        data.totalRevenue = 0;
-    }
+}
+function addSampleData(data, incremental) {
     if (!incremental && ADD_SAMPLE_DATA) {
-        // Add a sample auto fleet purchase if none exist
         if (data.purchases.autoFleetDetails.length === 0) {
             data.purchases.autoFleetDetails.push({
                 model: 'Sample Model',
@@ -71,7 +53,6 @@ function updateRevenueData(incremental = false, filePath) {
             data.purchases.autoFleet += 50000;
             data.totalRevenue -= 50000;
         }
-        // Add a sample corporate home purchase if none exist
         if (data.purchases.corporateHomesDetails.length === 0) {
             data.purchases.corporateHomesDetails.push({
                 address: '123 Corporate Blvd',
@@ -84,14 +65,16 @@ function updateRevenueData(incremental = false, filePath) {
             data.totalRevenue -= 250000;
         }
     }
-    // Ensure revenueStreamsDetails object exists
+}
+function ensureRevenueStreamsDetails(data) {
     if (!data.revenueStreamsDetails) {
         data.revenueStreamsDetails = {};
     }
-    // Add sample transaction details for each revenue stream if missing
     if (!data.revenueStreams) {
         data.revenueStreams = {};
     }
+}
+function addTransactionDetails(data) {
     for (const streamName of Object.keys(data.revenueStreams)) {
         if (!Array.isArray(data.revenueStreamsDetails[streamName])) {
             data.revenueStreamsDetails[streamName] = [];
@@ -105,7 +88,8 @@ function updateRevenueData(incremental = false, filePath) {
             });
         }
     }
-    // Integrate payroll data if present
+}
+function integratePayroll(data) {
     if (Array.isArray(data.payroll)) {
         let payrollTotal = 0;
         for (const payrollEntry of data.payroll) {
@@ -119,7 +103,8 @@ function updateRevenueData(incremental = false, filePath) {
         data.payrollTotal = payrollTotal;
         console.log(`Integrated payroll data total amount: ${payrollTotal}`);
     }
-    // Add audit trail entry
+}
+function addAuditTrail(data, incremental) {
     if (!Array.isArray(data.auditTrail)) {
         data.auditTrail = [];
     }
@@ -136,14 +121,31 @@ function updateRevenueData(incremental = false, filePath) {
             incrementalUpdate: incremental
         }
     });
+}
+async function updateRevenueData(incremental = false, filePath) {
+    const dataPath = filePath || revenueDataPath;
     try {
-        fs_1.default.writeFileSync(revenueDataPath, JSON.stringify(data, null, 2), 'utf-8');
+        await promises_1.default.access(dataPath);
+        const fileContent = await promises_1.default.readFile(dataPath, 'utf-8');
+        const data = JSON.parse(fileContent);
+        ensurePurchasesStructure(data);
+        validatePurchases(data);
+        if (typeof data.totalRevenue !== 'number' || isNaN(data.totalRevenue)) {
+            console.warn('Invalid or missing totalRevenue, defaulting to 0.');
+            data.totalRevenue = 0;
+        }
+        addSampleData(data, incremental);
+        ensureRevenueStreamsDetails(data);
+        addTransactionDetails(data);
+        integratePayroll(data);
+        addAuditTrail(data, incremental);
+        await promises_1.default.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
         console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
         return true;
-    }
-    catch (error) {
-        console.error('Error writing updated revenue data file:', error);
-        throw error;
+    } catch (error) {
+        console.error('Error accessing, parsing, or updating revenue data file:', error.message);
+        return false;
     }
 }
-module.exports = updateRevenueData;
+exports.default = updateRevenueData;
+//# sourceMappingURL=update_revenue_data.js.map

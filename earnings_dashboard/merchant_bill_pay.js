@@ -2,11 +2,8 @@ import express from 'express';
 import Stripe from 'stripe';
 import nodemailer from 'nodemailer';
 import fs from 'node:fs';
-import path from 'node:path';
+import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
@@ -186,6 +183,9 @@ async function sendSMSNotification(phoneNumber, message) {
     console.error('Error sending SMS notification:', error);
   }
 }
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const revenueDataPath = path.resolve(__dirname, '../earnings_report_updated.json');
 
@@ -446,7 +446,7 @@ router.post('/merchant-webhook', express.raw({ type: 'application/json' }), asyn
   await handleMerchantWebhook(req, res);
 });
 
-export default {
+export {
   router,
   createMerchantPaymentIntent,
   handleMerchantWebhook,

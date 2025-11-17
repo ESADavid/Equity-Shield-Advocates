@@ -1,4 +1,4 @@
-import QuickBooksPayrollIntegration from './quickbooks_payroll_integration';
+import QuickBooksPayrollIntegration from './quickbooks_payroll_integration.js';
 
 const dummyConfig = {
   baseUrl: 'https://quickbooks.api.intuit.com',
@@ -10,7 +10,7 @@ const dummyConfig = {
 };
 
 describe('QuickBooksPayrollIntegration', () => {
-  let integration;
+  let integration: any;
 
   beforeEach(() => {
     integration = new QuickBooksPayrollIntegration(
@@ -35,7 +35,10 @@ describe('QuickBooksPayrollIntegration', () => {
       })
     );
     jest.spyOn(axios, 'get').mockImplementationOnce(() =>
-      Promise.reject({ response: { status: 401 } })
+      Promise.reject(new Error('401 Unauthorized'))
+    );
+    jest.spyOn(axios, 'get').mockImplementationOnce(() =>
+      Promise.reject(new Error('401 Unauthorized'))
     );
     jest.spyOn(axios, 'get').mockImplementationOnce(() =>
       Promise.resolve({
