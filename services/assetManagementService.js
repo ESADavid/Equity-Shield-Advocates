@@ -5,6 +5,7 @@
  */
 
 import { randomBytes } from 'node:crypto';
+import DebtAcquisitionService from './debtAcquisitionService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
