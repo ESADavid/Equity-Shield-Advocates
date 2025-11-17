@@ -40,7 +40,7 @@ module.exports = {
     listen_timeout: 3000,
     kill_timeout: 5000,
     // Environment variables for performance
-    env_production: {
+    env_production_extended: {
       ...process.env,
       NODE_ENV: 'production',
       PORT: 3000,
