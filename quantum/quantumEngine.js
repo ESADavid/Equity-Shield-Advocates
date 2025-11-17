@@ -26,7 +26,7 @@ class QuantumEngine extends EventEmitter {
       quantumHash,
       timestamp,
       entangled: false,
-      encryptionKey: this.securityLayer.encryptionKey
+      encryptionKey: this.securityLayer.getEncryptionKey()
     });
     this.entangleState(key);
     // Backup for error correction
