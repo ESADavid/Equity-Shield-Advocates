@@ -1,5 +1,5 @@
 {
-  "totalRevenue": 1232635181,
+  "totalRevenue": 1232630679,
   "revenueStreams": {
     "Sample Repo": {
       "amount": 617090945,
@@ -28,8 +28,8 @@
     }
   },
   "purchases": {
-    "corporateHomes": 365107,
-    "autoFleet": 1567602,
+    "corporateHomes": 366108,
+    "autoFleet": 1571103,
     "autoFleetDetails": [
       {
         "model": "2025 ROLLS-ROYCE BLACK BADGE SPECTRA",
@@ -38,7 +38,7 @@
         "cost": 799996,
         "purchaseDate": "2024-06-10T00:00:00.000Z",
         "deliveryStatus": "delivered",
-        "deliveryDate": "2025-11-16T00:03:07.066Z",
+        "deliveryDate": "2025-11-18T21:11:08.503Z",
         "deliveryAddress": "7438 STILLBROOKBEND CT HUNTERSVILLE NC 28078"
       },
       {
@@ -7509,6 +7509,60 @@
           "dealership": "Test Dealership",
           "cost": 1,
           "purchaseDate": "2025-11-16T00:03:07.035Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-11-18T21:11:08.408Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763500268408",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-11-18T21:11:08.408Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-11-18T21:11:08.658Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763500268658",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-11-18T21:11:08.658Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-11-18T21:11:08.742Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763500268742",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-11-18T21:11:08.742Z"
         }
       }
     ],
