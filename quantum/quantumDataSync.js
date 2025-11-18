@@ -4,9 +4,9 @@
  * Provides real-time data sync between Owlban systems and JPMorgan
  */
 
-import EventEmitter from 'node:events';
-import crypto from 'node:crypto';
-import { performance } from 'node:perf_hooks';
+const EventEmitter = require('node:events');
+const crypto = require('node:crypto');
+const { performance } = require('node:perf_hooks');
 
 class QuantumDataSync extends EventEmitter {
   constructor() {

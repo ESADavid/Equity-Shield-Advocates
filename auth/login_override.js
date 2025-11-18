@@ -271,30 +271,30 @@ class LoginOverrideManager {
   validateOverrideSession(overrideId, userId) {
     const session = activeOverrides.get(overrideId);
 
-    if (!session) {
+    if (session) {
+      if (session.status !== 'active') {
+        return { valid: false, reason: 'Override session not active' };
+      }
+
+      if (new Date() > new Date(session.expiresAt)) {
+        session.status = 'expired';
+        activeOverrides.set(overrideId, session);
+        return { valid: false, reason: 'Override session expired' };
+      }
+
+      if (session.targetUserId && session.targetUserId !== userId) {
+        return { valid: false, reason: 'Override session not for this user' };
+      }
+
+      return {
+        valid: true,
+        session: session,
+        type: session.type,
+        expiresAt: session.expiresAt
+      };
+    } else {
       return { valid: false, reason: 'Override session not found' };
     }
-
-    if (session.status !== 'active') {
-      return { valid: false, reason: 'Override session not active' };
-    }
-
-    if (new Date() > new Date(session.expiresAt)) {
-      session.status = 'expired';
-      activeOverrides.set(overrideId, session);
-      return { valid: false, reason: 'Override session expired' };
-    }
-
-    if (session.targetUserId && session.targetUserId !== userId) {
-      return { valid: false, reason: 'Override session not for this user' };
-    }
-
-    return {
-      valid: true,
-      session: session,
-      type: session.type,
-      expiresAt: session.expiresAt
-    };
   }
 
   // Revoke override session
@@ -987,17 +987,17 @@ class LoginOverrideManager {
 
   // Enhanced password validation with configurable requirements
   validatePasswordStrength(password) {
-    if (!password || password.length < OVERRIDE_CONFIG.PASSWORD_MIN_LENGTH) {
-      return false;
+    if (password && password.length >= OVERRIDE_CONFIG.PASSWORD_MIN_LENGTH) {
+      if (OVERRIDE_CONFIG.PASSWORD_REQUIRE_COMPLEXITY) {
+        // At least 1 uppercase, 1 lowercase, 1 number, 1 special character
+        const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+        return complexityRegex.test(password);
+      }
+
+      return true;
     }
 
-    if (OVERRIDE_CONFIG.PASSWORD_REQUIRE_COMPLEXITY) {
-      // At least 1 uppercase, 1 lowercase, 1 number, 1 special character
-      const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
-      return complexityRegex.test(password);
-    }
-
-    return true;
+    return false;
   }
 
   // Enhanced MFA enforcement

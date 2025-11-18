@@ -4,14 +4,14 @@
  * Handles all transaction types with quantum security and AI intelligence
  */
 
-import EventEmitter from 'node:events';
-import crypto from 'node:crypto';
-import { performance } from 'node:perf_hooks';
+const EventEmitter = require('node:events');
+const crypto = require('node:crypto');
+const { performance } = require('node:perf_hooks');
 
 // Import quantum systems
-import { QuantumEngine } from './quantumEngine.js';
-import { QuantumSecurity } from './quantumSecurity.js';
-import { QuantumOptimizer } from './quantumOptimizer.js';
+const { QuantumEngine } = require('./quantumEngine.js');
+const { QuantumSecurity } = require('./quantumSecurity.js');
+const { QuantumOptimizer } = require('./quantumOptimizer.js');
 
 class QuantumTransactionEngine extends EventEmitter {
   constructor() {
@@ -82,8 +82,9 @@ class QuantumTransactionEngine extends EventEmitter {
 
   // Core Transaction Processing
   async processTransaction(transactionData) {
+    let transactionId;
     try {
-      const transactionId = this.generateTransactionId();
+      transactionId = this.generateTransactionId();
 
       // Create quantum transaction
       const quantumTransaction = {
@@ -139,7 +140,7 @@ class QuantumTransactionEngine extends EventEmitter {
 
     } catch (error) {
       this.emit('transaction-failed', {
-        transactionId,
+        transactionId: transactionId || 'unknown',
         error: error.message,
         type: transactionData.type
       });

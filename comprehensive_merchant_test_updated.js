@@ -287,7 +287,7 @@ async function runComprehensiveMerchantTests() {
 }
 
 // Run tests if called directly
-await (async () => {
+(async () => {
   if (import.meta.url === `file://${process.argv[1]}`) {
     try {
       const report = await runComprehensiveMerchantTests();

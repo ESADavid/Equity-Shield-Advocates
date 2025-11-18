@@ -39,7 +39,7 @@ class QuantumPayrollSystem extends EventEmitter {
       socialSecurityRate: 0.062,
       medicareRate: 0.0145,
       overtimeMultiplier: 1.5,
-      minimumWage: 16.90,
+      minimumWage: 16.9,
       maxHoursPerWeek: 40
     };
 
@@ -255,9 +255,9 @@ class QuantumPayrollSystem extends EventEmitter {
 
   // Payroll Processing
   async processPayroll(payPeriod = null) {
+    const period = payPeriod || this.getCurrentPayPeriod();
     try {
       const payrollRunId = this.generatePayrollRunId();
-      const period = payPeriod || this.getCurrentPayPeriod();
 
       // Create payroll run
       const payrollRun = {
@@ -277,7 +277,7 @@ class QuantumPayrollSystem extends EventEmitter {
       };
 
       // Process each employee
-      for (const [employeeId, employee] of this.employees) {
+      for (const employee of this.employees.values()) {
         const employeePayroll = await this.calculateEmployeePayroll(employee, period);
         payrollRun.employees.push(employeePayroll);
 
@@ -426,6 +426,7 @@ class QuantumPayrollSystem extends EventEmitter {
     // Process payments for each employee via quantum transaction engine
     for (const employeePayroll of payrollRun.employees) {
       const employee = this.employees.get(employeePayroll.employeeId);
+      if (!employee) continue; // Skip if employee not found
 
       const transaction = {
         type: 'transfer',

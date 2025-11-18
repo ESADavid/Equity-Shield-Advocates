@@ -68,7 +68,7 @@ module.exports = {
       parser: 'espree',
       parserOptions: {
         sourceType: 'module', // Allow import/export in specific config and server files
-        ecmaVersion: 2020,
+        ecmaVersion: 2022,
       },
       rules: {
         '@typescript-eslint/no-unused-vars': 'off',

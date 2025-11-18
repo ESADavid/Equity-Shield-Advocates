@@ -26,14 +26,14 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 class EnhancedDatabase {
-  static isConnected = false;
-  static connection = null;
-  static retryCount = 0;
-  static maxRetries = Number.parseInt(process.env.DB_MAX_RETRIES) || 5;
-  static retryDelay = Number.parseInt(process.env.DB_RETRY_DELAY) || 1000; // Start with 1 second
-  static maxRetryDelay = 30000; // Max 30 seconds
-  static connectionTimeout = Number.parseInt(process.env.DB_CONNECTION_TIMEOUT) || 30000;
-  static performanceMetrics = {
+  maxRetries = Number.parseInt(process.env.DB_MAX_RETRIES) || 5;
+  retryDelay = Number.parseInt(process.env.DB_RETRY_DELAY) || 1000; // Start with 1 second
+  maxRetryDelay = 30000; // Max 30 seconds
+  connectionTimeout = Number.parseInt(process.env.DB_CONNECTION_TIMEOUT) || 30000;
+  isConnected = false;
+  connection = null;
+  retryCount = 0;
+  performanceMetrics = {
     queryCount: 0,
     slowQueries: 0,
     connectionPoolSize: 0,
@@ -44,8 +44,8 @@ class EnhancedDatabase {
     lastConnectionTime: null,
     uptime: 0
   };
-  static healthCheckInterval = null;
-  static reconnectOnFailure = process.env.DB_RECONNECT_ON_FAILURE !== 'false';
+  healthCheckInterval = null;
+  reconnectOnFailure = process.env.DB_RECONNECT_ON_FAILURE !== 'false';
 
   async connect() {
     try {
