@@ -1,14 +1,14 @@
 // Payroll Calculator Functions for Executive Dashboard
 
+/* global ExecutiveDashboard, Utils, dashboard */
+
 // Add payroll case to loadSectionData
 const originalLoadSectionData = ExecutiveDashboard.prototype.loadSectionData;
 ExecutiveDashboard.prototype.loadSectionData = function(section) {
-    switch (section) {
-        case 'payroll':
-            this.loadPayrollData();
-            break;
-        default:
-            originalLoadSectionData.call(this, section);
+    if (section === 'payroll') {
+        this.loadPayrollData();
+    } else {
+        originalLoadSectionData.call(this, section);
     }
 };
 
@@ -83,22 +83,66 @@ ExecutiveDashboard.prototype.loadPremiumOptions = function() {
 
     // Populate medical plans
     planSelect.innerHTML = '<option value="">Select Medical Plan</option>';
-    Object.keys(premiumRates).forEach(plan => {
+    for (const plan of Object.keys(premiumRates)) {
         const option = document.createElement('option');
         option.value = plan;
         option.textContent = plan;
         planSelect.appendChild(option);
-    });
+    }
 
     // Populate coverage levels (assuming all plans have same coverage levels)
     coverageSelect.innerHTML = '<option value="">Select Coverage Level</option>';
     const coverageLevels = Object.keys(premiumRates[Object.keys(premiumRates)[0]]);
-    coverageLevels.forEach(level => {
+    for (const level of coverageLevels) {
         const option = document.createElement('option');
         option.value = level;
         option.textContent = level;
         coverageSelect.appendChild(option);
-    });
+    }
+};
+
+ExecutiveDashboard.prototype.loadEmployeeList = async function() {
+    try {
+        const response = await fetch('/api/payroll/employees', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('executiveToken')
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to load employee data');
+        }
+        const employees = await response.json();
+        const select = document.getElementById('employeeSelect');
+        if (select) {
+            select.innerHTML = '<option value="">Choose employee...</option>';
+            employees.forEach(employee => {
+                const option = document.createElement('option');
+                option.value = employee.employeeId || employee.id || '';
+                option.textContent = employee.name || 'Unknown';
+                option.dataset.employee = JSON.stringify(employee);
+                select.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading employee list:', error);
+        if (dashboard && dashboard.showError) {
+            dashboard.showError('Failed to load employee data');
+        }
+    }
+};
+
+ExecutiveDashboard.prototype.loadRecentCalculations = function() {
+    const recentCalculations = JSON.parse(localStorage.getItem('recentPayrollCalculations') || '[]');
+    const container = document.getElementById('recentCalculations');
+    if (!container) return;
+
+    container.innerHTML = recentCalculations.map(calc => `
+        <div class="calculation-item">
+            <div class="employee-name">${calc.employeeName}</div>
+            <div class="calculation-date">${Utils.formatDate(calc.date)}</div>
+            <div class="net-pay">${Utils.formatCurrency(calc.netPay)}</div>
+        </div>
+    `).join('');
 };
 
 ExecutiveDashboard.prototype.calculatePaycheck = function() {
@@ -262,35 +306,7 @@ async function syncPayrollData() {
     }
 }
 
-async function loadEmployeeData() {
-    try {
-        const response = await fetch('/api/payroll/employees', {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('executiveToken')
-            }
-        });
-        if (!response.ok) {
-            throw new Error('Failed to load employee data');
-        }
-        const employees = await response.json();
-        const select = document.getElementById('employeeSelect');
-        if (select) {
-            select.innerHTML = '<option value="">Choose employee...</option>';
-            employees.forEach(employee => {
-                const option = document.createElement('option');
-                option.value = employee.employeeId || employee.id || '';
-                option.textContent = employee.name || 'Unknown';
-                option.dataset.employee = JSON.stringify(employee);
-                select.appendChild(option);
-            });
-        }
-    } catch (error) {
-        console.error('Error loading employee list:', error);
-        if (dashboard && dashboard.showError) {
-            dashboard.showError('Failed to load employee data');
-        }
-    }
-}
+
 
 function openQuickBooksCalculator() {
     window.open('https://quickbooks.intuit.com/oa/payroll/?cid=ppc_YB_p_US_.Payroll_US_BNG_NonBrand_NonTop_Search_Desktop_WP._payroll%20for%20business_txt&agid=58700008023089342&infinity=ict2~net~gaw~ar~~kw~payroll%20for%20business~mt~p~cmp~Payroll_US_BNG_NonBrand_NonTop_Search_Desktop_WP~ag~Business&gclid=17e0719bf69a119d858e192dcf40dfdd&gclsrc=3p.ds&msclkid=17e0719bf69a119d858e192dcf40dfdd', '_blank');

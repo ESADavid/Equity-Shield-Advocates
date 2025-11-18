@@ -1,6 +1,8 @@
 // Executive Dashboard JavaScript - Oscar Broome
 // Enhanced analytics and real-time data management
 
+/* global Chart */
+
 class ExecutiveDashboard {
     constructor() {
         this.currentSection = 'overview';

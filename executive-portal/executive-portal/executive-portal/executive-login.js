@@ -139,5 +139,5 @@ class ExecutiveLoginPortal {
 
 // Initialize the portal when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    globalThis.portal = new ExecutiveLoginPortal(); // Initialize the executive login portal
+  globalThis.portal = new ExecutiveLoginPortal(); // Initialize the executive login portal
 });

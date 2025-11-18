@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 
@@ -98,7 +98,7 @@ function integratePayroll(data: any): void {
   if (Array.isArray(data.payroll)) {
     let payrollTotal = 0;
     for (const payrollEntry of data.payroll) {
-      if (typeof payrollEntry.amount === 'number' && !isNaN(payrollEntry.amount) && payrollEntry.amount >= 0) {
+      if (typeof payrollEntry.amount === 'number' && !Number.isNaN(payrollEntry.amount) && payrollEntry.amount >= 0) {
         payrollTotal += payrollEntry.amount;
       } else {
         console.warn('Invalid payroll entry amount detected, skipping:', payrollEntry);
@@ -133,14 +133,13 @@ async function updateRevenueData(incremental: boolean = false, filePath?: string
 
   await fs.access(dataPath);
 
-  let data;
   const fileContent = await fs.readFile(dataPath, 'utf-8');
-  data = JSON.parse(fileContent);
+  const data = JSON.parse(fileContent);
 
   ensurePurchasesStructure(data);
   validatePurchases(data);
 
-  if (typeof data.totalRevenue !== 'number' || isNaN(data.totalRevenue)) {
+  if (typeof data.totalRevenue !== 'number' || Number.isNaN(data.totalRevenue)) {
     console.warn('Invalid or missing totalRevenue, defaulting to 0.');
     data.totalRevenue = 0;
   }
