@@ -1,7 +1,5 @@
 /**
  * @jest-environment node
- * QUANTUM AI WALLET CRITICAL TESTING
- * Tests the advanced AI-powered wallet system
  */
 import { QuantumAIWallet, QuantumAIEngine } from '../quantum/quantumAIWallet.js';
 

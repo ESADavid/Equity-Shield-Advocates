@@ -72,7 +72,6 @@ async function testPlaidService() {
   }
 }
 
-// Run the test if this file is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   await testPlaidService();
 }
