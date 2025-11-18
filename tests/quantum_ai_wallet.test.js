@@ -1,4 +1,5 @@
 /**
+ * @jest-environment node
  * QUANTUM AI WALLET CRITICAL TESTING
  * Tests the advanced AI-powered wallet system
  */
@@ -186,9 +187,9 @@ describe('🚀 Quantum AI Wallet Critical Testing', () => {
 
       const results = await Promise.all(operations);
 
-      results.forEach((result) => {
+      for (const result of results) {
         expect(result.success).toBe(true);
-      });
+      }
     });
   });
 
