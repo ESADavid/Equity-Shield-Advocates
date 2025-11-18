@@ -1,13 +1,14 @@
 // Executive Dashboard JavaScript - Oscar Broome
 // Enhanced analytics and real-time data management
 
-/* global Chart */
+import Chart from 'chart.js/auto';
 
 class ExecutiveDashboard {
+    currentSection = 'overview';
+    charts = {};
+    data = {};
+
     constructor() {
-        this.currentSection = 'overview';
-        this.charts = {};
-        this.data = {};
         this.init();
     }
 
@@ -19,27 +20,26 @@ class ExecutiveDashboard {
     }
 
     setupNavigation() {
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
+        for (const item of document.querySelectorAll('.nav-item')) {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 const section = item.dataset.section;
                 this.switchSection(section);
             });
-        });
+        }
     }
 
     switchSection(section) {
         // Update active nav item
-        document.querySelectorAll('.nav-item').forEach(item => {
+        for (const item of document.querySelectorAll('.nav-item')) {
             item.classList.remove('active');
-        });
+        }
         document.querySelector(`[data-section="${section}"]`).classList.add('active');
 
         // Update active section
-        document.querySelectorAll('.dashboard-section').forEach(sec => {
+        for (const sec of document.querySelectorAll('.dashboard-section')) {
             sec.classList.remove('active');
-        });
+        }
         document.getElementById(`${section}-section`).classList.add('active');
 
         this.currentSection = section;
@@ -453,7 +453,7 @@ const Utils = {
 function logout() {
     localStorage.removeItem('executiveToken');
     localStorage.removeItem('executiveUser');
-    window.location.href = '/executive-portal/login.html';
+    globalThis.location.href = '/executive-portal/login.html';
 }
 
 function syncRevenueData() {
@@ -486,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check authentication
     const token = localStorage.getItem('executiveToken');
     if (!token) {
-        window.location.href = '/executive-portal/login.html';
+        globalThis.location.href = '/executive-portal/login.html';
         return;
     }
 
