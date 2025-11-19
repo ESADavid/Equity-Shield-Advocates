@@ -10,6 +10,57 @@ import path from 'node:path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Performance constants to avoid magic numbers
+const PERFORMANCE_CONSTANTS = {
+  US_EQUITIES_DAILY: 0.012,
+  US_EQUITIES_WEEKLY: 0.034,
+  US_EQUITIES_MONTHLY: 0.045,
+  US_EQUITIES_QUARTERLY: 0.089,
+  US_EQUITIES_YEARLY: 0.128,
+  US_EQUITIES_VOLATILITY: 0.18,
+  US_EQUITIES_SHARPE: 0.71,
+
+  INTL_EQUITIES_DAILY: 0.008,
+  INTL_EQUITIES_WEEKLY: 0.022,
+  INTL_EQUITIES_MONTHLY: 0.031,
+  INTL_EQUITIES_QUARTERLY: 0.065,
+  INTL_EQUITIES_YEARLY: 0.095,
+  INTL_EQUITIES_VOLATILITY: 0.22,
+  INTL_EQUITIES_SHARPE: 0.43,
+
+  FIXED_INCOME_DAILY: 0.003,
+  FIXED_INCOME_WEEKLY: 0.008,
+  FIXED_INCOME_MONTHLY: 0.012,
+  FIXED_INCOME_QUARTERLY: 0.028,
+  FIXED_INCOME_YEARLY: 0.042,
+  FIXED_INCOME_VOLATILITY: 0.08,
+  FIXED_INCOME_SHARPE: 0.53,
+
+  ALTERNATIVE_DAILY: 0.005,
+  ALTERNATIVE_WEEKLY: 0.015,
+  ALTERNATIVE_MONTHLY: 0.025,
+  ALTERNATIVE_QUARTERLY: 0.045,
+  ALTERNATIVE_YEARLY: 0.089,
+  ALTERNATIVE_VOLATILITY: 0.15,
+  ALTERNATIVE_SHARPE: 0.59,
+
+  CASH_DAILY: 0.001,
+  CASH_WEEKLY: 0.003,
+  CASH_MONTHLY: 0.005,
+  CASH_QUARTERLY: 0.012,
+  CASH_YEARLY: 0.025,
+  CASH_VOLATILITY: 0.02,
+  CASH_SHARPE: 1.25,
+
+  MAX_DRAWDOWN_PERCENT: 0.15,
+  VAR_CONFIDENCE_Z_SCORE: 1.645,
+  ALLOCATION_DEVIATION_THRESHOLD: 0.05,
+  MIN_REBALANCE_DIFFERENCE: 1000,
+  PERFORMANCE_HISTORY_LIMIT: 1000,
+  UNDERPERFORMANCE_THRESHOLD: 0.05,
+  HIGH_VOLATILITY_THRESHOLD: 0.25
+};
+
 class AssetManagementService {
   constructor() {
     this.portfolio = new Map();
@@ -42,13 +93,13 @@ class AssetManagementService {
           { symbol: 'GOOGL', shares: 15000, price: 200, value: 3000000 }
         ],
         performance: {
-          daily: 0.012,
-          weekly: 0.034,
-          monthly: 0.045,
-          quarterly: 0.089,
-          yearly: 0.128,
-          volatility: 0.18,
-          sharpeRatio: 0.71
+          daily: PERFORMANCE_CONSTANTS.US_EQUITIES_DAILY,
+          weekly: PERFORMANCE_CONSTANTS.US_EQUITIES_WEEKLY,
+          monthly: PERFORMANCE_CONSTANTS.US_EQUITIES_MONTHLY,
+          quarterly: PERFORMANCE_CONSTANTS.US_EQUITIES_QUARTERLY,
+          yearly: PERFORMANCE_CONSTANTS.US_EQUITIES_YEARLY,
+          volatility: PERFORMANCE_CONSTANTS.US_EQUITIES_VOLATILITY,
+          sharpeRatio: PERFORMANCE_CONSTANTS.US_EQUITIES_SHARPE
         }
       },
       {
@@ -65,13 +116,13 @@ class AssetManagementService {
           { symbol: 'ASML.AS', shares: 5000, price: 400, value: 2000000 }
         ],
         performance: {
-          daily: .008,
-          weekly: .022,
-          monthly: .031,
-          quarterly: .065,
-          yearly: .095,
-          volatility: .22,
-          sharpeRatio: .43
+          daily: PERFORMANCE_CONSTANTS.INTL_EQUITIES_DAILY,
+          weekly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_WEEKLY,
+          monthly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_MONTHLY,
+          quarterly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_QUARTERLY,
+          yearly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_YEARLY,
+          volatility: PERFORMANCE_CONSTANTS.INTL_EQUITIES_VOLATILITY,
+          sharpeRatio: PERFORMANCE_CONSTANTS.INTL_EQUITIES_SHARPE
         }
       },
       {
@@ -84,18 +135,18 @@ class AssetManagementService {
         allocation: 0.25,
         benchmark: 'Bloomberg Barclays Global Aggregate',
         holdings: [
-          { name: 'US Treasury 10Y', value: 10000000, yield: .045, duration: 8.5 },
-          { name: 'US Treasury 30Y', value: 5000000, yield: .048, duration: 18.2 },
-          { name: 'Corporate Bonds', value: 5000000, yield: .038, duration: 6.8 }
+          { name: 'US Treasury 10Y', value: 10000000, yield: 0.045, duration: 8.5 },
+          { name: 'US Treasury 30Y', value: 5000000, yield: 0.048, duration: 18.2 },
+          { name: 'Corporate Bonds', value: 5000000, yield: 0.038, duration: 6.8 }
         ],
         performance: {
-          daily: .003,
-          weekly: .008,
-          monthly: .012,
-          quarterly: .028,
-          yearly: .042,
-          volatility: .08,
-          sharpeRatio: .53
+          daily: PERFORMANCE_CONSTANTS.FIXED_INCOME_DAILY,
+          weekly: PERFORMANCE_CONSTANTS.FIXED_INCOME_WEEKLY,
+          monthly: PERFORMANCE_CONSTANTS.FIXED_INCOME_MONTHLY,
+          quarterly: PERFORMANCE_CONSTANTS.FIXED_INCOME_QUARTERLY,
+          yearly: PERFORMANCE_CONSTANTS.FIXED_INCOME_YEARLY,
+          volatility: PERFORMANCE_CONSTANTS.FIXED_INCOME_VOLATILITY,
+          sharpeRatio: PERFORMANCE_CONSTANTS.FIXED_INCOME_SHARPE
         }
       },
       {
@@ -105,7 +156,7 @@ class AssetManagementService {
         region: 'Global',
         value: 10000000,
         currency: 'USD',
-        allocation: .12,
+        allocation: 0.12,
         benchmark: 'HFRX Global Hedge Fund Index',
         holdings: [
           { name: 'Private Equity Fund A', value: 4000000, vintage: 2020 },
@@ -113,13 +164,13 @@ class AssetManagementService {
           { name: 'Infrastructure Fund', value: 3000000, vintage: 2019 }
         ],
         performance: {
-          daily: .005,
-          weekly: .015,
-          monthly: .025,
-          quarterly: .045,
-          yearly: .089,
-          volatility: .15,
-          sharpeRatio: .59
+          daily: PERFORMANCE_CONSTANTS.ALTERNATIVE_DAILY,
+          weekly: PERFORMANCE_CONSTANTS.ALTERNATIVE_WEEKLY,
+          monthly: PERFORMANCE_CONSTANTS.ALTERNATIVE_MONTHLY,
+          quarterly: PERFORMANCE_CONSTANTS.ALTERNATIVE_QUARTERLY,
+          yearly: PERFORMANCE_CONSTANTS.ALTERNATIVE_YEARLY,
+          volatility: PERFORMANCE_CONSTANTS.ALTERNATIVE_VOLATILITY,
+          sharpeRatio: PERFORMANCE_CONSTANTS.ALTERNATIVE_SHARPE
         }
       },
       {
@@ -132,17 +183,17 @@ class AssetManagementService {
         allocation: 0.08,
         benchmark: '3-Month T-Bill',
         holdings: [
-          { name: 'Money Market Fund', value: 3000000, yield: .052 },
-          { name: 'Commercial Paper', value: 2000000, yield: .048 }
+          { name: 'Money Market Fund', value: 3000000, yield: 0.052 },
+          { name: 'Commercial Paper', value: 2000000, yield: 0.048 }
         ],
         performance: {
-          daily: .001,
-          weekly: .003,
-          monthly: .005,
-          quarterly: .012,
-          yearly: .025,
-          volatility: .02,
-          sharpeRatio: 1.25
+          daily: PERFORMANCE_CONSTANTS.CASH_DAILY,
+          weekly: PERFORMANCE_CONSTANTS.CASH_WEEKLY,
+          monthly: PERFORMANCE_CONSTANTS.CASH_MONTHLY,
+          quarterly: PERFORMANCE_CONSTANTS.CASH_QUARTERLY,
+          yearly: PERFORMANCE_CONSTANTS.CASH_YEARLY,
+          volatility: PERFORMANCE_CONSTANTS.CASH_VOLATILITY,
+          sharpeRatio: PERFORMANCE_CONSTANTS.CASH_SHARPE
         }
       }
     ];
@@ -332,7 +383,7 @@ class AssetManagementService {
    */
   calculateMaxDrawdown() {
     // Simplified calculation - in real implementation would use historical data
-    const maxDrawdown = .15; // 15% example
+    const maxDrawdown = 1.5e-1; // 15% example
     return (maxDrawdown * 100).toFixed(2) + '%';
   }
 
@@ -426,7 +477,7 @@ class AssetManagementService {
       const performance = asset.performance || {};
 
       // Check if asset is underperforming
-      if (performance.yearly < .05) { // Less than 5% annual return
+      if (performance.yearly < 0.05) { // Less than 5% annual return
         recommendations.push({
           type: 'underperforming',
           assetId: asset.id,
@@ -438,7 +489,7 @@ class AssetManagementService {
       }
 
       // Check volatility
-      if (performance.volatility > .25) { // High volatility
+      if (performance.volatility > 0.25) { // High volatility
         recommendations.push({
           type: 'high_volatility',
           assetId: asset.id,
@@ -453,7 +504,7 @@ class AssetManagementService {
       const targetAllocation = this.getTargetAllocation(asset.type);
       const allocationDiff = Math.abs(asset.allocation - targetAllocation);
 
-      if (allocationDiff > .05) { // More than 5% deviation
+      if (allocationDiff > 0.05) { // More than 5% deviation
         recommendations.push({
           type: 'allocation_drift',
           assetId: asset.id,
@@ -476,13 +527,13 @@ class AssetManagementService {
    */
   getTargetAllocation(assetType) {
     const targets = {
-      'equity': .55,
-      'fixed_income': .30,
-      'alternative': .1,
-      'cash': .05
+      'equity': 0.55,
+      'fixed_income': 0.30,
+      'alternative': 0.1,
+      'cash': 0.05
     };
 
-    return targets[assetType] || .1;
+    return targets[assetType] || 0.1;
   }
 
   /**
