@@ -58,7 +58,20 @@ const PERFORMANCE_CONSTANTS = {
   MIN_REBALANCE_DIFFERENCE: 1000,
   PERFORMANCE_HISTORY_LIMIT: 1000,
   UNDERPERFORMANCE_THRESHOLD: 0.05,
-  HIGH_VOLATILITY_THRESHOLD: 0.25
+  HIGH_VOLATILITY_THRESHOLD: 0.25,
+
+  // Default portfolio allocations
+  DEFAULT_US_EQUITIES_ALLOCATION: 0.35,
+  DEFAULT_INTL_EQUITIES_ALLOCATION: 0.20,
+  DEFAULT_FIXED_INCOME_ALLOCATION: 0.25,
+  DEFAULT_ALTERNATIVE_ALLOCATION: 0.12,
+  DEFAULT_CASH_ALLOCATION: 0.08,
+
+  // Target allocations
+  TARGET_EQUITY_ALLOCATION: 0.55,
+  TARGET_FIXED_INCOME_ALLOCATION: 0.30,
+  TARGET_ALTERNATIVE_ALLOCATION: 0.10,
+  TARGET_CASH_ALLOCATION: 0.05
 };
 
 class AssetManagementService {
@@ -85,7 +98,7 @@ class AssetManagementService {
         region: 'US',
         value: 25000000,
         currency: 'USD',
-        allocation: 0.35,
+        allocation: PERFORMANCE_CONSTANTS.DEFAULT_US_EQUITIES_ALLOCATION,
         benchmark: 'S&P 500',
         holdings: [
           { symbol: 'AAPL', shares: 50000, price: 150, value: 7500000 },
@@ -109,7 +122,7 @@ class AssetManagementService {
         region: 'International',
         value: 15000000,
         currency: 'USD',
-        allocation: 0.20,
+        allocation: PERFORMANCE_CONSTANTS.DEFAULT_INTL_EQUITIES_ALLOCATION,
         benchmark: 'MSCI World ex-US',
         holdings: [
           { symbol: 'TSM', shares: 20000, price: 80, value: 1600000 },
@@ -132,7 +145,7 @@ class AssetManagementService {
         region: 'Global',
         value: 20000000,
         currency: 'USD',
-        allocation: 0.25,
+        allocation: PERFORMANCE_CONSTANTS.DEFAULT_FIXED_INCOME_ALLOCATION,
         benchmark: 'Bloomberg Barclays Global Aggregate',
         holdings: [
           { name: 'US Treasury 10Y', value: 10000000, yield: 0.045, duration: 8.5 },
@@ -156,7 +169,7 @@ class AssetManagementService {
         region: 'Global',
         value: 10000000,
         currency: 'USD',
-        allocation: 0.12,
+        allocation: PERFORMANCE_CONSTANTS.DEFAULT_ALTERNATIVE_ALLOCATION,
         benchmark: 'HFRX Global Hedge Fund Index',
         holdings: [
           { name: 'Private Equity Fund A', value: 4000000, vintage: 2020 },
@@ -180,7 +193,7 @@ class AssetManagementService {
         region: 'US',
         value: 5000000,
         currency: 'USD',
-        allocation: 0.08,
+        allocation: PERFORMANCE_CONSTANTS.DEFAULT_CASH_ALLOCATION,
         benchmark: '3-Month T-Bill',
         holdings: [
           { name: 'Money Market Fund', value: 3000000, yield: 0.052 },
@@ -279,8 +292,8 @@ class AssetManagementService {
     const history = this.performanceHistory.get(assetId) || [];
     history.push(historyEntry);
 
-    // Keep only last 1000 entries
-    this.performanceHistory.set(assetId, history.slice(-1000));
+    // Keep only last PERFORMANCE_HISTORY_LIMIT entries
+    this.performanceHistory.set(assetId, history.slice(-PERFORMANCE_CONSTANTS.PERFORMANCE_HISTORY_LIMIT));
 
     return {
       success: true,
@@ -383,7 +396,7 @@ class AssetManagementService {
    */
   calculateMaxDrawdown() {
     // Simplified calculation - in real implementation would use historical data
-    const maxDrawdown = 1.5e-1; // 15% example
+    const maxDrawdown = PERFORMANCE_CONSTANTS.MAX_DRAWDOWN_PERCENT;
     return (maxDrawdown * 100).toFixed(2) + '%';
   }
 
@@ -399,7 +412,7 @@ class AssetManagementService {
     }, 0);
 
     // Simplified VaR calculation (95% confidence, 1-day)
-    const var95 = totalValue * portfolioVolatility * 1.645; // 1.645 = 95% confidence z-score
+    const var95 = totalValue * portfolioVolatility * PERFORMANCE_CONSTANTS.VAR_CONFIDENCE_Z_SCORE;
     return this.formatCurrency(var95, 'USD');
   }
 
@@ -442,7 +455,7 @@ class AssetManagementService {
       const currentValue = asset.value;
       const adjustment = targetValue - currentValue;
 
-      if (Math.abs(adjustment) > 1000) { // Only rebalance if difference > $1000
+      if (Math.abs(adjustment) > PERFORMANCE_CONSTANTS.MIN_REBALANCE_DIFFERENCE) { // Only rebalance if difference > $1000
         rebalancingActions.push({
           assetId: asset.id,
           assetName: asset.name,
@@ -477,7 +490,7 @@ class AssetManagementService {
       const performance = asset.performance || {};
 
       // Check if asset is underperforming
-      if (performance.yearly < 0.05) { // Less than 5% annual return
+      if (performance.yearly < PERFORMANCE_CONSTANTS.UNDERPERFORMANCE_THRESHOLD) { // Less than 5% annual return
         recommendations.push({
           type: 'underperforming',
           assetId: asset.id,
@@ -489,7 +502,7 @@ class AssetManagementService {
       }
 
       // Check volatility
-      if (performance.volatility > 0.25) { // High volatility
+      if (performance.volatility > PERFORMANCE_CONSTANTS.HIGH_VOLATILITY_THRESHOLD) { // High volatility
         recommendations.push({
           type: 'high_volatility',
           assetId: asset.id,
@@ -504,7 +517,7 @@ class AssetManagementService {
       const targetAllocation = this.getTargetAllocation(asset.type);
       const allocationDiff = Math.abs(asset.allocation - targetAllocation);
 
-      if (allocationDiff > 0.05) { // More than 5% deviation
+      if (allocationDiff > PERFORMANCE_CONSTANTS.ALLOCATION_DEVIATION_THRESHOLD) { // More than 5% deviation
         recommendations.push({
           type: 'allocation_drift',
           assetId: asset.id,

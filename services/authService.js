@@ -73,7 +73,7 @@ class AuthService {
         tokens
       };
     } catch (error) {
-      logger.error('User registration failed', { error: error.message, email, username });
+      logger.error('User registration failed', { error: error.message, 'email': userData?.email, 'username': userData?.username });
       throw error;
     }
   }
@@ -114,7 +114,7 @@ class AuthService {
         tokens
       };
     } catch (error) {
-      logger.error('User login failed', { error: error.message, username });
+      logger.error('User login failed', { error: error.message, username: credentials?.username });
       throw error;
     }
   }
