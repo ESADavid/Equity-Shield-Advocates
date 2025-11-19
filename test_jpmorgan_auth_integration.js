@@ -3,6 +3,8 @@
  * Tests the integration of Oscar Broome Login Override System with JPMorgan Payment System
  */
 
+/* eslint-disable no-unused-expressions, @typescript-eslint/no-unused-expressions */
+
 const axios = require('axios');
 const { expect } = require('chai');
 const jwt = require('jsonwebtoken');
@@ -86,7 +88,7 @@ class JPMorganAuthIntegrationTest {
         headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` }
       });
 
-      expect(verifyResponse.data.authenticated).to.be.true;
+      expect(verifyResponse.data.authenticated).to.be.true; // eslint-disable-line no-unused-expressions
       expect(verifyResponse.data.user.role).to.equal('admin');
       console.log('✓ Token verification successful');
 
@@ -334,11 +336,11 @@ class JPMorganAuthIntegrationTest {
     };
 
     console.log('\n=== Test Results Summary ===');
-    Object.entries(results).forEach(([test, passed]) => {
+    for (const [test, passed] of Object.entries(results)) {
       console.log(`${passed ? '✅' : '❌'} ${test}: ${passed ? 'PASSED' : 'FAILED'}`);
-    });
+    }
 
-    const allPassed = Object.values(results).every(result => result);
+    const allPassed = Object.values(results).every(Boolean);
     console.log(`\n${allPassed ? '🎉' : '💥'} Overall Result: ${allPassed ? 'ALL TESTS PASSED' : 'SOME TESTS FAILED'}`);
 
     return allPassed;
@@ -350,13 +352,14 @@ module.exports = JPMorganAuthIntegrationTest;
 
 // Run tests if this file is executed directly
 if (require.main === module) {
-  const testSuite = new JPMorganAuthIntegrationTest();
-  testSuite.runAllTests()
-    .then(success => {
+  (async () => {
+    try {
+      const testSuite = new JPMorganAuthIntegrationTest();
+      const success = await testSuite.runAllTests();
       process.exit(success ? 0 : 1);
-    })
-    .catch(error => {
+    } catch (error) {
       console.error('Test execution failed:', error);
       process.exit(1);
-    });
+    }
+  })();
 }

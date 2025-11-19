@@ -30,6 +30,18 @@ module.exports = {
   },
   overrides: [
     {
+      files: ['owlban_revenue_repo/executive-portal/**/*.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'script',
+        ecmaVersion: 2022,
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        'no-unused-vars': 'off',
+      },
+    },
+    {
       files: ['*.js'],
       parser: 'espree',
       parserOptions: {
@@ -41,6 +53,20 @@ module.exports = {
       },
     },
     {
+      files: ['**/test_jpmorgan_auth_integration.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 2022,
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-expressions': 'off', // Allow Chai assertions in this test file
+        'no-unused-vars': 'off',
+        'no-unused-expressions': 'off', // Allow Chai assertions in this test file
+      },
+    },
+    {
       files: ['tests/**/*.js', 'test/**/*.js', 'test/**/*.mjs', 'test/**/*.cjs'],
       parser: 'espree',
       parserOptions: {
@@ -49,6 +75,7 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-unused-vars': 'off',
         'no-unused-vars': 'off',
+        'no-unused-expressions': 'off', // Allow Chai assertions in tests
       },
     },
     {
@@ -94,5 +121,6 @@ module.exports = {
         'no-unused-expressions': 'off', // Cypress often uses expressions in tests
       },
     },
+
   ],
 };

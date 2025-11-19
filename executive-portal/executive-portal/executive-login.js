@@ -91,7 +91,7 @@ class ExecutiveLoginPortal {
         return isValid;
     }
 
-    validateLogin(email, password, twoFactorCode) {
+    validateLogin(_email, _password, _twoFactorCode) {
         return this.validateEmail() && this.validatePassword() && this.validateTwoFactorCode();
     }
 
