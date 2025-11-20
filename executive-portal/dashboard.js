@@ -7,8 +7,11 @@ class ExecutiveDashboard {
     currentSection = 'overview';
     charts = {};
     data = {};
+    assetManagementService = null;
 
     constructor() {
+        this.assetManagementService = new AssetManagementService();
+        this.assetManagementService.initializePortfolio();
         this.init();
     }
 
@@ -73,31 +76,27 @@ class ExecutiveDashboard {
     }
 
     updateMetrics() {
-        document.getElementById('totalRevenue').textContent = 
+        document.getElementById('totalRevenue').textContent =
             new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD'
             }).format(this.data.totalAnnualRevenue || 0);
 
-        document.getElementById('dailyRevenue').textContent = 
+        document.getElementById('dailyRevenue').textContent =
             new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD'
             }).format(this.data.totalDailyRevenue || 0);
 
-        document.getElementById('fleetCount').textContent = 
+        document.getElementById('fleetCount').textContent =
             this.data.purchases?.autoFleetDetails?.length || 0;
 
-        document.getElementById('corporateHomes').textContent = 
+        document.getElementById('corporateHomes').textContent =
             new Intl.NumberFormat('en-US').format(this.data.purchases?.corporateHomes || 0);
 
-        // New AUM metrics
-        document.getElementById('totalAUM').textContent =
-            new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                maximumFractionDigits: 0
-            }).format(this.data.assetsUnderManagement?.totalAUM || 0);
+        // Get real AUM data from AssetManagementService
+        const analytics = this.assetManagementService.getPortfolioAnalytics();
+        document.getElementById('totalAUM').textContent = analytics.summary.totalValue;
     }
 
     setupCharts() {
@@ -375,9 +374,10 @@ class ExecutiveDashboard {
         const ctx = document.getElementById('aumChart');
         if (!ctx) return;
 
-        const aum = this.data.assetsUnderManagement || {};
-        const labels = Object.keys(aum.assetClasses || {});
-        const data = labels.map(key => aum.assetClasses[key].amount);
+        // Get real data from AssetManagementService
+        const analytics = this.assetManagementService.getPortfolioAnalytics();
+        const labels = analytics.assets.map(asset => asset.name);
+        const data = analytics.assets.map(asset => parseFloat(asset.value.replace(/[$,]/g, '')));
 
         this.charts.aum = new Chart(ctx.getContext('2d'), {
             type: 'pie',
