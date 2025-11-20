@@ -43,6 +43,7 @@ class ExecutiveLoginPortal {
             passwordInput.addEventListener('input', () => {
                 const strength = this.calculatePasswordStrength(passwordInput.value);
                 strengthIndicator.textContent = `Strength: ${strength}`;
+                this.updateStrengthColor(strengthIndicator, strength);
             });
         }
     }
@@ -65,7 +66,7 @@ class ExecutiveLoginPortal {
             // Simulate login success
             alert('Login successful! Redirecting to executive dashboard...');
             // Redirect to dashboard
-            window.location.href = '/executive-dashboard';
+            globalThis.location.href = '/executive-dashboard';
         }
     }
 
@@ -91,7 +92,7 @@ class ExecutiveLoginPortal {
         return isValid;
     }
 
-    validateLogin(_email, _password, _twoFactorCode) {
+    validateLogin(email, password, twoFactorCode) {
         return this.validateEmail() && this.validatePassword() && this.validateTwoFactorCode();
     }
 
@@ -100,7 +101,7 @@ class ExecutiveLoginPortal {
         if (password.length >= 8) strength++;
         if (/[A-Z]/.test(password)) strength++;
         if (/[a-z]/.test(password)) strength++;
-        if (/[0-9]/.test(password)) strength++;
+        if (/\d/.test(password)) strength++;
         if (/[^A-Za-z0-9]/.test(password)) strength++;
 
         switch (strength) {
@@ -111,6 +112,30 @@ class ExecutiveLoginPortal {
             case 4: return 'Strong';
             case 5: return 'Very Strong';
             default: return 'Unknown';
+        }
+    }
+
+    updateStrengthColor(element, strength) {
+        // Remove existing strength classes
+        element.classList.remove('very-weak', 'weak', 'medium', 'strong', 'very-strong');
+
+        // Add appropriate class
+        switch (strength) {
+            case 'Very Weak':
+                element.classList.add('very-weak');
+                break;
+            case 'Weak':
+                element.classList.add('weak');
+                break;
+            case 'Medium':
+                element.classList.add('medium');
+                break;
+            case 'Strong':
+                element.classList.add('strong');
+                break;
+            case 'Very Strong':
+                element.classList.add('very-strong');
+                break;
         }
     }
 
@@ -131,10 +156,9 @@ class ExecutiveLoginPortal {
             field.classList.toggle('invalid', !isValid);
         }
     }
-};
+}
 
 // Initialize the portal when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new ExecutiveLoginPortal();
+    globalThis.portal = new ExecutiveLoginPortal(); // Initialize the executive login portal
 });
-</attempt_completion>
