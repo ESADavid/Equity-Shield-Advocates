@@ -213,7 +213,7 @@ describe('🚀 Quantum AI Wallet Critical Testing', () => {
 });
 
 // Test runner
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   console.log('🚀 Running Quantum AI Wallet Critical Tests...');
   console.log('✅ Quantum AI Wallet tests completed');
   console.log('🎯 Oscar Broome\'s Quantum AI Wallet is operational');

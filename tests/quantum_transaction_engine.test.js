@@ -5,7 +5,7 @@ describe('Quantum Transaction Engine', () => {
 });
 
 // Test runner
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   console.log('🚀 Running Quantum Transaction Engine Tests...');
   console.log('✅ Quantum Transaction Engine tests completed');
 }

@@ -5,6 +5,8 @@
 import { EventEmitter } from 'node:events';
 import crypto from 'node:crypto';
 import { performance } from 'node:perf_hooks';
+import { QuantumSecurity } from './quantumSecurity.js';
+import { QuantumOptimizer } from './quantumOptimizer.js';
 
 class QuantumEngine extends EventEmitter {
   constructor() {
@@ -89,7 +91,7 @@ class QuantumEngine extends EventEmitter {
 
   // Store key in quantum state object for integrity verification
   getEncryptionKey() {
-    return this.securityLayer.getEncryptionKey();
+    return this.securityLayer.encryptionKey;
   }
 
   // Get real-time metrics for monitoring
@@ -138,41 +140,4 @@ class QuantumErrorCorrector {
   }
 }
 
-class QuantumSecurity {
-  constructor() {
-    this.encryptionKey = this.generateQuantumKey();
-  }
-
-  generateQuantumKey() {
-    return crypto.randomBytes(64).toString('hex');
-  }
-
-  verifySecurity() {
-    // Quantum security verification
-    return {
-      quantumSafe: true,
-      postQuantumCrypto: true,
-      zeroTrust: true,
-      blockchainVerified: true
-    };
-  }
-
-  verify() {
-    // Alias for backward compatibility
-    return this.verifySecurity();
-  }
-}
-
-class QuantumOptimizer {
-  optimize() {
-    return {
-      performance: 'quantum-level',
-      latency: 'zero',
-      throughput: 'unlimited',
-      efficiency: 100,
-      selfHealing: true
-    };
-  }
-}
-
-export { QuantumEngine, QuantumSecurity, QuantumOptimizer };
+export { QuantumEngine };

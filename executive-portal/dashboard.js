@@ -2,6 +2,7 @@
 // Enhanced analytics and real-time data management
 
 import Chart from 'chart.js/auto';
+import AssetManagementService from '../services/assetManagementService.js';
 
 class ExecutiveDashboard {
     currentSection = 'overview';

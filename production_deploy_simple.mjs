@@ -171,8 +171,8 @@ class ProductionDeployer {
       this.log(`dotenv not available, skipping environment loading: ${error.message}`, 'warning');
     }
 
-    let missingRequired = [];
-    let missingOptional = [];
+const missingRequired = [];
+const missingOptional = [];
 
     // Check required environment variables
     CONFIG.requiredEnvVars.forEach(varName => {
@@ -224,7 +224,7 @@ class ProductionDeployer {
         'getMerchantPhone'
       ];
 
-      let missingFunctions = [];
+      const missingFunctions = [];
       requiredFunctions.forEach(funcName => {
         if (typeof merchantBillPay[funcName] !== 'function') {
           missingFunctions.push(funcName);

@@ -4,7 +4,7 @@
  */
 
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 const bcrypt = require('bcrypt');
 const winston = require('winston');
 
@@ -75,7 +75,7 @@ class JPMorganAuthManager {
     const hasUpper = /[A-Z]/.test(password);
     const hasLower = /[a-z]/.test(password);
     const hasDigit = /\d/.test(password);
-    const hasSpecial = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?`~]/.test(password);
+    const hasSpecial = /[!@#$%^&*()_+\-={}|;:,.<>?`~]/.test(password);
 
     if (!(hasUpper && hasLower && hasDigit && hasSpecial)) {
       return {
@@ -132,138 +132,126 @@ class JPMorganAuthManager {
 
   // User authentication
   async authenticateUser(email, password, mfaCode = null) {
-    try {
-      // Check rate limiting
-      if (this.isAccountLocked(email)) {
-        logger.warning(`Login attempt for locked account: ${email}`);
+    // Check rate limiting
+    if (this.isAccountLocked(email)) {
+      logger.warning(`Login attempt for locked account: ${email}`);
+      return {
+        success: false,
+        message: 'Account is temporarily locked due to too many failed attempts'
+      };
+    }
+
+    const user = users.get(email);
+    if (!user) {
+      logger.warning(`Login attempt for non-existent user: ${email}`);
+      this.recordFailedAttempt(email);
+      return { success: false, message: 'Invalid credentials' };
+    }
+
+    // Verify password
+    const isValidPassword = await this.verifyPassword(password, user.password);
+    if (!isValidPassword) {
+      logger.warning(`Invalid password for user: ${email}`);
+      this.recordFailedAttempt(email);
+      return { success: false, message: 'Invalid credentials' };
+    }
+
+    // Check MFA if enabled
+    if (user.mfaEnabled) {
+      if (!mfaCode) {
         return {
           success: false,
-          message: 'Account is temporarily locked due to too many failed attempts'
+          message: 'MFA code required',
+          requiresMfa: true
         };
       }
 
-      const user = users.get(email);
-      if (!user) {
-        logger.warning(`Login attempt for non-existent user: ${email}`);
+      if (!this.verifyMfaCode(user.mfaSecret, mfaCode)) {
+        logger.warning(`Invalid MFA code for user: ${email}`);
         this.recordFailedAttempt(email);
-        return { success: false, message: 'Invalid credentials' };
+        return { success: false, message: 'Invalid MFA code' };
       }
+    }
 
-      // Verify password
-      const isValidPassword = await this.verifyPassword(password, user.password);
-      if (!isValidPassword) {
-        logger.warning(`Invalid password for user: ${email}`);
-        this.recordFailedAttempt(email);
-        return { success: false, message: 'Invalid credentials' };
-      }
+    // Reset login attempts on successful login
+    user.loginAttempts = 0;
+    user.lastLogin = new Date().toISOString();
+    users.set(email, user);
 
-      // Check MFA if enabled
-      if (user.mfaEnabled) {
-        if (!mfaCode) {
-          return {
-            success: false,
-            message: 'MFA code required',
-            requiresMfa: true
-          };
-        }
+    // Generate tokens
+    const tokens = this.generateTokens(user);
 
-        if (!this.verifyMfaCode(user.mfaSecret, mfaCode)) {
-          logger.warning(`Invalid MFA code for user: ${email}`);
-          this.recordFailedAttempt(email);
-          return { success: false, message: 'Invalid MFA code' };
-        }
-      }
+    // Store session
+    sessions.set(tokens.accessToken, {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      permissions: user.permissions,
+      department: user.department,
+      expiresAt: Date.now() + (15 * 60 * 1000) // 15 minutes
+    });
 
-      // Reset login attempts on successful login
-      user.loginAttempts = 0;
-      user.lastLogin = new Date().toISOString();
-      users.set(email, user);
+    logger.info(`Successful login for JPMorgan user: ${email}`);
+    return {
+      success: true,
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        permissions: user.permissions,
+        department: user.department
+      },
+      tokens
+    };
+  }
 
-      // Generate tokens
-      const tokens = this.generateTokens(user);
+  // Admin override
+  async adminOverride(overrideCode, targetEmail) {
+    if (overrideCode !== config.security.adminOverrideCode) {
+      logger.warning('Invalid admin override code attempt');
+      return { success: false, message: 'Invalid override code' };
+    }
 
-      // Store session
-      sessions.set(tokens.accessToken, {
+    const user = users.get(targetEmail);
+    if (!user) {
+      logger.warning(`Admin override for non-existent user: ${targetEmail}`);
+      return { success: false, message: 'User not found' };
+    }
+
+    // Reset user account
+    user.loginAttempts = 0;
+    user.locked = false;
+    user.lockedUntil = null;
+    users.set(targetEmail, user);
+
+    // Generate emergency access token
+    const emergencyToken = jwt.sign(
+      {
         userId: user.id,
         email: user.email,
         role: user.role,
         permissions: user.permissions,
         department: user.department,
-        expiresAt: Date.now() + (15 * 60 * 1000) // 15 minutes
-      });
+        override: true,
+        emergency: true,
+        exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour
+      },
+      config.jwt.secret
+    );
 
-      logger.info(`Successful login for JPMorgan user: ${email}`);
-      return {
-        success: true,
-        message: 'Login successful',
-        user: {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          permissions: user.permissions,
-          department: user.department
-        },
-        tokens
-      };
-
-    } catch (error) {
-      logger.error(`Authentication error for ${email}:`, error);
-      return { success: false, message: 'Authentication failed' };
-    }
-  }
-
-  // Admin override
-  async adminOverride(overrideCode, targetEmail) {
-    try {
-      if (overrideCode !== config.security.adminOverrideCode) {
-        logger.warning('Invalid admin override code attempt');
-        return { success: false, message: 'Invalid override code' };
+    logger.info(`Admin override successful for JPMorgan user: ${targetEmail}`);
+    return {
+      success: true,
+      message: 'Admin override successful',
+      emergencyToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        department: user.department
       }
-
-      const user = users.get(targetEmail);
-      if (!user) {
-        logger.warning(`Admin override for non-existent user: ${targetEmail}`);
-        return { success: false, message: 'User not found' };
-      }
-
-      // Reset user account
-      user.loginAttempts = 0;
-      user.locked = false;
-      user.lockedUntil = null;
-      users.set(targetEmail, user);
-
-      // Generate emergency access token
-      const emergencyToken = jwt.sign(
-        {
-          userId: user.id,
-          email: user.email,
-          role: user.role,
-          permissions: user.permissions,
-          department: user.department,
-          override: true,
-          emergency: true,
-          exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour
-        },
-        config.jwt.secret
-      );
-
-      logger.info(`Admin override successful for JPMorgan user: ${targetEmail}`);
-      return {
-        success: true,
-        message: 'Admin override successful',
-        emergencyToken,
-        user: {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          department: user.department
-        }
-      };
-
-    } catch (error) {
-      logger.error('Admin override error:', error);
-      return { success: false, message: 'Override failed' };
-    }
+    };
   }
 
   // Token generation
@@ -404,7 +392,9 @@ class JPMorganAuthManager {
       }
     }
 
-    expiredTokens.forEach(token => sessions.delete(token));
+    for (const token of expiredTokens) {
+      sessions.delete(token);
+    }
     return { success: true, cleaned: expiredTokens.length };
   }
 

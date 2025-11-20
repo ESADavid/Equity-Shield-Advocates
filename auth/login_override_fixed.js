@@ -3,9 +3,9 @@
  * Emergency access and administrative override capabilities
  */
 
-const crypto = require('crypto');
-const fs = require('fs').promises;
-const path = require('path');
+const crypto = require('node:crypto');
+const fs = require('node:fs').promises;
+const path = require('node:path');
 const winston = require('winston');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -371,7 +371,7 @@ class AuthenticationManager {
       return { valid: false, message: 'Password must contain at least one number' };
     }
 
-    if (PASSWORD_REQUIRE_SPECIAL && !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    if (PASSWORD_REQUIRE_SPECIAL && !/[!@#$%^&*()_+\-={}|;:,.<>?`~]/.test(password)) {
       return { valid: false, message: 'Password must contain at least one special character' };
     }
 
