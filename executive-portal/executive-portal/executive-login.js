@@ -144,16 +144,16 @@ class ExecutiveLoginPortal {
         const errorElement = document.getElementById(`${fieldId}-error`);
 
         if (errorElement) {
-            if (!isValid) {
+            if (isValid) {
+                errorElement.style.display = 'none';
+            } else {
                 errorElement.textContent = message;
                 errorElement.style.display = 'block';
-            } else {
-                errorElement.style.display = 'none';
             }
         }
 
         if (field) {
-            field.classList.toggle('invalid', !isValid);
+            field.classList.toggle('invalid', isValid === false);
         }
     }
 }

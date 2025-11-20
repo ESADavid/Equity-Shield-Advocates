@@ -6,8 +6,9 @@ const crypto = require('node:crypto');
 const jwt = require('jsonwebtoken');
 
 class QuantumSecurity {
+  algorithm = 'CRYSTALS-Dilithium-3';
+
   constructor() {
-    this.algorithm = 'CRYSTALS-Dilithium-3';
     this.encryptionKey = this.generateEncryptionKey();
     this.jwtKey = this.generateJWTKey();
     this.securityMatrix = this.initializeSecurityMatrix();
