@@ -120,7 +120,7 @@ class AccountValidationService {
       }
 
       // Remove spaces and dashes
-      const cleanRouting = routingNumber.replaceAll(/[\s\-]/g, '');
+      const cleanRouting = routingNumber.replace(/[\s\-]/g, '');
 
       // Must be exactly 9 digits
       if (cleanRouting.length !== 9) {
