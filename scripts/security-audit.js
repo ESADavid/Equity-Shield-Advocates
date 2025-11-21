@@ -228,7 +228,7 @@ class SecurityAuditor {
       }
     }
 
-    if (jwtConfigured === false) {
+    if (!jwtConfigured) {
       this.results.vulnerabilities.push({
         type: 'weak_jwt_secret',
         severity: 'high',
