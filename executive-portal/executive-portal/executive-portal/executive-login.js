@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 // Executive Login Portal JavaScript - Oscar Broome
 // Enhanced security and executive-level features
 

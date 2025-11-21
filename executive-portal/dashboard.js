@@ -4,7 +4,7 @@
 import Chart from 'chart.js/auto';
 import AssetManagementService from '../services/assetManagementService.js';
 
-class ExecutiveDashboard {
+export default class ExecutiveDashboard {
     currentSection = 'overview';
     charts = {};
     data = {};

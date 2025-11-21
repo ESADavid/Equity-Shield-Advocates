@@ -1,3 +1,5 @@
+/* eslint-env cypress */
+
 // End-to-End Tests for Oscar Broome Executive Portal
 // Comprehensive E2E testing covering login, 2FA, dashboard, and all critical flows
 

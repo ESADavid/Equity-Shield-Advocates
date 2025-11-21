@@ -31,8 +31,8 @@ class AuthService {
 
   // Register new user
   async register(userData) {
+    const { username, email, password, firstName, lastName, role = 'user', tenantId } = userData;
     try {
-      const { username, email, password, firstName, lastName, role = 'user', tenantId } = userData;
 
       // Validate tenantId is provided
       if (!tenantId) {

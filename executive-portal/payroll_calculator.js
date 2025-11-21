@@ -1,6 +1,26 @@
 // Payroll Calculator Functions for Executive Dashboard
 
-/* global ExecutiveDashboard, Utils, dashboard */
+import ExecutiveDashboard from './dashboard.js';
+
+/* global dashboard */
+
+// Utility functions
+const Utils = {
+    formatCurrency: (amount) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(amount);
+    },
+
+    formatDate: (date) => {
+        return new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }).format(new Date(date));
+    }
+};
 
 // Add payroll case to loadSectionData
 const originalLoadSectionData = ExecutiveDashboard.prototype.loadSectionData;
