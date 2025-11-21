@@ -74,6 +74,7 @@ class ExecutiveDashboard {
         this.updateMetrics();
         this.updateCharts();
         this.updateRecentActivity();
+        this.updatePortfolioSummary();
     }
 
     updateMetrics() {
@@ -98,12 +99,20 @@ class ExecutiveDashboard {
         // Get real AUM data from AssetManagementService
         const analytics = this.assetManagementService.getPortfolioAnalytics();
         document.getElementById('totalAUM').textContent = analytics.summary.totalValue;
+
+        // Add portfolio-specific metrics
+        const portfolioMetrics = this.assetManagementService.getPortfolioMetrics();
+        document.getElementById('portfolioReturn').textContent = `${portfolioMetrics.totalReturn}%`;
+        document.getElementById('portfolioRisk').textContent = `${portfolioMetrics.volatility}%`;
+        document.getElementById('diversificationScore').textContent = `${portfolioMetrics.diversificationScore}/100`;
     }
 
     setupCharts() {
         this.createRevenueChart();
         this.createFleetChart();
         this.createAUMChart();
+        this.createAssetPerformanceChart();
+        this.createPortfolioRiskChart();
     }
 
     createRevenueChart() {
@@ -197,23 +206,44 @@ class ExecutiveDashboard {
 
     updateRecentActivity() {
         const activityContainer = document.getElementById('recentActivity');
-        
+
+        // Get portfolio alerts and recommendations from AssetManagementService
+        const alerts = this.assetManagementService.getPortfolioAlerts();
+        const recommendations = this.assetManagementService.getRebalancingRecommendations();
+
+        // Combine alerts and recommendations with existing activities
+        const portfolioActivities = [
+            ...alerts.map(alert => ({
+                type: 'alert',
+                message: alert.message,
+                date: alert.timestamp,
+                amount: 0
+            })),
+            ...recommendations.map(rec => ({
+                type: 'recommendation',
+                message: rec.action,
+                date: new Date().toISOString().split('T')[0],
+                amount: 0
+            }))
+        ];
+
         // Sample activities - replace with actual data
         const activities = [
             { type: 'purchase', message: 'Added Tesla Model S to fleet', date: '2024-01-15', amount: 79999 },
             { type: 'revenue', message: 'Daily revenue exceeded $50,000', date: '2024-01-14', amount: 50000 },
-            { type: 'purchase', message: 'Purchased corporate home', date: '2024-01-13', amount: 2500000 }
+            { type: 'purchase', message: 'Purchased corporate home', date: '2024-01-13', amount: 2500000 },
+            ...portfolioActivities
         ];
 
         activityContainer.innerHTML = activities.map(activity => `
             <div class="activity-item ${activity.type}">
                 <div class="activity-icon">
-                    <i class="fas fa-${activity.type === 'purchase' ? 'shopping-cart' : 'chart-line'}"></i>
+                    <i class="fas fa-${activity.type === 'purchase' ? 'shopping-cart' : activity.type === 'revenue' ? 'chart-line' : activity.type === 'alert' ? 'exclamation-triangle' : 'lightbulb'}"></i>
                 </div>
                 <div class="activity-content">
                     <div class="activity-message">${activity.message}</div>
                     <div class="activity-date">${Utils.formatDate(activity.date)}</div>
-                    <div class="activity-amount">${Utils.formatCurrency(activity.amount)}</div>
+                    ${activity.amount > 0 ? `<div class="activity-amount">${Utils.formatCurrency(activity.amount)}</div>` : ''}
                 </div>
             </div>
         `).join('');
@@ -292,21 +322,29 @@ class ExecutiveDashboard {
         // Load analytics-specific data
         const performanceContainer = document.getElementById('performanceMetrics');
         const forecastContainer = document.getElementById('financialForecast');
-        
+
+        // Get portfolio analytics from AssetManagementService
+        const portfolioAnalytics = this.assetManagementService.getPortfolioAnalytics();
+        const portfolioMetrics = this.assetManagementService.getPortfolioMetrics();
+
         if (performanceContainer) {
             performanceContainer.innerHTML = `
                 <div class="metrics-list">
                     <div class="metric">
-                        <span>ROI</span>
-                        <span class="value">127%</span>
+                        <span>Portfolio ROI</span>
+                        <span class="value">${portfolioMetrics.totalReturn}%</span>
                     </div>
                     <div class="metric">
-                        <span>Growth Rate</span>
-                        <span class="value">+15.3%</span>
+                        <span>Sharpe Ratio</span>
+                        <span class="value">${portfolioMetrics.sharpeRatio}</span>
                     </div>
                     <div class="metric">
-                        <span>Efficiency</span>
-                        <span class="value">94.2%</span>
+                        <span>Volatility</span>
+                        <span class="value">${portfolioMetrics.volatility}%</span>
+                    </div>
+                    <div class="metric">
+                        <span>Diversification Score</span>
+                        <span class="value">${portfolioMetrics.diversificationScore}/100</span>
                     </div>
                 </div>
             `;
@@ -318,7 +356,7 @@ class ExecutiveDashboard {
                     <canvas id="forecastChart"></canvas>
                 </div>
             `;
-            
+
             // Create forecast chart
             this.createForecastChart();
         }
@@ -380,19 +418,22 @@ class ExecutiveDashboard {
         const labels = analytics.assets.map(asset => asset.name);
         const data = analytics.assets.map(asset => Number.parseFloat(asset.value.replaceAll(/[$,]/g, '')));
 
+        // Create performance chart showing historical data
+        const performanceData = this.assetManagementService.getHistoricalPerformance();
+        const performanceLabels = performanceData.map(point => point.date);
+        const performanceValues = performanceData.map(point => point.value);
+
         this.charts.aum = new Chart(ctx.getContext('2d'), {
-            type: 'pie',
+            type: 'line',
             data: {
-                labels,
+                labels: performanceLabels,
                 datasets: [{
-                    data,
-                    backgroundColor: [
-                        '#d4af37',
-                        '#1a1a2e',
-                        '#16213e',
-                        '#0f3460',
-                        '#333'
-                    ]
+                    label: 'Portfolio Performance',
+                    data: performanceValues,
+                    borderColor: '#d4af37',
+                    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                    tension: 0.4,
+                    fill: true
                 }]
             },
             options: {
@@ -402,6 +443,172 @@ class ExecutiveDashboard {
                     legend: {
                         labels: {
                             color: '#ffffff'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            color: '#ffffff',
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createAssetPerformanceChart() {
+        const ctx = document.getElementById('assetPerformanceChart');
+        if (!ctx) return;
+
+        // Get portfolio analytics for asset performance data
+        const analytics = this.assetManagementService.getPortfolioAnalytics();
+        const assets = analytics.assets;
+
+        const labels = assets.map(asset => asset.name);
+        const returns = assets.map(asset => parseFloat(asset.performance?.yearly || 0));
+        const volatilities = assets.map(asset => parseFloat(asset.performance?.volatility || 0));
+
+        this.charts.assetPerformance = new Chart(ctx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Annual Return (%)',
+                    data: returns,
+                    backgroundColor: '#d4af37',
+                    borderColor: '#b8952a',
+                    borderWidth: 1
+                }, {
+                    label: 'Volatility (%)',
+                    data: volatilities,
+                    backgroundColor: '#1a1a2e',
+                    borderColor: '#16213e',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            color: '#ffffff',
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createPortfolioRiskChart() {
+        const ctx = document.getElementById('portfolioRiskChart');
+        if (!ctx) return;
+
+        // Get portfolio metrics for risk analysis
+        const metrics = this.assetManagementService.getPortfolioMetrics();
+        const analytics = this.assetManagementService.getPortfolioAnalytics();
+
+        // Create risk-return scatter plot
+        const assets = analytics.assets;
+        const riskData = assets.map(asset => ({
+            x: parseFloat(asset.performance?.volatility || 0),
+            y: parseFloat(asset.performance?.yearly || 0),
+            name: asset.name,
+            allocation: parseFloat(asset.allocation.replace('%', ''))
+        }));
+
+        this.charts.portfolioRisk = new Chart(ctx.getContext('2d'), {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Asset Risk-Return Profile',
+                    data: riskData,
+                    backgroundColor: '#d4af37',
+                    borderColor: '#b8952a',
+                    pointRadius: function(context) {
+                        const size = context.raw.allocation || 5;
+                        return Math.max(5, size * 2);
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.raw.name}: Return ${context.parsed.y}%, Risk ${context.parsed.x}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Volatility (Risk) %',
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Annual Return %',
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
                         }
                     }
                 }
@@ -420,12 +627,44 @@ class ExecutiveDashboard {
         }, 5000);
     }
 
+    updatePortfolioSummary() {
+        const summaryContainer = document.getElementById('portfolioSummary');
+        if (!summaryContainer) return;
+
+        const analytics = this.assetManagementService.getPortfolioAnalytics();
+        const metrics = this.assetManagementService.getPortfolioMetrics();
+
+        summaryContainer.innerHTML = `
+            <div class="portfolio-summary">
+                <h3>Portfolio Overview</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="label">Total Assets</span>
+                        <span class="value">${analytics.summary.totalAssets}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Total Value</span>
+                        <span class="value">${analytics.summary.totalValue}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Best Performer</span>
+                        <span class="value">${analytics.summary.bestPerformer}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Worst Performer</span>
+                        <span class="value">${analytics.summary.worstPerformer}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     showSuccess(message) {
         const successDiv = document.createElement('div');
         successDiv.className = 'success-message';
         successDiv.textContent = message;
         document.querySelector('.dashboard-content').prepend(successDiv);
-        
+
         setTimeout(() => {
             successDiv.remove();
         }, 3000);

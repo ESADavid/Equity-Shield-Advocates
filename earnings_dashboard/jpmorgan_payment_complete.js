@@ -2,6 +2,14 @@ import express from 'express';
 import crypto from 'node:crypto';
 import axios from 'axios';
 
+// Utility function for currency formatting
+const formatCurrency = (amount, currency = 'USD') => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency
+  }).format(amount);
+};
+
 const router = express.Router();
 
 // Import middleware

@@ -176,7 +176,7 @@ class QuantumSecurity {
   }
 
   // Alias for backward compatibility
-  verify() {
+  verifySecurityAlias() {
     return this.verifySecurity();
   }
 
