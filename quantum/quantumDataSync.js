@@ -60,6 +60,26 @@ class QuantumDataSync extends EventEmitter {
         owlban: 'reports',
         jpmorgan: 'reports',
         fields: ['reportId', 'type', 'period', 'data', 'generatedAt']
+      },
+      revenue: {
+        owlban: 'revenue',
+        jpmorgan: 'revenue',
+        fields: ['totalRevenue', 'revenueStreams', 'purchases', 'payrollTotal', 'auditTrail']
+      },
+      payroll: {
+        owlban: 'payroll',
+        jpmorgan: 'payroll',
+        fields: ['employeeId', 'amount', 'period', 'type', 'status']
+      },
+      wallet: {
+        owlban: 'wallet',
+        jpmorgan: 'wallet',
+        fields: ['walletId', 'balance', 'transactions', 'assets', 'liabilities']
+      },
+      merchant: {
+        owlban: 'merchant',
+        jpmorgan: 'merchant',
+        fields: ['merchantId', 'businessName', 'revenue', 'transactions', 'status']
       }
     };
 
@@ -236,6 +256,21 @@ class QuantumDataSync extends EventEmitter {
       reports: [
         { reportId: 'RPT001', type: 'daily', period: '2024-01-15', data: { totalVolume: 500000, transactions: 150 }, generatedAt: new Date().toISOString() },
         { reportId: 'RPT002', type: 'monthly', period: '2024-01', data: { totalVolume: 15000000, transactions: 4500 }, generatedAt: new Date().toISOString() }
+      ],
+      revenue: [
+        { totalRevenue: 50000000, revenueStreams: { banking: 30000000, investments: 20000000 }, purchases: { autoFleet: 500000, corporateHomes: 2000000 }, payrollTotal: 5000000, auditTrail: [] }
+      ],
+      payroll: [
+        { employeeId: 'EMP001', amount: 150000, period: '2024-01', type: 'salary', status: 'paid' },
+        { employeeId: 'EMP002', amount: 120000, period: '2024-01', type: 'salary', status: 'paid' },
+        { employeeId: 'EMP003', amount: 180000, period: '2024-01', type: 'bonus', status: 'pending' }
+      ],
+      wallet: [
+        { walletId: 'WAL001', balance: 1000000, transactions: [], assets: { crypto: 500000, stocks: 500000 }, liabilities: 0 }
+      ],
+      merchant: [
+        { merchantId: 'MER001', businessName: 'Luxury Store', revenue: 1000000, transactions: 500, status: 'active' },
+        { merchantId: 'MER002', businessName: 'Investment Firm', revenue: 5000000, transactions: 2000, status: 'active' }
       ]
     };
 
