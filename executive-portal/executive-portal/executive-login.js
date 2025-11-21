@@ -27,10 +27,10 @@ class ExecutiveLoginPortal {
         const passwordInput = document.getElementById('password');
 
         if (emailInput) {
-            emailInput.addEventListener('blur', this.validateEmail.bind(this));
+            emailInput.addEventListener('blur', this.validateEmailExecutive.bind(this));
         }
         if (passwordInput) {
-            passwordInput.addEventListener('input', this.validatePassword.bind(this));
+            passwordInput.addEventListener('input', this.validatePasswordExecutive.bind(this));
         }
     }
 
@@ -41,9 +41,9 @@ class ExecutiveLoginPortal {
 
         if (passwordInput && strengthIndicator) {
             passwordInput.addEventListener('input', () => {
-                const strength = this.calculatePasswordStrength(passwordInput.value);
+                const strength = this.calculatePasswordStrengthExecutive(passwordInput.value);
                 strengthIndicator.textContent = `Strength: ${strength}`;
-                this.updateStrengthColor(strengthIndicator, strength);
+                this.updateStrengthColorExecutive(strengthIndicator, strength);
             });
         }
     }
@@ -62,7 +62,7 @@ class ExecutiveLoginPortal {
         const password = document.getElementById('password').value;
         const twoFactorCode = document.getElementById('two-factor-code').value;
 
-        if (this.validateLogin(email, password, twoFactorCode)) {
+        if (this.validateLoginExecutive(email, password, twoFactorCode)) {
             // Simulate login success
             alert('Login successful! Redirecting to executive dashboard...');
             // Redirect to dashboard
@@ -70,33 +70,33 @@ class ExecutiveLoginPortal {
         }
     }
 
-    validateEmail() {
+    validateEmailExecutive() {
         const email = document.getElementById('email').value;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const isValid = emailRegex.test(email);
-        this.showValidationMessage('email', isValid, 'Please enter a valid email address');
+        this.showValidationMessageExecutive('email', isValid, 'Please enter a valid email address');
         return isValid;
     }
 
-    validatePassword() {
+    validatePasswordExecutive() {
         const password = document.getElementById('password').value;
         const isValid = password.length >= 8;
-        this.showValidationMessage('password', isValid, 'Password must be at least 8 characters long');
+        this.showValidationMessageExecutive('password', isValid, 'Password must be at least 8 characters long');
         return isValid;
     }
 
-    validateTwoFactorCode() {
+    validateTwoFactorCodeExecutive() {
         const code = document.getElementById('two-factor-code').value;
         const isValid = /^\d{6}$/.test(code);
-        this.showValidationMessage('two-factor-code', isValid, 'Please enter a valid 6-digit code');
+        this.showValidationMessageExecutive('two-factor-code', isValid, 'Please enter a valid 6-digit code');
         return isValid;
     }
 
-    validateLogin(email, password, twoFactorCode) {
-        return this.validateEmail() && this.validatePassword() && this.validateTwoFactorCode();
+    validateLoginExecutive(email, password, twoFactorCode) {
+        return this.validateEmailExecutive() && this.validatePasswordExecutive() && this.validateTwoFactorCodeExecutive();
     }
 
-    calculatePasswordStrength(password) {
+    calculatePasswordStrengthExecutive(password) {
         let strength = 0;
         if (password.length >= 8) strength++;
         if (/[A-Z]/.test(password)) strength++;
@@ -115,7 +115,7 @@ class ExecutiveLoginPortal {
         }
     }
 
-    updateStrengthColor(element, strength) {
+    updateStrengthColorExecutive(element, strength) {
         // Remove existing strength classes
         element.classList.remove('very-weak', 'weak', 'medium', 'strong', 'very-strong');
 
@@ -139,7 +139,7 @@ class ExecutiveLoginPortal {
         }
     }
 
-    showValidationMessage(fieldId, isValid, message) {
+    showValidationMessageExecutive(fieldId, isValid, message) {
         const field = document.getElementById(fieldId);
         const errorElement = document.getElementById(`${fieldId}-error`);
 
