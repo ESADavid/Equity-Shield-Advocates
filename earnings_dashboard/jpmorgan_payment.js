@@ -1,8 +1,8 @@
-const express = require('express');
-const axios = require('axios');
-const crypto = require('node:crypto');
-const fs = require('node:fs');
-const path = require('node:path');
+import express from 'express';
+import axios from 'axios';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const router = express.Router();
 
@@ -708,7 +708,7 @@ function generateMockBankingBalances() {
   };
 }
 
-const QuickBooksPayrollIntegration = require('../quickbooks_payroll_integration.js');
+import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration.js';
 
 // Example function to sync payments with QuickBooks payroll
 async function syncPaymentsWithQuickBooks() {
@@ -1736,4 +1736,4 @@ router.post('/control/banking-action', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

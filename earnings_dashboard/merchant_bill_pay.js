@@ -446,7 +446,7 @@ router.post('/merchant-webhook', express.raw({ type: 'application/json' }), asyn
   await handleMerchantWebhook(req, res);
 });
 
-module.exports = {
+export {
   router,
   createMerchantPaymentIntent,
   handleMerchantWebhook,
