@@ -601,6 +601,127 @@ class AssetManagementService {
   }
 
   /**
+   * Get portfolio metrics for dashboard
+   * @returns {Object} Portfolio metrics
+   */
+  getPortfolioMetrics() {
+    const assets = Array.from(this.portfolio.values());
+    const totalValue = assets.reduce((sum, asset) => sum + asset.value, 0);
+
+    // Calculate weighted metrics
+    const weightedReturn = assets.reduce((sum, asset) => {
+      return sum + (asset.performance?.yearly || 0) * asset.allocation;
+    }, 0);
+
+    const weightedVolatility = assets.reduce((sum, asset) => {
+      return sum + (asset.performance?.volatility || 0) * asset.allocation;
+    }, 0);
+
+    const weightedSharpe = assets.reduce((sum, asset) => {
+      return sum + (asset.performance?.sharpeRatio || 0) * asset.allocation;
+    }, 0);
+
+    const diversificationRatio = this.calculateDiversificationRatio(assets);
+
+    return {
+      totalReturn: (weightedReturn * 100).toFixed(2),
+      volatility: (weightedVolatility * 100).toFixed(2),
+      sharpeRatio: weightedSharpe.toFixed(2),
+      diversificationScore: Math.round(diversificationRatio * 25) // Scale to 0-100
+    };
+  }
+
+  /**
+   * Get portfolio alerts
+   * @returns {Array} Array of portfolio alerts
+   */
+  getPortfolioAlerts() {
+    const alerts = [];
+    const assets = Array.from(this.portfolio.values());
+
+    for (const asset of assets) {
+      const performance = asset.performance || {};
+
+      // Check for high volatility
+      if (performance.volatility > PERFORMANCE_CONSTANTS.HIGH_VOLATILITY_THRESHOLD) {
+        alerts.push({
+          message: `${asset.name} shows high volatility (${(performance.volatility * 100).toFixed(1)}%)`,
+          timestamp: new Date().toISOString(),
+          severity: 'warning'
+        });
+      }
+
+      // Check for underperformance
+      if (performance.yearly < PERFORMANCE_CONSTANTS.UNDERPERFORMANCE_THRESHOLD) {
+        alerts.push({
+          message: `${asset.name} is underperforming with ${(performance.yearly * 100).toFixed(1)}% annual return`,
+          timestamp: new Date().toISOString(),
+          severity: 'warning'
+        });
+      }
+    }
+
+    return alerts;
+  }
+
+  /**
+   * Get rebalancing recommendations
+   * @returns {Array} Array of rebalancing recommendations
+   */
+  getRebalancingRecommendations() {
+    const recommendations = [];
+    const assets = Array.from(this.portfolio.values());
+
+    for (const asset of assets) {
+      const targetAllocation = this.getTargetAllocation(asset.type);
+      const allocationDiff = Math.abs(asset.allocation - targetAllocation);
+
+      if (allocationDiff > PERFORMANCE_CONSTANTS.ALLOCATION_DEVIATION_THRESHOLD) {
+        const action = asset.allocation > targetAllocation ? 'Reduce allocation' : 'Increase allocation';
+        recommendations.push({
+          action: `${action} for ${asset.name} by ${((allocationDiff) * 100).toFixed(1)}%`,
+          assetId: asset.id,
+          currentAllocation: (asset.allocation * 100).toFixed(1) + '%',
+          targetAllocation: (targetAllocation * 100).toFixed(1) + '%'
+        });
+      }
+    }
+
+    return recommendations;
+  }
+
+  /**
+   * Get historical performance data
+   * @returns {Array} Array of historical performance points
+   */
+  getHistoricalPerformance() {
+    const performanceData = [];
+    const assets = Array.from(this.portfolio.values());
+
+    // Generate sample historical data for the last 30 days
+    const today = new Date();
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+
+      // Calculate portfolio value for this date (simplified)
+      let totalValue = 0;
+      for (const asset of assets) {
+        const dailyReturn = asset.performance?.daily || 0;
+        const value = asset.value * Math.pow(1 + dailyReturn, -i); // Simplified historical calculation
+        totalValue += value;
+      }
+
+      performanceData.push({
+        date: date.toISOString().split('T')[0],
+        value: totalValue
+      });
+    }
+
+    return performanceData;
+  }
+
+  /**
    * Get service health status
    * @returns {Object} Health status
    */
