@@ -8015,6 +8015,32 @@
         "payrollTotal": 0,
         "incrementalUpdate": false
       }
+    },
+    {
+      "timestamp": "2025-11-21T00:43:01.774Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232630679,
+        "purchases": {
+          "autoFleet": 1571103,
+          "corporateHomes": 366108
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-11-21T00:43:26.954Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232630679,
+        "purchases": {
+          "autoFleet": 1571103,
+          "corporateHomes": 366108
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": true
+      }
     }
   ]
 }

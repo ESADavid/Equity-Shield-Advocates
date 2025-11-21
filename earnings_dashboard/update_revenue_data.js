@@ -1,13 +1,13 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const promises_1 = __importDefault(require("fs/promises"));
-const path_1 = __importDefault(require("path"));
-const revenueDataPath = path_1.default.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+import fs from 'node:fs/promises';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 function validateNumber(value, fieldName) {
-    if (typeof value !== 'number' || isNaN(value) || value < 0) {
+    if (typeof value !== 'number' || Number.isNaN(value) || value < 0) {
         console.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
         return 0;
     }
@@ -19,29 +19,21 @@ function validateNumber(value, fieldName) {
  */
 const ADD_SAMPLE_DATA = false;
 function ensurePurchasesStructure(data) {
-    if (!data.purchases) {
-        data.purchases = {
-            corporateHomes: 0,
-            corporateHomesDetails: [],
-            autoFleet: 0,
-            autoFleetDetails: []
-        };
-    }
-    else {
-        if (!Array.isArray(data.purchases.autoFleetDetails)) {
-            data.purchases.autoFleetDetails = [];
-        }
-        if (!Array.isArray(data.purchases.corporateHomesDetails)) {
-            data.purchases.corporateHomesDetails = [];
-        }
-    }
+    data.purchases = data.purchases || {
+        corporateHomes: 0,
+        corporateHomesDetails: [],
+        autoFleet: 0,
+        autoFleetDetails: []
+    };
+    data.purchases.autoFleetDetails = Array.isArray(data.purchases.autoFleetDetails) ? data.purchases.autoFleetDetails : [];
+    data.purchases.corporateHomesDetails = Array.isArray(data.purchases.corporateHomesDetails) ? data.purchases.corporateHomesDetails : [];
 }
 function validatePurchases(data) {
     data.purchases.autoFleet = validateNumber(data.purchases.autoFleet, 'autoFleet');
     data.purchases.corporateHomes = validateNumber(data.purchases.corporateHomes, 'corporateHomes');
 }
 function addSampleData(data, incremental) {
-    if (!incremental && ADD_SAMPLE_DATA) {
+    if (incremental && ADD_SAMPLE_DATA) {
         if (data.purchases.autoFleetDetails.length === 0) {
             data.purchases.autoFleetDetails.push({
                 model: 'Sample Model',
@@ -93,7 +85,7 @@ function integratePayroll(data) {
     if (Array.isArray(data.payroll)) {
         let payrollTotal = 0;
         for (const payrollEntry of data.payroll) {
-            if (typeof payrollEntry.amount === 'number' && !isNaN(payrollEntry.amount) && payrollEntry.amount >= 0) {
+            if (typeof payrollEntry.amount === 'number' && !Number.isNaN(payrollEntry.amount) && payrollEntry.amount >= 0) {
                 payrollTotal += payrollEntry.amount;
             }
             else {
@@ -122,15 +114,15 @@ function addAuditTrail(data, incremental) {
         }
     });
 }
-async function updateRevenueData(incremental = false, filePath) {
+async function updateRevenueData(filePath, incremental = false) {
     const dataPath = filePath || revenueDataPath;
     try {
-        await promises_1.default.access(dataPath);
-        const fileContent = await promises_1.default.readFile(dataPath, 'utf-8');
+        await fs.access(dataPath);
+        const fileContent = await fs.readFile(dataPath, 'utf-8');
         const data = JSON.parse(fileContent);
         ensurePurchasesStructure(data);
         validatePurchases(data);
-        if (typeof data.totalRevenue !== 'number' || isNaN(data.totalRevenue)) {
+        if (typeof data.totalRevenue !== 'number' || Number.isNaN(data.totalRevenue)) {
             console.warn('Invalid or missing totalRevenue, defaulting to 0.');
             data.totalRevenue = 0;
         }
@@ -139,7 +131,7 @@ async function updateRevenueData(incremental = false, filePath) {
         addTransactionDetails(data);
         integratePayroll(data);
         addAuditTrail(data, incremental);
-        await promises_1.default.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
+        await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
         console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
         return true;
     } catch (error) {
@@ -147,5 +139,5 @@ async function updateRevenueData(incremental = false, filePath) {
         return false;
     }
 }
-exports.default = updateRevenueData;
+export default updateRevenueData;
 //# sourceMappingURL=update_revenue_data.js.map
