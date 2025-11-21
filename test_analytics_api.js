@@ -112,7 +112,7 @@ class AnalyticsAPITester {
       if (response.statusCode === 200 && response.body) {
         // Check for expected analytics structure
         const requiredFields = ['predictions', 'anomalies', 'riskAssessment'];
-        const hasRequiredFields = requiredFields.every(field => response.body.hasOwnProperty(field));
+        const hasRequiredFields = requiredFields.every(field => Object.prototype.hasOwnProperty.call(response.body, field));
 
         if (hasRequiredFields) {
           this.logPass('Analytics Endpoint', `Contains ${Object.keys(response.body).length} fields`);
@@ -138,7 +138,7 @@ class AnalyticsAPITester {
       if (response.statusCode === 200 && response.body) {
         // Check for expected transcendence structure
         const requiredFields = ['deepLearning', 'quantumOptimization', 'autonomousDecisions'];
-        const hasRequiredFields = requiredFields.every(field => response.body.hasOwnProperty(field));
+        const hasRequiredFields = requiredFields.every(field => Object.prototype.hasOwnProperty.call(response.body, field));
 
         if (hasRequiredFields) {
           this.logPass('Transcendence Analytics Endpoint', `Contains ${Object.keys(response.body).length} fields`);
@@ -173,9 +173,9 @@ class AnalyticsAPITester {
       if (response.statusCode === 200 && response.body) {
         // Check for expected optimization structure
         const requiredFields = ['optimized', 'decisions'];
-        const hasRequiredFields = requiredFields.every(field => response.body.hasOwnProperty(field));
+        const hasRequiredFields = requiredFields.every(field => Object.prototype.hasOwnProperty.call(response.body, field));
 
-        if (hasRequiredFields && response.body.optimized && response.body.optimized.projectedRevenue) {
+        if (hasRequiredFields && response.body.optimized && Object.prototype.hasOwnProperty.call(response.body.optimized, 'projectedRevenue')) {
           this.logPass('Revenue Optimization Endpoint', `Projected revenue: $${response.body.optimized.projectedRevenue.toLocaleString()}`);
           return response.body;
         } else {
@@ -199,7 +199,7 @@ class AnalyticsAPITester {
       if (response.statusCode === 200 && response.body) {
         // Check for expected status structure
         const requiredFields = ['merchantBillPay', 'jpmorganPayment', 'environment'];
-        const hasRequiredFields = requiredFields.every(field => response.body.hasOwnProperty(field));
+        const hasRequiredFields = requiredFields.every(field => Object.prototype.hasOwnProperty.call(response.body, field));
 
         if (hasRequiredFields) {
           this.logPass('API Status Endpoint', `Environment: ${response.body.environment.environment}, Port: ${response.body.environment.port}`);
