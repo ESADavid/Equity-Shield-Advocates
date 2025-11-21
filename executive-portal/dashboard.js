@@ -378,7 +378,7 @@ class ExecutiveDashboard {
         // Get real data from AssetManagementService
         const analytics = this.assetManagementService.getPortfolioAnalytics();
         const labels = analytics.assets.map(asset => asset.name);
-        const data = analytics.assets.map(asset => parseFloat(asset.value.replace(/[$,]/g, '')));
+        const data = analytics.assets.map(asset => Number.parseFloat(asset.value.replaceAll(/[$,]/g, '')));
 
         this.charts.aum = new Chart(ctx.getContext('2d'), {
             type: 'pie',
@@ -454,7 +454,7 @@ const Utils = {
 function logout() {
     localStorage.removeItem('executiveToken');
     localStorage.removeItem('executiveUser');
-    globalThis.location.href = '/executive-portal/login.html';
+    window.location.href = '/executive-portal/login.html';
 }
 
 function syncRevenueData() {
@@ -487,7 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check authentication
     const token = localStorage.getItem('executiveToken');
     if (!token) {
-        globalThis.location.href = '/executive-portal/login.html';
+        window.location.href = '/executive-portal/login.html';
         return;
     }
 

@@ -66,7 +66,7 @@ class ExecutiveLoginPortal {
             // Simulate login success
             alert('Login successful! Redirecting to executive dashboard...');
             // Redirect to dashboard
-            globalThis.location.href = '/executive-dashboard';
+            window.location.href = '/executive-dashboard';
         }
     }
 

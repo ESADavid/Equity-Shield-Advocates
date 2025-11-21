@@ -55,13 +55,13 @@ const MFA_SECRET = process.env.MFA_SECRET || crypto.randomBytes(32).toString('he
 const ADMIN_OVERRIDE_CODE = process.env.ADMIN_OVERRIDE_CODE || 'OSCAR_BROOME_EMERGENCY_2024';
 
 // Enhanced security settings
-const PASSWORD_MIN_LENGTH = parseInt(process.env.PASSWORD_MIN_LENGTH) || 12;
+const PASSWORD_MIN_LENGTH = Number.parseInt(process.env.PASSWORD_MIN_LENGTH) || 12;
 const PASSWORD_REQUIRE_UPPERCASE = process.env.PASSWORD_REQUIRE_UPPERCASE !== 'false';
 const PASSWORD_REQUIRE_LOWERCASE = process.env.PASSWORD_REQUIRE_LOWERCASE !== 'false';
 const PASSWORD_REQUIRE_NUMBERS = process.env.PASSWORD_REQUIRE_NUMBERS !== 'false';
 const PASSWORD_REQUIRE_SPECIAL = process.env.PASSWORD_REQUIRE_SPECIAL !== 'false';
-const SESSION_TIMEOUT = parseInt(process.env.SESSION_TIMEOUT) || 3600000; // 1 hour
-const MAX_SESSIONS_PER_USER = parseInt(process.env.MAX_SESSIONS_PER_USER) || 5;
+const SESSION_TIMEOUT = Number.parseInt(process.env.SESSION_TIMEOUT) || 3600000; // 1 hour
+const MAX_SESSIONS_PER_USER = Number.parseInt(process.env.MAX_SESSIONS_PER_USER) || 5;
 
 // In-memory user store (in production, use database)
 const users = new Map();
@@ -181,7 +181,7 @@ class AuthenticationManager {
 
     } catch (error) {
       authLogger.error(`Authentication error for ${email}: ${error.message}`);
-      return { success: false, message: 'Authentication failed' };
+      throw error; // Re-throw to allow caller to handle
     }
   }
 
@@ -329,6 +329,7 @@ class AuthenticationManager {
       const tokens = this.generateTokens(user);
       return { success: true, tokens };
     } catch (error) {
+      authLogger.error(`Refresh token error: ${error.message}`);
       return { success: false, message: 'Invalid refresh token' };
     }
   }
@@ -402,7 +403,9 @@ class AuthenticationManager {
       }
     }
 
-    tokensToDelete.forEach(token => sessions.delete(token));
+    for (const token of tokensToDelete) {
+      sessions.delete(token);
+    }
     authLogger.info(`Force logout all sessions for user: ${userId}`);
     return { success: true, message: `${tokensToDelete.length} sessions terminated` };
   }
@@ -444,6 +447,7 @@ class AuthenticationManager {
       if (sessions.has(token)) {
         sessions.delete(token); // Clean up invalid session
       }
+      authLogger.error(`Token verification error: ${error.message}`);
       return { valid: false, message: 'Invalid token' };
     }
   }
