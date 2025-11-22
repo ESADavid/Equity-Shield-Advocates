@@ -433,7 +433,7 @@ class EnhancedDatabase {
   // Backup and restore methods
   async createBackup(backupPath) {
     try {
-      const timestamp = new Date().toISOString().replaceAll(/[:.]/g, '-');
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const filename = `backup-${timestamp}.gz`;
       const fullPath = `${backupPath}/${filename}`;
 

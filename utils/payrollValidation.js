@@ -127,7 +127,7 @@ function sanitizeEmployeeInput(input) {
     if (input.salary !== undefined) {
         sanitized.salary = input.salary;
     }
-    const accountNumber = input.accountNumber?.replaceAll(/\D/g, '');
+    const accountNumber = input.accountNumber?.replace(/\D/g, '');
     if (accountNumber) {
         sanitized.accountNumber = accountNumber;
     }

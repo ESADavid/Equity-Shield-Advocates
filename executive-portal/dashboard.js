@@ -419,7 +419,7 @@ export default class ExecutiveDashboard {
         // Get real data from AssetManagementService
         const analytics = this.assetManagementService.getPortfolioAnalytics();
         const labels = analytics.assets.map(asset => asset.name);
-        const data = analytics.assets.map(asset => Number.parseFloat(asset.value.replaceAll(/[$,]/g, '')));
+        const data = analytics.assets.map(asset => Number.parseFloat(asset.value.replace(/[$,]/g, '')));
 
         // Create performance chart showing historical data
         const performanceData = this.assetManagementService.getHistoricalPerformance();

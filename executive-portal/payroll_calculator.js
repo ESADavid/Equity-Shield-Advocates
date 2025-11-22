@@ -2,6 +2,9 @@
 
 import ExecutiveDashboard from './dashboard.js';
 
+// Create global dashboard instance
+const dashboard = new ExecutiveDashboard();
+
 /* global dashboard */
 
 // Utility functions

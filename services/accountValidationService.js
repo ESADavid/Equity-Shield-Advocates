@@ -37,7 +37,7 @@ class AccountValidationService {
       }
 
       // Remove spaces and dashes
-      const cleanAccountNumber = accountNumber.replaceAll(/[\s-]/g, '');
+      const cleanAccountNumber = accountNumber.replace(/[\s-]/g, '');
 
       // Check length (typically 8-17 digits)
       if (cleanAccountNumber.length < 8 || cleanAccountNumber.length > 17) {
