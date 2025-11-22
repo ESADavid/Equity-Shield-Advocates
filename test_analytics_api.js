@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-import http from 'http';
-import https from 'https';
+import http from 'node:http';
 
 /**
  * Comprehensive Analytics API Test Suite
@@ -327,9 +326,9 @@ class AnalyticsAPITester {
 
     if (this.results.errors.length > 0) {
       console.log('\n🔍 Failed Tests:');
-      this.results.errors.forEach((err, index) => {
+      for (const [index, err] of this.results.errors.entries()) {
         console.log(`${index + 1}. ${err.test}: ${err.error}${err.details ? ' (' + err.details + ')' : ''}`);
-      });
+      }
     }
 
     console.log('\n🏁 Analytics API Testing Completed!');
