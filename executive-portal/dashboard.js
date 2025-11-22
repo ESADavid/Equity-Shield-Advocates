@@ -4,6 +4,9 @@
 import Chart from 'chart.js/auto';
 import AssetManagementService from '../services/assetManagementService.js';
 
+// Global Chart variable for compatibility
+globalThis.Chart = Chart;
+
 export default class ExecutiveDashboard {
     currentSection = 'overview';
     charts = {};

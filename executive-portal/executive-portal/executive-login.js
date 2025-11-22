@@ -52,7 +52,7 @@ class ExecutiveLoginPortal {
         // Setup 2FA input handling
         const twoFactorInput = document.getElementById('two-factor-code');
         if (twoFactorInput) {
-            twoFactorInput.addEventListener('input', this.validateTwoFactorCode.bind(this));
+            twoFactorInput.addEventListener('input', this.validateTwoFactorCodeExecutive.bind(this));
         }
     }
 

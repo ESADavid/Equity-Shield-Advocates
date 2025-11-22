@@ -31,6 +31,8 @@ const logger = winston_1.default.createLogger({
 });
 // Import authentication routes
 const jpmorganAuthRoutes = require('../routes/jpmorgan_auth_routes.js');
+// Import payroll routes
+const payrollRouter = require('./payroll_router.js');
 // Basic auth setup (fallback for legacy endpoints)
 app.use((0, express_basic_auth_1.default)({
     users: { [ADMIN_USER]: ADMIN_PASS },
@@ -41,6 +43,8 @@ app.use(express_1.default.json());
 app.use((0, morgan_1.default)('combined', { stream: { write: (msg) => logger.info(msg.trim()) } }));
 // Mount JPMorgan authentication routes
 app.use('/api/auth', jpmorganAuthRoutes);
+// Mount payroll routes
+app.use('/api/payroll', payrollRouter);
 // Load aggregated revenue data path from environment or default
 const revenueDataPath = process.env.REVENUE_DATA_PATH ||
     path_1.default.resolve(__dirname, '../owlban_repos/aggregated_revenue.json');
