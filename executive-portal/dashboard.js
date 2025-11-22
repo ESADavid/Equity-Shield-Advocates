@@ -245,8 +245,8 @@ export default class ExecutiveDashboard {
                 </div>
                 <div class="activity-content">
                     <div class="activity-message">${activity.message}</div>
-                    <div class="activity-date">${Utils.formatDate(activity.date)}</div>
-                    ${activity.amount > 0 ? `<div class="activity-amount">${Utils.formatCurrency(activity.amount)}</div>` : ''}
+                    <div class="activity-date">${new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(activity.date))}</div>
+                    ${activity.amount > 0 ? `<div class="activity-amount">${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(activity.amount)}</div>` : ''}
                 </div>
             </div>
         `).join('');
@@ -285,7 +285,7 @@ export default class ExecutiveDashboard {
                 ${Object.entries(this.data.revenueStreams || {}).map(([stream, details]) => `
                     <div class="revenue-stream">
                         <h4>${stream}</h4>
-                        <div class="amount">${Utils.formatCurrency(details.amount)}</div>
+                        <div class="amount">${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(details.amount)}</div>
                         <div class="account">Account: ${details.accountNumber || 'N/A'}</div>
                     </div>
                 `).join('')}
@@ -307,7 +307,7 @@ export default class ExecutiveDashboard {
                             <h4>${vehicle.model}</h4>
                             <p>VIN: ${vehicle.vin}</p>
                             <p>Dealership: ${vehicle.dealership}</p>
-                            <p>Cost: ${Utils.formatCurrency(vehicle.cost)}</p>
+                            <p>Cost: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(vehicle.cost)}</p>
                             <p>Status: ${vehicle.deliveryStatus}</p>
                         </div>
                         <div class="vehicle-actions">
@@ -382,7 +382,7 @@ export default class ExecutiveDashboard {
         assetClassContainer.innerHTML = Object.entries(aum.assetClasses || {}).map(([key, val]) => `
             <div class="aum-asset-class">
                 <h4>${key.charAt(0).toUpperCase() + key.slice(1)}</h4>
-                <p>Amount: ${Utils.formatCurrency(val.amount)}</p>
+                <p>Amount: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val.amount)}</p>
                 <p>Percentage: ${val.percentage}%</p>
                 <p>${val.description}</p>
             </div>
@@ -673,24 +673,6 @@ export default class ExecutiveDashboard {
         }, 3000);
     }
 }
-
-// Utility functions
-const Utils = {
-    formatCurrency: (amount) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD'
-        }).format(amount);
-    },
-    
-    formatDate: (date) => {
-        return new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        }).format(new Date(date));
-    }
-};
 
 // Global functions
 function logout() {

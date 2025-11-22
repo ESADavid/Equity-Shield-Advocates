@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 // Executive Login Portal JavaScript - Oscar Broome
 // Enhanced security and executive-level features
 
@@ -29,10 +27,10 @@ class ExecutiveLoginPortal {
         const passwordInput = document.getElementById('password');
 
         if (emailInput) {
-            emailInput.addEventListener('blur', this.validateEmail.bind(this));
+            emailInput.addEventListener('blur', this.validateEmailNested.bind(this));
         }
         if (passwordInput) {
-            passwordInput.addEventListener('input', this.validatePassword.bind(this));
+            passwordInput.addEventListener('input', this.validatePasswordNested.bind(this));
         }
     }
 
@@ -43,7 +41,7 @@ class ExecutiveLoginPortal {
 
         if (passwordInput && strengthIndicator) {
             passwordInput.addEventListener('input', () => {
-                const strength = this.calculatePasswordStrength(passwordInput.value);
+                const strength = this.calculatePasswordStrengthNested(passwordInput.value);
                 strengthIndicator.textContent = `Strength: ${strength}`;
             });
         }
@@ -53,7 +51,7 @@ class ExecutiveLoginPortal {
         // Setup 2FA input handling
         const twoFactorInput = document.getElementById('two-factor-code');
         if (twoFactorInput) {
-            twoFactorInput.addEventListener('input', this.validateTwoFactorCode.bind(this));
+            twoFactorInput.addEventListener('input', this.validateTwoFactorCodeNested.bind(this));
         }
     }
 
@@ -63,41 +61,41 @@ class ExecutiveLoginPortal {
         const password = document.getElementById('password').value;
         const twoFactorCode = document.getElementById('two-factor-code').value;
 
-        if (this.validateLogin(email, password, twoFactorCode)) {
+        if (this.validateLoginNested(email, password, twoFactorCode)) {
             // Simulate login success
             alert('Login successful! Redirecting to executive dashboard...');
             // Redirect to dashboard
-            window.location.href = '/executive-dashboard';
+            globalThis.location.href = '/executive-dashboard';
         }
     }
 
-    validateEmail() {
+    validateEmailNested() {
         const email = document.getElementById('email').value;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const isValid = emailRegex.test(email);
-        this.showValidationMessage('email', isValid, 'Please enter a valid email address');
+        this.showValidationMessageNested('email', isValid, 'Please enter a valid email address');
         return isValid;
     }
 
-    validatePassword() {
+    validatePasswordNested() {
         const password = document.getElementById('password').value;
         const isValid = password.length >= 8;
-        this.showValidationMessage('password', isValid, 'Password must be at least 8 characters long');
+        this.showValidationMessageNested('password', isValid, 'Password must be at least 8 characters long');
         return isValid;
     }
 
-    validateTwoFactorCode() {
+    validateTwoFactorCodeNested() {
         const code = document.getElementById('two-factor-code').value;
         const isValid = /^\d{6}$/.test(code);
-        this.showValidationMessage('two-factor-code', isValid, 'Please enter a valid 6-digit code');
+        this.showValidationMessageNested('two-factor-code', isValid, 'Please enter a valid 6-digit code');
         return isValid;
     }
 
-    validateLogin(_email, _password, _twoFactorCode) {
-        return this.validateEmail() && this.validatePassword() && this.validateTwoFactorCode();
+    validateLoginNested(_email, _password, _twoFactorCode) {
+        return this.validateEmailNested() && this.validatePasswordNested() && this.validateTwoFactorCodeNested();
     }
 
-    calculatePasswordStrength(password) {
+    calculatePasswordStrengthNested(password) {
         let strength = 0;
         if (password.length >= 8) strength++;
         if (/[A-Z]/.test(password)) strength++;
@@ -116,7 +114,7 @@ class ExecutiveLoginPortal {
         }
     }
 
-    showValidationMessage(fieldId, isValid, message) {
+    showValidationMessageNested(fieldId, isValid, message) {
         const field = document.getElementById(fieldId);
         const errorElement = document.getElementById(`${fieldId}-error`);
 
