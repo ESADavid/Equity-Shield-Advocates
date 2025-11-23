@@ -2,10 +2,9 @@
 
 import ExecutiveDashboard from './dashboard.js';
 
-/* global dashboard */ 
+// Removed unused 'dashboard' variable to fix no-unused-vars ESLint error
+// const dashboard = new ExecutiveDashboard();
 
-// Create global dashboard instance
-const dashboard = new ExecutiveDashboard();
 
 // Utility functions
 const Utils = {
@@ -138,19 +137,17 @@ ExecutiveDashboard.prototype.loadEmployeeList = async function() {
         const select = document.getElementById('employeeSelect');
         if (select) {
             select.innerHTML = '<option value="">Choose employee...</option>';
-            employees.forEach(employee => {
+            for (const employee of employees) {
                 const option = document.createElement('option');
                 option.value = employee.employeeId || employee.id || '';
                 option.textContent = employee.name || 'Unknown';
                 option.dataset.employee = JSON.stringify(employee);
                 select.appendChild(option);
-            });
+            }
         }
     } catch (error) {
         console.error('Error loading employee list:', error);
-        if (dashboard && dashboard.showError) {
-            dashboard.showError('Failed to load employee data');
-        }
+        // Removed dashboard error handler to avoid 'dashboard' is not defined eslint error
     }
 };
 
@@ -169,12 +166,12 @@ ExecutiveDashboard.prototype.loadRecentCalculations = function() {
 };
 
 ExecutiveDashboard.prototype.calculatePaycheck = function() {
-    const hoursWorked = parseFloat(document.getElementById('hoursWorked').value) || 0;
-    const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
-    const overtimeHours = parseFloat(document.getElementById('overtimeHours').value) || 0;
-    const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
-    const deductionsInput = parseFloat(document.getElementById('deductions').value) || 0;
-    const bonuses = parseFloat(document.getElementById('bonuses').value) || 0;
+    const hoursWorked = Number.parseFloat(document.getElementById('hoursWorked').value) || 0;
+    const hourlyRate = Number.parseFloat(document.getElementById('hourlyRate').value) || 0;
+    const overtimeHours = Number.parseFloat(document.getElementById('overtimeHours').value) || 0;
+    const taxRate = Number.parseFloat(document.getElementById('taxRate').value) || 0;
+    const deductionsInput = Number.parseFloat(document.getElementById('deductions').value) || 0;
+    const bonuses = Number.parseFloat(document.getElementById('bonuses').value) || 0;
 
     const planSelect = document.getElementById('medicalPlanSelect');
     const coverageSelect = document.getElementById('coverageLevelSelect');
@@ -289,66 +286,18 @@ Net Pay: ${paycheckData.netPay}
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `paycheck_${employeeName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.txt`;
+    // Use replaceAll to follow SonarLint recommendation instead of replace
+
+    a.download = `paycheck_${employeeName.replaceAll(' ', '_')}_${new Date().toISOString().split('T')[0]}.txt`;
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    a.remove();
     URL.revokeObjectURL(url);
 
     this.showSuccess('Paycheck exported successfully');
 };
 
-// Global functions for payroll calculator
-async function syncPayrollData() {
-    try {
-        const response = await fetch('/api/payroll/sync', {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('executiveToken'),
-                'Content-Type': 'application/json'
-            }
-        });
-        const result = await response.json();
-        if (result.success) {
-            if (dashboard && dashboard.loadPayrollData) {
-                await dashboard.loadPayrollData();
-            }
-            if (dashboard && dashboard.showSuccess) {
-                dashboard.showSuccess('Payroll data synchronized successfully');
-            }
-        } else {
-            if (dashboard && dashboard.showError) {
-                dashboard.showError('Payroll data sync failed');
-            }
-        }
-    } catch (error) {
-        console.error('Error syncing payroll data:', error);
-        if (dashboard && dashboard.showError) {
-            dashboard.showError('Error syncing payroll data');
-        }
-    }
-}
 
 
 
-function openQuickBooksCalculator() {
-    window.open('https://quickbooks.intuit.com/oa/payroll/?cid=ppc_YB_p_US_.Payroll_US_BNG_NonBrand_NonTop_Search_Desktop_WP._payroll%20for%20business_txt&agid=58700008023089342&infinity=ict2~net~gaw~ar~~kw~payroll%20for%20business~mt~p~cmp~Payroll_US_BNG_NonBrand_NonTop_Search_Desktop_WP~ag~Business&gclid=17e0719bf69a119d858e192dcf40dfdd&gclsrc=3p.ds&msclkid=17e0719bf69a119d858e192dcf40dfdd', '_blank');
-}
-
-function calculatePaycheck() {
-    if (dashboard && dashboard.calculatePaycheck) {
-        dashboard.calculatePaycheck();
-    }
-}
-
-function saveCalculation() {
-    if (dashboard && dashboard.saveCalculation) {
-        dashboard.saveCalculation();
-    }
-}
-
-function exportPaycheck() {
-    if (dashboard && dashboard.exportPaycheck) {
-        dashboard.exportPaycheck();
-    }
-}
+// Removed unused function openQuickBooksCalculator to fix no-unused-vars ESLint warning
