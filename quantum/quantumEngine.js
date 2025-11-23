@@ -5,7 +5,7 @@
 import { EventEmitter } from 'node:events';
 import crypto from 'node:crypto';
 import { performance } from 'node:perf_hooks';
-import { QuantumSecurity } from './quantumSecurity.js';
+import QuantumSecurity from '../quantumSecurityCommonJS.js';
 import { QuantumOptimizer } from './quantumOptimizer.js';
 
 class QuantumEngine extends EventEmitter {
@@ -28,7 +28,7 @@ class QuantumEngine extends EventEmitter {
       quantumHash,
       timestamp,
       entangled: false,
-      encryptionKey: this.securityLayer.getEncryptionKey()
+      encryptionKey: this.securityLayer.getEncryptionKey(),
     });
     this.entangleState(key);
     // Backup for error correction
@@ -91,7 +91,7 @@ class QuantumEngine extends EventEmitter {
 
   // Store key in quantum state object for integrity verification
   getEncryptionKey() {
-    return this.securityLayer.encryptionKey;
+    return this.securityLayer.getEncryptionKey();
   }
 
   // Get real-time metrics for monitoring
@@ -102,7 +102,7 @@ class QuantumEngine extends EventEmitter {
       stateIntegrity: this.getStateIntegrityMetrics(),
       entanglement: this.entanglementNodes.size,
       uptime: performance.now(),
-      memory: process.memoryUsage()
+      memory: process.memoryUsage(),
     };
   }
 
@@ -120,7 +120,7 @@ class QuantumEngine extends EventEmitter {
     return {
       totalStates,
       corruptedStates,
-      integrityRate: totalStates > 0 ? ((totalStates - corruptedStates) / totalStates) * 100 : 100
+      integrityRate: totalStates > 0 ? ((totalStates - corruptedStates) / totalStates) * 100 : 100,
     };
   }
 }
@@ -140,4 +140,4 @@ class QuantumErrorCorrector {
   }
 }
 
-export { QuantumEngine };
+export default QuantumEngine;
