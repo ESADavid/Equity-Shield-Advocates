@@ -4,7 +4,7 @@ import path from 'node:path';
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 
 function validateNumber(value: any, fieldName: string): number {
-  if (typeof value !== 'number' || isNaN(value) || value < 0) {
+  if (typeof value !== 'number' || Number.isNaN(value) || value < 0) {
     console.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
     return 0;
   }
@@ -98,7 +98,7 @@ function integratePayroll(data: any): void {
   if (Array.isArray(data.payroll)) {
     let payrollTotal = 0;
     for (const payrollEntry of data.payroll) {
-      if (typeof payrollEntry.amount === 'number' && !Number.isNaN(payrollEntry.amount) && payrollEntry.amount >= 0) {
+      if (typeof payrollEntry.amount === 'number' && Number.isNaN(payrollEntry.amount) === false && payrollEntry.amount >= 0) {
         payrollTotal += payrollEntry.amount;
       } else {
         console.warn('Invalid payroll entry amount detected, skipping:', payrollEntry);
@@ -129,30 +129,35 @@ function addAuditTrail(data: any, incremental: boolean): void {
 }
 
 async function updateRevenueData(incremental: boolean = false, filePath?: string): Promise<boolean> {
-  const dataPath = filePath || revenueDataPath;
+  try {
+    const dataPath = filePath || revenueDataPath;
 
-  await fs.access(dataPath);
+    await fs.access(dataPath);
 
-  const fileContent = await fs.readFile(dataPath, 'utf-8');
-  const data = JSON.parse(fileContent);
+    const fileContent = await fs.readFile(dataPath, 'utf-8');
+    const data = JSON.parse(fileContent);
 
-  ensurePurchasesStructure(data);
-  validatePurchases(data);
+    ensurePurchasesStructure(data);
+    validatePurchases(data);
 
-  if (typeof data.totalRevenue !== 'number' || Number.isNaN(data.totalRevenue)) {
-    console.warn('Invalid or missing totalRevenue, defaulting to 0.');
-    data.totalRevenue = 0;
+    if (typeof data.totalRevenue !== 'number' || Number.isNaN(data.totalRevenue)) {
+      console.warn('Invalid or missing totalRevenue, defaulting to 0.');
+      data.totalRevenue = 0;
+    }
+
+    addSampleData(data, incremental);
+    ensureRevenueStreamsDetails(data);
+    addTransactionDetails(data);
+    integratePayroll(data);
+    addAuditTrail(data, incremental);
+
+    await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
+    console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
+    return true;
+  } catch (error) {
+    console.error('Error in updateRevenueData:', error);
+    return false;
   }
-
-  addSampleData(data, incremental);
-  ensureRevenueStreamsDetails(data);
-  addTransactionDetails(data);
-  integratePayroll(data);
-  addAuditTrail(data, incremental);
-
-  await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
-  console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
-  return true;
 }
 
 export default updateRevenueData;

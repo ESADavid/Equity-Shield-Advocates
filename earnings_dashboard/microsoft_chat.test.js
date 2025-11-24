@@ -1,8 +1,7 @@
-const request = require('supertest');
-const { app } = require('./server'); // Import the app from server.js
+import request from 'supertest';
+import { app } from './server.js';
 
 describe('GET /microsoft/chat', () => {
-  // No need to close server as we're using the app directly
   it('should return 200 and success message with valid query parameters', async () => {
     const response = await request(app)
       .get('/microsoft/chat')
@@ -33,18 +32,16 @@ describe('GET /microsoft/chat', () => {
       .query({
         auth: '2',
         origin: 'ProfileAboutMe'
-        // missing other params
       });
     expect(response.statusCode).toBe(400);
     expect(response.body).toHaveProperty('error');
   });
 
   it('should handle unexpected errors gracefully', async () => {
-    // Simulate error by sending invalid query param type or other means
     const response = await request(app)
       .get('/microsoft/chat')
       .auth('BSEAN4890@GMAIL.COM', 'TBROOME704')
-      .query(null); // invalid query
+      .query(null);
     expect([400, 500]).toContain(response.statusCode);
   });
 });
