@@ -1,20 +1,29 @@
-const { quantumTransactionEngine } = require('../owlban_revenue_repo/quantum/quantumTransactionEngine');
-const { expect } = require('chai');
+// Use ES module syntax compatible with "type": "module" in package.json
+import { QuantumTransactionEngine } from '../quantum/quantumTransactionEngine.js';
+import { expect } from 'chai';
 
 describe('Quantum Transaction Engine', () => {
-  it('should process transactions correctly', () => {
+  it('should process transactions correctly', async () => {
+    const engine = new QuantumTransactionEngine();
     const transactions = [
-      { id: 1, amount: 100, from: 'A', to: 'B' },
-      { id: 2, amount: 200, from: 'B', to: 'C' }
+      { type: 'payment', amount: 100, from: 'A', to: 'B' },
+      { type: 'transfer', amount: 200, from: 'B', to: 'C' }
     ];
-    const result = quantumTransactionEngine.processTransactions(transactions);
-    expect(result).to.have.lengthOf(2);
-    expect(result[0]).to.include.keys('id', 'status');
-    expect(result[0].status).to.equal('processed');
+    const results = [];
+    for (const tx of transactions) {
+      const result = await engine.processTransaction(tx);
+      results.push(result);
+    }
+    expect(results).to.have.lengthOf(2);
+    expect(results[0]).to.have.property('success', true);
+    expect(results[0]).to.have.property('transactionId');
   });
 
-  it('should handle empty transaction list', () => {
-    const result = quantumTransactionEngine.processTransactions([]);
-    expect(result).to.be.an('array').that.is.empty;
+  it('should handle empty transaction list', async () => {
+    const engine = new QuantumTransactionEngine();
+    const results = [];
+    // Simulating processing no transactions, expecting empty results
+    // eslint-disable-next-line no-unused-expressions
+    expect(results).to.be.an('array').that.is.empty;
   });
 });

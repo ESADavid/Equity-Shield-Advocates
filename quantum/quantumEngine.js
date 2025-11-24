@@ -5,7 +5,7 @@
 import { EventEmitter } from 'node:events';
 import crypto from 'node:crypto';
 import { performance } from 'node:perf_hooks';
-import QuantumSecurity from '../quantumSecurityCommonJS.js';
+import * as QuantumSecurity from './quantumSecurityCommonJS.js';
 import { QuantumOptimizer } from './quantumOptimizer.js';
 
 class QuantumEngine extends EventEmitter {

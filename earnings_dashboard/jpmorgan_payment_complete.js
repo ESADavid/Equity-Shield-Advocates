@@ -6,9 +6,7 @@ const router = express.Router();
 
 // Import middleware
 import { securityHeaders, createRateLimit, validateInput } from '../../config/security.js';
-import {
-  validatePayment
-} from '../../middleware/validation.js';
+import { validatePayment } from '../../middleware/validation.js';
 
 // Environment variables
 const JPMORGAN_CLIENT_ID = process.env.JPMORGAN_CLIENT_ID;
@@ -65,7 +63,7 @@ router.post('/wallet-decrypt', async (req, res) => {
     const headers = generateAuthHeaders();
 
     const decryptPayload = {
-      encryptedWalletData: encryptedWalletData
+      encryptedWalletData
     };
 
     const response = await axios.post(
@@ -95,43 +93,6 @@ router.post('/wallet-encrypt', async (req, res) => {
     const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } = req.body;
 
     if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
-      return res.status(400).json({
-        success: false,
-        error: 'cardNumber, expiryDate, cvv, and cardholderName are required'
-      });
-    }
-
-    const headers = generateAuthHeaders();
-
-    const encryptPayload = {
-      cardNumber: cardNumber.replaceAll(/\s/g, ''), // Remove spaces
-      expiryDate: expiryDate,
-      cvv: cvv,
-      cardholderName: cardholderName,
-      billingAddress: billingAddress || {}
-    };
-
-    const response = await axios.post(
-      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/wallet/encrypt`,
-      encryptPayload,
-      { headers }
-    );
-
-    res.json({
-      success: true,
-      encryptedData: response.data.encryptedWalletData,
-      walletId: response.data.walletId
-    });
-
-  } catch (error) {
-    console.error('JPMorgan wallet encryption error:', error.response?.data || error.message);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to encrypt wallet data',
-      details: error.response?.data || error.message
-    });
-  }
-});
 
 // Wallet Validation API endpoint
 router.post('/wallet-validate', async (req, res) => {

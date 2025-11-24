@@ -1,9 +1,9 @@
 // Payroll Calculator Functions for Executive Dashboard
 
+// Payroll Calculator Functions for Executive Dashboard
+
 import ExecutiveDashboard from './dashboard.js';
 
-// Removed unused 'dashboard' variable to fix no-unused-vars ESLint error
-// const dashboard = new ExecutiveDashboard();
 
 
 // Utility functions
@@ -33,6 +33,7 @@ ExecutiveDashboard.prototype.loadSectionData = function(section) {
         originalLoadSectionData.call(this, section);
     }
 };
+
 
 // Premium rates data from PDF (per pay period)
 const premiumRates = {
@@ -300,4 +301,4 @@ Net Pay: ${paycheckData.netPay}
 
 
 
-// Removed unused function openQuickBooksCalculator to fix no-unused-vars ESLint warning
+
