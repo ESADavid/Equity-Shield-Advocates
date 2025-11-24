@@ -94,14 +94,12 @@ describe('updateRevenueData', () => {
   });
 
   test('should validate and sanitize purchase costs', async () => {
-    const invalidData = Object.assign({}, mockRevenueData, {
-      purchases: {
-        corporateHomes: 'invalid',
-        corporateHomesDetails: [],
-        autoFleet: -100,
-        autoFleetDetails: []
-      }
-    });
+    const invalidData = { ...mockRevenueData, purchases: {
+      corporateHomes: 'invalid',
+      corporateHomesDetails: [],
+      autoFleet: -100,
+      autoFleetDetails: []
+    } };
 
     await fs.writeFile(testDataPath, JSON.stringify(invalidData, null, 2));
 
@@ -116,6 +114,7 @@ describe('updateRevenueData', () => {
   test('should handle missing purchases object', async () => {
     const dataWithoutPurchases = { ...mockRevenueData };
     if ('purchases' in dataWithoutPurchases) {
+      // @ts-ignore
       delete dataWithoutPurchases.purchases;
     }
 
@@ -174,6 +173,7 @@ describe('updateRevenueData', () => {
   test('should handle missing revenueStreamsDetails object', async () => {
     const dataWithoutRevenueStreamsDetails = { ...mockRevenueData };
     if ('revenueStreamsDetails' in dataWithoutRevenueStreamsDetails) {
+      // @ts-ignore
       delete dataWithoutRevenueStreamsDetails.revenueStreamsDetails;
     }
 
@@ -215,9 +215,7 @@ describe('updateRevenueData', () => {
   });
 
   test('should handle invalid totalRevenue values', async () => {
-    const dataWithInvalidRevenue = Object.assign({}, mockRevenueData, {
-      totalRevenue: 'invalid'
-    });
+    const dataWithInvalidRevenue = { ...mockRevenueData, totalRevenue: 'invalid' };
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithInvalidRevenue, null, 2));
 
