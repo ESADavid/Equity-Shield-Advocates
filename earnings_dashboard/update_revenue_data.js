@@ -1,11 +1,8 @@
-"use strict";
-import fs from 'node:fs/promises';
-import path, { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+const fs = require('fs').promises;
+const path = require('path');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+
 function validateNumber(value, fieldName) {
     if (typeof value !== 'number' || Number.isNaN(value) || value < 0) {
         console.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
@@ -13,11 +10,13 @@ function validateNumber(value, fieldName) {
     }
     return value;
 }
+
 /**
  * Flag to control whether to add sample purchase data.
  * Set to false in production to avoid adding hardcoded sample data.
  */
 const ADD_SAMPLE_DATA = false;
+
 function ensurePurchasesStructure(data) {
     data.purchases = data.purchases || {
         corporateHomes: 0,
@@ -28,10 +27,12 @@ function ensurePurchasesStructure(data) {
     data.purchases.autoFleetDetails = Array.isArray(data.purchases.autoFleetDetails) ? data.purchases.autoFleetDetails : [];
     data.purchases.corporateHomesDetails = Array.isArray(data.purchases.corporateHomesDetails) ? data.purchases.corporateHomesDetails : [];
 }
+
 function validatePurchases(data) {
     data.purchases.autoFleet = validateNumber(data.purchases.autoFleet, 'autoFleet');
     data.purchases.corporateHomes = validateNumber(data.purchases.corporateHomes, 'corporateHomes');
 }
+
 function addSampleData(data, incremental) {
     if (incremental && ADD_SAMPLE_DATA) {
         if (data.purchases.autoFleetDetails.length === 0) {
@@ -58,6 +59,7 @@ function addSampleData(data, incremental) {
         }
     }
 }
+
 function ensureRevenueStreamsDetails(data) {
     if (!data.revenueStreamsDetails) {
         data.revenueStreamsDetails = {};
@@ -66,6 +68,7 @@ function ensureRevenueStreamsDetails(data) {
         data.revenueStreams = {};
     }
 }
+
 function addTransactionDetails(data) {
     for (const streamName of Object.keys(data.revenueStreams)) {
         if (!Array.isArray(data.revenueStreamsDetails[streamName])) {
@@ -81,14 +84,14 @@ function addTransactionDetails(data) {
         }
     }
 }
+
 function integratePayroll(data) {
     if (Array.isArray(data.payroll)) {
         let payrollTotal = 0;
         for (const payrollEntry of data.payroll) {
             if (typeof payrollEntry.amount === 'number' && !Number.isNaN(payrollEntry.amount) && payrollEntry.amount >= 0) {
                 payrollTotal += payrollEntry.amount;
-            }
-            else {
+            } else {
                 console.warn('Invalid payroll entry amount detected, skipping:', payrollEntry);
             }
         }
@@ -96,6 +99,7 @@ function integratePayroll(data) {
         console.log(`Integrated payroll data total amount: ${payrollTotal}`);
     }
 }
+
 function addAuditTrail(data, incremental) {
     if (!Array.isArray(data.auditTrail)) {
         data.auditTrail = [];
@@ -114,6 +118,7 @@ function addAuditTrail(data, incremental) {
         }
     });
 }
+
 async function updateRevenueData(filePath, incremental = false) {
     const dataPath = filePath || revenueDataPath;
     try {
@@ -139,5 +144,5 @@ async function updateRevenueData(filePath, incremental = false) {
         return false;
     }
 }
-export default updateRevenueData;
-//# sourceMappingURL=update_revenue_data.js.map
+
+module.exports = updateRevenueData;
