@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
 const update_revenue_data_1 = __importDefault(require("./update_revenue_data"));
-const testDataPath = path_1.default.resolve(__dirname, '../owlban_repos/sample_repo/test_revenue.json');
+const testDataPath = path_1.default.resolve(__dirname, '../../owlban_repos/test_revenue.json');
 // Mock data for testing
 const mockRevenueData = {
     totalRevenue: 1000000,
