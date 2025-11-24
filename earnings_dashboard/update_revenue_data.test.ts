@@ -1,7 +1,8 @@
 
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
+const fs = require('node:fs').promises;
+const path = require('node:path');
 const updateRevenueData = require('./update_revenue_data');
+
 
 const testDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/test_revenue.json');
 
@@ -41,7 +42,11 @@ describe('updateRevenueData', () => {
 
   afterEach(async () => {
     // Clean up test file
-    await fs.unlink(testDataPath);
+    try {
+      await fs.unlink(testDataPath);
+    } catch (error) {
+      // Ignore file not found error
+    }
   });
 
   afterAll(async () => {
@@ -114,11 +119,13 @@ describe('updateRevenueData', () => {
   test('should handle missing purchases object', async () => {
     const dataWithoutPurchases = { ...mockRevenueData };
     if ('purchases' in dataWithoutPurchases) {
-      // @ts-ignore
+      // @ts-expect-error TS2790: operand of delete must be optional
       delete dataWithoutPurchases.purchases;
     }
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithoutPurchases, null, 2));
+
+
 
     const result = await updateRevenueData(testDataPath, false);
     expect(result).toBe(true);
@@ -173,11 +180,13 @@ describe('updateRevenueData', () => {
   test('should handle missing revenueStreamsDetails object', async () => {
     const dataWithoutRevenueStreamsDetails = { ...mockRevenueData };
     if ('revenueStreamsDetails' in dataWithoutRevenueStreamsDetails) {
-      // @ts-ignore
+      // @ts-expect-error TS2790: operand of delete must be optional
       delete dataWithoutRevenueStreamsDetails.revenueStreamsDetails;
     }
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithoutRevenueStreamsDetails, null, 2));
+
+
 
     const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
