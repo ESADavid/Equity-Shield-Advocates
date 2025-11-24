@@ -3,7 +3,7 @@
  * Consolidated TypeScript implementation with proper validation and error handling
  */
 
-import { calculatePayroll, validateEmployeeData, preparePayslip } from './utils/payrollCalculator.js';
+
 // Use module directory for data directory - works in both Node.js and Jest
 const DATA_DIR = './data';
 const EMPLOYEES_FILE = `${DATA_DIR}/employees.json`;

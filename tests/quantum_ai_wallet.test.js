@@ -1,5 +1,5 @@
-const { quantumAIWallet } = require('../owlban_revenue_repo/quantum/quantumAIWallet');
-const { expect } = require('chai');
+import { quantumAIWallet } from '../owlban_revenue_repo/quantum/quantumAIWallet.js';
+import { expect } from 'chai';
 
 describe('Quantum AI Wallet', () => {
   it('should generate a new wallet with valid keys', () => {
