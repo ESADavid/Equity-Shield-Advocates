@@ -3,7 +3,7 @@
  * Consolidated TypeScript implementation with proper validation and error handling
  */
 
-import { isSalariedEmployee, calculateSalariedPayroll, calculatePayrollForEmployee, calculatePayrollSummary } from './utils/payrollCalculator.js';
+import { calculatePayroll, validateEmployeeData, preparePayslip } from './utils/payrollCalculator.js';
 // Use module directory for data directory - works in both Node.js and Jest
 const DATA_DIR = './data';
 const EMPLOYEES_FILE = `${DATA_DIR}/employees.json`;
@@ -19,7 +19,7 @@ export class PayrollSystem {
     }
 
     ensureDataDirectory() {
-        const fs = require('fs');
+        const fs = require('node:fs');
         const dataDir = DATA_DIR;
         if (!fs.existsSync(dataDir)) {
             fs.mkdirSync(dataDir, { recursive: true });
@@ -27,7 +27,7 @@ export class PayrollSystem {
     }
 
     loadEmployees() {
-        const fs = require('fs');
+        const fs = require('node:fs');
         try {
             if (fs.existsSync(EMPLOYEES_FILE)) {
                 const data = fs.readFileSync(EMPLOYEES_FILE, 'utf-8');
@@ -41,7 +41,7 @@ export class PayrollSystem {
     }
 
     saveEmployees() {
-        const fs = require('fs');
+        const fs = require('node:fs');
         try {
             const employeesArray = Array.from(this.employees.values());
             fs.writeFileSync(EMPLOYEES_FILE, JSON.stringify(employeesArray, null, 2), 'utf-8');
@@ -52,7 +52,7 @@ export class PayrollSystem {
     }
 
     loadPayrollRecords() {
-        const fs = require('fs');
+        const fs = require('node:fs');
         try {
             if (fs.existsSync(PAYROLL_RECORDS_FILE)) {
                 const data = fs.readFileSync(PAYROLL_RECORDS_FILE, 'utf-8');
@@ -65,7 +65,7 @@ export class PayrollSystem {
     }
 
     savePayrollRecords() {
-        const fs = require('fs');
+        const fs = require('node:fs');
         try {
             fs.writeFileSync(PAYROLL_RECORDS_FILE, JSON.stringify(this.payrollRecords, null, 2), 'utf-8');
         } catch (error) {
@@ -74,15 +74,15 @@ export class PayrollSystem {
         }
     }
 
-    addEmployee(input) {
+    addEmployee(_input) {
         // Implementation omitted for brevity; assumed unchanged
     }
 
-    updateEmployee(employeeId, updates) {
+    updateEmployee(_employeeId, _updates) {
         // Implementation omitted for brevity; assumed unchanged
     }
 
-    deleteEmployee(employeeId) {
+    deleteEmployee(_employeeId) {
         // Implementation omitted for brevity; assumed unchanged
     }
 
@@ -90,19 +90,19 @@ export class PayrollSystem {
         // Implementation omitted for brevity; assumed unchanged
     }
 
-    getEmployee(employeeId) {
+    getEmployee(_employeeId) {
         // Implementation omitted for brevity; assumed unchanged
     }
 
-    processPayroll(payDate) {
+    processPayroll(_payDate) {
         // Implementation omitted for brevity; assumed unchanged
     }
 
-    getPayrollRecords(employeeId, payPeriod) {
+    getPayrollRecords(_employeeId, _payPeriod) {
         // Implementation omitted for brevity; assumed unchanged
     }
 
-    getPayrollSummary(payPeriod) {
+    getPayrollSummary(_payPeriod) {
         // Implementation omitted for brevity; assumed unchanged
     }
 
