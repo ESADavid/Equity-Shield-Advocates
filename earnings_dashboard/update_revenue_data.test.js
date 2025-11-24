@@ -162,7 +162,7 @@ describe('updateRevenueData', () => {
         const updatedData = JSON.parse(await promises_1.default.readFile(testDataPath, 'utf-8'));
         expect(updatedData.revenueStreamsDetails).toBeDefined();
         // Check that transaction details were added for each revenue stream
-        Object.keys(updatedData.revenueStreams).forEach(streamName => {
+        for (const streamName of Object.keys(updatedData.revenueStreams)) {
             expect(updatedData.revenueStreamsDetails[streamName]).toBeDefined();
             expect(Array.isArray(updatedData.revenueStreamsDetails[streamName])).toBe(true);
             if (updatedData.revenueStreamsDetails[streamName].length > 0) {
@@ -172,7 +172,7 @@ describe('updateRevenueData', () => {
                 expect(transaction).toHaveProperty('date');
                 expect(transaction).toHaveProperty('description');
             }
-        });
+        }
     });
     test('should handle file write errors gracefully', async () => {
         // This test would require mocking fs.writeFile to throw an error
