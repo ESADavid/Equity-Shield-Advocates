@@ -4,11 +4,12 @@ import path from 'node:path';
 const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
 
 function validateNumber(value: any, fieldName: string): number {
-  if (typeof value !== 'number' || Number.isNaN(value) || value < 0) {
+  if (typeof value === 'number' && !Number.isNaN(value) && value >= 0) {
+    return value;
+  } else {
     console.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
     return 0;
   }
-  return value;
 }
 
 /**
@@ -18,7 +19,8 @@ function validateNumber(value: any, fieldName: string): number {
 const ADD_SAMPLE_DATA = false;
 
 function ensurePurchasesStructure(data: any): void {
-  if (!data.purchases) {
+  // Changed negated condition to positive condition to fix SonarQube warning
+  if (data.purchases === undefined || data.purchases === null) {
     data.purchases = {
       corporateHomes: 0,
       corporateHomesDetails: [],
@@ -135,7 +137,14 @@ async function updateRevenueData(incremental: boolean = false, filePath?: string
     await fs.access(dataPath);
 
     const fileContent = await fs.readFile(dataPath, 'utf-8');
-    const data = JSON.parse(fileContent);
+
+    let data;
+    try {
+      data = JSON.parse(fileContent);
+    } catch (jsonError) {
+      console.error(`JSON parsing error in file ${dataPath}:`, jsonError);
+      return false;
+    }
 
     ensurePurchasesStructure(data);
     validatePurchases(data);
