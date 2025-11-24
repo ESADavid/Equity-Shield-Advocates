@@ -2,11 +2,18 @@ import crypto from 'node:crypto';
 import jwt from 'jsonwebtoken';
 
 export class QuantumSecurity {
+  algorithm = 'CRYSTALS-Dilithium-3';
+  securityMatrix = {
+    layers: ['physical', 'network', 'application', 'data', 'quantum'],
+    protocols: ['TLS-3.0', 'QUIC', 'HTTP-3', 'WebAuthn', 'FIDO2'],
+    algorithms: ['CRYSTALS-Dilithium', 'FALCON', 'SPHINCS+', 'Kyber', 'NTRU'],
+    zeroTrust: true,
+    blockchainAudit: true
+  };
+
   constructor() {
-    this.algorithm = 'CRYSTALS-Dilithium-3';
     this.encryptionKey = this.generateEncryptionKey();
     this.jwtKey = this.generateJWTKey();
-    this.securityMatrix = this.initializeSecurityMatrix();
   }
 
   generateEncryptionKey() {
