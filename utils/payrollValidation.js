@@ -1,18 +1,11 @@
-"use strict";
 /**
  * Payroll Validation Utilities
  * Provides comprehensive validation for payroll data and calculations
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PayrollValidationError = void 0;
-exports.validateEmployeeInput = validateEmployeeInput;
-exports.validatePayrollCalculationInput = validatePayrollCalculationInput;
-exports.validateEmployee = validateEmployee;
-exports.sanitizeEmployeeInput = sanitizeEmployeeInput;
-exports.isValidEmployeeId = isValidEmployeeId;
-exports.isValidPayPeriod = isValidPayPeriod;
-const payroll_js_1 = require("../types/payroll.js");
-class PayrollValidationError extends Error {
+
+import * as payroll_js_1 from '../types/payroll.js';
+
+export class PayrollValidationError extends Error {
     constructor(field, message, value) {
         super(message);
         this.name = 'PayrollValidationError';
@@ -20,35 +13,38 @@ class PayrollValidationError extends Error {
         this.value = value;
     }
 }
-exports.PayrollValidationError = PayrollValidationError;
+
 /**
  * Validates a required string field
  */
-function validateRequiredString(value, fieldName, errors) {
+export function validateRequiredString(value, fieldName, errors) {
     if (!value || typeof value !== 'string' || value.trim().length === 0) {
         errors.push(new PayrollValidationError(fieldName, `${fieldName} is required and must be a non-empty string`));
     }
 }
+
 /**
  * Validates a numeric field within bounds
  */
-function validateNumericField(value, fieldName, min, max, errors) {
+export function validateNumericField(value, fieldName, min, max, errors) {
     if (typeof value !== 'number' || value < min || value > max) {
         errors.push(new PayrollValidationError(fieldName, `${fieldName} must be between ${min} and ${max}`, value));
     }
 }
+
 /**
  * Validates an optional numeric field
  */
-function validateOptionalNumericField(value, fieldName, min, max, errors) {
+export function validateOptionalNumericField(value, fieldName, min, max, errors) {
     if (value !== undefined) {
         validateNumericField(value, fieldName, min, max, errors);
     }
 }
+
 /**
  * Validates banking information
  */
-function validateBankingInfo(input, errors) {
+export function validateBankingInfo(input, errors) {
     if (input.accountNumber !== undefined) {
         if (typeof input.accountNumber !== 'string' || !/^\d{8,17}$/.test(input.accountNumber)) {
             errors.push(new PayrollValidationError('accountNumber', 'Account number must be 8-17 digits', input.accountNumber));
@@ -60,10 +56,11 @@ function validateBankingInfo(input, errors) {
         }
     }
 }
+
 /**
  * Validates employee input data
  */
-function validateEmployeeInput(input) {
+export function validateEmployeeInput(input) {
     const errors = [];
     // Required fields
     validateRequiredString(input.name, 'name', errors);
@@ -83,10 +80,11 @@ function validateEmployeeInput(input) {
     validateBankingInfo(input, errors);
     return errors;
 }
+
 /**
  * Validates payroll calculation input
  */
-function validatePayrollCalculationInput(input) {
+export function validatePayrollCalculationInput(input) {
     const errors = [];
     // Required field
     validateRequiredString(input.employeeId, 'employeeId', errors);
@@ -99,16 +97,18 @@ function validatePayrollCalculationInput(input) {
     validateOptionalNumericField(input.bonuses, 'bonuses', 0, payroll_js_1.PAYROLL_CONSTANTS.MAX_BONUSES, errors);
     return errors;
 }
+
 /**
  * Validates a complete employee object
  */
-function validateEmployee(employee) {
+export function validateEmployee(employee) {
     return validateEmployeeInput(employee);
 }
+
 /**
  * Sanitizes and normalizes employee input data
  */
-function sanitizeEmployeeInput(input) {
+export function sanitizeEmployeeInput(input) {
     const sanitized = {
         name: input.name?.trim(),
         taxRate: input.taxRate,
@@ -143,20 +143,21 @@ function sanitizeEmployeeInput(input) {
     }
     return sanitized;
 }
+
 /**
  * Checks if an employee ID is valid format
  */
-function isValidEmployeeId(employeeId) {
+export function isValidEmployeeId(employeeId) {
     return typeof employeeId === 'string' &&
         employeeId.length > 0 &&
         employeeId.length <= 50 &&
         /^[a-zA-Z0-9_-]+$/.test(employeeId);
 }
+
 /**
  * Validates pay period date string
  */
-function isValidPayPeriod(payPeriod) {
+export function isValidPayPeriod(payPeriod) {
     const date = new Date(payPeriod);
     return Number.isNaN(date.getTime()) === false && payPeriod === date.toISOString().split('T')[0];
 }
-//# sourceMappingURL=payrollValidation.js.map

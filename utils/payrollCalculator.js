@@ -1,19 +1,14 @@
-"use strict";
 /**
  * Payroll Calculator Utilities
  * Provides standardized payroll calculation logic
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculatePayrollForEmployee = calculatePayrollForEmployee;
-exports.calculateSalariedPayroll = calculateSalariedPayroll;
-exports.isSalariedEmployee = isSalariedEmployee;
-exports.calculatePayrollSummary = calculatePayrollSummary;
-exports.validatePayrollCalculation = validatePayrollCalculation;
-const payroll_js_1 = require("../types/payroll.js");
+
+import * as payroll_js_1 from '../types/payroll.js';
+
 /**
  * Calculates payroll for an employee based on hours worked and rates
  */
-function calculatePayrollForEmployee(employee, overrides) {
+export function calculatePayrollForEmployee(employee, overrides) {
     // Use employee data as base, with optional overrides
     const hoursWorked = overrides?.hoursWorked ?? employee.hoursWorked ?? 0;
     const hourlyRate = overrides?.hourlyRate ?? employee.hourlyRate ?? 0;
@@ -45,10 +40,11 @@ function calculatePayrollForEmployee(employee, overrides) {
         calculatedAt: new Date().toISOString()
     };
 }
+
 /**
  * Calculates payroll for a salaried employee
  */
-function calculateSalariedPayroll(employee, payPeriod = new Date().toISOString().split('T')[0]) {
+export function calculateSalariedPayroll(employee, payPeriod = new Date().toISOString().split('T')[0]) {
     if (!employee.salary) {
         throw new Error('Employee does not have a salary defined');
     }
@@ -68,16 +64,18 @@ function calculateSalariedPayroll(employee, payPeriod = new Date().toISOString()
         calculatedAt: new Date().toISOString()
     };
 }
+
 /**
  * Determines if an employee should be paid as salaried or hourly
  */
-function isSalariedEmployee(employee) {
+export function isSalariedEmployee(employee) {
     return employee.salary !== undefined && employee.salary > 0;
 }
+
 /**
  * Calculates payroll summary for multiple employees
  */
-function calculatePayrollSummary(employees, payPeriod = new Date().toISOString().split('T')[0]) {
+export function calculatePayrollSummary(employees, payPeriod = new Date().toISOString().split('T')[0]) {
     const calculations = employees.map(employee => {
         if (isSalariedEmployee(employee)) {
             return calculateSalariedPayroll(employee, payPeriod);
@@ -108,14 +106,14 @@ function calculatePayrollSummary(employees, payPeriod = new Date().toISOString()
         calculations
     };
 }
+
 /**
  * Validates that calculated payroll makes mathematical sense
  */
-function validatePayrollCalculation(calculation) {
+export function validatePayrollCalculation(calculation) {
     const expectedGrossPay = calculation.regularPay + calculation.overtimePay + calculation.bonuses;
     const expectedNetPay = calculation.grossPay - calculation.taxAmount - calculation.deductions;
     const grossPayMatch = Math.abs(calculation.grossPay - expectedGrossPay) < 0.01;
     const netPayMatch = Math.abs(calculation.netPay - expectedNetPay) < 0.01;
     return grossPayMatch && netPayMatch;
 }
-//# sourceMappingURL=payrollCalculator.js.map
