@@ -1,3 +1,5 @@
+/* global Chart */
+
 // Executive Dashboard JavaScript - Oscar Broome
 // Enhanced analytics and real-time data management
 

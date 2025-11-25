@@ -114,7 +114,6 @@ module.exports = {
         es2021: true,
         node: true,
         jest: true,
-        cypress: true,
       },
       rules: {
         '@typescript-eslint/no-unused-vars': 'off',
@@ -122,10 +121,6 @@ module.exports = {
         'no-unused-expressions': 'off', // Cypress often uses expressions in tests
       },
     },
-
-  ],
-  overrides: [
-    ...module.exports.overrides || [],
     {
       files: ['*.d.ts'],
       rules: {
