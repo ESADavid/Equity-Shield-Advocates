@@ -93,6 +93,42 @@ router.post('/wallet-encrypt', async (req, res) => {
     const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } = req.body;
 
     if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
+      return res.status(400).json({
+        success: false,
+        error: 'cardNumber, expiryDate, cvv, and cardholderName are required'
+      });
+    }
+
+    const headers = generateAuthHeaders();
+
+    const encryptPayload = {
+      cardNumber: cardNumber.replaceAll(/\s/g, ''), // Remove spaces
+      expiryDate,
+      cvv,
+      cardholderName,
+      billingAddress: billingAddress || {}
+    };
+
+    const response = await axios.post(
+      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/wallet/encrypt`,
+      encryptPayload,
+      { headers }
+    );
+
+    res.json({
+      success: true,
+      encryptedWalletData: response.data.encryptedWalletData
+    });
+
+  } catch (error) {
+    console.error('JPMorgan wallet encryption error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to encrypt wallet data',
+      details: error.response?.data || error.message
+    });
+  }
+});
 
 // Wallet Validation API endpoint
 router.post('/wallet-validate', async (req, res) => {

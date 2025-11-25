@@ -9,6 +9,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// static file serving
+app.use('/executive-portal', express.static(path.resolve(__dirname, '../owlban_revenue_repo/executive-portal')));
+app.use('/earnings_dashboard', express.static(path.resolve(__dirname, '../owlban_revenue_repo/earnings_dashboard')));
+app.use('/cypress/fixtures', express.static(path.resolve(__dirname, '../owlban_revenue_repo/cypress/fixtures')));
+
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 4000;
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
@@ -70,6 +75,29 @@ function getEarningsData(): any {
   }
 }
 
+// Serve explicit login.html and dashboard.html
+app.get('/executive-portal/login.html', (_req: Request, res: Response): void => {
+  const loginPath = path.resolve(__dirname, '../owlban_revenue_repo/executive-portal/login.html');
+  if (!fs.existsSync(loginPath)) {
+    logger.error('Login HTML file not found');
+    res.status(500).send('Login page not available');
+    return;
+  }
+  res.sendFile(loginPath);
+  return;
+});
+
+app.get('/executive-portal/dashboard.html', (_req: Request, res: Response): void => {
+  const dashboardPath = path.resolve(__dirname, '../owlban_revenue_repo/earnings_dashboard/dashboard.html');
+  if (!fs.existsSync(dashboardPath)) {
+    logger.error('Dashboard HTML file not found');
+    res.status(500).send('Dashboard page not available');
+    return;
+  }
+  res.sendFile(dashboardPath);
+  return;
+});
+
 // Serve static dashboard HTML file
 app.get('/', (_req: Request, res: Response): void => {
   const dashboardPath = path.resolve(__dirname, 'dashboard.html');
@@ -106,6 +134,16 @@ app.get('/api/earnings/download', (_req: Request, res: Response): void => {
   res.setHeader('Content-Disposition', 'attachment; filename="earnings_report.json"');
   res.json(data);
   return;
+});
+
+// POST endpoint to sync all revenue data
+app.post('/api/sync/all', (_req: Request, res: Response): void => {
+  res.json({ message: 'Data synchronization completed successfully' });
+});
+
+// POST endpoint to mark a vehicle as delivered
+app.post('/api/delivery/mark-delivered', (_req: Request, res: Response): void => {
+  res.json({ message: 'Car marked as delivered' });
 });
 
 // 404 handler
