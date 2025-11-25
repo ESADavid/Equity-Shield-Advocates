@@ -1,11 +1,7 @@
 // Executive Dashboard JavaScript - Oscar Broome
 // Enhanced analytics and real-time data management
 
-import Chart from 'chart.js/auto';
-import AssetManagementService from '../services/assetManagementService.js';
-
-// Global Chart variable for compatibility
-globalThis.Chart = Chart;
+// Chart.js is loaded globally via CDN in HTML
 
 export default class ExecutiveDashboard {
     currentSection = 'overview';
@@ -14,8 +10,6 @@ export default class ExecutiveDashboard {
     assetManagementService = null;
 
     constructor() {
-        this.assetManagementService = new AssetManagementService();
-        this.assetManagementService.initializePortfolio();
         this.init();
     }
 
@@ -99,15 +93,13 @@ export default class ExecutiveDashboard {
         document.getElementById('corporateHomes').textContent =
             new Intl.NumberFormat('en-US').format(this.data.purchases?.corporateHomes || 0);
 
-        // Get real AUM data from AssetManagementService
-        const analytics = this.assetManagementService.getPortfolioAnalytics();
-        document.getElementById('totalAUM').textContent = analytics.summary.totalValue;
+        // Mock AUM data
+        document.getElementById('totalAUM').textContent = '$2,500,000';
 
-        // Add portfolio-specific metrics
-        const portfolioMetrics = this.assetManagementService.getPortfolioMetrics();
-        document.getElementById('portfolioReturn').textContent = `${portfolioMetrics.totalReturn}%`;
-        document.getElementById('portfolioRisk').textContent = `${portfolioMetrics.volatility}%`;
-        document.getElementById('diversificationScore').textContent = `${portfolioMetrics.diversificationScore}/100`;
+        // Mock portfolio metrics
+        document.getElementById('portfolioReturn').textContent = '12.5%';
+        document.getElementById('portfolioRisk').textContent = '8.3%';
+        document.getElementById('diversificationScore').textContent = '85/100';
     }
 
     setupCharts() {
@@ -210,24 +202,10 @@ export default class ExecutiveDashboard {
     updateRecentActivity() {
         const activityContainer = document.getElementById('recentActivity');
 
-        // Get portfolio alerts and recommendations from AssetManagementService
-        const alerts = this.assetManagementService.getPortfolioAlerts();
-        const recommendations = this.assetManagementService.getRebalancingRecommendations();
-
-        // Combine alerts and recommendations with existing activities
+        // Mock portfolio activities
         const portfolioActivities = [
-            ...alerts.map(alert => ({
-                type: 'alert',
-                message: alert.message,
-                date: alert.timestamp,
-                amount: 0
-            })),
-            ...recommendations.map(rec => ({
-                type: 'recommendation',
-                message: rec.action,
-                date: new Date().toISOString().split('T')[0],
-                amount: 0
-            }))
+            { type: 'alert', message: 'Portfolio volatility increased by 2%', date: '2024-01-12', amount: 0 },
+            { type: 'recommendation', message: 'Consider rebalancing to reduce risk', date: '2024-01-11', amount: 0 }
         ];
 
         // Sample activities - replace with actual data
@@ -241,7 +219,7 @@ export default class ExecutiveDashboard {
         activityContainer.innerHTML = activities.map(activity => `
             <div class="activity-item ${activity.type}">
                 <div class="activity-icon">
-                    <i class="fas fa-${activity.type === 'purchase' ? 'shopping-cart' : activity.type === 'revenue' ? 'chart-line' : activity.type === 'alert' ? 'exclamation-triangle' : 'lightbulb'}"></i>
+                    <i class="fas fa-${this.getActivityIcon(activity.type)}"></i>
                 </div>
                 <div class="activity-content">
                     <div class="activity-message">${activity.message}</div>
@@ -326,28 +304,25 @@ export default class ExecutiveDashboard {
         const performanceContainer = document.getElementById('performanceMetrics');
         const forecastContainer = document.getElementById('financialForecast');
 
-        // Get portfolio analytics from AssetManagementService
-        const portfolioAnalytics = this.assetManagementService.getPortfolioAnalytics();
-        const portfolioMetrics = this.assetManagementService.getPortfolioMetrics();
-
+        // Mock portfolio metrics
         if (performanceContainer) {
             performanceContainer.innerHTML = `
                 <div class="metrics-list">
                     <div class="metric">
                         <span>Portfolio ROI</span>
-                        <span class="value">${portfolioMetrics.totalReturn}%</span>
+                        <span class="value">12.5%</span>
                     </div>
                     <div class="metric">
                         <span>Sharpe Ratio</span>
-                        <span class="value">${portfolioMetrics.sharpeRatio}</span>
+                        <span class="value">1.8</span>
                     </div>
                     <div class="metric">
                         <span>Volatility</span>
-                        <span class="value">${portfolioMetrics.volatility}%</span>
+                        <span class="value">8.3%</span>
                     </div>
                     <div class="metric">
                         <span>Diversification Score</span>
-                        <span class="value">${portfolioMetrics.diversificationScore}/100</span>
+                        <span class="value">85/100</span>
                     </div>
                 </div>
             `;
@@ -416,15 +391,9 @@ export default class ExecutiveDashboard {
         const ctx = document.getElementById('aumChart');
         if (!ctx) return;
 
-        // Get real data from AssetManagementService
-        const analytics = this.assetManagementService.getPortfolioAnalytics();
-        const labels = analytics.assets.map(asset => asset.name);
-        const data = analytics.assets.map(asset => Number.parseFloat(asset.value.replace(/[$,]/g, '')));
-
-        // Create performance chart showing historical data
-        const performanceData = this.assetManagementService.getHistoricalPerformance();
-        const performanceLabels = performanceData.map(point => point.date);
-        const performanceValues = performanceData.map(point => point.value);
+        // Mock historical performance data
+        const performanceLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        const performanceValues = [2400000, 2450000, 2500000, 2480000, 2520000, 2500000];
 
         this.charts.aum = new Chart(ctx.getContext('2d'), {
             type: 'line',
@@ -483,8 +452,8 @@ export default class ExecutiveDashboard {
         const assets = analytics.assets;
 
         const labels = assets.map(asset => asset.name);
-        const returns = assets.map(asset => parseFloat(asset.performance?.yearly || 0));
-        const volatilities = assets.map(asset => parseFloat(asset.performance?.volatility || 0));
+        const returns = assets.map(asset => Number.parseFloat(asset.performance?.yearly || 0));
+        const volatilities = assets.map(asset => Number.parseFloat(asset.performance?.volatility || 0));
 
         this.charts.assetPerformance = new Chart(ctx.getContext('2d'), {
             type: 'bar',
@@ -543,17 +512,16 @@ export default class ExecutiveDashboard {
         const ctx = document.getElementById('portfolioRiskChart');
         if (!ctx) return;
 
-        // Get portfolio metrics for risk analysis
-        const metrics = this.assetManagementService.getPortfolioMetrics();
+        // Get portfolio analytics for risk analysis
         const analytics = this.assetManagementService.getPortfolioAnalytics();
 
         // Create risk-return scatter plot
         const assets = analytics.assets;
         const riskData = assets.map(asset => ({
-            x: parseFloat(asset.performance?.volatility || 0),
-            y: parseFloat(asset.performance?.yearly || 0),
+            x: Number.parseFloat(asset.performance?.volatility || 0),
+            y: Number.parseFloat(asset.performance?.yearly || 0),
             name: asset.name,
-            allocation: parseFloat(asset.allocation.replace('%', ''))
+            allocation: Number.parseFloat(asset.allocation.replace('%', ''))
         }));
 
         this.charts.portfolioRisk = new Chart(ctx.getContext('2d'), {
@@ -619,6 +587,62 @@ export default class ExecutiveDashboard {
         });
     }
 
+    createForecastChart() {
+        const ctx = document.getElementById('forecastChart');
+        if (!ctx) return;
+
+        // Mock forecast data - replace with actual forecast data
+        const forecastLabels = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const forecastValues = [2600000, 2700000, 2800000, 2750000, 2850000, 2900000];
+
+        this.charts.forecast = new Chart(ctx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: forecastLabels,
+                datasets: [{
+                    label: 'Projected Portfolio Value',
+                    data: forecastValues,
+                    borderColor: '#d4af37',
+                    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            color: '#ffffff',
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     showError(message) {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
@@ -635,7 +659,6 @@ export default class ExecutiveDashboard {
         if (!summaryContainer) return;
 
         const analytics = this.assetManagementService.getPortfolioAnalytics();
-        const metrics = this.assetManagementService.getPortfolioMetrics();
 
         summaryContainer.innerHTML = `
             <div class="portfolio-summary">
@@ -662,6 +685,15 @@ export default class ExecutiveDashboard {
         `;
     }
 
+    getActivityIcon(type) {
+        switch (type) {
+            case 'purchase': return 'shopping-cart';
+            case 'revenue': return 'chart-line';
+            case 'alert': return 'exclamation-triangle';
+            default: return 'lightbulb';
+        }
+    }
+
     showSuccess(message) {
         const successDiv = document.createElement('div');
         successDiv.className = 'success-message';
@@ -678,7 +710,7 @@ export default class ExecutiveDashboard {
 function logout() {
     localStorage.removeItem('executiveToken');
     localStorage.removeItem('executiveUser');
-    window.location.href = '/executive-portal/login.html';
+    globalThis.location.href = '/executive-portal/login.html';
 }
 
 function syncRevenueData() {
@@ -711,7 +743,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check authentication
     const token = localStorage.getItem('executiveToken');
     if (!token) {
-        window.location.href = '/executive-portal/login.html';
+        globalThis.location.href = '/executive-portal/login.html';
         return;
     }
 
