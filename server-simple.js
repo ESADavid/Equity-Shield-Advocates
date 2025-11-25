@@ -122,6 +122,9 @@ app.use(express.static(path.join(__dirname, 'public'), {
   }
 }));
 
+// Serve the executive-portal folder statically to fix Cypress tests
+app.use('/executive-portal', express.static(path.join(__dirname, 'owlban_revenue_repo', 'executive-portal')));
+
 // Catch-all handler for SPA
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'override-dashboard.html'));
