@@ -2,7 +2,8 @@
 
 // Payroll Calculator Functions for Executive Dashboard
 
-import ExecutiveDashboard from './dashboard.js';
+// Note: ExecutiveDashboard is loaded globally in the HTML, so we access it via window
+// import ExecutiveDashboard from './dashboard.js';
 
 
 

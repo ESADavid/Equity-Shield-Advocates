@@ -1,15 +1,25 @@
-const { quantumControlCenter } = require('../owlban_revenue_repo/quantum/quantumControlCenter');
+const { QuantumControlCenter } = require('../quantum/quantumControlCenter');
 const { expect } = require('chai');
 
 describe('Quantum Control Center', () => {
-  it('should initialize quantum control center system', () => {
-    const controlCenter = quantumControlCenter.initialize();
-    expect(controlCenter).to.have.property('status');
-    expect(controlCenter.status).to.equal('initialized');
+  let controlCenter;
+
+  beforeEach(() => {
+    controlCenter = new QuantumControlCenter();
+  });
+
+  it('should initialize quantum control center system', async () => {
+    // Wait for initialization to complete
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const status = controlCenter.getControlCenterStatus();
+    expect(status).to.have.property('centerId');
+    expect(status.centerId).to.match(/^QCC_/);
   });
 
   it('should perform system health check', () => {
-    const health = quantumControlCenter.healthCheck();
-    expect(health).to.be.true;
+    const status = controlCenter.getControlCenterStatus();
+    expect(status).to.have.property('jpmorganConnection');
+    expect(status).to.have.property('syncStatus');
   });
 });

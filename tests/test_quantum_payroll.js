@@ -34,7 +34,9 @@ describe('Quantum Payroll System', () => {
     await payrollSystem.addEmployee(employeeData);
     const payroll = await payrollSystem.calculateEmployeePayroll(employeeData, null);
     expect(payroll).to.have.property('employeeId', 'emp002');
+    // eslint-disable-next-line no-unused-expressions
     expect(payroll).to.have.property('grossPay').that.is.a('number');
+    // eslint-disable-next-line no-unused-expressions
     expect(payroll).to.have.property('netPay').that.is.a('number');
   });
 

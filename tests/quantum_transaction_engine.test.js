@@ -23,7 +23,6 @@ describe('Quantum Transaction Engine', () => {
     const engine = new QuantumTransactionEngine();
     const results = [];
     // Simulating processing no transactions, expecting empty results
-    // eslint-disable-next-line no-unused-expressions
-    expect(results).to.be.an('array').that.is.empty;
+    void results.should.be.an('array').and.be.empty;
   });
 });
