@@ -6,7 +6,6 @@
 
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -624,6 +623,7 @@ class AssetManagementService {
     const diversificationRatio = this.calculateDiversificationRatio(assets);
 
     return {
+      totalValue: this.formatCurrency(totalValue, 'USD'),
       totalReturn: (weightedReturn * 100).toFixed(2),
       volatility: (weightedVolatility * 100).toFixed(2),
       sharpeRatio: weightedSharpe.toFixed(2),
