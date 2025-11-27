@@ -276,11 +276,6 @@ class SecurityAuditor {
       }
     }
 
-    // Initialize serverContent variable if not found
-    if (!serverContent) {
-      serverContent = '';
-    }
-
     if (serverContent) {
       if (serverContent.includes('helmet') && serverContent.includes('https')) {
         console.log('   ✅ HTTPS and security headers configured');

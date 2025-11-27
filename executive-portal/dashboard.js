@@ -1,9 +1,7 @@
-/* global Chart */
+import Chart from 'chart.js/auto';
 
 // Executive Dashboard JavaScript - Oscar Broome
 // Enhanced analytics and real-time data management
-
-// Chart.js is loaded globally via CDN in HTML
 
 export default class ExecutiveDashboard {
     currentSection = 'overview';

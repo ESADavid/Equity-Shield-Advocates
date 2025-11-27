@@ -71,7 +71,10 @@ const PERFORMANCE_CONSTANTS = {
   TARGET_EQUITY_ALLOCATION: 5.5e-1,
   TARGET_FIXED_INCOME_ALLOCATION: 3e-1,
   TARGET_ALTERNATIVE_ALLOCATION: 1e-1,
-  TARGET_CASH_ALLOCATION: 5e-2
+  TARGET_CASH_ALLOCATION: 5e-2,
+
+  // Default allocation fallback
+  DEFAULT_ALLOCATION_DEFAULT: 0.1
 };
 
 class AssetManagementService {
@@ -540,13 +543,13 @@ class AssetManagementService {
    */
   getTargetAllocation(assetType) {
     const targets = {
-      'equity': 0.55,
-      'fixed_income': 0.30,
-      'alternative': 0.1,
-      'cash': 0.05
+      'equity': PERFORMANCE_CONSTANTS.TARGET_EQUITY_ALLOCATION,
+      'fixed_income': PERFORMANCE_CONSTANTS.TARGET_FIXED_INCOME_ALLOCATION,
+      'alternative': PERFORMANCE_CONSTANTS.TARGET_ALTERNATIVE_ALLOCATION,
+      'cash': PERFORMANCE_CONSTANTS.TARGET_CASH_ALLOCATION
     };
 
-    return targets[assetType] || 0.1;
+    return targets[assetType] || PERFORMANCE_CONSTANTS.DEFAULT_ALLOCATION_DEFAULT;
   }
 
   /**
@@ -708,7 +711,7 @@ class AssetManagementService {
       let totalValue = 0;
       for (const asset of assets) {
         const dailyReturn = asset.performance?.daily || 0;
-        const value = asset.value * Math.pow(1 + dailyReturn, -i); // Simplified historical calculation
+        const value = asset.value / Math.pow(1 + dailyReturn, i); // Simplified historical calculation
         totalValue += value;
       }
 
