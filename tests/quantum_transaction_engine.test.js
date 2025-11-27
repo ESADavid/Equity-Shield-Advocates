@@ -20,9 +20,8 @@ describe('Quantum Transaction Engine', () => {
   });
 
   it('should handle empty transaction list', async () => {
-    const engine = new QuantumTransactionEngine();
     const results = [];
     // Simulating processing no transactions, expecting empty results
-    void results.should.be.an('array').and.be.empty;
+    expect(results).to.be.an('array').that.is.empty;
   });
 });
