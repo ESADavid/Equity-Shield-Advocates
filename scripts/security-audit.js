@@ -228,7 +228,10 @@ class SecurityAuditor {
       }
     }
 
-    if (!jwtConfigured) {
+    if (jwtConfigured) {
+      console.log('   ✅ JWT authentication configured');
+      this.results.score += 10;
+    } else {
       this.results.vulnerabilities.push({
         type: 'weak_jwt_secret',
         severity: 'high',
@@ -236,9 +239,6 @@ class SecurityAuditor {
       });
       this.results.recommendations.push('Configure proper JWT authentication');
       this.results.score -= 20;
-    } else {
-      console.log('   ✅ JWT authentication configured');
-      this.results.score += 10;
     }
 
     // Check for password policies
