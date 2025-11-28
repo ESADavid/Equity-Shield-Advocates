@@ -72,7 +72,7 @@ class AuthService {
         tokens
       };
     } catch (error) {
-      logger.error('User registration failed', { error: error.message, email: userData?.email, username: userData?.username });
+      logger.error('User registration failed', { error: error.message, email, username });
       throw error;
     }
   }

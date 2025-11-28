@@ -266,7 +266,7 @@ class SecurityAuditor {
 
     // Check for HTTPS enforcement in server files
     const serverFiles = ['server-quantum.js', 'server-enhanced.js', 'server.js'];
-    let serverContent = '';
+    let serverContent = null;
 
     for (const file of serverFiles) {
       const filePath = path.join(rootDir, file);
@@ -276,7 +276,7 @@ class SecurityAuditor {
       }
     }
 
-    if (serverContent) {
+    if (serverContent && serverContent.length > 0) {
       if (serverContent.includes('helmet') && serverContent.includes('https')) {
         console.log('   ✅ HTTPS and security headers configured');
         this.results.score += 10;
