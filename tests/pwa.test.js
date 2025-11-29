@@ -50,10 +50,12 @@ describe('Progressive Web App (PWA) Tests', () => {
       });
 
       // Check if assets are cached
-      const cacheContents = await page.evaluate(async () => {
-        const cache = await caches.open('ai-bank-static-v1.0.0');
-        const keys = await cache.keys();
-        return keys.map(request => request.url);
+      const cacheContents = await page.evaluate(() => {
+        return caches.open('ai-bank-static-v1.0.0').then(cache => {
+          return cache.keys().then(keys => {
+            return keys.map(request => request.url);
+          });
+        });
       });
 
       expect(cacheContents.length).toBeGreaterThan(0);
@@ -85,10 +87,12 @@ describe('Progressive Web App (PWA) Tests', () => {
       await page.setOfflineMode(true);
 
       // Check if cached API data is available
-      const cachedData = await page.evaluate(async () => {
-        const cache = await caches.open('ai-bank-dynamic-v1.0.0');
-        const keys = await cache.keys();
-        return keys.filter(request => request.url.includes('/api/')).length;
+      const cachedData = await page.evaluate(() => {
+        return caches.open('ai-bank-dynamic-v1.0.0').then(cache => {
+          return cache.keys().then(keys => {
+            return keys.filter(request => request.url.includes('/api/')).length;
+          });
+        });
       });
 
       expect(cachedData).toBeGreaterThan(0);
@@ -101,22 +105,23 @@ describe('Progressive Web App (PWA) Tests', () => {
 
       // Mock push event
       const pushHandled = await page.evaluate(() => {
+        let handled = false;
+        navigator.serviceWorker.addEventListener('message', (event) => {
+          if (event.data.type === 'PUSH_RECEIVED') {
+            handled = true;
+          }
+        });
+
+        // Simulate push event (in real scenario, this would come from server)
+        navigator.serviceWorker.controller.postMessage({
+          type: 'PUSH_RECEIVED',
+          title: 'Test Notification',
+          body: 'This is a test push notification'
+        });
+
+        // Timeout after 2 seconds
         return new Promise((resolve) => {
-          navigator.serviceWorker.addEventListener('message', (event) => {
-            if (event.data.type === 'PUSH_RECEIVED') {
-              resolve(true);
-            }
-          });
-
-          // Simulate push event (in real scenario, this would come from server)
-          navigator.serviceWorker.controller.postMessage({
-            type: 'PUSH_RECEIVED',
-            title: 'Test Notification',
-            body: 'This is a test push notification'
-          });
-
-          // Timeout after 2 seconds
-          setTimeout(() => resolve(false), 2000);
+          setTimeout(() => resolve(handled), 2000);
         });
       });
 
@@ -129,7 +134,7 @@ describe('Progressive Web App (PWA) Tests', () => {
       await page.goto('http://localhost:3000');
 
       const syncRegistered = await page.evaluate(async () => {
-        if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+        if ('serviceWorker' in navigator && 'sync' in globalThis.ServiceWorkerRegistration.prototype) {
           const registration = await navigator.serviceWorker.ready;
           await registration.sync.register('background-transaction-sync');
           return true;
@@ -163,15 +168,14 @@ describe('Progressive Web App (PWA) Tests', () => {
 
       // Check for beforeinstallprompt event
       const installable = await page.evaluate(() => {
+        let installPromptTriggered = false;
+
+        window.addEventListener('beforeinstallprompt', () => {
+          installPromptTriggered = true;
+        });
+
+        // Wait a bit for the event
         return new Promise((resolve) => {
-          let installPromptTriggered = false;
-
-          window.addEventListener('beforeinstallprompt', () => {
-            installPromptTriggered = true;
-            resolve(true);
-          });
-
-          // Wait a bit for the event
           setTimeout(() => resolve(installPromptTriggered), 2000);
         });
       });
@@ -236,7 +240,7 @@ describe('Progressive Web App (PWA) Tests', () => {
       await page.waitForTimeout(500);
 
       // Should not throw any errors
-      expect(true).toBeTruthy();
+      expect(true).toBe(true);
     });
   });
 });
