@@ -24,6 +24,43 @@ module.exports = {
     'no-unused-expressions': 'error',
   },
   overrides: [
+    // TypeScript files - must be first to take precedence
+    {
+      files: ['**/*.ts'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+        project: './tsconfig.json',
+        tsconfigRootDir: __dirname,
+      },
+      plugins: ['@typescript-eslint'],
+      extends: ['plugin:@typescript-eslint/recommended'],
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-require-imports': 'off',
+        '@typescript-eslint/no-inferrable-types': 'off',
+        '@typescript-eslint/explicit-function-return-type': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
+        '@typescript-eslint/no-empty-interface': 'off',
+        'no-unused-vars': 'off',
+      },
+    },
+    // Exclude .d.ts files from TypeScript parsing
+    {
+      files: ['**/*.d.ts'],
+      parser: 'espree',
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+      },
+      rules: {
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': 'off',
+      },
+    },
     {
       files: ['owlban_revenue_repo/**/*.js'],
       parser: 'espree',
@@ -138,6 +175,19 @@ module.exports = {
         'no-unused-vars': 'off',
         '@typescript-eslint/no-unused-vars': 'off',
       }
+    },
+    // JavaScript files using ES modules
+    {
+      files: ['payrollSystem.js', 'utils/payrollCalculator.js', 'utils/payrollValidation.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 2022,
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        'no-unused-vars': 'off',
+      },
     }
   ],
 };

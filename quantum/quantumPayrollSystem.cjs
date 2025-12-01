@@ -425,24 +425,21 @@ class QuantumPayrollSystem extends EventEmitter {
   async processPayrollPayments(payrollRun) {
     // Process payments for each employee via quantum transaction engine
     for (const employeePayroll of payrollRun.employees) {
-      const employee = this.employees.get(employeePayroll.employeeId);
-      if (!employee) continue; // Skip if employee not found
-
       const transaction = {
         type: 'transfer',
         amount: employeePayroll.netPay,
         from: 'jpmorgan_payroll_account',
-        to: employee.email, // Using email as account identifier
-        description: `Payroll: ${employeePayroll.payPeriod} - ${employee.name}`,
-        employeeId: employee.employeeId,
+        to: employeePayroll.employeeId, // Using employee ID as account identifier
+        description: `Payroll: ${employeePayroll.payPeriod} - ${employeePayroll.employeeName}`,
+        employeeId: employeePayroll.employeeId,
         payPeriod: employeePayroll.payPeriod
       };
 
       try {
         await this.transactionEngine.processTransaction(transaction);
-        console.log(`✅ Processed payroll payment for ${employee.name}: $${employeePayroll.netPay.toLocaleString()}`);
+        console.log(`✅ Processed payroll payment for ${employeePayroll.employeeName}: $${employeePayroll.netPay.toLocaleString()}`);
       } catch (error) {
-        console.error(`❌ Failed to process payroll payment for ${employee.name}:`, error.message);
+        console.error(`❌ Failed to process payroll payment for ${employeePayroll.employeeName}:`, error.message);
       }
     }
   }
