@@ -1,3 +1,5 @@
+/* eslint-env cypress */
+
 // End-to-End Tests for Oscar Broome Executive Portal
 // Comprehensive E2E testing covering login, 2FA, dashboard, and all critical flows
 
@@ -145,12 +147,12 @@ describe('Oscar Broome Executive Portal E2E Tests', () => {
     it('should logout and redirect to login', () => {
       cy.visit(dashboardUrl);
       cy.get('.logout-btn').click();
-      
+
       cy.window().then((win) => {
-        expect(win.localStorage.getItem('executiveToken')).to.be.null;
-        expect(win.localStorage.getItem('executiveUser')).to.be.null;
+        cy.wrap(win.localStorage.getItem('executiveToken')).should('be.null');
+        cy.wrap(win.localStorage.getItem('executiveUser')).should('be.null');
       });
-      
+
       cy.url().should('include', 'login.html');
     });
   });

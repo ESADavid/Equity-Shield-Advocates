@@ -11,8 +11,9 @@ import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 
 // Quantum imports
-import { QuantumEngine, QuantumOptimizer } from './quantum/quantumEngine.js';
+import { QuantumEngine } from './quantum/quantumEngine.js';
 import { QuantumSecurity as QuantumSecurityModule } from './quantum/quantumSecurity.js';
+import { QuantumOptimizer } from './quantum/quantumOptimizer.js';
 
 // Initialize quantum systems
 const quantumEngine = new QuantumEngine();

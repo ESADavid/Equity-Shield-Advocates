@@ -9,9 +9,11 @@
 // Template strings contain {{variable}} placeholders that are replaced at runtime
 // These are not JavaScript variables, so we disable the no-undef rule
 
-import { QuantumEngine } from './quantumEngine.js';
-import crypto from 'node:crypto';
-import { EventEmitter } from 'node:events';
+const { QuantumEngine } = require('./quantumEngine');
+const crypto = require('node:crypto');
+
+const { EventEmitter } = require('node:events');
+
 
 class QuantumEmailSystem extends EventEmitter {
   constructor() {
@@ -623,4 +625,4 @@ class QuantumDeliveryTracker {
   }
 }
 
-export { QuantumEmailSystem };
+module.exports = { QuantumEmailSystem };

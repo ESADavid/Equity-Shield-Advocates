@@ -3,13 +3,13 @@
  * Emergency access and administrative override capabilities
  */
 
-import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 import winston from 'winston';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,16 +56,16 @@ const authLogger = winston.createLogger({
 const OVERRIDE_CONFIG = {
   EMERGENCY_CODE: process.env.EMERGENCY_OVERRIDE_CODE || 'OSCAR_BROOME_EMERGENCY_2024',
   ADMIN_OVERRIDE_CODE: process.env.ADMIN_OVERRIDE_CODE || 'ADMIN_OVERRIDE_2024',
-  MAX_OVERRIDE_ATTEMPTS: parseInt(process.env.MAX_OVERRIDE_ATTEMPTS) || 3,
-  OVERRIDE_WINDOW_MINUTES: parseInt(process.env.OVERRIDE_WINDOW_MINUTES) || 15,
+  MAX_OVERRIDE_ATTEMPTS: Number.parseInt(process.env.MAX_OVERRIDE_ATTEMPTS) || 3,
+  OVERRIDE_WINDOW_MINUTES: Number.parseInt(process.env.OVERRIDE_WINDOW_MINUTES) || 15,
   REQUIRE_ADDITIONAL_AUTH: process.env.REQUIRE_ADDITIONAL_AUTH === 'true',
   NOTIFICATION_EMAILS: (process.env.NOTIFICATION_EMAILS || '').split(',').filter(email => email.trim()),
   // Enhanced security settings
-  RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  RATE_LIMIT_MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 5,
+  RATE_LIMIT_WINDOW_MS: Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
+  RATE_LIMIT_MAX_REQUESTS: Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 5,
   MFA_ENFORCEMENT_LEVEL: process.env.MFA_ENFORCEMENT_LEVEL || 'required', // 'required', 'optional', 'disabled'
-  SESSION_TIMEOUT_MINUTES: parseInt(process.env.SESSION_TIMEOUT_MINUTES) || 30,
-  PASSWORD_MIN_LENGTH: parseInt(process.env.PASSWORD_MIN_LENGTH) || 12,
+  SESSION_TIMEOUT_MINUTES: Number.parseInt(process.env.SESSION_TIMEOUT_MINUTES) || 30,
+  PASSWORD_MIN_LENGTH: Number.parseInt(process.env.PASSWORD_MIN_LENGTH) || 12,
   PASSWORD_REQUIRE_COMPLEXITY: process.env.PASSWORD_REQUIRE_COMPLEXITY !== 'false'
 };
 
@@ -105,7 +105,7 @@ class LoginOverrideManager {
     const timestamp = new Date().toISOString();
 
     // Validate emergency conditions
-    if (!this.validateEmergencyConditions(userId, reason)) {
+    if (!this.isCriticalReason(reason)) {
       throw new Error('Emergency override conditions not met');
     }
 
@@ -271,30 +271,30 @@ class LoginOverrideManager {
   validateOverrideSession(overrideId, userId) {
     const session = activeOverrides.get(overrideId);
 
-    if (!session) {
+    if (session) {
+      if (session.status !== 'active') {
+        return { valid: false, reason: 'Override session not active' };
+      }
+
+      if (new Date() > new Date(session.expiresAt)) {
+        session.status = 'expired';
+        activeOverrides.set(overrideId, session);
+        return { valid: false, reason: 'Override session expired' };
+      }
+
+      if (session.targetUserId && session.targetUserId !== userId) {
+        return { valid: false, reason: 'Override session not for this user' };
+      }
+
+      return {
+        valid: true,
+        session: session,
+        type: session.type,
+        expiresAt: session.expiresAt
+      };
+    } else {
       return { valid: false, reason: 'Override session not found' };
     }
-
-    if (session.status !== 'active') {
-      return { valid: false, reason: 'Override session not active' };
-    }
-
-    if (new Date() > new Date(session.expiresAt)) {
-      session.status = 'expired';
-      activeOverrides.set(overrideId, session);
-      return { valid: false, reason: 'Override session expired' };
-    }
-
-    if (session.targetUserId && session.targetUserId !== userId) {
-      return { valid: false, reason: 'Override session not for this user' };
-    }
-
-    return {
-      valid: true,
-      session: session,
-      type: session.type,
-      expiresAt: session.expiresAt
-    };
   }
 
   // Revoke override session
@@ -385,12 +385,8 @@ class LoginOverrideManager {
     overrideAttempts.set(userId, attempts);
   }
 
-  // Validate emergency conditions
-  validateEmergencyConditions(userId, reason) {
-    // Check if user is Oscar Broome or designated executive
-    const authorizedUsers = ['oscar.broome@oscarsystem.com', 'oscar.broome@jpmorgan.com', 'executive@oscarsystem.com', 'admin@oscarsystem.com'];
-
-    // Allow emergency override for critical reasons
+  // Check if reason is critical
+  isCriticalReason(reason) {
     const criticalReasons = [
       OVERRIDE_REASONS.EMERGENCY_ACCESS,
       OVERRIDE_REASONS.SYSTEM_MAINTENANCE,
@@ -506,6 +502,7 @@ class LoginOverrideManager {
         }
       }
     } catch (error) {
+      // Log error but don't rethrow - this is a utility method that should fail gracefully
       overrideLogger.error('Failed to load override history', { error: error.message });
     }
   }
@@ -553,7 +550,7 @@ class LoginOverrideManager {
       recentActivity: []
     };
 
-    for (const [id, session] of activeOverrides) {
+    for (const session of activeOverrides.values()) {
       if (session.status === 'active') {
         stats.totalActive++;
         stats.byType[session.type] = (stats.byType[session.type] || 0) + 1;
@@ -860,12 +857,6 @@ class LoginOverrideManager {
     return `USER_${Date.now()}_${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
   }
 
-  validatePasswordStrength(password) {
-    // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordRegex.test(password);
-  }
-
   async recordFailedLoginAttempt(userId) {
     const user = await this.getUserById(userId);
     if (user) {
@@ -996,17 +987,17 @@ class LoginOverrideManager {
 
   // Enhanced password validation with configurable requirements
   validatePasswordStrength(password) {
-    if (!password || password.length < OVERRIDE_CONFIG.PASSWORD_MIN_LENGTH) {
-      return false;
+    if (password && password.length >= OVERRIDE_CONFIG.PASSWORD_MIN_LENGTH) {
+      if (OVERRIDE_CONFIG.PASSWORD_REQUIRE_COMPLEXITY) {
+        // At least 1 uppercase, 1 lowercase, 1 number, 1 special character
+        const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+        return complexityRegex.test(password);
+      }
+
+      return true;
     }
 
-    if (OVERRIDE_CONFIG.PASSWORD_REQUIRE_COMPLEXITY) {
-      // At least 1 uppercase, 1 lowercase, 1 number, 1 special character
-      const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
-      return complexityRegex.test(password);
-    }
-
-    return true;
+    return false;
   }
 
   // Enhanced MFA enforcement

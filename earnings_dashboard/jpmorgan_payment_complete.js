@@ -6,10 +6,7 @@ const router = express.Router();
 
 // Import middleware
 import { securityHeaders, createRateLimit, validateInput } from '../../config/security.js';
-import {
-  validatePayment,
-  validatePagination
-} from '../../middleware/validation.js';
+import { validatePayment } from '../../middleware/validation.js';
 
 // Environment variables
 const JPMORGAN_CLIENT_ID = process.env.JPMORGAN_CLIENT_ID;
@@ -66,7 +63,7 @@ router.post('/wallet-decrypt', async (req, res) => {
     const headers = generateAuthHeaders();
 
     const decryptPayload = {
-      encryptedWalletData: encryptedWalletData
+      encryptedWalletData
     };
 
     const response = await axios.post(
@@ -106,9 +103,9 @@ router.post('/wallet-encrypt', async (req, res) => {
 
     const encryptPayload = {
       cardNumber: cardNumber.replaceAll(/\s/g, ''), // Remove spaces
-      expiryDate: expiryDate,
-      cvv: cvv,
-      cardholderName: cardholderName,
+      expiryDate,
+      cvv,
+      cardholderName,
       billingAddress: billingAddress || {}
     };
 
@@ -120,8 +117,7 @@ router.post('/wallet-encrypt', async (req, res) => {
 
     res.json({
       success: true,
-      encryptedData: response.data.encryptedWalletData,
-      walletId: response.data.walletId
+      encryptedWalletData: response.data.encryptedWalletData
     });
 
   } catch (error) {

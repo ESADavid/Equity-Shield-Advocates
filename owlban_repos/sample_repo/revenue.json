@@ -1,9 +1,13 @@
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
   "totalRevenue": 1233057317,
 =======
   "totalRevenue": 1232635181,
 >>>>>>> 6fc293f7133ff0c5134064004b73c444e6d2e488
+=======
+  "totalRevenue": 1232621667,
+>>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
   "revenueStreams": {
     "Sample Repo": {
       "amount": 617090945,
@@ -33,12 +37,17 @@
   },
   "purchases": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "corporateHomes": 272039,
     "autoFleet": 1238534,
 =======
     "corporateHomes": 365107,
     "autoFleet": 1567602,
 >>>>>>> 6fc293f7133ff0c5134064004b73c444e6d2e488
+=======
+    "corporateHomes": 368114,
+    "autoFleet": 1578109,
+>>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
     "autoFleetDetails": [
       {
         "model": "2025 ROLLS-ROYCE BLACK BADGE SPECTRA",
@@ -48,10 +57,14 @@
         "purchaseDate": "2024-06-10T00:00:00.000Z",
         "deliveryStatus": "delivered",
 <<<<<<< HEAD
+<<<<<<< HEAD
         "deliveryDate": "2025-10-16T18:15:45.885Z",
 =======
         "deliveryDate": "2025-11-16T00:03:07.066Z",
 >>>>>>> 6fc293f7133ff0c5134064004b73c444e6d2e488
+=======
+        "deliveryDate": "2025-11-23T04:04:02.938Z",
+>>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
         "deliveryAddress": "7438 STILLBROOKBEND CT HUNTERSVILLE NC 28078"
       },
       {
@@ -7739,6 +7752,240 @@
           "purchaseDate": "2025-11-16T00:03:07.035Z"
 >>>>>>> 6fc293f7133ff0c5134064004b73c444e6d2e488
         }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-11-18T21:11:08.408Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763500268408",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-11-18T21:11:08.408Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-11-18T21:11:08.658Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763500268658",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-11-18T21:11:08.658Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-11-18T21:11:08.742Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763500268742",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-11-18T21:11:08.742Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-11-23T01:23:03.417Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763860983417",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-11-23T01:23:03.417Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-11-23T01:23:25.549Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763861005549",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-11-23T01:23:25.549Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-11-23T01:23:25.655Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763861005655",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-11-23T01:23:25.655Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-11-23T01:39:15.734Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763861955734",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-11-23T01:39:15.734Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "TESTVIN123456",
+        "dealership": "Test Dealership",
+        "cost": 2000,
+        "purchaseDate": "2025-11-23T01:39:16.798Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763861956798",
+          "model": "Test Model",
+          "vin": "TESTVIN123456",
+          "dealership": "Test Dealership",
+          "cost": 2000,
+          "purchaseDate": "2025-11-23T01:39:16.798Z"
+        }
+      },
+      {
+        "model": "Delivery Test Model",
+        "vin": "DELIVERYVIN123",
+        "dealership": "Delivery Dealership",
+        "cost": 1500,
+        "purchaseDate": "2025-11-23T01:39:16.909Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763861956909",
+          "model": "Delivery Test Model",
+          "vin": "DELIVERYVIN123",
+          "dealership": "Delivery Dealership",
+          "cost": 1500,
+          "purchaseDate": "2025-11-23T01:39:16.909Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-11-23T03:31:04.040Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763868664040",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-11-23T03:31:04.040Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-11-23T03:41:32.404Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763869292404",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-11-23T03:41:32.404Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-11-23T03:51:08.452Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763869868452",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-11-23T03:51:08.452Z"
+        }
+      },
+      {
+        "model": "Test Model",
+        "vin": "VIN123456",
+        "dealership": "Test Dealership",
+        "cost": 1,
+        "purchaseDate": "2025-11-23T04:04:02.818Z",
+        "deliveryStatus": "pending",
+        "deliveryDate": null,
+        "deliveryAddress": null,
+        "receipt": {
+          "receiptId": "RCPT-1763870642818",
+          "model": "Test Model",
+          "vin": "VIN123456",
+          "dealership": "Test Dealership",
+          "cost": 1,
+          "purchaseDate": "2025-11-23T04:04:02.818Z"
+        }
       }
     ],
     "corporateHomesDetails": []
@@ -8189,6 +8436,852 @@
         },
         "payrollTotal": 0,
         "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-11-21T00:43:01.774Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232630679,
+        "purchases": {
+          "autoFleet": 1571103,
+          "corporateHomes": 366108
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": false
+      }
+    },
+    {
+      "timestamp": "2025-11-21T00:43:26.954Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232630679,
+        "purchases": {
+          "autoFleet": 1571103,
+          "corporateHomes": 366108
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": true
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:14.350Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:14.511Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:14.809Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:14.835Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:14.955Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:15.025Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:15.116Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:15.165Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:15.204Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:15.482Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:15.797Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:15.968Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:16.046Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:16.179Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:16.249Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:16.394Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:16.623Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:16.668Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:16.743Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:16.775Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:16.852Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:17.058Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:17.451Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:17.528Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T23:17:17.810Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:18.211Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:18.246Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:18.424Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:18.450Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:18.648Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:18.835Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.005Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.098Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.214Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.234Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.254Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.275Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.309Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.445Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.485Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.710Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.735Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:19.759Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:20.220Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:20.362Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:20.395Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:20.463Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:20.483Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:20.500Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T00:39:20.537Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:06.814Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:07.064Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:07.243Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:07.513Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:07.682Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:07.713Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:07.755Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:07.788Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:07.865Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:08.043Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:08.342Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    }
+  ]
+}{
+      "timestamp": "2025-11-24T01:19:08.377Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
+      }
+    },
+    {
+      "timestamp": "2025-11-24T01:19:08.409Z",
+      "action": "updateRevenueData",
+      "details": {
+        "totalRevenue": 1232621667,
+        "purchases": {
+          "autoFleet": 1578109,
+          "corporateHomes": 368114
+        },
+        "payrollTotal": 0,
+        "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
       }
     }
   ]

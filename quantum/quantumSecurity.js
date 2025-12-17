@@ -7,9 +7,12 @@ import jwt from 'jsonwebtoken';
 
 class QuantumSecurity {
   algorithm = 'CRYSTALS-Dilithium-3';
-  encryptionKey = this.generateEncryptionKey();
-  jwtKey = this.generateJWTKey();
-  securityMatrix = this.initializeSecurityMatrix();
+
+  constructor() {
+    this.encryptionKey = this.generateEncryptionKey();
+    this.jwtKey = this.generateJWTKey();
+    this.securityMatrix = this.initializeSecurityMatrix();
+  }
 
   generateEncryptionKey() {
     // Generate 256-bit AES key for encryption (32 bytes) as hex string
@@ -171,6 +174,12 @@ class QuantumSecurity {
       blockchainVerified: true
     };
   }
+
+  // Alias for backward compatibility
+  verifySecurityAlias() {
+    return this.verifySecurity();
+  }
+
 
   // Get security metrics for monitoring
   getSecurityMetrics() {

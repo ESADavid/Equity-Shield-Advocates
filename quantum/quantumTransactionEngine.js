@@ -4,13 +4,13 @@
  * Handles all transaction types with quantum security and AI intelligence
  */
 
-import EventEmitter from 'node:events';
+import { EventEmitter } from 'node:events';
 import crypto from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 
 // Import quantum systems
 import { QuantumEngine } from './quantumEngine.js';
-import { QuantumSecurity } from './quantumSecurity.js';
+import { QuantumSecurity } from './quantumSecurityCommonJS.js';
 import { QuantumOptimizer } from './quantumOptimizer.js';
 
 class QuantumTransactionEngine extends EventEmitter {
@@ -82,8 +82,9 @@ class QuantumTransactionEngine extends EventEmitter {
 
   // Core Transaction Processing
   async processTransaction(transactionData) {
+    const transactionId = this.generateTransactionId();
     try {
-      const transactionId = this.generateTransactionId();
+      
 
       // Create quantum transaction
       const quantumTransaction = {
@@ -109,8 +110,16 @@ class QuantumTransactionEngine extends EventEmitter {
       // Process transaction based on type
       const result = await this.processTransactionByType(quantumTransaction);
 
+      // Extract nested ternary into independent statement
+      let updatedStatus;
+      if (result.success) {
+        updatedStatus = this.transactionStatus.COMPLETED;
+      } else {
+        updatedStatus = this.transactionStatus.FAILED;
+      }
+
       // Update transaction status
-      quantumTransaction.status = result.success ? this.transactionStatus.COMPLETED : this.transactionStatus.FAILED;
+      quantumTransaction.status = updatedStatus;
       quantumTransaction.completedAt = new Date().toISOString();
       quantumTransaction.result = result;
 
@@ -139,7 +148,7 @@ class QuantumTransactionEngine extends EventEmitter {
 
     } catch (error) {
       this.emit('transaction-failed', {
-        transactionId,
+        transactionId: transactionId || 'unknown',
         error: error.message,
         type: transactionData.type
       });
@@ -260,52 +269,52 @@ class QuantumTransactionEngine extends EventEmitter {
     }
   }
 
-  async processPayment(transaction) {
+  async processPayment(_transaction) {
     // Quantum payment processing
-    const paymentResult = await this.executeQuantumPayment(transaction);
+    const paymentResult = await this.executeQuantumPayment(_transaction);
 
     return {
       success: paymentResult.success,
-      transactionId: transaction.id,
+      transactionId: _transaction.id,
       processingTime: performance.now(),
       quantumVerified: true,
       details: paymentResult
     };
   }
 
-  async processTransfer(transaction) {
+  async processTransfer(_transaction) {
     // Quantum transfer processing
-    const transferResult = await this.executeQuantumTransfer(transaction);
+    const transferResult = await this.executeQuantumTransfer(_transaction);
 
     return {
       success: transferResult.success,
-      transactionId: transaction.id,
+      transactionId: _transaction.id,
       processingTime: performance.now(),
       quantumVerified: true,
       details: transferResult
     };
   }
 
-  async processWithdrawal(transaction) {
+  async processWithdrawal(_transaction) {
     // Quantum withdrawal processing
-    const withdrawalResult = await this.executeQuantumWithdrawal(transaction);
+    const withdrawalResult = await this.executeQuantumWithdrawal(_transaction);
 
     return {
       success: withdrawalResult.success,
-      transactionId: transaction.id,
+      transactionId: _transaction.id,
       processingTime: performance.now(),
       quantumVerified: true,
       details: withdrawalResult
     };
   }
 
-  async processDeposit(transaction) {
+  async processDeposit(_transaction) {
     // Quantum deposit processing
-    const depositResult = await this.executeQuantumDeposit(transaction);
+    const depositResult = await this.executeQuantumDeposit(_transaction);
 
     return {
       success: depositResult.success,
-      transactionId: transaction.id,
+      transactionId: _transaction.id,
       processingTime: performance.now(),
       quantumVerified: true,
       details: depositResult
@@ -364,52 +373,52 @@ class QuantumTransactionEngine extends EventEmitter {
     };
   }
 
-  async executeQuantumWithdrawal(transaction) {
+  async executeQuantumWithdrawal(_transaction) {
     // Simulate quantum withdrawal processing
     await new Promise(resolve => setTimeout(resolve, 10)); // 10ms quantum withdrawal
 
     return {
       success: true,
       withdrawalId: `WD_${crypto.randomBytes(8).toString('hex').toUpperCase()}`,
-      destination: transaction.destination,
+      destination: _transaction.destination,
       confirmation: crypto.randomBytes(16).toString('hex')
     };
   }
 
-  async executeQuantumDeposit(transaction) {
+  async executeQuantumDeposit(_transaction) {
     // Simulate quantum deposit processing
     await new Promise(resolve => setTimeout(resolve, 8)); // 8ms quantum deposit
 
     return {
       success: true,
       depositId: `DEP_${crypto.randomBytes(8).toString('hex').toUpperCase()}`,
-      source: transaction.source,
+      source: _transaction.source,
       confirmation: crypto.randomBytes(16).toString('hex')
     };
   }
 
-  async executeQuantumRefund(transaction) {
+  async executeQuantumRefund(_transaction) {
     // Simulate quantum refund processing
     await new Promise(resolve => setTimeout(resolve, 6)); // 6ms quantum refund
 
     return {
       success: true,
       refundId: `REF_${crypto.randomBytes(8).toString('hex').toUpperCase()}`,
-      originalTransaction: transaction.originalTransactionId,
+      originalTransaction: _transaction.originalTransactionId,
       confirmation: crypto.randomBytes(16).toString('hex')
     };
   }
 
-  async executeQuantumExchange(transaction) {
+  async executeQuantumExchange(_transaction) {
     // Simulate quantum exchange processing
     await new Promise(resolve => setTimeout(resolve, 12)); // 12ms quantum exchange
 
     return {
       success: true,
       exchangeId: `EXC_${crypto.randomBytes(8).toString('hex').toUpperCase()}`,
-      fromCurrency: transaction.fromCurrency,
-      toCurrency: transaction.toCurrency,
-      rate: transaction.exchangeRate,
+      fromCurrency: _transaction.fromCurrency,
+      toCurrency: _transaction.toCurrency,
+      rate: _transaction.exchangeRate,
       confirmation: crypto.randomBytes(16).toString('hex')
     };
   }

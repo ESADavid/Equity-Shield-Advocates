@@ -10,11 +10,11 @@ interface PayrollResponse {
 }
 
 interface PayrollIntegration {
-  getEmployeePayroll(employeeId: string): Promise<PayrollResponse>;
+  getEmployeePayroll(_employeeId: string): Promise<PayrollResponse>;
 }
 
 interface QuickBooksPayrollIntegration {
-  getEmployeePayroll(employeeId: string): Promise<PayrollResponse>;
+  getEmployeePayroll(_employeeId: string): Promise<PayrollResponse>;
 }
 
 // Dynamic imports for JavaScript modules

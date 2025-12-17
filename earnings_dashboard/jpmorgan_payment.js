@@ -3,10 +3,13 @@ import axios from 'axios';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+<<<<<<< HEAD
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+=======
+>>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
 
 const router = express.Router();
 
@@ -1740,4 +1743,4 @@ router.post('/control/banking-action', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

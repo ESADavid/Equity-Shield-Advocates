@@ -1,8 +1,11 @@
-import fs from 'fs/promises';
-import path from 'path';
-import updateRevenueData from './update_revenue_data.js';
+
+const fs = require('node:fs').promises;
+const path = require('node:path');
+const updateRevenueData = require('./update_revenue_data');
+
 
 const testDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/test_revenue.json');
+
 
 // Mock data for testing
 const mockRevenueData = {
@@ -39,7 +42,11 @@ describe('updateRevenueData', () => {
 
   afterEach(async () => {
     // Clean up test file
-    await fs.unlink(testDataPath);
+    try {
+      await fs.unlink(testDataPath);
+    } catch (error) {
+      // Ignore file not found error
+    }
   });
 
   afterAll(async () => {
@@ -52,7 +59,7 @@ describe('updateRevenueData', () => {
   });
 
   test('should return true when data file exists and is valid', async () => {
-    const result = await updateRevenueData(false, testDataPath);
+    const result = await updateRevenueData(testDataPath, false);
     expect(result).toBe(true);
   });
 
@@ -62,7 +69,7 @@ describe('updateRevenueData', () => {
     try {
       await fs.rename(testDataPath, tempPath);
 
-      const result = await updateRevenueData(false, testDataPath);
+      const result = await updateRevenueData(testDataPath, false);
       expect(result).toBe(false);
     } finally {
       // Restore the file
@@ -74,14 +81,14 @@ describe('updateRevenueData', () => {
     // Write invalid JSON
     await fs.writeFile(testDataPath, 'invalid json content');
 
-    const result = await updateRevenueData(false, testDataPath);
+    const result = await updateRevenueData(testDataPath, false);
     expect(result).toBe(false);
   });
 
   test('should add sample purchase data when ADD_SAMPLE_DATA is true and incremental is false', async () => {
     // This test would need to modify the ADD_SAMPLE_DATA flag in the source
     // For now, we'll test with the current configuration
-    const result = await updateRevenueData(false, testDataPath);
+    const result = await updateRevenueData(testDataPath, true);
     expect(result).toBe(true);
 
     // Read the updated data and verify structure
@@ -92,19 +99,16 @@ describe('updateRevenueData', () => {
   });
 
   test('should validate and sanitize purchase costs', async () => {
-    const invalidData = {
-      ...mockRevenueData,
-      purchases: {
-        corporateHomes: 'invalid',
-        corporateHomesDetails: [],
-        autoFleet: -100,
-        autoFleetDetails: []
-      }
-    };
+    const invalidData = { ...mockRevenueData, purchases: {
+      corporateHomes: 'invalid',
+      corporateHomesDetails: [],
+      autoFleet: -100,
+      autoFleetDetails: []
+    } };
 
     await fs.writeFile(testDataPath, JSON.stringify(invalidData, null, 2));
 
-    const result = await updateRevenueData(false, testDataPath);
+    const result = await updateRevenueData(testDataPath, false);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -114,12 +118,16 @@ describe('updateRevenueData', () => {
 
   test('should handle missing purchases object', async () => {
     const dataWithoutPurchases = { ...mockRevenueData };
-    const temp = dataWithoutPurchases as any;
-    delete temp.purchases;
+    if ('purchases' in dataWithoutPurchases) {
+      // @ts-expect-error TS2790: operand of delete must be optional
+      delete dataWithoutPurchases.purchases;
+    }
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithoutPurchases, null, 2));
 
-    const result = await updateRevenueData(false, testDataPath);
+
+
+    const result = await updateRevenueData(testDataPath, false);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -129,7 +137,7 @@ describe('updateRevenueData', () => {
   });
 
   test('should integrate payroll data correctly', async () => {
-    const result = await updateRevenueData(false, testDataPath);
+    const result = await updateRevenueData(testDataPath, false);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -138,8 +146,7 @@ describe('updateRevenueData', () => {
   });
 
   test('should handle invalid payroll entries', async () => {
-    const dataWithInvalidPayroll = {
-      ...mockRevenueData,
+    const dataWithInvalidPayroll = { ...mockRevenueData, 
       payroll: [
         { employeeId: 'EMP001', amount: 5000, date: '2024-01-01' },
         { employeeId: 'EMP002', amount: 'invalid', date: '2024-01-01' },
@@ -149,7 +156,7 @@ describe('updateRevenueData', () => {
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithInvalidPayroll, null, 2));
 
-    const result = await updateRevenueData(false, testDataPath);
+    const result = await updateRevenueData(testDataPath, false);
     expect(result).toBe(true);
 
     const updatedData = JSON.parse(await fs.readFile(testDataPath, 'utf-8'));
@@ -172,10 +179,14 @@ describe('updateRevenueData', () => {
 
   test('should handle missing revenueStreamsDetails object', async () => {
     const dataWithoutRevenueStreamsDetails = { ...mockRevenueData };
-    const temp = dataWithoutRevenueStreamsDetails as any;
-    delete temp.revenueStreamsDetails;
+    if ('revenueStreamsDetails' in dataWithoutRevenueStreamsDetails) {
+      // @ts-expect-error TS2790: operand of delete must be optional
+      delete dataWithoutRevenueStreamsDetails.revenueStreamsDetails;
+    }
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithoutRevenueStreamsDetails, null, 2));
+
+
 
     const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
@@ -192,7 +203,7 @@ describe('updateRevenueData', () => {
     expect(updatedData.revenueStreamsDetails).toBeDefined();
 
     // Check that transaction details were added for each revenue stream
-    Object.keys(updatedData.revenueStreams).forEach(streamName => {
+    for (const streamName of Object.keys(updatedData.revenueStreams)) {
       expect(updatedData.revenueStreamsDetails[streamName]).toBeDefined();
       expect(Array.isArray(updatedData.revenueStreamsDetails[streamName])).toBe(true);
       if (updatedData.revenueStreamsDetails[streamName].length > 0) {
@@ -202,7 +213,7 @@ describe('updateRevenueData', () => {
         expect(transaction).toHaveProperty('date');
         expect(transaction).toHaveProperty('description');
       }
-    });
+    }
   });
 
   test('should handle file write errors gracefully', async () => {
@@ -213,10 +224,7 @@ describe('updateRevenueData', () => {
   });
 
   test('should handle invalid totalRevenue values', async () => {
-    const dataWithInvalidRevenue = {
-      ...mockRevenueData,
-      totalRevenue: 'invalid'
-    };
+    const dataWithInvalidRevenue = { ...mockRevenueData, totalRevenue: 'invalid' };
 
     await fs.writeFile(testDataPath, JSON.stringify(dataWithInvalidRevenue, null, 2));
 
@@ -228,8 +236,7 @@ describe('updateRevenueData', () => {
   });
 
   test('should preserve existing data structure', async () => {
-    const customData = {
-      ...mockRevenueData,
+    const customData = { ...mockRevenueData, 
       customField: 'test value',
       nestedObject: {
         property1: 'value1',

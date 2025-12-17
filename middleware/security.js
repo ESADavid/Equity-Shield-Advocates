@@ -76,7 +76,7 @@ const VALIDATION_PATTERNS = {
   EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/,
   USERNAME: /^[a-zA-Z0-9_-]{3,20}$/,
-  PHONE: /^\+?[\d\s\-\(\)]{10,}$/,
+  PHONE: /^\+?[\d\s\-()]{10,}$/,
   ZIPCODE: /^\d{5}(-\d{4})?$/,
   CREDIT_CARD: /^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/,
   AMOUNT: /^\d+(\.\d{1,2})?$/,
@@ -301,7 +301,7 @@ class SecurityMiddleware {
       /on\w+\s*=/i,
       /union\s+select/i,
       /drop\s+table/i,
-      /\b(or|and)\b\s+\d+\s*=\s*\d+/i,
+      /\bor\b\s+\d+\s*=\s*\d+|\band\b\s+\d+\s*=\s*\d+/i,
       /--/g,
       /\/\*.*\*\//g
     ];

@@ -287,8 +287,8 @@ async function runComprehensiveMerchantTests() {
 }
 
 // Run tests if called directly
-await (async () => {
-  if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
+  (async () => {
     try {
       const report = await runComprehensiveMerchantTests();
       console.log('\n🏁 Comprehensive merchant testing completed!');
@@ -297,7 +297,7 @@ await (async () => {
       console.error('❌ Test execution failed:', error);
       process.exit(1);
     }
-  }
-})();
+  })();
+}
 
 export { runComprehensiveMerchantTests, MerchantEndpointTests, TestSuite };

@@ -1,12 +1,12 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
+const __importDefault = (mod) => {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const promises_1 = __importDefault(require("fs/promises"));
-const path_1 = __importDefault(require("path"));
+const promises_1 = __importDefault(require("node:fs/promises"));
+const path_1 = __importDefault(require("node:path"));
 const update_revenue_data_1 = __importDefault(require("./update_revenue_data"));
-const testDataPath = path_1.default.resolve(__dirname, '../owlban_repos/sample_repo/test_revenue.json');
+const testDataPath = path_1.default.resolve(__dirname, '../../owlban_repos/test_revenue.json');
 // Mock data for testing
 const mockRevenueData = {
     totalRevenue: 1000000,
@@ -162,7 +162,7 @@ describe('updateRevenueData', () => {
         const updatedData = JSON.parse(await promises_1.default.readFile(testDataPath, 'utf-8'));
         expect(updatedData.revenueStreamsDetails).toBeDefined();
         // Check that transaction details were added for each revenue stream
-        Object.keys(updatedData.revenueStreams).forEach(streamName => {
+        for (const streamName of Object.keys(updatedData.revenueStreams)) {
             expect(updatedData.revenueStreamsDetails[streamName]).toBeDefined();
             expect(Array.isArray(updatedData.revenueStreamsDetails[streamName])).toBe(true);
             if (updatedData.revenueStreamsDetails[streamName].length > 0) {
@@ -172,7 +172,7 @@ describe('updateRevenueData', () => {
                 expect(transaction).toHaveProperty('date');
                 expect(transaction).toHaveProperty('description');
             }
-        });
+        }
     });
     test('should handle file write errors gracefully', async () => {
         // This test would require mocking fs.writeFile to throw an error

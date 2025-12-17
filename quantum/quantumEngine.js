@@ -2,9 +2,11 @@
  * QUANTUM ENGINE - Core perfection system
  * Provides quantum-level performance, security, and reliability
  */
-import EventEmitter from 'node:events';
+import { EventEmitter } from 'node:events';
 import crypto from 'node:crypto';
 import { performance } from 'node:perf_hooks';
+import * as QuantumSecurity from './quantumSecurityCommonJS.js';
+import { QuantumOptimizer } from './quantumOptimizer.js';
 
 class QuantumEngine extends EventEmitter {
   constructor() {
@@ -26,7 +28,7 @@ class QuantumEngine extends EventEmitter {
       quantumHash,
       timestamp,
       entangled: false,
-      encryptionKey: this.securityLayer.encryptionKey
+      encryptionKey: this.securityLayer.getEncryptionKey(),
     });
     this.entangleState(key);
     // Backup for error correction
@@ -100,7 +102,7 @@ class QuantumEngine extends EventEmitter {
       stateIntegrity: this.getStateIntegrityMetrics(),
       entanglement: this.entanglementNodes.size,
       uptime: performance.now(),
-      memory: process.memoryUsage()
+      memory: process.memoryUsage(),
     };
   }
 
@@ -118,7 +120,7 @@ class QuantumEngine extends EventEmitter {
     return {
       totalStates,
       corruptedStates,
-      integrityRate: totalStates > 0 ? ((totalStates - corruptedStates) / totalStates) * 100 : 100
+      integrityRate: totalStates > 0 ? ((totalStates - corruptedStates) / totalStates) * 100 : 100,
     };
   }
 }
@@ -138,41 +140,4 @@ class QuantumErrorCorrector {
   }
 }
 
-class QuantumSecurity {
-  constructor() {
-    this.encryptionKey = this.generateQuantumKey();
-  }
-
-  generateQuantumKey() {
-    return crypto.randomBytes(64).toString('hex');
-  }
-
-  verifySecurity() {
-    // Quantum security verification
-    return {
-      quantumSafe: true,
-      postQuantumCrypto: true,
-      zeroTrust: true,
-      blockchainVerified: true
-    };
-  }
-
-  verify() {
-    // Alias for backward compatibility
-    return this.verifySecurity();
-  }
-}
-
-class QuantumOptimizer {
-  optimize() {
-    return {
-      performance: 'quantum-level',
-      latency: 'zero',
-      throughput: 'unlimited',
-      efficiency: 100,
-      selfHealing: true
-    };
-  }
-}
-
-export { QuantumEngine, QuantumSecurity, QuantumOptimizer };
+export default QuantumEngine;

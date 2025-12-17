@@ -1,8 +1,9 @@
-const request = require('supertest');
-const express = require('express');
-const bodyParser = require('body-parser');
+import request from 'supertest';
+import express from 'express';
+import bodyParser from 'body-parser';
+import axios from 'axios';
+import jpmorganPaymentRouter from './jpmorgan_payment.js';
 
-// Mock axios before requiring the module
 jest.mock('axios', () => ({
   post: jest.fn(),
   get: jest.fn(),
@@ -15,8 +16,6 @@ jest.mock('axios', () => ({
     }
   }))
 }));
-
-const jpmorganPaymentRouter = require('./jpmorgan_payment');
 
 const app = express();
 app.use(bodyParser.json());
@@ -56,7 +55,6 @@ describe('JPMorgan Payments API', () => {
 
   // Mock axios for successful payment creation
   test('Create payment success returns payment details', async () => {
-    const axios = require('axios');
     axios.post.mockResolvedValue({
       data: {
         id: 'PAY123',
@@ -75,7 +73,6 @@ describe('JPMorgan Payments API', () => {
   });
 
   test('Get payment status returns 200', async () => {
-    const axios = require('axios');
     axios.get.mockResolvedValue({
       data: {
         id: 'PAY123',
@@ -115,7 +112,6 @@ describe('JPMorgan Payments API', () => {
   });
 
   test('Get transactions returns 200', async () => {
-    const axios = require('axios');
     axios.get.mockResolvedValue({
       data: {
         transactions: [],

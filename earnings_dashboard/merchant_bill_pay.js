@@ -2,8 +2,12 @@ import express from 'express';
 import Stripe from 'stripe';
 import nodemailer from 'nodemailer';
 import fs from 'node:fs';
+<<<<<<< HEAD
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+=======
+import path from 'node:path';
+>>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
 
 const router = express.Router();
 
@@ -184,8 +188,14 @@ async function sendSMSNotification(phoneNumber, message) {
   }
 }
 
+<<<<<<< HEAD
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+=======
+import { fileURLToPath } from 'node:url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+>>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
 
 const revenueDataPath = path.resolve(__dirname, '../earnings_report_updated.json');
 

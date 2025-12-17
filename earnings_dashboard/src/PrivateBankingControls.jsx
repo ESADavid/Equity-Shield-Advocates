@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function PrivateBankingControls({ controlStatus, onStatusUpdate }) {
+function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate }) {
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [loading, setLoading] = useState(true);

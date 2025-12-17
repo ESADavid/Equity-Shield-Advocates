@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import emailService from './emailService.js';
 import winston from 'winston';
@@ -32,8 +31,8 @@ class AuthService {
 
   // Register new user
   async register(userData) {
+    const { username, email, password, firstName, lastName, role = 'user', tenantId } = userData;
     try {
-      const { username, email, password, firstName, lastName, role = 'user', tenantId } = userData;
 
       // Validate tenantId is provided
       if (!tenantId) {
@@ -114,7 +113,7 @@ class AuthService {
         tokens
       };
     } catch (error) {
-      logger.error('User login failed', { error: error.message, username });
+      logger.error('User login failed', { error: error.message, username: credentials?.username });
       throw error;
     }
   }

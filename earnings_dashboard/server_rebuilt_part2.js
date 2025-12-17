@@ -1,3 +1,11 @@
+const express = require('express');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+const revenueDataPath = path.join(__dirname, 'aggregated_revenue.json');
+
 app.get('/api/earnings/download', (req, res) => {
   if (!fs.existsSync(revenueDataPath)) {
     return res.status(404).json({ error: 'Earnings data not found' });

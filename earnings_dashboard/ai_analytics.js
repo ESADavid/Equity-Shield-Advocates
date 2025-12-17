@@ -1,4 +1,4 @@
-import { create, all, matrix, transpose, multiply, inv, exp, pow, sqrt, sin, cos, pi } from 'mathjs';
+import { transpose, multiply, inv } from 'mathjs';
 
 // Enhanced historical data: last 24 months revenue with seasonal patterns
 const historicalData = [
@@ -15,10 +15,6 @@ const riskFactors = {
   competitivePressure: 0.08,
   regulatoryChanges: 0.05
 };
-
-const linearModel = null;
-const seasonalModel = null;
-const arimaModel = null;
 
 class AdvancedAnalytics {
   constructor() {
@@ -195,15 +191,14 @@ class AdvancedAnalytics {
 
   // Risk Assessment
   assessRisks() {
-    const currentRevenue = historicalData[historicalData.length - 1];
-    const volatility = this.calculateVolatility();
+    this.calculateVolatility();
 
-    const riskScore = Object.values(riskFactors).reduce((a, b) => a + b, 0) * volatility;
+    const riskScore = Object.values(riskFactors).reduce((a, b) => a + b, 0) * this.calculateVolatility();
 
     return {
       overallRisk: riskScore,
       factors: riskFactors,
-      volatility: volatility,
+      volatility: this.calculateVolatility(),
       recommendations: this.generateRiskRecommendations(riskScore)
     };
   }

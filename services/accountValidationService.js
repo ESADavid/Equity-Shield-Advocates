@@ -5,6 +5,8 @@
  */
 
 import { randomBytes } from 'node:crypto';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,7 +37,8 @@ class AccountValidationService {
       }
 
       // Remove spaces and dashes
-      const cleanAccountNumber = accountNumber.replaceAll(/[\s\-]/g, '');
+      const cleanAccountNumber = accountNumber.replace(/[\s-]/g, '');
+
 
       // Check length (typically 8-17 digits)
       if (cleanAccountNumber.length < 8 || cleanAccountNumber.length > 17) {
@@ -45,6 +48,7 @@ class AccountValidationService {
           accountNumber: cleanAccountNumber
         };
       }
+
 
       // Check if all characters are digits
       if (!/^\d+$/.test(cleanAccountNumber)) {
@@ -117,8 +121,10 @@ class AccountValidationService {
         };
       }
 
+      
       // Remove spaces and dashes
-      const cleanRouting = routingNumber.replaceAll(/[\s\-]/g, '');
+      const cleanRouting = routingNumber.replace(/[\s-]/g, '');
+
 
       // Must be exactly 9 digits
       if (cleanRouting.length !== 9) {
@@ -127,6 +133,7 @@ class AccountValidationService {
           error: 'Routing number must be exactly 9 digits'
         };
       }
+
 
       // Must contain only digits
       if (!/^\d{9}$/.test(cleanRouting)) {
@@ -194,14 +201,15 @@ class AccountValidationService {
       switch (network.toUpperCase()) {
         case 'BTC':
         case 'BITCOIN':
-          // Bitcoin address validation (P2PKH, P2SH, Bech32)
-          if (!/^([13][a-km-zA-HJ-NP-Z1-9]{25,34}|bc1[a-z0-9]{39,59})$/.test(cleanAddress)) {
-            return {
-              valid: false,
-              error: 'Invalid Bitcoin address format'
-            };
-          }
+        // Bitcoin address validation (P2PKH, P2SH, Bech32)
+        if (!/^([13][a-km-zA-HJ-NP-Z1-9]{25,34}|bc1[a-z0-9]{39,59})$/.test(cleanAddress)) {
+          return {
+            valid: false,
+            error: 'Invalid Bitcoin address format'
+          };
+        }
           break;
+
 
         case 'ETH':
         case 'ETHEREUM':
@@ -213,6 +221,7 @@ class AccountValidationService {
             };
           }
           break;
+
 
         case 'USDC':
         case 'USDT':

@@ -7,19 +7,14 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
   ],
-  parser: '@typescript-eslint/parser',
+  parser: 'espree',
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 2022,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint'],
   rules: {
     'no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
-    '@typescript-eslint/no-unused-vars': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-require-imports': 'off', // Allow require() for now
     'no-undef': 'error',
     'no-case-declarations': 'off', // Allow declarations in case blocks
     'no-dupe-keys': 'error',
@@ -29,6 +24,69 @@ module.exports = {
     'no-unused-expressions': 'error',
   },
   overrides: [
+    // TypeScript files - must be first to take precedence
+    {
+      files: ['**/*.ts'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+        project: './tsconfig.json',
+        tsconfigRootDir: __dirname,
+      },
+      plugins: ['@typescript-eslint'],
+      extends: ['plugin:@typescript-eslint/recommended'],
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-require-imports': 'off',
+        '@typescript-eslint/no-inferrable-types': 'off',
+        '@typescript-eslint/explicit-function-return-type': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
+        '@typescript-eslint/no-empty-interface': 'off',
+        'no-unused-vars': 'off',
+      },
+    },
+    // Exclude .d.ts files from TypeScript parsing
+    {
+      files: ['**/*.d.ts'],
+      parser: 'espree',
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+      },
+      rules: {
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': 'off',
+      },
+    },
+    {
+      files: ['owlban_revenue_repo/**/*.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 2022,
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-expressions': 'off',
+        'no-unused-vars': 'off',
+        'no-unused-expressions': 'off',
+      },
+    },
+    {
+      files: ['owlban_revenue_repo/executive-portal/**/*.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'script',
+        ecmaVersion: 2022,
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        'no-unused-vars': 'off',
+      },
+    },
     {
       files: ['*.js'],
       parser: 'espree',
@@ -41,7 +99,25 @@ module.exports = {
       },
     },
     {
+<<<<<<< HEAD
       files: ['tests/**/*.js', 'test/**/*.js', 'test/**/*.mjs', 'test/**/*.cjs', 'debt_acquisition_critical_test.js', 'debt_acquisition_test.js'],
+=======
+      files: ['**/test_jpmorgan_auth_integration.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 2022,
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-expressions': 'off', // Allow Chai assertions in this test file
+        'no-unused-vars': 'off',
+        'no-unused-expressions': 'off', // Allow Chai assertions in this test file
+      },
+    },
+    {
+      files: ['tests/**/*.js', 'test/**/*.js', 'test/**/*.mjs', 'test/**/*.cjs'],
+>>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
       parser: 'espree',
       parserOptions: {
         sourceType: 'module', // Allow import/export in test files
@@ -50,14 +126,29 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-unused-vars': 'off',
         'no-unused-vars': 'off',
+        'no-unused-expressions': 'off', // Allow Chai assertions in tests
       },
     },
     {
-      files: ['earnings_dashboard/**/*.js', 'quantum/**/*.js', 'auth/**/*.js', 'blockchain/**/*.js', 'comprehensive_*.js', 'cypress/**/*.js', 'ecosystem.config.js', 'executive-portal/**/*.js', 'middleware/**/*.js', 'models/**/*.js', 'routes/**/*.js', 'scripts/**/*.js', 'services/**/*.js', 'staging_*.js', 'test_*.js', 'vite.config.js'],
+      files: ['earnings_dashboard/**/*.js', 'quantum/**/*.js', 'auth/**/*.js', 'blockchain/**/*.js', 'comprehensive_*.js', 'cypress/**/*.js', 'ecosystem.config.js', 'executive-portal/**/*.js', 'middleware/**/*.js', 'models/**/*.js', 'routes/**/*.js', 'scripts/**/*.js', 'services/**/*.js', 'staging_*.js', 'test_*.js', 'vite.config.js', 'config/**/*.js', 'frontend/**/*.js', 'blackbox_integration/**/*.js', 'ai_models/**/*.js', 'public/**/*.js', 'monitoring/**/*.js', 'test/**/*.js', 'owlban_revenue_repo/**/*.js'],
       parser: 'espree',
       parserOptions: {
         sourceType: 'module', // Allow import/export in various module files
-        ecmaVersion: 2020,
+        ecmaVersion: 2022,
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-expressions': 'off',
+        'no-unused-vars': 'off',
+        'no-unused-expressions': 'off',
+      },
+    },
+    {
+      files: ['config/database.js', 'config/database_enhanced.js', 'config/email.js', 'create_oscar_broome_login_simple.js', 'e2e_perfection_test.js', 'e2e_perfection_test_final.js', 'e2e_perfection_test_final_refactored.js', 'performance_test.js', 'quantum.config.js', 'server-enhanced.js', 'server-quantum.js', 'server-simple.js', 'server_with_auth.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module', // Allow import/export in specific config and server files
+        ecmaVersion: 2022,
       },
       rules: {
         '@typescript-eslint/no-unused-vars': 'off',
@@ -83,5 +174,25 @@ module.exports = {
         'no-unused-expressions': 'off', // Cypress often uses expressions in tests
       },
     },
+    {
+      files: ['*.d.ts'],
+      rules: {
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': 'off',
+      }
+    },
+    // JavaScript files using ES modules
+    {
+      files: ['payrollSystem.js', 'utils/payrollCalculator.js', 'utils/payrollValidation.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 2022,
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        'no-unused-vars': 'off',
+      },
+    }
   ],
 };

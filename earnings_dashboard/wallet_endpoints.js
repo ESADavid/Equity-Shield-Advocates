@@ -49,7 +49,7 @@ router.post('/wallet-encrypt', async (req, res) => {
     const headers = generateAuthHeaders();
 
     const encryptPayload = {
-      cardNumber: cardNumber.replaceAll(/\s/g, ''), // Remove spaces
+      cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces
       expiryDate: expiryDate,
       cvv: cvv,
       cardholderName: cardholderName,
@@ -134,7 +134,7 @@ router.post('/wallet-tokenize', async (req, res) => {
     const headers = generateAuthHeaders();
 
     const tokenizePayload = {
-      cardNumber: cardNumber.replaceAll(/\s/g, ''), // Remove spaces
+      cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces
       expiryDate: expiryDate,
       cvv: cvv,
       cardholderName: cardholderName,

@@ -39,7 +39,7 @@ class QuantumPayrollSystem extends EventEmitter {
       socialSecurityRate: 0.062,
       medicareRate: 0.0145,
       overtimeMultiplier: 1.5,
-      minimumWage: 16.90,
+      minimumWage: 16.9,
       maxHoursPerWeek: 40
     };
 
@@ -255,9 +255,9 @@ class QuantumPayrollSystem extends EventEmitter {
 
   // Payroll Processing
   async processPayroll(payPeriod = null) {
+    const period = payPeriod || this.getCurrentPayPeriod();
     try {
       const payrollRunId = this.generatePayrollRunId();
-      const period = payPeriod || this.getCurrentPayPeriod();
 
       // Create payroll run
       const payrollRun = {
@@ -277,7 +277,7 @@ class QuantumPayrollSystem extends EventEmitter {
       };
 
       // Process each employee
-      for (const [employeeId, employee] of this.employees) {
+      for (const employee of this.employees.values()) {
         const employeePayroll = await this.calculateEmployeePayroll(employee, period);
         payrollRun.employees.push(employeePayroll);
 
@@ -425,23 +425,21 @@ class QuantumPayrollSystem extends EventEmitter {
   async processPayrollPayments(payrollRun) {
     // Process payments for each employee via quantum transaction engine
     for (const employeePayroll of payrollRun.employees) {
-      const employee = this.employees.get(employeePayroll.employeeId);
-
       const transaction = {
         type: 'transfer',
         amount: employeePayroll.netPay,
         from: 'jpmorgan_payroll_account',
-        to: employee.email, // Using email as account identifier
-        description: `Payroll: ${employeePayroll.payPeriod} - ${employee.name}`,
-        employeeId: employee.employeeId,
+        to: employeePayroll.employeeId, // Using employee ID as account identifier
+        description: `Payroll: ${employeePayroll.payPeriod} - ${employeePayroll.employeeName}`,
+        employeeId: employeePayroll.employeeId,
         payPeriod: employeePayroll.payPeriod
       };
 
       try {
         await this.transactionEngine.processTransaction(transaction);
-        console.log(`✅ Processed payroll payment for ${employee.name}: $${employeePayroll.netPay.toLocaleString()}`);
+        console.log(`✅ Processed payroll payment for ${employeePayroll.employeeName}: $${employeePayroll.netPay.toLocaleString()}`);
       } catch (error) {
-        console.error(`❌ Failed to process payroll payment for ${employee.name}:`, error.message);
+        console.error(`❌ Failed to process payroll payment for ${employeePayroll.employeeName}:`, error.message);
       }
     }
   }
