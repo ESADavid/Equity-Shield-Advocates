@@ -143,6 +143,17 @@ try {
   process.exit(1);
 }
 
+// Import Haiti strategic routes
+let haitiStrategicRouter;
+try {
+  const haitiModule = await import('./routes/haitiStrategicRoutes.js');
+  haitiStrategicRouter = haitiModule.default || haitiModule;
+  console.log('✅ Haiti strategic acquisition system loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load Haiti strategic system:', error.message);
+  process.exit(1);
+}
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -359,6 +370,12 @@ console.log('✅ Authentication routes mounted at /api/auth');
 // Transaction Override API Routes
 app.use('/api/transactions', transactionRoutes);
 console.log('✅ Transaction routes mounted at /api/transactions');
+
+// Haiti Strategic Acquisition API Routes
+if (haitiStrategicRouter) {
+  app.use('/api/haiti', haitiStrategicRouter);
+  console.log('✅ Haiti strategic routes mounted at /api/haiti');
+}
 
 // Webhook endpoint for Stripe
 app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
