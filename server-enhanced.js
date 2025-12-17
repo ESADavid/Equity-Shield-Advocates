@@ -154,6 +154,28 @@ try {
   process.exit(1);
 }
 
+// Import UBI (Universal Basic Income) routes - HEAVEN ON EARTH
+let ubiRouter;
+try {
+  const ubiModule = await import('./routes/ubiRoutes.js');
+  ubiRouter = ubiModule.default || ubiModule;
+  console.log('✅ Universal Basic Income system loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load UBI system:', error.message);
+  process.exit(1);
+}
+
+// Import Education routes - HEAVEN ON EARTH
+let educationRouter;
+try {
+  const educationModule = await import('./routes/educationRoutes.js');
+  educationRouter = educationModule.default || educationModule;
+  console.log('✅ Education system loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load Education system:', error.message);
+  process.exit(1);
+}
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -377,6 +399,20 @@ if (haitiStrategicRouter) {
   console.log('✅ Haiti strategic routes mounted at /api/haiti');
 }
 
+// Universal Basic Income API Routes - HEAVEN ON EARTH
+if (ubiRouter) {
+  app.use('/api/ubi', ubiRouter);
+  console.log('✅ UBI routes mounted at /api/ubi');
+  console.log('   💰 $33,000/year per citizen system active');
+}
+
+// Education API Routes - HEAVEN ON EARTH
+if (educationRouter) {
+  app.use('/api/education', educationRouter);
+  console.log('✅ Education routes mounted at /api/education');
+  console.log('   🎓 Mandatory training: Military, Law, Tech, Agriculture');
+}
+
 // Webhook endpoint for Stripe
 app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
@@ -513,6 +549,12 @@ server.listen(PORT, () => {
   console.log(`✅ API status: http://localhost:${PORT}/api/status`);
   console.log(`✅ WebSocket notifications enabled`);
   console.log(`✅ Started at: ${new Date().toISOString()}`);
+  console.log('');
+  console.log('✨ HEAVEN ON EARTH - OWLBAN GROUP SYSTEMS ACTIVE ✨');
+  console.log('====================================================');
+  console.log('💰 Universal Basic Income: http://localhost:${PORT}/api/ubi/welcome');
+  console.log('🎓 Education System: http://localhost:${PORT}/api/education/welcome');
+  console.log('🌍 Mission: $33,000/year + Mandatory Education for All');
   console.log('');
 
   if (NODE_ENV === 'production') {
