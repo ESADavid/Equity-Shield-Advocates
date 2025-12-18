@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 import dotenv from 'dotenv';
+import logger from './utils/loggerWrapper.js';
+
 dotenv.config();
 
 import express from 'express';

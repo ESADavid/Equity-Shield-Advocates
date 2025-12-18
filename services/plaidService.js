@@ -1,4 +1,5 @@
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
+import logger from '../utils/loggerWrapper.js';
 
 // Plaid API configuration
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
