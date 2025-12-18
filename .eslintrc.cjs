@@ -201,7 +201,7 @@ module.exports = {
     },
     // JavaScript files using ES modules
     {
-      files: ['payrollSystem.js', 'utils/payrollCalculator.js', 'utils/payrollValidation.js'],
+      files: ['payrollSystem.js', 'utils/**/*.js'],
       parser: 'espree',
       parserOptions: {
         sourceType: 'module',
