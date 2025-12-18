@@ -14,8 +14,12 @@ build/
 coverage/
 
 # Logs
+logs/*.log
+logs/**/*.log
+!logs/.gitkeep
 npm-debug.log*
 yarn-error.log*
+*.log
 
 # Misc
 .DS_Store

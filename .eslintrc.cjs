@@ -22,6 +22,7 @@ module.exports = {
     'prefer-const': 'error',
     'no-useless-escape': 'warn',
     'no-unused-expressions': 'error',
+    'no-console': ['warn', { allow: ['warn', 'error'] }], // Warn on console.log, allow console.warn/error
   },
   overrides: [
     // TypeScript files - must be first to take precedence
@@ -98,10 +99,8 @@ module.exports = {
         'no-unused-vars': 'off',
       },
     },
+    // Specific test file with Chai assertions
     {
-<<<<<<< HEAD
-      files: ['tests/**/*.js', 'test/**/*.js', 'test/**/*.mjs', 'test/**/*.cjs', 'debt_acquisition_critical_test.js', 'debt_acquisition_test.js'],
-=======
       files: ['**/test_jpmorgan_auth_integration.js'],
       parser: 'espree',
       parserOptions: {
@@ -110,14 +109,25 @@ module.exports = {
       },
       rules: {
         '@typescript-eslint/no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-expressions': 'off', // Allow Chai assertions in this test file
+        '@typescript-eslint/no-unused-expressions': 'off', // Allow Chai assertions
         'no-unused-vars': 'off',
-        'no-unused-expressions': 'off', // Allow Chai assertions in this test file
+        'no-unused-expressions': 'off', // Allow Chai assertions
+        'no-console': 'off', // Allow console in tests
       },
     },
+    // All test files - merged configuration
     {
-      files: ['tests/**/*.js', 'test/**/*.js', 'test/**/*.mjs', 'test/**/*.cjs'],
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
+      files: [
+        'tests/**/*.js', 
+        'test/**/*.js', 
+        'test/**/*.mjs', 
+        'test/**/*.cjs', 
+        'debt_acquisition_critical_test.js', 
+        'debt_acquisition_test.js',
+        '**/test_*.js',
+        '**/*.test.js',
+        '**/*.spec.js'
+      ],
       parser: 'espree',
       parserOptions: {
         sourceType: 'module', // Allow import/export in test files
@@ -127,10 +137,11 @@ module.exports = {
         '@typescript-eslint/no-unused-vars': 'off',
         'no-unused-vars': 'off',
         'no-unused-expressions': 'off', // Allow Chai assertions in tests
+        'no-console': 'off', // Allow console in test files
       },
     },
     {
-      files: ['earnings_dashboard/**/*.js', 'quantum/**/*.js', 'auth/**/*.js', 'blockchain/**/*.js', 'comprehensive_*.js', 'cypress/**/*.js', 'ecosystem.config.js', 'executive-portal/**/*.js', 'middleware/**/*.js', 'models/**/*.js', 'routes/**/*.js', 'scripts/**/*.js', 'services/**/*.js', 'staging_*.js', 'test_*.js', 'vite.config.js', 'config/**/*.js', 'frontend/**/*.js', 'blackbox_integration/**/*.js', 'ai_models/**/*.js', 'public/**/*.js', 'monitoring/**/*.js', 'test/**/*.js', 'owlban_revenue_repo/**/*.js'],
+      files: ['earnings_dashboard/**/*.js', 'quantum/**/*.js', 'auth/**/*.js', 'blockchain/**/*.js', 'comprehensive_*.js', 'cypress/**/*.js', 'ecosystem.config.js', 'executive-portal/**/*.js', 'middleware/**/*.js', 'models/**/*.js', 'routes/**/*.js', 'scripts/**/*.js', 'services/**/*.js', 'staging_*.js', 'vite.config.js', 'config/**/*.js', 'frontend/**/*.js', 'blackbox_integration/**/*.js', 'ai_models/**/*.js', 'public/**/*.js', 'monitoring/**/*.js', 'owlban_revenue_repo/**/*.js'],
       parser: 'espree',
       parserOptions: {
         sourceType: 'module', // Allow import/export in various module files
@@ -168,10 +179,17 @@ module.exports = {
         node: true,
         jest: true,
       },
+      globals: {
+        cy: 'readonly',
+        Cypress: 'readonly',
+        expect: 'readonly',
+        assert: 'readonly',
+      },
       rules: {
         '@typescript-eslint/no-unused-vars': 'off',
         'no-unused-vars': 'off',
         'no-unused-expressions': 'off', // Cypress often uses expressions in tests
+        'no-console': 'off', // Allow console in Cypress tests
       },
     },
     {
