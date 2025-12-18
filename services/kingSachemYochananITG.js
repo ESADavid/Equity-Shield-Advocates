@@ -15,7 +15,7 @@ import DivineWisdom from '../algorithms/divineWisdom.js';
 import KingdomMetrics from '../models/KingdomMetrics.js';
 import { getBlockchainService } from '../blockchain/blockchainService.js';
 import NvidiaBlackwellService from './nvidiaBlackwellService.js';
-import { createLogger } from '../config/logger.js';
+import winston from 'winston';
 
 class KingSachemYochananITG {
   constructor() {
@@ -25,7 +25,19 @@ class KingSachemYochananITG {
     this.divineWisdom = new DivineWisdom();
     this.blockchainService = getBlockchainService();
     this.blackwellService = new NvidiaBlackwellService();
-    this.logger = createLogger('KingSachemYochananITG');
+    this.logger = winston.createLogger({
+      level: 'info',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+      ),
+      defaultMeta: { service: 'KingSachemYochananITG' },
+      transports: [
+        new winston.transports.Console({
+          format: winston.format.simple()
+        })
+      ]
+    });
     
     // ITG Algorithm Configuration
     this.config = {

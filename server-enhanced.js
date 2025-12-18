@@ -176,6 +176,17 @@ try {
   process.exit(1);
 }
 
+// Import ITG (Integrated Technology Growth) routes - KING SACHEM YOCHANAN
+let itgRouter;
+try {
+  const itgModule = await import('./routes/itgRoutes.js');
+  itgRouter = itgModule.default || itgModule;
+  console.log('✅ King Sachem Yochanan ITG Algorithm loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load ITG system:', error.message);
+  process.exit(1);
+}
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -413,6 +424,14 @@ if (educationRouter) {
   console.log('   🎓 Mandatory training: Military, Law, Tech, Agriculture');
 }
 
+// ITG API Routes - KING SACHEM YOCHANAN
+if (itgRouter) {
+  app.use('/api/itg', itgRouter);
+  console.log('✅ ITG routes mounted at /api/itg');
+  console.log('   👑 King Sachem Yochanan ITG Algorithm active');
+  console.log('   ✨ Sacred Geometry + Divine Wisdom + Quantum Enhancement');
+}
+
 // Webhook endpoint for Stripe
 app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
@@ -555,6 +574,13 @@ server.listen(PORT, () => {
   console.log('💰 Universal Basic Income: http://localhost:${PORT}/api/ubi/welcome');
   console.log('🎓 Education System: http://localhost:${PORT}/api/education/welcome');
   console.log('🌍 Mission: $33,000/year + Mandatory Education for All');
+  console.log('');
+  console.log('👑 KING SACHEM YOCHANAN ITG ALGORITHM ACTIVE 👑');
+  console.log('====================================================');
+  console.log('📊 ITG Dashboard: http://localhost:${PORT}/api/itg/dashboard-data');
+  console.log('⚡ Quick Assessment: http://localhost:${PORT}/api/itg/quick-assessment');
+  console.log('✨ Sacred Geometry + Divine Wisdom + Quantum Computing');
+  console.log('🔐 Blockchain-Verified Sovereignty Tracking');
   console.log('');
 
   if (NODE_ENV === 'production') {
