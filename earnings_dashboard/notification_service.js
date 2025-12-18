@@ -22,17 +22,17 @@ class NotificationService {
           pass: process.env.SMTP_PASS
         }
       });
-      console.log('✅ Email notification service initialized');
+      logger.info('✅ Email notification service initialized');
     } else {
-      console.log('⚠️ Email service not configured');
+      logger.info('⚠️ Email service not configured');
     }
 
     // Initialize Twilio client
     if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
       this.twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-      console.log('✅ SMS notification service initialized');
+      logger.info('✅ SMS notification service initialized');
     } else {
-      console.log('⚠️ SMS service not configured');
+      logger.info('⚠️ SMS service not configured');
     }
   }
 
@@ -40,14 +40,14 @@ class NotificationService {
   sendWebSocketNotification(event, data) {
     if (this.io) {
       this.io.emit(event, data);
-      console.log(`📡 WebSocket notification sent: ${event}`);
+      logger.info(`📡 WebSocket notification sent: ${event}`);
     }
   }
 
   // Send email notification
   async sendEmailNotification(to, subject, message) {
     if (!this.transporter) {
-      console.log('⚠️ Email service not available');
+      logger.info('⚠️ Email service not available');
       return false;
     }
 
@@ -58,10 +58,10 @@ class NotificationService {
         subject,
         html: message
       });
-      console.log(`📧 Email sent to ${to}`);
+      logger.info(`📧 Email sent to ${to}`);
       return true;
     } catch (error) {
-      console.error('Email send error:', error);
+      logger.error('Email send error:', error);
       return false;
     }
   }
@@ -69,7 +69,7 @@ class NotificationService {
   // Send SMS notification
   async sendSMSNotification(to, message) {
     if (!this.twilioClient) {
-      console.log('⚠️ SMS service not available');
+      logger.info('⚠️ SMS service not available');
       return false;
     }
 
@@ -79,10 +79,10 @@ class NotificationService {
         from: process.env.TWILIO_PHONE_NUMBER,
         to
       });
-      console.log(`📱 SMS sent to ${to}`);
+      logger.info(`📱 SMS sent to ${to}`);
       return true;
     } catch (error) {
-      console.error('SMS send error:', error);
+      logger.error('SMS send error:', error);
       return false;
     }
   }

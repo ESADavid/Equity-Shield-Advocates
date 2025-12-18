@@ -107,7 +107,7 @@ class DebtAcquisitionService {
       this.debtValuations.set(debt.id, []);
     }
 
-    console.log(`Initialized debt portfolio with ${portfolioToInitialize.length} acquired debts`);
+    logger.info(`Initialized debt portfolio with ${portfolioToInitialize.length} acquired debts`);
   }
 
   /**

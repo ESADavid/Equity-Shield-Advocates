@@ -61,7 +61,7 @@ const specs = swaggerJsdoc(options);
 const outputPath = path.join(__dirname, '..', 'docs', 'openapi.json');
 fs.writeFileSync(outputPath, JSON.stringify(specs, null, 2));
 
-console.log(`✅ API documentation generated: ${outputPath}`);
+logger.info(`✅ API documentation generated: ${outputPath}`);
 
 // Generate HTML documentation
 const htmlTemplate = `
@@ -114,7 +114,7 @@ const htmlTemplate = `
 const htmlPath = path.join(__dirname, '..', 'docs', 'index.html');
 fs.writeFileSync(htmlPath, htmlTemplate);
 
-console.log(`✅ HTML documentation generated: ${htmlPath}`);
+logger.info(`✅ HTML documentation generated: ${htmlPath}`);
 
 // Generate Postman collection
 const postmanCollection = {
@@ -220,12 +220,12 @@ postmanCollection.item.push({
 const postmanPath = path.join(__dirname, '..', 'docs', 'postman-collection.json');
 fs.writeFileSync(postmanPath, JSON.stringify(postmanCollection, null, 2));
 
-console.log(`✅ Postman collection generated: ${postmanPath}`);
-console.log('\n📚 API Documentation Summary:');
-console.log(`   - OpenAPI 3.0 spec: docs/openapi.json`);
-console.log(`   - HTML documentation: docs/index.html`);
-console.log(`   - Postman collection: docs/postman-collection.json`);
-console.log('\n🚀 To view documentation:');
-console.log('   1. Start the server: npm start');
-console.log('   2. Open: http://localhost:3000/api-docs');
-console.log('   3. Or open docs/index.html in browser');
+logger.info(`✅ Postman collection generated: ${postmanPath}`);
+logger.info('\n📚 API Documentation Summary:');
+logger.info(`   - OpenAPI 3.0 spec: docs/openapi.json`);
+logger.info(`   - HTML documentation: docs/index.html`);
+logger.info(`   - Postman collection: docs/postman-collection.json`);
+logger.info('\n🚀 To view documentation:');
+logger.info('   1. Start the server: npm start');
+logger.info('   2. Open: http://localhost:3000/api-docs');
+logger.info('   3. Or open docs/index.html in browser');

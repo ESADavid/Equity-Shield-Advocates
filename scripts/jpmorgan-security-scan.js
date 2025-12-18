@@ -26,7 +26,7 @@ class JPMorganSecurityScanner {
 
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
+    logger.info(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
   }
 
   addVulnerability(severity, message, file = null, line = null, cve = null) {
@@ -381,28 +381,28 @@ class JPMorganSecurityScanner {
     this.saveReport();
 
     // Summary
-    console.log('\n' + '='.repeat(60));
-    console.log('JPMorgan Security Scan Summary');
-    console.log('='.repeat(60));
-    console.log(`Vulnerabilities: ${this.vulnerabilities.length}`);
-    console.log(`Warnings: ${this.warnings.length}`);
-    console.log(`Secure Items: ${this.secure.length}`);
-    console.log(`Risk Score: ${this.riskScore}`);
-    console.log(`Risk Level: ${this.getRiskLevel()}`);
+    logger.info('\n' + '='.repeat(60));
+    logger.info('JPMorgan Security Scan Summary');
+    logger.info('='.repeat(60));
+    logger.info(`Vulnerabilities: ${this.vulnerabilities.length}`);
+    logger.info(`Warnings: ${this.warnings.length}`);
+    logger.info(`Secure Items: ${this.secure.length}`);
+    logger.info(`Risk Score: ${this.riskScore}`);
+    logger.info(`Risk Level: ${this.getRiskLevel()}`);
 
     const criticalVulns = this.vulnerabilities.filter(v => v.severity === 'critical');
     if (criticalVulns.length === 0) {
-      console.log('\n✅ Security scan PASSED');
+      logger.info('\n✅ Security scan PASSED');
       process.exit(0);
     } else {
-      console.log('\n❌ Security scan FAILED');
-      console.log('\nCritical vulnerabilities found:');
+      logger.info('\n❌ Security scan FAILED');
+      logger.info('\nCritical vulnerabilities found:');
       criticalVulns.forEach((vuln, index) => {
-        console.log(`${index + 1}. ${vuln.message}`);
+        logger.info(`${index + 1}. ${vuln.message}`);
         if (vuln.file) {
-          console.log(`   File: ${vuln.file}`);
+          logger.info(`   File: ${vuln.file}`);
           if (vuln.line) {
-            console.log(`   Line: ${vuln.line}`);
+            logger.info(`   Line: ${vuln.line}`);
           }
         }
       });
@@ -415,7 +415,7 @@ class JPMorganSecurityScanner {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const scanner = new JPMorganSecurityScanner();
   scanner.runSecurityScan().catch(error => {
-    console.error('Security scan failed:', error);
+    logger.error('Security scan failed:', error);
     process.exit(1);
   });
 }

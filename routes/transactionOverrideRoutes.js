@@ -61,7 +61,7 @@ router.post('/override', authorizeOverride(['admin', 'override_manager']), (req,
     });
 
     // In production, save to database
-    console.log('New override request:', override.toJSON());
+    logger.info('New override request:', override.toJSON());
 
     res.json({
       success: true,
@@ -84,7 +84,7 @@ router.put('/:id/override', authorizeOverride(['admin']), (req, res) => {
     const { newValue, reason } = req.body;
 
     // In production, update transaction in database
-    console.log(`Updating transaction ${id} with override:`, { newValue, reason });
+    logger.info(`Updating transaction ${id} with override:`, { newValue, reason });
 
     res.json({
       success: true,
@@ -108,7 +108,7 @@ router.delete('/:id/override', authorizeOverride(['admin']), (req, res) => {
     const { reason } = req.body;
 
     // In production, update override status in database
-    console.log(`Rejecting override ${id}:`, reason);
+    logger.info(`Rejecting override ${id}:`, reason);
 
     res.json({
       success: true,

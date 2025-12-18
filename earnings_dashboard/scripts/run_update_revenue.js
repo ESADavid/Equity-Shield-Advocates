@@ -8,15 +8,15 @@ async function runUpdate() {
     try {
         const success = await (0, update_revenue_data_1.default)(false); // Pass false for incremental update
         if (success) {
-            console.log('Revenue data updated successfully.');
+            logger.info('Revenue data updated successfully.');
         }
         else {
-            console.error('Revenue data update failed.');
+            logger.error('Revenue data update failed.');
             process.exit(1);
         }
     }
     catch (error) {
-        console.error('Error during revenue update:', error);
+        logger.error('Error during revenue update:', error);
         process.exit(1);
     }
 }

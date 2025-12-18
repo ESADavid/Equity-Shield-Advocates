@@ -147,7 +147,7 @@ ExecutiveDashboard.prototype.loadEmployeeList = async function() {
             }
         }
     } catch (error) {
-        console.error('Error loading employee list:', error);
+        logger.error('Error loading employee list:', error);
         // Removed dashboard error handler to avoid 'dashboard' is not defined eslint error
     }
 };

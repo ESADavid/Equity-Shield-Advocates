@@ -25,7 +25,7 @@ class JPMorganComplianceChecker {
 
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
+    logger.info(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
   }
 
   addIssue(message, file = null, line = null) {
@@ -349,25 +349,25 @@ class JPMorganComplianceChecker {
     this.saveReport();
 
     // Summary
-    console.log('\n' + '='.repeat(60));
-    console.log('JPMorgan Compliance Check Summary');
-    console.log('='.repeat(60));
-    console.log(`Issues: ${this.issues.length}`);
-    console.log(`Warnings: ${this.warnings.length}`);
-    console.log(`Passed: ${this.passed.length}`);
+    logger.info('\n' + '='.repeat(60));
+    logger.info('JPMorgan Compliance Check Summary');
+    logger.info('='.repeat(60));
+    logger.info(`Issues: ${this.issues.length}`);
+    logger.info(`Warnings: ${this.warnings.length}`);
+    logger.info(`Passed: ${this.passed.length}`);
 
     if (this.issues.length === 0) {
-      console.log('\n✅ All compliance checks PASSED');
+      logger.info('\n✅ All compliance checks PASSED');
       process.exit(0);
     } else {
-      console.log('\n❌ Compliance checks FAILED');
-      console.log('\nIssues found:');
+      logger.info('\n❌ Compliance checks FAILED');
+      logger.info('\nIssues found:');
       this.issues.forEach((issue, index) => {
-        console.log(`${index + 1}. ${issue.message}`);
+        logger.info(`${index + 1}. ${issue.message}`);
         if (issue.file) {
-          console.log(`   File: ${issue.file}`);
+          logger.info(`   File: ${issue.file}`);
           if (issue.line) {
-            console.log(`   Line: ${issue.line}`);
+            logger.info(`   Line: ${issue.line}`);
           }
         }
       });
@@ -380,7 +380,7 @@ class JPMorganComplianceChecker {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const checker = new JPMorganComplianceChecker();
   checker.runComplianceChecks().catch(error => {
-    console.error('Compliance check failed:', error);
+    logger.error('Compliance check failed:', error);
     process.exit(1);
   });
 }

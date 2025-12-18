@@ -18,12 +18,12 @@ const isMockMode = !process.env.STRIPE_SECRET_KEY;
 if (process.env.STRIPE_SECRET_KEY) {
   stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 } else {
-  console.warn('⚠️  STRIPE_SECRET_KEY not found. Running in mock mode for testing.');
+  logger.warn('⚠️  STRIPE_SECRET_KEY not found. Running in mock mode for testing.');
   // Create a mock Stripe object for testing
   stripe = {
     paymentIntents: {
       create: async (params) => {
-        console.log('Mock Stripe: Creating payment intent', params);
+        logger.info('Mock Stripe: Creating payment intent', params);
         return {
           id: `pi_mock_${Date.now()}`,
           client_secret: `pi_mock_secret_${Date.now()}`,
@@ -37,7 +37,7 @@ if (process.env.STRIPE_SECRET_KEY) {
     },
     webhooks: {
       constructEvent: (payload, signature, secret) => {
-        console.log('Mock Stripe: Constructing webhook event');
+        logger.info('Mock Stripe: Constructing webhook event');
         // For testing, accept any payload without signature verification
         return JSON.parse(payload);
       }
@@ -58,11 +58,11 @@ if (process.env.SMTP_USER && process.env.SMTP_PASS) {
     }
   });
 } else {
-  console.warn('⚠️  SMTP credentials not found. Email functionality will be disabled for testing.');
+  logger.warn('⚠️  SMTP credentials not found. Email functionality will be disabled for testing.');
   // Create a mock transporter for testing
   emailTransporter = {
     sendMail: async () => {
-      console.log('Mock email sent (SMTP not configured)');
+      logger.info('Mock email sent (SMTP not configured)');
     }
   };
 }
@@ -97,7 +97,7 @@ async function sendMerchantPaymentSuccessNotification(merchantId, amount, paymen
       };
 
       await emailTransporter.sendMail(mailOptions);
-      console.log(`Email notification sent to merchant ${merchantId}`);
+      logger.info(`Email notification sent to merchant ${merchantId}`);
     }
 
     // SMS notification (if Twilio is configured)
@@ -105,7 +105,7 @@ async function sendMerchantPaymentSuccessNotification(merchantId, amount, paymen
       await sendSMSNotification(merchantPhone, `Payment of $${amount.toFixed(2)} received. Payment ID: ${paymentIntentId}`);
     }
   } catch (error) {
-    console.error('Error sending payment success notification:', error);
+    logger.error('Error sending payment success notification:', error);
   }
 }
 
@@ -138,7 +138,7 @@ async function sendMerchantPaymentFailureNotification(merchantId, amount, paymen
       };
 
       await emailTransporter.sendMail(mailOptions);
-      console.log(`Failure email notification sent to merchant ${merchantId}`);
+      logger.info(`Failure email notification sent to merchant ${merchantId}`);
     }
 
     // SMS notification (if Twilio is configured)
@@ -146,7 +146,7 @@ async function sendMerchantPaymentFailureNotification(merchantId, amount, paymen
       await sendSMSNotification(merchantPhone, `Payment of $${amount.toFixed(2)} failed. Error: ${errorMessage}`);
     }
   } catch (error) {
-    console.error('Error sending payment failure notification:', error);
+    logger.error('Error sending payment failure notification:', error);
   }
 }
 
@@ -182,9 +182,9 @@ async function sendSMSNotification(phoneNumber, message) {
       to: phoneNumber
     });
 
-    console.log(`SMS notification sent to ${phoneNumber}`);
+    logger.info(`SMS notification sent to ${phoneNumber}`);
   } catch (error) {
-    console.error('Error sending SMS notification:', error);
+    logger.error('Error sending SMS notification:', error);
   }
 }
 
@@ -277,7 +277,7 @@ async function processSuccessfulPayment(paymentIntent) {
   });
 
   writeRevenueData(data);
-  console.log(`Updated merchant ${merchantId} balance: $${merchantData.balance.toFixed(2)}`);
+  logger.info(`Updated merchant ${merchantId} balance: $${merchantData.balance.toFixed(2)}`);
 
   // Send notification to merchant
   await sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntent.id);
@@ -303,7 +303,7 @@ async function processFailedPayment(failedIntent) {
   });
 
   writeRevenueData(data);
-  console.log(`Recorded failed payment for merchant ${merchantId}`);
+  logger.info(`Recorded failed payment for merchant ${merchantId}`);
 
   // Send failure notification to merchant
   await sendMerchantPaymentFailureNotification(merchantId, failedIntent.amount / 100, failedIntent.id, failedIntent.last_payment_error?.message || 'Unknown error');
@@ -317,26 +317,26 @@ async function handleMerchantWebhook(req, res) {
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
-    console.error('Merchant webhook signature verification failed:', err.message);
+    logger.error('Merchant webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   try {
     if (event.type === 'payment_intent.succeeded') {
       const paymentIntent = event.data.object;
-      console.log('Merchant PaymentIntent was successful!', paymentIntent.id);
+      logger.info('Merchant PaymentIntent was successful!', paymentIntent.id);
       await processSuccessfulPayment(paymentIntent);
     } else if (event.type === 'payment_intent.payment_failed') {
       const failedIntent = event.data.object;
-      console.log('Merchant PaymentIntent failed:', failedIntent.last_payment_error?.message);
+      logger.info('Merchant PaymentIntent failed:', failedIntent.last_payment_error?.message);
       await processFailedPayment(failedIntent);
     } else {
-      console.log(`Unhandled merchant event type ${event.type}`);
+      logger.info(`Unhandled merchant event type ${event.type}`);
     }
 
     res.json({ received: true });
   } catch (error) {
-    console.error('Error processing merchant webhook event:', error);
+    logger.error('Error processing merchant webhook event:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
@@ -344,10 +344,10 @@ async function handleMerchantWebhook(req, res) {
 // Express route to create payment intent
 router.post('/create-merchant-payment-intent', async (req, res) => {
   try {
-    console.log('Merchant payment intent request received:', req.body);
+    logger.info('Merchant payment intent request received:', req.body);
     // Mock mode check
     const isMockMode = !process.env.STRIPE_SECRET_KEY;
-    console.log('Merchant payment intent creation - Mock mode:', isMockMode, 'STRIPE_SECRET_KEY:', !!process.env.STRIPE_SECRET_KEY);
+    logger.info('Merchant payment intent creation - Mock mode:', isMockMode, 'STRIPE_SECRET_KEY:', !!process.env.STRIPE_SECRET_KEY);
 
     if (isMockMode) {
       const { amount, currency = 'usd', merchantId, description } = req.body;
@@ -360,7 +360,7 @@ router.post('/create-merchant-payment-intent', async (req, res) => {
       }
 
       const mockClientSecret = `pi_mock_${Date.now()}_secret_${Math.random().toString(36).substring(2)}`;
-      console.log('Mock payment intent created:', mockClientSecret);
+      logger.info('Mock payment intent created:', mockClientSecret);
 
       return res.json({
         success: true,
@@ -379,7 +379,7 @@ router.post('/create-merchant-payment-intent', async (req, res) => {
     const paymentIntent = await createMerchantPaymentIntent(req.body);
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
-    console.error('Error creating merchant payment intent:', error);
+    logger.error('Error creating merchant payment intent:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -400,7 +400,7 @@ function processMockWebhookEvent() {
   };
 
   const paymentIntent = mockEvent.data.object;
-  console.log('Mock PaymentIntent was successful!', paymentIntent.id);
+  logger.info('Mock PaymentIntent was successful!', paymentIntent.id);
 
   const data = readRevenueData();
   if (data) {
@@ -428,7 +428,7 @@ function processMockWebhookEvent() {
       });
 
       writeRevenueData(data);
-      console.log(`Mock updated merchant ${merchantId} balance: $${data.merchants[merchantId].balance.toFixed(2)}`);
+      logger.info(`Mock updated merchant ${merchantId} balance: $${data.merchants[merchantId].balance.toFixed(2)}`);
 
       // Send mock notification
       sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntent.id);
@@ -439,15 +439,15 @@ function processMockWebhookEvent() {
 // Express route for webhook
 router.post('/merchant-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const isMockMode = !process.env.STRIPE_SECRET_KEY;
-  console.log('Merchant webhook - Mock mode:', isMockMode);
+  logger.info('Merchant webhook - Mock mode:', isMockMode);
 
   if (isMockMode) {
-    console.log('Mock webhook received, processing without signature verification');
+    logger.info('Mock webhook received, processing without signature verification');
     try {
       processMockWebhookEvent();
       return res.json({ received: true, mock: true });
     } catch (error) {
-      console.error('Error in mock webhook processing:', error);
+      logger.error('Error in mock webhook processing:', error);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
   }

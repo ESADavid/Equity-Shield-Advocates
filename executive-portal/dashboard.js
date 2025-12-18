@@ -62,7 +62,7 @@ export default class ExecutiveDashboard {
             this.data = await response.json();
             this.updateDashboard();
         } catch (error) {
-            console.error('Error loading executive data:', error);
+            logger.error('Error loading executive data:', error);
             this.showError('Failed to load executive data');
         }
     }

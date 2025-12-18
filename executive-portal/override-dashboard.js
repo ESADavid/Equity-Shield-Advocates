@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 /**
  * Oscar Broome Login Override Dashboard JavaScript
  * Frontend interface for emergency access and administrative overrides
@@ -107,7 +109,7 @@ class OverrideDashboard {
             }
         } catch (error) {
             this.showError('Network error occurred. Please try again.');
-            console.error('Emergency override error:', error);
+            logger.error('Emergency override error:', error);
         } finally {
             this.setLoading('emergencyBtn', false);
         }
@@ -138,7 +140,7 @@ class OverrideDashboard {
             }
         } catch (error) {
             this.showError('Network error occurred. Please try again.');
-            console.error('Admin override error:', error);
+            logger.error('Admin override error:', error);
         } finally {
             this.setLoading('adminBtn', false);
         }
@@ -169,7 +171,7 @@ class OverrideDashboard {
             }
         } catch (error) {
             this.showError('Network error occurred. Please try again.');
-            console.error('Technical override error:', error);
+            logger.error('Technical override error:', error);
         } finally {
             this.setLoading('technicalBtn', false);
         }
@@ -204,7 +206,7 @@ class OverrideDashboard {
                 this.updateStatsDisplay(response.data);
             }
         } catch (error) {
-            console.error('Failed to load stats:', error);
+            logger.error('Failed to load stats:', error);
             this.showError('Failed to load override statistics');
         }
     }
@@ -271,7 +273,7 @@ class OverrideDashboard {
             }
         } catch (error) {
             this.showError('Failed to revoke override session');
-            console.error('Revoke error:', error);
+            logger.error('Revoke error:', error);
         }
     }
 

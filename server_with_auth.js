@@ -137,7 +137,7 @@ app.get('*', (req, res) => {
 
 // Error handling
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  logger.error('Error:', err);
   res.status(err.status || 500).json({
     error: NODE_ENV === 'production' ? 'Internal server error' : err.message,
     timestamp: new Date().toISOString(),
@@ -156,17 +156,17 @@ app.use((req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log('🚀 OSCAR BROOME REVENUE - Auth Server');
-  console.log('====================================================');
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`✅ Environment: ${NODE_ENV}`);
-  console.log(`✅ Health check: http://localhost:${PORT}/health`);
-  console.log(`✅ API status: http://localhost:${PORT}/api/status`);
-  console.log(`✅ Auth API: http://localhost:${PORT}/api/auth`);
-  console.log(`✅ Override API: http://localhost:${PORT}/api/override`);
-  console.log('✅ Database: JSON-based storage');
-  console.log(`✅ Started at: ${new Date().toISOString()}`);
-  console.log('');
+  logger.info('🚀 OSCAR BROOME REVENUE - Auth Server');
+  logger.info('====================================================');
+  logger.info(`✅ Server running on port ${PORT}`);
+  logger.info(`✅ Environment: ${NODE_ENV}`);
+  logger.info(`✅ Health check: http://localhost:${PORT}/health`);
+  logger.info(`✅ API status: http://localhost:${PORT}/api/status`);
+  logger.info(`✅ Auth API: http://localhost:${PORT}/api/auth`);
+  logger.info(`✅ Override API: http://localhost:${PORT}/api/override`);
+  logger.info('✅ Database: JSON-based storage');
+  logger.info(`✅ Started at: ${new Date().toISOString()}`);
+  logger.info('');
 });
 
 export default app;

@@ -69,7 +69,7 @@ router.post('/wallet-encrypt', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan wallet encryption error:', error.response?.data || error.message);
+    logger.error('JPMorgan wallet encryption error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to encrypt wallet data',
@@ -110,7 +110,7 @@ router.post('/wallet-validate', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan wallet validation error:', error.response?.data || error.message);
+    logger.error('JPMorgan wallet validation error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to validate wallet data',
@@ -155,7 +155,7 @@ router.post('/wallet-tokenize', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan wallet tokenization error:', error.response?.data || error.message);
+    logger.error('JPMorgan wallet tokenization error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to tokenize wallet data',
@@ -194,7 +194,7 @@ router.post('/wallet-detokenize', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan wallet detokenization error:', error.response?.data || error.message);
+    logger.error('JPMorgan wallet detokenization error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to detokenize wallet data',

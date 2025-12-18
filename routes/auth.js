@@ -45,7 +45,7 @@ router.post('/register', authRateLimit, logAuthEvent('register'), async (req, re
       data: result
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    logger.error('Registration error:', error);
     res.status(400).json({
       success: false,
       message: error.message
@@ -73,7 +73,7 @@ router.post('/login', authRateLimit, logAuthEvent('login'), async (req, res) => 
       data: result
     });
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error:', error);
     res.status(401).json({
       success: false,
       message: error.message
@@ -101,7 +101,7 @@ router.post('/refresh', logAuthEvent('refresh'), async (req, res) => {
       data: tokens
     });
   } catch (error) {
-    console.error('Token refresh error:', error);
+    logger.error('Token refresh error:', error);
     res.status(401).json({
       success: false,
       message: 'Invalid refresh token'
@@ -119,7 +119,7 @@ router.post('/logout', authenticate, logAuthEvent('logout'), async (req, res) =>
       message: 'Logout successful'
     });
   } catch (error) {
-    console.error('Logout error:', error);
+    logger.error('Logout error:', error);
     res.status(500).json({
       success: false,
       message: 'Logout failed'
@@ -137,7 +137,7 @@ router.get('/profile', authenticate, logAuthEvent('get_profile'), async (req, re
       data: profile
     });
   } catch (error) {
-    console.error('Get profile error:', error);
+    logger.error('Get profile error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get profile'
@@ -156,7 +156,7 @@ router.put('/profile', authenticate, logAuthEvent('update_profile'), async (req,
       data: profile
     });
   } catch (error) {
-    console.error('Update profile error:', error);
+    logger.error('Update profile error:', error);
     res.status(400).json({
       success: false,
       message: error.message
@@ -190,7 +190,7 @@ router.put('/change-password', authenticate, logAuthEvent('change_password'), as
       message: 'Password changed successfully'
     });
   } catch (error) {
-    console.error('Change password error:', error);
+    logger.error('Change password error:', error);
     res.status(400).json({
       success: false,
       message: error.message
@@ -217,7 +217,7 @@ router.post('/forgot-password', authRateLimit, logAuthEvent('forgot_password'), 
       message: result.message
     });
   } catch (error) {
-    console.error('Forgot password error:', error);
+    logger.error('Forgot password error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to process password reset request'
@@ -251,7 +251,7 @@ router.post('/reset-password', logAuthEvent('reset_password'), async (req, res) 
       message: 'Password reset successfully'
     });
   } catch (error) {
-    console.error('Reset password error:', error);
+    logger.error('Reset password error:', error);
     res.status(400).json({
       success: false,
       message: error.message

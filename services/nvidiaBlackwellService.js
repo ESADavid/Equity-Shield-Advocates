@@ -26,7 +26,7 @@ class NvidiaBlackwellService {
     try {
       // Initialize Blackwell GPUs
       const gpuCount = await this.detectBlackwellGPUs();
-      console.log(`🚀 Initialized ${gpuCount} NVIDIA Blackwell GPUs`);
+      logger.info(`🚀 Initialized ${gpuCount} NVIDIA Blackwell GPUs`);
 
       for (let i = 0; i < gpuCount; i++) {
         this.gpuDevices.push({
@@ -44,7 +44,7 @@ class NvidiaBlackwellService {
 
       return { success: true, gpuCount };
     } catch (error) {
-      console.error('Blackwell GPU initialization failed:', error);
+      logger.error('Blackwell GPU initialization failed:', error);
       return { success: false, error: error.message };
     }
   }
@@ -96,7 +96,7 @@ class NvidiaBlackwellService {
         blackwellOptimized: true
       };
     } catch (error) {
-      console.error('Blackwell inference failed:', error);
+      logger.error('Blackwell inference failed:', error);
       return { success: false, error: error.message };
     }
   }

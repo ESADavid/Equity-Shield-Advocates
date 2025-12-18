@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 #!/usr/bin/env node
 
 /**
@@ -7,12 +9,12 @@
 require('dotenv').config();
 const axios = require('axios');
 
-console.log('🔍 JPMorgan-QuickBooks Integration Diagnostics');
-console.log('==============================================\n');
+logger.info('🔍 JPMorgan-QuickBooks Integration Diagnostics');
+logger.info('==============================================\n');
 
 // Test JPMorgan API endpoints
 async function testJPMorganEndpoints() {
-  console.log('🏦 Testing JPMorgan API endpoints...');
+  logger.info('🏦 Testing JPMorgan API endpoints...');
 
   const baseUrl = process.env.JPMORGAN_BASE_URL || 'https://api.payments.jpmorgan.com';
   const orgId = process.env.JPMORGAN_ORGANIZATION_ID || 'D3R56WRGSR3R';
@@ -28,7 +30,7 @@ async function testJPMorganEndpoints() {
 
   for (const endpoint of endpoints) {
     try {
-      console.log(`Testing: ${endpoint}`);
+      logger.info(`Testing: ${endpoint}`);
       const response = await axios.get(endpoint, {
         headers: {
           'Client-Id': process.env.JPMORGAN_CLIENT_ID,
@@ -39,30 +41,30 @@ async function testJPMorganEndpoints() {
         },
         timeout: 10000
       });
-      console.log(`✅ Success: ${response.status} - ${response.statusText}`);
+      logger.info(`✅ Success: ${response.status} - ${response.statusText}`);
       return true;
     } catch (error) {
-      console.log(`❌ Failed: ${error.response?.status || 'Network Error'} - ${error.response?.statusText || error.message}`);
+      logger.info(`❌ Failed: ${error.response?.status || 'Network Error'} - ${error.response?.statusText || error.message}`);
     }
   }
 
-  console.log('\n🔧 JPMorgan Troubleshooting:');
-  console.log('1. Verify your JPMorgan credentials are correct');
-  console.log('2. Check if you\'re using sandbox vs production endpoints');
-  console.log('3. Confirm your merchant account is active');
-  console.log('4. Verify the organization and project IDs are correct');
+  logger.info('\n🔧 JPMorgan Troubleshooting:');
+  logger.info('1. Verify your JPMorgan credentials are correct');
+  logger.info('2. Check if you\'re using sandbox vs production endpoints');
+  logger.info('3. Confirm your merchant account is active');
+  logger.info('4. Verify the organization and project IDs are correct');
   return false;
 }
 
 // Test QuickBooks API endpoints
 async function testQuickBooksEndpoints() {
-  console.log('\n📊 Testing QuickBooks API endpoints...');
+  logger.info('\n📊 Testing QuickBooks API endpoints...');
 
   const baseUrl = process.env.QUICKBOOKS_BASE_URL || 'https://sandbox-quickbooks.api.intuit.com';
   const companyId = process.env.QUICKBOOKS_COMPANY_ID;
 
   if (!companyId) {
-    console.log('❌ QuickBooks Company ID not set');
+    logger.info('❌ QuickBooks Company ID not set');
     return false;
   }
 
@@ -74,7 +76,7 @@ async function testQuickBooksEndpoints() {
 
   for (const endpoint of endpoints) {
     try {
-      console.log(`Testing: ${endpoint}`);
+      logger.info(`Testing: ${endpoint}`);
       const response = await axios.get(endpoint, {
         headers: {
           'Authorization': `Bearer ${process.env.QUICKBOOKS_ACCESS_TOKEN}`,
@@ -82,25 +84,25 @@ async function testQuickBooksEndpoints() {
         },
         timeout: 10000
       });
-      console.log(`✅ Success: ${response.status} - ${response.statusText}`);
+      logger.info(`✅ Success: ${response.status} - ${response.statusText}`);
       return true;
     } catch (error) {
-      console.log(`❌ Failed: ${error.response?.status || 'Network Error'} - ${error.response?.statusText || error.message}`);
+      logger.info(`❌ Failed: ${error.response?.status || 'Network Error'} - ${error.response?.statusText || error.message}`);
     }
   }
 
-  console.log('\n🔧 QuickBooks Troubleshooting:');
-  console.log('1. Your access token may be expired - refresh it');
-  console.log('2. Verify your QuickBooks app permissions');
-  console.log('3. Check if you\'re using the correct company ID');
-  console.log('4. Confirm your app is authorized for the company');
+  logger.info('\n🔧 QuickBooks Troubleshooting:');
+  logger.info('1. Your access token may be expired - refresh it');
+  logger.info('2. Verify your QuickBooks app permissions');
+  logger.info('3. Check if you\'re using the correct company ID');
+  logger.info('4. Confirm your app is authorized for the company');
   return false;
 }
 
 // Check environment variables
 function checkEnvironment() {
-  console.log('🔧 Environment Variables Check:');
-  console.log('=============================');
+  logger.info('🔧 Environment Variables Check:');
+  logger.info('=============================');
 
   const requiredVars = {
     'JPMorgan': [
@@ -121,10 +123,10 @@ function checkEnvironment() {
   let allSet = true;
 
   for (const [service, vars] of Object.entries(requiredVars)) {
-    console.log(`\n${service}:`);
+    logger.info(`\n${service}:`);
     for (const varName of vars) {
       const isSet = process.env[varName] ? true : false;
-      console.log(`  ${varName}: ${isSet ? '✅ Set' : '❌ Not set'}`);
+      logger.info(`  ${varName}: ${isSet ? '✅ Set' : '❌ Not set'}`);
       if (!isSet) allSet = false;
     }
   }
@@ -137,34 +139,34 @@ async function runDiagnostics() {
   const envOk = checkEnvironment();
 
   if (!envOk) {
-    console.log('\n❌ Environment variables are not properly configured.');
-    console.log('Please check your .env file and ensure all required variables are set.');
+    logger.info('\n❌ Environment variables are not properly configured.');
+    logger.info('Please check your .env file and ensure all required variables are set.');
     return;
   }
 
-  console.log('\n✅ All environment variables are set.');
-  console.log('Testing API connectivity...\n');
+  logger.info('\n✅ All environment variables are set.');
+  logger.info('Testing API connectivity...\n');
 
   const jpmorganOk = await testJPMorganEndpoints();
   const quickbooksOk = await testQuickBooksEndpoints();
 
-  console.log('\n📋 Diagnostic Summary:');
-  console.log('=====================');
-  console.log(`JPMorgan API: ${jpmorganOk ? '✅ Working' : '❌ Failed'}`);
-  console.log(`QuickBooks API: ${quickbooksOk ? '✅ Working' : '❌ Failed'}`);
-  console.log(`Overall Status: ${(jpmorganOk && quickbooksOk) ? '✅ Ready' : '❌ Issues Found'}`);
+  logger.info('\n📋 Diagnostic Summary:');
+  logger.info('=====================');
+  logger.info(`JPMorgan API: ${jpmorganOk ? '✅ Working' : '❌ Failed'}`);
+  logger.info(`QuickBooks API: ${quickbooksOk ? '✅ Working' : '❌ Failed'}`);
+  logger.info(`Overall Status: ${(jpmorganOk && quickbooksOk) ? '✅ Ready' : '❌ Issues Found'}`);
 
   if (!jpmorganOk || !quickbooksOk) {
-    console.log('\n🔧 Next Steps:');
+    logger.info('\n🔧 Next Steps:');
     if (!jpmorganOk) {
-      console.log('1. Contact JPMorgan support to verify your credentials');
-      console.log('2. Check JPMorgan developer portal for correct endpoints');
-      console.log('3. Ensure your merchant account is properly configured');
+      logger.info('1. Contact JPMorgan support to verify your credentials');
+      logger.info('2. Check JPMorgan developer portal for correct endpoints');
+      logger.info('3. Ensure your merchant account is properly configured');
     }
     if (!quickbooksOk) {
-      console.log('1. Refresh your QuickBooks access token');
-      console.log('2. Re-authorize your QuickBooks app');
-      console.log('3. Verify company permissions in QuickBooks');
+      logger.info('1. Refresh your QuickBooks access token');
+      logger.info('2. Re-authorize your QuickBooks app');
+      logger.info('3. Verify company permissions in QuickBooks');
     }
   }
 }

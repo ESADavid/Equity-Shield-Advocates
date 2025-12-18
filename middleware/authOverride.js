@@ -62,7 +62,7 @@ const auditOverride = (req, res, next) => {
       };
       
       // In production, save to audit log
-      console.log('AUDIT:', auditEntry);
+      logger.info('AUDIT:', auditEntry);
     }
     
     originalSend.call(this, body);

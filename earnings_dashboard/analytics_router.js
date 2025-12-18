@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
     };
     res.json(response);
   } catch (error) {
-    console.error('Analytics error:', error);
+    logger.error('Analytics error:', error);
     res.status(500).json({ error: 'Failed to retrieve analytics' });
   }
 });
@@ -33,7 +33,7 @@ router.get('/transcendence', async (req, res) => {
     };
     res.json(response);
   } catch (error) {
-    console.error('Transcendence analytics error:', error);
+    logger.error('Transcendence analytics error:', error);
     res.status(500).json({ error: 'Failed to retrieve transcendence analytics' });
   }
 });
@@ -57,14 +57,14 @@ router.post('/optimize', async (req, res) => {
     };
     res.json(response);
   } catch (error) {
-    console.error('Optimization error:', error);
+    logger.error('Optimization error:', error);
     res.status(500).json({ error: 'Failed to optimize revenue' });
   }
 });
 
 // Initialize transcendence engine on router load
 initializeTranscendence().catch(err => {
-  console.error('Failed to initialize AI transcendence engine:', err);
+  logger.error('Failed to initialize AI transcendence engine:', err);
 });
 
 export default router;

@@ -22,7 +22,7 @@ router.post('/create-link-token', async (req, res) => {
       data: linkTokenData
     });
   } catch (error) {
-    console.error('Error creating link token:', error);
+    logger.error('Error creating link token:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create link token',
@@ -50,7 +50,7 @@ router.post('/exchange-public-token', async (req, res) => {
       data: tokenData
     });
   } catch (error) {
-    console.error('Error exchanging public token:', error);
+    logger.error('Error exchanging public token:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to exchange public token',
@@ -71,7 +71,7 @@ router.get('/accounts/:accessToken', async (req, res) => {
       data: accounts
     });
   } catch (error) {
-    console.error('Error getting accounts:', error);
+    logger.error('Error getting accounts:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get accounts',
@@ -92,7 +92,7 @@ router.get('/balances/:accessToken', async (req, res) => {
       data: balances
     });
   } catch (error) {
-    console.error('Error getting balances:', error);
+    logger.error('Error getting balances:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get balances',
@@ -124,7 +124,7 @@ router.get('/transactions/:accessToken', async (req, res) => {
       data: transactions
     });
   } catch (error) {
-    console.error('Error getting transactions:', error);
+    logger.error('Error getting transactions:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get transactions',
@@ -145,7 +145,7 @@ router.get('/income/:accessToken', async (req, res) => {
       data: income
     });
   } catch (error) {
-    console.error('Error getting income:', error);
+    logger.error('Error getting income:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get income',
@@ -174,7 +174,7 @@ router.post('/verify-ownership/:accessToken/:accountId', async (req, res) => {
       data: verification
     });
   } catch (error) {
-    console.error('Error verifying account ownership:', error);
+    logger.error('Error verifying account ownership:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to verify account ownership',
@@ -195,7 +195,7 @@ router.get('/identity/:accessToken', async (req, res) => {
       data: identity
     });
   } catch (error) {
-    console.error('Error getting identity:', error);
+    logger.error('Error getting identity:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get identity',
@@ -216,7 +216,7 @@ router.delete('/item/:accessToken', async (req, res) => {
       data: result
     });
   } catch (error) {
-    console.error('Error removing item:', error);
+    logger.error('Error removing item:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to remove item',
@@ -235,7 +235,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 
     res.json(result);
   } catch (error) {
-    console.error('Error handling webhook:', error);
+    logger.error('Error handling webhook:', error);
     res.status(500).json({
       success: false,
       message: 'Webhook processing failed',

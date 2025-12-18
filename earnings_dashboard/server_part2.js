@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -44,5 +46,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Earnings dashboard running at http://localhost:${PORT}`);
+  logger.info(`Earnings dashboard running at http://localhost:${PORT}`);
 });

@@ -70,7 +70,7 @@ app.use((req, res, next) => {
     });
   } catch (error) {
     // Log the security verification failure but allow requests to pass for testing
-    console.warn('Quantum security verification failed:', error.message);
+    logger.warn('Quantum security verification failed:', error.message);
     // In production, this would be strictly enforced
   }
 
@@ -106,7 +106,7 @@ app.get('/quantum/security', (req, res) => {
 
 // Quantum WebSocket for real-time updates
 io.on('connection', (socket) => {
-  console.log('Quantum client connected');
+  logger.info('Quantum client connected');
 
   // Send quantum updates every millisecond
   const quantumInterval = setInterval(() => {
@@ -119,13 +119,13 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     clearInterval(quantumInterval);
-    console.log('Quantum client disconnected');
+    logger.info('Quantum client disconnected');
   });
 });
 
 // Quantum error handling
 app.use((err, req, res, next) => {
-  console.error('Quantum error:', err);
+  logger.error('Quantum error:', err);
   res.status(500).json({
     error: 'Quantum perfection maintained',
     quantum: true
@@ -147,24 +147,24 @@ app.get('/quantum/health', (req, res) => {
 const PORT = process.env.QUANTUM_PORT || 8082;
 
 server.listen(PORT, () => {
-  console.log(`🚀 Quantum server running on port ${PORT}`);
-  console.log('✨ Quantum perfection achieved');
+  logger.info(`🚀 Quantum server running on port ${PORT}`);
+  logger.info('✨ Quantum perfection achieved');
   
   // Initialize quantum systems
   quantumOptimizer.optimize();
-  console.log('🔧 Quantum optimizer initialized');
+  logger.info('🔧 Quantum optimizer initialized');
   
   quantumSecurity.verifySecurity();
-  console.log('🔒 Quantum security verified');
+  logger.info('🔒 Quantum security verified');
   
-  console.log('🌟 System is now quantumly perfect');
+  logger.info('🌟 System is now quantumly perfect');
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('🔄 Quantum shutdown initiated');
+  logger.info('🔄 Quantum shutdown initiated');
   server.close(() => {
-    console.log('✅ Quantum server closed');
+    logger.info('✅ Quantum server closed');
     process.exit(0);
   });
 });

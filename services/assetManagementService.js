@@ -293,7 +293,7 @@ class AssetManagementService {
       this.performanceHistory.set(asset.id, []);
     }
 
-    console.log(`Initialized portfolio with ${portfolioToInitialize.length} asset classes`);
+    logger.info(`Initialized portfolio with ${portfolioToInitialize.length} asset classes`);
   }
 
   /**

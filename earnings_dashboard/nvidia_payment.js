@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
@@ -110,7 +112,7 @@ router.post('/create-inference-payment', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('NVIDIA AIQ payment creation error:', error.response?.data || error.message);
+    logger.error('NVIDIA AIQ payment creation error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to create inference payment',
@@ -140,7 +142,7 @@ router.get('/payment-status/:paymentId', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('NVIDIA AIQ payment status error:', error.response?.data || error.message);
+    logger.error('NVIDIA AIQ payment status error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to get payment status',
@@ -198,7 +200,7 @@ router.post('/gpu-usage-billing', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('NVIDIA GPU billing error:', error.response?.data || error.message);
+    logger.error('NVIDIA GPU billing error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to process GPU usage billing',
@@ -225,7 +227,7 @@ router.get('/gpu-models', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('NVIDIA GPU models error:', error.response?.data || error.message);
+    logger.error('NVIDIA GPU models error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch GPU models',
@@ -283,7 +285,7 @@ router.post('/create-subscription', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('NVIDIA subscription creation error:', error.response?.data || error.message);
+    logger.error('NVIDIA subscription creation error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to create subscription',

@@ -25,7 +25,7 @@ class AITranscendence {
     this.quantumOptimizer.initialize();
     this.selfLearner.initialize();
     this.decisionEngine.initialize();
-    console.log('🤖 AI Transcendence Engine initialized');
+    logger.info('🤖 AI Transcendence Engine initialized');
   }
 
   // Deep Learning Revenue Prediction
@@ -156,7 +156,7 @@ class DeepLearningPredictor {
       hidden: matrix(randomMatrix(1, 50)),
       output: matrix([[0.1]])
     };
-    console.log('🧠 Advanced Neural Network model initialized with math.js');
+    logger.info('🧠 Advanced Neural Network model initialized with math.js');
   }
 
   async predict(data, horizon) {
@@ -253,7 +253,7 @@ class QuantumInspiredOptimizer {
       phase: Math.random() * 2 * pi,
       entanglement: Math.random()
     };
-    console.log('⚛️ Quantum optimizer initialized');
+    logger.info('⚛️ Quantum optimizer initialized');
   }
 
   optimizePredictions(predictions) {
@@ -298,7 +298,7 @@ class AutonomousDecisionEngine {
   }
 
   initialize() {
-    console.log('🎯 Autonomous decision engine initialized');
+    logger.info('🎯 Autonomous decision engine initialized');
   }
 
   async makeDecisions(analysis) {
@@ -367,7 +367,7 @@ class SelfLearningSystem {
       successfulStrategies: [],
       riskPatterns: []
     };
-    console.log('🧠 Self-learning system initialized');
+    logger.info('🧠 Self-learning system initialized');
   }
 
   async learn(newData) {

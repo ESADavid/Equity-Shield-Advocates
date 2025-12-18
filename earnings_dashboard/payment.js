@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
@@ -51,7 +53,7 @@ router.post('/create-payment-intent',
       }
 
       // Log authenticated payment request
-      console.log(`JPMorgan authenticated payment request by ${user.email} (${user.role})`);
+      logger.info(`JPMorgan authenticated payment request by ${user.email} (${user.role})`);
 
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
@@ -76,7 +78,7 @@ router.post('/create-payment-intent',
         }
       });
     } catch (error) {
-      console.error('Error creating payment intent:', error);
+      logger.error('Error creating payment intent:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
@@ -90,7 +92,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
-    console.error('Webhook signature verification failed:', err.message);
+    logger.error('Webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -98,7 +100,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
   switch (event.type) {
     case 'payment_intent.succeeded': {
       const paymentIntent = event.data.object;
-      console.log('PaymentIntent was successful!', paymentIntent.id);
+      logger.info('PaymentIntent was successful!', paymentIntent.id);
       // handle successful payment here (e.g., update order status)
       const data = readRevenueData();
       if (data) {
@@ -114,7 +116,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
               order.status = 'paid';
               order.paymentIntentId = paymentIntent.id;
               writeRevenueData(data);
-              console.log(`Order ${order.id} marked as paid.`);
+              logger.info(`Order ${order.id} marked as paid.`);
             }
           }
         }
@@ -123,7 +125,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
     }
     case 'payment_intent.payment_failed': {
       const failedIntent = event.data.object;
-      console.log('PaymentIntent failed:', failedIntent.last_payment_error && failedIntent.last_payment_error.message);
+      logger.info('PaymentIntent failed:', failedIntent.last_payment_error && failedIntent.last_payment_error.message);
       // handle failed payment here
       // Could update order status to failed if orderId metadata exists
       const data = readRevenueData();
@@ -135,7 +137,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
               order.status = 'failed';
               order.paymentIntentId = failedIntent.id;
               writeRevenueData(data);
-              console.log(`Order ${order.id} marked as failed.`);
+              logger.info(`Order ${order.id} marked as failed.`);
             }
           }
         }
@@ -143,7 +145,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) =>
       break;
     }
     default:
-      console.log(`Unhandled event type ${event.type}`);
+      logger.info(`Unhandled event type ${event.type}`);
   }
 
   res.json({ received: true });

@@ -12,7 +12,7 @@ async function loadRevenueFromRepo(repoPath) {
             await promises_1.default.access(revenueFile);
         }
         catch {
-            console.warn(`No revenue.json found in ${repoPath}`);
+            logger.warn(`No revenue.json found in ${repoPath}`);
             return null;
         }
         const data = await promises_1.default.readFile(revenueFile, 'utf-8');
@@ -25,7 +25,7 @@ async function loadRevenueFromRepo(repoPath) {
         };
     }
     catch (error) {
-        console.error(`Error loading revenue from ${repoPath}:`, error);
+        logger.error(`Error loading revenue from ${repoPath}:`, error);
         return null;
     }
 }
@@ -56,30 +56,30 @@ async function main() {
         await promises_1.default.access(baseDir);
     }
     catch {
-        console.error('Base directory for repositories does not exist:', baseDir);
+        logger.error('Base directory for repositories does not exist:', baseDir);
         return;
     }
     const dirents = await promises_1.default.readdir(baseDir, { withFileTypes: true });
     const repoDirs = dirents.filter(d => d.isDirectory()).map(d => path_1.default.join(baseDir, d.name));
     const aggregated = await aggregateRevenues(repoDirs);
-    console.log('Aggregated Revenue Report:');
-    console.log(`Total Revenue Across All Repositories: $${aggregated.totalRevenue.toLocaleString()}`);
-    console.log('Revenue Per Repository:');
+    logger.info('Aggregated Revenue Report:');
+    logger.info(`Total Revenue Across All Repositories: $${aggregated.totalRevenue.toLocaleString()}`);
+    logger.info('Revenue Per Repository:');
     Object.entries(aggregated.perRepository).forEach(([repo, revenue]) => {
-        console.log(`- ${repo}: $${revenue.toLocaleString()}`);
+        logger.info(`- ${repo}: $${revenue.toLocaleString()}`);
     });
-    console.log('Revenue Streams Summary:');
+    logger.info('Revenue Streams Summary:');
     Object.entries(aggregated.revenueStreamsSummary).forEach(([stream, amount]) => {
-        console.log(`- ${stream}: $${amount.toLocaleString()}`);
+        logger.info(`- ${stream}: $${amount.toLocaleString()}`);
     });
     // Optionally write aggregated data to a JSON file
     const outputFile = path_1.default.join(baseDir, 'aggregated_revenue_report.json');
     try {
         await promises_1.default.writeFile(outputFile, JSON.stringify(aggregated, null, 2), 'utf-8');
-        console.log(`Aggregated revenue report written to ${outputFile}`);
+        logger.info(`Aggregated revenue report written to ${outputFile}`);
     }
     catch (error) {
-        console.error('Error writing aggregated revenue report:', error);
+        logger.error('Error writing aggregated revenue report:', error);
     }
 }
 main();

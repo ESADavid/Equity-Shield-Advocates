@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 /**
  * Script to mark the Rolls Royce Spectra Black Badge as delivered
  * using the existing delivery API endpoint in the earnings dashboard system.
@@ -29,12 +31,12 @@ async function markDelivery() {
     const result = await response.json();
 
     if (response.ok) {
-      console.log('Delivery marked successfully:', result);
+      logger.info('Delivery marked successfully:', result);
     } else {
-      console.error('Failed to mark delivery:', result.error);
+      logger.error('Failed to mark delivery:', result.error);
     }
   } catch (error) {
-    console.error('Error during delivery request:', error);
+    logger.error('Error during delivery request:', error);
   }
 }
 

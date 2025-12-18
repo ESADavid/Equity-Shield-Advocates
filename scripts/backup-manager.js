@@ -586,35 +586,35 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     case 'create':
       backupManager.createFullBackup(options.name)
         .then(result => {
-          console.log('✅ Backup created successfully:', result.backupId);
+          logger.info('✅ Backup created successfully:', result.backupId);
           process.exit(0);
         })
         .catch(error => {
-          console.error('❌ Backup creation failed:', error.message);
+          logger.error('❌ Backup creation failed:', error.message);
           process.exit(1);
         });
       break;
 
     case 'list':
       const backups = backupManager.listBackups();
-      console.log('📋 Available backups:');
+      logger.info('📋 Available backups:');
       backups.forEach(backup => {
-        console.log(`  ${backup.name} (${new Date(backup.created).toLocaleString()}) - ${(backup.size / 1024 / 1024).toFixed(2)} MB`);
+        logger.info(`  ${backup.name} (${new Date(backup.created).toLocaleString()}) - ${(backup.size / 1024 / 1024).toFixed(2)} MB`);
       });
       break;
 
     case 'restore':
       if (!options.name) {
-        console.error('❌ Please specify backup name with --name');
+        logger.error('❌ Please specify backup name with --name');
         process.exit(1);
       }
       backupManager.restoreBackup(options.name, options)
         .then(result => {
-          console.log('✅ Backup restored successfully:', result.backupName);
+          logger.info('✅ Backup restored successfully:', result.backupName);
           process.exit(0);
         })
         .catch(error => {
-          console.error('❌ Backup restoration failed:', error.message);
+          logger.error('❌ Backup restoration failed:', error.message);
           process.exit(1);
         });
       break;
@@ -622,34 +622,34 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     case 'cleanup':
       backupManager.cleanupOldBackups()
         .then(count => {
-          console.log(`🧹 Cleaned up ${count} old backups`);
+          logger.info(`🧹 Cleaned up ${count} old backups`);
           process.exit(0);
         })
         .catch(error => {
-          console.error('❌ Cleanup failed:', error.message);
+          logger.error('❌ Cleanup failed:', error.message);
           process.exit(1);
         });
       break;
 
     case 'status':
       const status = backupManager.getStatus();
-      console.log('📊 Backup Manager Status:');
-      console.log(`  Directory: ${status.backupDirectory}`);
-      console.log(`  Total backups: ${status.totalBackups}`);
-      console.log(`  Retention: ${status.retentionDays} days`);
-      console.log(`  Encryption: ${status.encryptionEnabled ? 'Enabled' : 'Disabled'}`);
+      logger.info('📊 Backup Manager Status:');
+      logger.info(`  Directory: ${status.backupDirectory}`);
+      logger.info(`  Total backups: ${status.totalBackups}`);
+      logger.info(`  Retention: ${status.retentionDays} days`);
+      logger.info(`  Encryption: ${status.encryptionEnabled ? 'Enabled' : 'Disabled'}`);
       if (status.latestBackup) {
-        console.log(`  Latest backup: ${status.latestBackup.name} (${new Date(status.latestBackup.created).toLocaleString()})`);
+        logger.info(`  Latest backup: ${status.latestBackup.name} (${new Date(status.latestBackup.created).toLocaleString()})`);
       }
       break;
 
     default:
-      console.log('Usage:');
-      console.log('  create [--name <name>]           Create a new backup');
-      console.log('  list                              List all backups');
-      console.log('  restore --name <backup>           Restore from backup');
-      console.log('  cleanup                           Remove old backups');
-      console.log('  status                            Show backup status');
+      logger.info('Usage:');
+      logger.info('  create [--name <name>]           Create a new backup');
+      logger.info('  list                              List all backups');
+      logger.info('  restore --name <backup>           Restore from backup');
+      logger.info('  cleanup                           Remove old backups');
+      logger.info('  status                            Show backup status');
       process.exit(1);
   }
 }

@@ -25,7 +25,7 @@ class JPMorganDeployer {
 
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
+    logger.info(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
   }
 
   loadConfig() {
@@ -274,7 +274,7 @@ class JPMorganDeployer {
     };
 
     // In a real scenario, send to Slack, email, or monitoring system
-    console.log('Deployment Notification:', JSON.stringify(notification, null, 2));
+    logger.info('Deployment Notification:', JSON.stringify(notification, null, 2));
   }
 
   async runDeployment() {
@@ -310,7 +310,7 @@ class JPMorganDeployer {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const deployer = new JPMorganDeployer();
   deployer.runDeployment().catch(error => {
-    console.error('Deployment failed:', error);
+    logger.error('Deployment failed:', error);
     process.exit(1);
   });
 }

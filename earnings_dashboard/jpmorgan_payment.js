@@ -22,7 +22,7 @@ const JPMORGAN_CLIENT_SECRET = process.env.JPMORGAN_CLIENT_SECRET;
 const JPMORGAN_MERCHANT_ID = process.env.JPMORGAN_MERCHANT_ID;
 const JPMORGAN_TERMINAL_ID = process.env.JPMORGAN_TERMINAL_ID;
 
-console.log('Environment check:', {
+logger.info('Environment check:', {
   JPMORGAN_CLIENT_ID: !!JPMORGAN_CLIENT_ID,
   JPMORGAN_CLIENT_SECRET: !!JPMORGAN_CLIENT_SECRET,
   isMockMode: !JPMORGAN_CLIENT_ID || !JPMORGAN_CLIENT_SECRET
@@ -126,7 +126,7 @@ router.post('/wallet-decrypt', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan wallet decryption error:', error.response?.data || error.message);
+    logger.error('JPMorgan wallet decryption error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to decrypt wallet data',
@@ -148,10 +148,10 @@ router.post('/create-payment', async (req, res) => {
     }
 
     // Mock mode response
-    console.log('Mock mode check:', isMockMode(), 'CLIENT_ID:', !!process.env.JPMORGAN_CLIENT_ID, 'CLIENT_SECRET:', !!process.env.JPMORGAN_CLIENT_SECRET);
+    logger.info('Mock mode check:', isMockMode(), 'CLIENT_ID:', !!process.env.JPMORGAN_CLIENT_ID, 'CLIENT_SECRET:', !!process.env.JPMORGAN_CLIENT_SECRET);
     if (isMockMode()) {
       const mockPaymentId = generateMockPaymentId();
-      console.log('Mock payment created:', mockPaymentId);
+      logger.info('Mock payment created:', mockPaymentId);
 
       return res.json({
         success: true,
@@ -206,7 +206,7 @@ router.post('/create-payment', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan payment creation error:', error.response?.data || error.message);
+    logger.error('JPMorgan payment creation error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to create payment',
@@ -222,7 +222,7 @@ router.get('/payment-status/:paymentId', async (req, res) => {
 
     // Mock mode response
     if (isMockMode()) {
-      console.log('Mock payment status requested for:', paymentId);
+      logger.info('Mock payment status requested for:', paymentId);
 
       return res.json({
         success: true,
@@ -251,7 +251,7 @@ router.get('/payment-status/:paymentId', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan payment status error:', error.response?.data || error.message);
+    logger.error('JPMorgan payment status error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to get payment status',
@@ -275,7 +275,7 @@ router.post('/refund', async (req, res) => {
     // Mock mode response
     if (isMockMode()) {
       const mockRefundId = generateMockTransactionId();
-      console.log('Mock refund processed for payment:', paymentId);
+      logger.info('Mock refund processed for payment:', paymentId);
 
       return res.json({
         success: true,
@@ -316,7 +316,7 @@ router.post('/refund', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan refund error:', error.response?.data || error.message);
+    logger.error('JPMorgan refund error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to process refund',
@@ -340,7 +340,7 @@ router.post('/capture', async (req, res) => {
     // Mock mode response
     if (isMockMode()) {
       const mockCaptureId = generateMockTransactionId();
-      console.log('Mock capture processed for payment:', paymentId);
+      logger.info('Mock capture processed for payment:', paymentId);
 
       return res.json({
         success: true,
@@ -379,7 +379,7 @@ router.post('/capture', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan capture error:', error.response?.data || error.message);
+    logger.error('JPMorgan capture error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to capture payment',
@@ -403,7 +403,7 @@ router.post('/void', async (req, res) => {
     // Mock mode response
     if (isMockMode()) {
       const mockVoidId = generateMockTransactionId();
-      console.log('Mock void processed for payment:', paymentId);
+      logger.info('Mock void processed for payment:', paymentId);
 
       return res.json({
         success: true,
@@ -439,7 +439,7 @@ router.post('/void', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan void error:', error.response?.data || error.message);
+    logger.error('JPMorgan void error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to void payment',
@@ -455,7 +455,7 @@ router.get('/transactions', async (req, res) => {
 
     // Mock mode response
     if (isMockMode()) {
-      console.log('Mock transactions requested');
+      logger.info('Mock transactions requested');
 
       const mockTransactions = [];
       const count = Math.min(Number.parseInt(limit) || 10, 50);
@@ -499,7 +499,7 @@ router.get('/transactions', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan transactions error:', error.response?.data || error.message);
+    logger.error('JPMorgan transactions error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch transactions',
@@ -531,7 +531,7 @@ const verifyWebhookSignature = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Webhook verification error:', error);
+    logger.error('Webhook verification error:', error);
     res.status(500).json({ error: 'Webhook verification failed' });
   }
 };
@@ -562,42 +562,42 @@ router.post('/webhook', express.json(), async (req, res) => {
 
     const event = req.body;
 
-    console.log('Received JPMorgan webhook event:', event.type, event.id);
+    logger.info('Received JPMorgan webhook event:', event.type, event.id);
 
     switch (event.type) {
       case 'payment.authorized':
         // Handle authorized payment
-        console.log('Payment authorized:', event.data.paymentId);
+        logger.info('Payment authorized:', event.data.paymentId);
         break;
 
       case 'payment.captured':
         // Handle captured payment
-        console.log('Payment captured:', event.data.paymentId);
+        logger.info('Payment captured:', event.data.paymentId);
         break;
 
       case 'payment.refunded':
         // Handle refund
-        console.log('Payment refunded:', event.data.paymentId);
+        logger.info('Payment refunded:', event.data.paymentId);
         break;
 
       case 'payment.voided':
         // Handle voided payment
-        console.log('Payment voided:', event.data.paymentId);
+        logger.info('Payment voided:', event.data.paymentId);
         break;
 
       case 'payment.failed':
         // Handle failed payment
-        console.log('Payment failed:', event.data.paymentId, event.data.reason);
+        logger.info('Payment failed:', event.data.paymentId, event.data.reason);
         break;
 
       default:
-        console.log('Unhandled webhook event type:', event.type);
+        logger.info('Unhandled webhook event type:', event.type);
     }
 
     res.json({ received: true });
 
   } catch (error) {
-    console.error('Webhook processing error:', error);
+    logger.error('Webhook processing error:', error);
     res.status(500).json({ error: 'Webhook processing failed' });
   }
 });
@@ -758,7 +758,7 @@ async function syncPaymentsWithQuickBooks() {
       }
     }
   } catch (error) {
-    console.error('Error syncing payments with QuickBooks:', error);
+    logger.error('Error syncing payments with QuickBooks:', error);
   }
 }
 
@@ -784,7 +784,7 @@ router.get('/treasury/cash-positions', async (req, res) => {
 
     // Check mock mode first, before any auth header generation
     if (isMockMode()) {
-      console.log('Mock treasury cash positions requested');
+      logger.info('Mock treasury cash positions requested');
 
       const mockBalances = generateMockTreasuryBalances();
 
@@ -831,7 +831,7 @@ router.get('/treasury/cash-positions', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan treasury cash positions error:', error.response?.data || error.message);
+    logger.error('JPMorgan treasury cash positions error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch cash positions',
@@ -847,7 +847,7 @@ router.get('/treasury/fx-rates', async (req, res) => {
 
     // Check mock mode first, before any auth header generation
     if (isMockMode()) {
-      console.log('Mock treasury FX rates requested');
+      logger.info('Mock treasury FX rates requested');
 
       const mockRates = {};
       const allCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'];
@@ -886,7 +886,7 @@ router.get('/treasury/fx-rates', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan treasury FX rates error:', error.response?.data || error.message);
+    logger.error('JPMorgan treasury FX rates error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch FX rates',
@@ -902,7 +902,7 @@ router.get('/treasury/liquidity-forecast', async (req, res) => {
 
     // Check mock mode first, before any auth header generation
     if (isMockMode()) {
-      console.log('Mock treasury liquidity forecast requested');
+      logger.info('Mock treasury liquidity forecast requested');
 
       const forecast = [];
       const daysCount = Math.min(Number.parseInt(days) || 30, 90);
@@ -944,7 +944,7 @@ router.get('/treasury/liquidity-forecast', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan treasury liquidity forecast error:', error.response?.data || error.message);
+    logger.error('JPMorgan treasury liquidity forecast error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch liquidity forecast',
@@ -960,7 +960,7 @@ router.get('/treasury/risk-exposure', async (req, res) => {
 
     // Check mock mode first, before any auth header generation
     if (isMockMode()) {
-      console.log('Mock treasury risk exposure requested');
+      logger.info('Mock treasury risk exposure requested');
 
       return res.json({
         success: true,
@@ -1000,7 +1000,7 @@ router.get('/treasury/risk-exposure', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan treasury risk exposure error:', error.response?.data || error.message);
+    logger.error('JPMorgan treasury risk exposure error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch risk exposure',
@@ -1024,7 +1024,7 @@ router.post('/treasury/investment-instruction', async (req, res) => {
     // Mock mode response
     if (isMockMode()) {
       const mockInstructionId = generateMockTransactionId();
-      console.log('Mock investment instruction created:', mockInstructionId);
+      logger.info('Mock investment instruction created:', mockInstructionId);
 
       return res.json({
         success: true,
@@ -1070,7 +1070,7 @@ router.post('/treasury/investment-instruction', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan treasury investment instruction error:', error.response?.data || error.message);
+    logger.error('JPMorgan treasury investment instruction error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to create investment instruction',
@@ -1086,7 +1086,7 @@ router.get('/treasury/portfolio-performance', async (req, res) => {
 
     // Check mock mode first, before any auth header generation
     if (isMockMode()) {
-      console.log('Mock treasury portfolio performance requested');
+      logger.info('Mock treasury portfolio performance requested');
 
       return res.json({
         success: true,
@@ -1123,7 +1123,7 @@ router.get('/treasury/portfolio-performance', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan treasury portfolio performance error:', error.response?.data || error.message);
+    logger.error('JPMorgan treasury portfolio performance error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch portfolio performance',
@@ -1139,7 +1139,7 @@ router.get('/treasury/cash-flow-analytics', async (req, res) => {
 
     // Check mock mode first, before any auth header generation
     if (isMockMode()) {
-      console.log('Mock treasury cash flow analytics requested');
+      logger.info('Mock treasury cash flow analytics requested');
 
       const analytics = [];
       const days = 30;
@@ -1184,7 +1184,7 @@ router.get('/treasury/cash-flow-analytics', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan treasury cash flow analytics error:', error.response?.data || error.message);
+    logger.error('JPMorgan treasury cash flow analytics error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch cash flow analytics',
@@ -1198,7 +1198,7 @@ router.get('/treasury/health', async (req, res) => {
   try {
     // Check mock mode first, before any auth header generation
     if (isMockMode()) {
-      console.log('Mock treasury health check requested');
+      logger.info('Mock treasury health check requested');
 
       return res.json({
         status: 'healthy',
@@ -1288,7 +1288,7 @@ router.post('/process-revenue', async (req, res) => {
           // In mock mode, simulate payment creation
           if (isMockMode()) {
             const mockPaymentId = generateMockPaymentId();
-            console.log(`Mock revenue payment processed for ${streamName}:`, mockPaymentId);
+            logger.info(`Mock revenue payment processed for ${streamName}:`, mockPaymentId);
 
             processedPayments.push({
               streamName,
@@ -1332,7 +1332,7 @@ router.post('/process-revenue', async (req, res) => {
             });
           }
         } catch (error) {
-          console.error(`Failed to process revenue for ${streamName}:`, error.message);
+          logger.error(`Failed to process revenue for ${streamName}:`, error.message);
           failedPayments.push({
             streamName,
             amount: streamData.amount,
@@ -1353,7 +1353,7 @@ router.post('/process-revenue', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Revenue processing error:', error);
+    logger.error('Revenue processing error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to process revenue through JPMorgan',
@@ -1398,7 +1398,7 @@ router.get('/revenue-status', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Revenue status error:', error);
+    logger.error('Revenue status error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get revenue status',
@@ -1427,7 +1427,7 @@ router.get('/control/status', async (req, res) => {
 
     res.json(controlStatus);
   } catch (error) {
-    console.error('Control status error:', error);
+    logger.error('Control status error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get control status',
@@ -1451,7 +1451,7 @@ router.get('/control/metrics', async (req, res) => {
 
     res.json(metrics);
   } catch (error) {
-    console.error('Metrics error:', error);
+    logger.error('Metrics error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get system metrics',
@@ -1490,7 +1490,7 @@ router.get('/control/activities', async (req, res) => {
 
     res.json({ activities });
   } catch (error) {
-    console.error('Activities error:', error);
+    logger.error('Activities error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get recent activities',
@@ -1504,7 +1504,7 @@ router.post('/control/execute', async (req, res) => {
   try {
     const { action, target } = req.body;
 
-    console.log(`Executing control action: ${action} on ${target}`);
+    logger.info(`Executing control action: ${action} on ${target}`);
 
     // Mock action execution
     const result = {
@@ -1520,7 +1520,7 @@ router.post('/control/execute', async (req, res) => {
       result
     });
   } catch (error) {
-    console.error('Control execution error:', error);
+    logger.error('Control execution error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to execute control action',
@@ -1580,7 +1580,7 @@ router.get('/control/websites', async (req, res) => {
 
     res.json({ websites });
   } catch (error) {
-    console.error('Websites fetch error:', error);
+    logger.error('Websites fetch error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch websites',
@@ -1594,7 +1594,7 @@ router.post('/control/website-action', async (req, res) => {
   try {
     const { action, websiteId } = req.body;
 
-    console.log(`Executing website action: ${action} on ${websiteId}`);
+    logger.info(`Executing website action: ${action} on ${websiteId}`);
 
     const result = {
       action,
@@ -1609,7 +1609,7 @@ router.post('/control/website-action', async (req, res) => {
       result
     });
   } catch (error) {
-    console.error('Website action error:', error);
+    logger.error('Website action error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to execute website action',
@@ -1623,7 +1623,7 @@ router.put('/control/website-config', async (req, res) => {
   try {
     const { websiteId, config } = req.body;
 
-    console.log(`Updating website config for ${websiteId}:`, config);
+    logger.info(`Updating website config for ${websiteId}:`, config);
 
     const result = {
       websiteId,
@@ -1638,7 +1638,7 @@ router.put('/control/website-config', async (req, res) => {
       result
     });
   } catch (error) {
-    console.error('Website config error:', error);
+    logger.error('Website config error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to update website configuration',
@@ -1704,7 +1704,7 @@ router.get('/control/banking/accounts', async (req, res) => {
 
     res.json({ accounts });
   } catch (error) {
-    console.error('Banking accounts error:', error);
+    logger.error('Banking accounts error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch banking accounts',
@@ -1718,7 +1718,7 @@ router.post('/control/banking-action', async (req, res) => {
   try {
     const { action, accountId, ...params } = req.body;
 
-    console.log(`Executing banking action: ${action} on account ${accountId}`, params);
+    logger.info(`Executing banking action: ${action} on account ${accountId}`, params);
 
     const result = {
       action,
@@ -1734,7 +1734,7 @@ router.post('/control/banking-action', async (req, res) => {
       result
     });
   } catch (error) {
-    console.error('Banking action error:', error);
+    logger.error('Banking action error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to execute banking action',

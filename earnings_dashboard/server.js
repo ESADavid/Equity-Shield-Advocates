@@ -70,7 +70,7 @@ function getEarningsData() {
     };
   } catch (error) {
     // As per SonarLint, handle the error by logging it before returning null
-    console.error('Error reading earnings data:', error);
+    logger.error('Error reading earnings data:', error);
     return null;
   }
 }

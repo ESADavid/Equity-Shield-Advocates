@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 /**
  * QUANTUM DATA SYNC
  * Advanced quantum-powered data synchronization system
@@ -101,7 +103,7 @@ class QuantumDataSync extends EventEmitter {
     // Start sync scheduler
     this.startSyncScheduler();
 
-    console.log('🔄 Quantum Data Sync initialized');
+    logger.info('🔄 Quantum Data Sync initialized');
   }
 
   generateSessionId() {
@@ -127,7 +129,7 @@ class QuantumDataSync extends EventEmitter {
       this.startRealTimeSync();
     }
 
-    console.log('⏰ Sync scheduler started');
+    logger.info('⏰ Sync scheduler started');
   }
 
   startRealTimeSync() {
@@ -136,7 +138,7 @@ class QuantumDataSync extends EventEmitter {
       await this.performRealTimeSync();
     }, 5000); // 5 seconds
 
-    console.log('⚡ Real-time sync enabled');
+    logger.info('⚡ Real-time sync enabled');
   }
 
   async performScheduledSync() {
@@ -160,7 +162,7 @@ class QuantumDataSync extends EventEmitter {
         timestamp: this.syncState.lastSync
       });
 
-      console.log(`✅ Scheduled sync completed in ${syncDuration.toFixed(2)}ms`);
+      logger.info(`✅ Scheduled sync completed in ${syncDuration.toFixed(2)}ms`);
 
     } catch (error) {
       this.syncState.errors++;
@@ -171,7 +173,7 @@ class QuantumDataSync extends EventEmitter {
         timestamp: new Date().toISOString()
       });
 
-      console.error('❌ Scheduled sync failed:', error.message);
+      logger.error('❌ Scheduled sync failed:', error.message);
     }
   }
 
@@ -188,11 +190,11 @@ class QuantumDataSync extends EventEmitter {
           timestamp: new Date().toISOString()
         });
 
-        console.log(`⚡ Real-time sync processed ${realTimeData.length} data points`);
+        logger.info(`⚡ Real-time sync processed ${realTimeData.length} data points`);
       }
 
     } catch (error) {
-      console.error('❌ Real-time sync failed:', error.message);
+      logger.error('❌ Real-time sync failed:', error.message);
     }
   }
 
@@ -218,10 +220,10 @@ class QuantumDataSync extends EventEmitter {
       // Update sync metrics
       this.syncState.dataTransferred += transformedData.length;
 
-      console.log(`📊 ${dataType} data synchronized: ${transformedData.length} records`);
+      logger.info(`📊 ${dataType} data synchronized: ${transformedData.length} records`);
 
     } catch (error) {
-      console.error(`❌ Failed to sync ${dataType}:`, error.message);
+      logger.error(`❌ Failed to sync ${dataType}:`, error.message);
       throw error;
     }
   }
@@ -338,7 +340,7 @@ class QuantumDataSync extends EventEmitter {
       this.completedQueue.set(syncId, syncItem);
     }
 
-    console.log(`✅ Synced ${data.length} ${dataType} records to ${system}`);
+    logger.info(`✅ Synced ${data.length} ${dataType} records to ${system}`);
   }
 
   async fetchRealTimeUpdates() {
@@ -410,7 +412,7 @@ class QuantumDataSync extends EventEmitter {
     processedUpdate.status = 'completed';
     processedUpdate.completedAt = new Date().toISOString();
 
-    console.log(`⚡ Real-time ${update.type} update processed: ${update.id}`);
+    logger.info(`⚡ Real-time ${update.type} update processed: ${update.id}`);
   }
 
   // Sync Management
@@ -459,7 +461,7 @@ class QuantumDataSync extends EventEmitter {
   // Manual Sync Control
   async forceSync(dataType = null) {
     try {
-      console.log(`🔄 Forcing ${dataType || 'full'} sync...`);
+      logger.info(`🔄 Forcing ${dataType || 'full'} sync...`);
 
       if (dataType) {
         await this.syncDataType(dataType);
@@ -472,11 +474,11 @@ class QuantumDataSync extends EventEmitter {
         timestamp: new Date().toISOString()
       });
 
-      console.log(`✅ Force sync completed for ${dataType || 'all data types'}`);
+      logger.info(`✅ Force sync completed for ${dataType || 'all data types'}`);
       return { success: true };
 
     } catch (error) {
-      console.error('❌ Force sync failed:', error.message);
+      logger.error('❌ Force sync failed:', error.message);
       throw error;
     }
   }
@@ -495,7 +497,7 @@ class QuantumDataSync extends EventEmitter {
     this.syncState.active = false;
     this.emit('sync-paused');
 
-    console.log('⏸️ Data sync paused');
+    logger.info('⏸️ Data sync paused');
     return { success: true };
   }
 
@@ -507,7 +509,7 @@ class QuantumDataSync extends EventEmitter {
     this.syncState.active = true;
     this.emit('sync-resumed');
 
-    console.log('▶️ Data sync resumed');
+    logger.info('▶️ Data sync resumed');
     return { success: true };
   }
 
@@ -521,7 +523,7 @@ class QuantumDataSync extends EventEmitter {
 
     this.emit('config-updated', { config: this.syncConfig });
 
-    console.log('⚙️ Sync configuration updated');
+    logger.info('⚙️ Sync configuration updated');
     return { success: true, config: this.syncConfig };
   }
 
@@ -534,7 +536,7 @@ class QuantumDataSync extends EventEmitter {
 
     this.emit('sync-cleanup-completed');
 
-    console.log('🧹 Data sync cleanup completed');
+    logger.info('🧹 Data sync cleanup completed');
   }
 }
 

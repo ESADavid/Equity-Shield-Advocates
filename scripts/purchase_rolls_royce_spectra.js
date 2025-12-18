@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 /**
  * Script to simulate purchasing a Rolls Royce Spectra Black Badge
  * using the existing purchase auto API endpoint in the earnings dashboard system.
@@ -30,12 +32,12 @@ async function purchaseRollsRoyceSpectra() {
     const result = await response.json();
 
     if (response.ok) {
-      console.log('Purchase successful:', result);
+      logger.info('Purchase successful:', result);
     } else {
-      console.error('Purchase failed:', result.error);
+      logger.error('Purchase failed:', result.error);
     }
   } catch (error) {
-    console.error('Error during purchase request:', error);
+    logger.error('Error during purchase request:', error);
   }
 }
 

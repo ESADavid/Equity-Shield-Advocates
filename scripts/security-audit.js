@@ -19,8 +19,8 @@ class SecurityAuditor {
   }
 
   async runFullAudit() {
-    console.log('🔒 Starting Comprehensive Security Audit...');
-    console.log('='.repeat(50));
+    logger.info('🔒 Starting Comprehensive Security Audit...');
+    logger.info('='.repeat(50));
 
     try {
       await this.checkDependencies();
@@ -31,11 +31,11 @@ class SecurityAuditor {
       await this.generateReport();
 
       this.results.status = 'completed';
-      console.log('\n✅ Security audit completed successfully!');
-      console.log(`📊 Security Score: ${this.results.score}/100`);
+      logger.info('\n✅ Security audit completed successfully!');
+      logger.info(`📊 Security Score: ${this.results.score}/100`);
 
     } catch (error) {
-      console.error('❌ Security audit failed:', error.message);
+      logger.error('❌ Security audit failed:', error.message);
       this.results.status = 'failed';
       this.results.error = error.message;
     }
@@ -44,14 +44,14 @@ class SecurityAuditor {
   }
 
   async checkDependencies() {
-    console.log('\n🔍 Checking Dependencies...');
+    logger.info('\n🔍 Checking Dependencies...');
 
     await this.checkVulnerabilities();
     await this.checkOutdatedPackages();
   }
 
   async checkVulnerabilities() {
-    console.log('   Checking for vulnerable dependencies...');
+    logger.info('   Checking for vulnerable dependencies...');
     const auditOutput = execSync('npm audit --json', { cwd: rootDir, encoding: 'utf8' });
     const auditData = JSON.parse(auditOutput);
 
@@ -66,13 +66,13 @@ class SecurityAuditor {
       this.results.recommendations.push('Run "npm audit fix" to address dependency vulnerabilities');
       this.results.score -= vulnCount * 5;
     } else {
-      console.log('   ✅ No dependency vulnerabilities found');
+      logger.info('   ✅ No dependency vulnerabilities found');
       this.results.score += 20;
     }
   }
 
   async checkOutdatedPackages() {
-    console.log('   Checking for outdated packages...');
+    logger.info('   Checking for outdated packages...');
 
     const outdatedOutput = execSync('npm outdated --json', { cwd: rootDir, encoding: 'utf8' });
     const outdatedData = JSON.parse(outdatedOutput);
@@ -82,13 +82,13 @@ class SecurityAuditor {
       this.results.recommendations.push(`Update ${outdatedCount} outdated packages`);
       this.results.score -= outdatedCount * 2;
     } else {
-      console.log('   ✅ All packages are up to date');
+      logger.info('   ✅ All packages are up to date');
       this.results.score += 10;
     }
   }
 
   async checkConfiguration() {
-    console.log('\n🔍 Checking Configuration Security...');
+    logger.info('\n🔍 Checking Configuration Security...');
 
     await this.checkForExposedSecrets();
     await this.checkForDebugMode();
@@ -108,7 +108,7 @@ class SecurityAuditor {
       this.results.recommendations.push('Move secrets to environment variables or secure vault');
       this.results.score -= 30;
     } else {
-      console.log('   ✅ No exposed secrets found in configuration');
+      logger.info('   ✅ No exposed secrets found in configuration');
       this.results.score += 15;
     }
   }
@@ -151,7 +151,7 @@ class SecurityAuditor {
       this.results.recommendations.push('Ensure NODE_ENV=production and DEBUG=false in production');
       this.results.score -= 10;
     } else {
-      console.log('   ✅ Production configuration appears secure');
+      logger.info('   ✅ Production configuration appears secure');
       this.results.score += 10;
     }
   }
@@ -166,7 +166,7 @@ class SecurityAuditor {
   }
 
   async checkCodeQuality() {
-    console.log('\n🔍 Checking Code Quality...');
+    logger.info('\n🔍 Checking Code Quality...');
 
     const insecurePatterns = this.scanForInsecurePatterns();
 
@@ -180,7 +180,7 @@ class SecurityAuditor {
       this.results.recommendations.push('Review and fix insecure code patterns (console.log secrets, eval, innerHTML)');
       this.results.score -= insecurePatterns * 5;
     } else {
-      console.log('   ✅ No insecure code patterns found');
+      logger.info('   ✅ No insecure code patterns found');
       this.results.score += 15;
     }
   }
@@ -211,7 +211,7 @@ class SecurityAuditor {
   }
 
   async checkAuthentication() {
-    console.log('\n🔍 Checking Authentication Security...');
+    logger.info('\n🔍 Checking Authentication Security...');
 
     // Check for JWT configuration in config files
     let jwtConfigured = false;
@@ -229,7 +229,7 @@ class SecurityAuditor {
     }
 
     if (jwtConfigured) {
-      console.log('   ✅ JWT authentication configured');
+      logger.info('   ✅ JWT authentication configured');
       this.results.score += 10;
     } else {
       this.results.vulnerabilities.push({
@@ -247,7 +247,7 @@ class SecurityAuditor {
       const userModel = fs.readFileSync(userModelPath, 'utf8');
       const hasPasswordHashing = userModel.includes('bcrypt') || userModel.includes('password') || userModel.includes('hash');
       if (hasPasswordHashing) {
-        console.log('   ✅ Password hashing appears properly implemented');
+        logger.info('   ✅ Password hashing appears properly implemented');
         this.results.score += 10;
       } else {
         this.results.vulnerabilities.push({
@@ -262,7 +262,7 @@ class SecurityAuditor {
   }
 
   async checkDataProtection() {
-    console.log('\n🔍 Checking Data Protection...');
+    logger.info('\n🔍 Checking Data Protection...');
 
     // Check for HTTPS enforcement in server files
     const serverFiles = ['server-quantum.js', 'server-enhanced.js', 'server.js'];
@@ -278,7 +278,7 @@ class SecurityAuditor {
 
     if (serverContent && serverContent.length > 0) {
       if (serverContent.includes('helmet') && serverContent.includes('https')) {
-        console.log('   ✅ HTTPS and security headers configured');
+        logger.info('   ✅ HTTPS and security headers configured');
         this.results.score += 10;
       } else {
         this.results.recommendations.push('Consider enforcing HTTPS and using security headers');
@@ -287,7 +287,7 @@ class SecurityAuditor {
 
       // Check for rate limiting
       if (serverContent.includes('rateLimit') || serverContent.includes('express-rate-limit')) {
-        console.log('   ✅ Rate limiting implemented');
+        logger.info('   ✅ Rate limiting implemented');
         this.results.score += 10;
       } else {
         this.results.vulnerabilities.push({
@@ -299,7 +299,7 @@ class SecurityAuditor {
         this.results.score -= 10;
       }
     } else {
-      console.log('   ⚠️ Could not find server file to check data protection');
+      logger.info('   ⚠️ Could not find server file to check data protection');
     }
   }
 
@@ -330,7 +330,7 @@ class SecurityAuditor {
   }
 
   async generateReport() {
-    console.log('\n📊 Generating Security Audit Report...');
+    logger.info('\n📊 Generating Security Audit Report...');
 
     // Ensure score is within bounds
     this.results.score = Math.max(0, Math.min(100, this.results.score + 50)); // Base score of 50
@@ -338,45 +338,45 @@ class SecurityAuditor {
     const reportPath = path.join(rootDir, 'logs', 'security-audit-report.json');
     const logsDir = path.dirname(reportPath);
 
-    console.log(`   Debug: rootDir = ${rootDir}`);
-    console.log(`   Debug: reportPath = ${reportPath}`);
-    console.log(`   Debug: logsDir = ${logsDir}`);
-    console.log(`   Debug: logsDir exists = ${fs.existsSync(logsDir)}`);
+    logger.info(`   Debug: rootDir = ${rootDir}`);
+    logger.info(`   Debug: reportPath = ${reportPath}`);
+    logger.info(`   Debug: logsDir = ${logsDir}`);
+    logger.info(`   Debug: logsDir exists = ${fs.existsSync(logsDir)}`);
 
     try {
       if (!fs.existsSync(logsDir)) {
-        console.log('   Creating logs directory...');
+        logger.info('   Creating logs directory...');
         fs.mkdirSync(logsDir, { recursive: true });
-        console.log('   Logs directory created successfully');
+        logger.info('   Logs directory created successfully');
       }
 
-      console.log('   Writing report file...');
+      logger.info('   Writing report file...');
       fs.writeFileSync(reportPath, JSON.stringify(this.results, null, 2));
-      console.log('   Report file written successfully');
+      logger.info('   Report file written successfully');
 
-      console.log(`   Report saved to: ${reportPath}`);
+      logger.info(`   Report saved to: ${reportPath}`);
     } catch (error) {
-      console.error('   Error generating report:', error.message);
+      logger.error('   Error generating report:', error.message);
       throw error;
     }
 
     // Print summary
-    console.log('\n📈 Security Audit Summary:');
-    console.log(`   Score: ${this.results.score}/100`);
-    console.log(`   Vulnerabilities: ${this.results.vulnerabilities.length}`);
-    console.log(`   Recommendations: ${this.results.recommendations.length}`);
+    logger.info('\n📈 Security Audit Summary:');
+    logger.info(`   Score: ${this.results.score}/100`);
+    logger.info(`   Vulnerabilities: ${this.results.vulnerabilities.length}`);
+    logger.info(`   Recommendations: ${this.results.recommendations.length}`);
 
     if (this.results.vulnerabilities.length > 0) {
-      console.log('\n🚨 Critical Issues:');
+      logger.info('\n🚨 Critical Issues:');
       for (const vuln of this.results.vulnerabilities) {
-        console.log(`   - ${vuln.type}: ${vuln.details}`);
+        logger.info(`   - ${vuln.type}: ${vuln.details}`);
       }
     }
 
     if (this.results.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
+      logger.info('\n💡 Recommendations:');
       for (const rec of this.results.recommendations) {
-        console.log(`   - ${rec}`);
+        logger.info(`   - ${rec}`);
       }
     }
   }
@@ -389,7 +389,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     await auditor.runFullAudit();
     process.exit(0);
   } catch (error) {
-    console.error('Audit failed:', error);
+    logger.error('Audit failed:', error);
     process.exit(1);
   }
 }

@@ -38,7 +38,7 @@ class Database {
     try {
       // Skip database connection if explicitly disabled
       if (process.env.SKIP_DATABASE === 'true') {
-        console.log('⚠️ Database connection skipped (SKIP_DATABASE=true)');
+        logger.info('⚠️ Database connection skipped (SKIP_DATABASE=true)');
         this.isConnected = false;
         return null;
       }

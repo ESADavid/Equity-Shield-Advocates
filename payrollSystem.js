@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 /**
  * Unified Payroll System
  * Consolidated TypeScript implementation with proper validation and error handling
@@ -35,7 +37,7 @@ export class PayrollSystem {
                 this.employees = new Map(employeesArray.map(emp => [emp.id, emp]));
             }
         } catch (error) {
-            console.error('Failed to load employees:', error);
+            logger.error('Failed to load employees:', error);
             this.employees = new Map();
         }
     }
@@ -46,7 +48,7 @@ export class PayrollSystem {
             const employeesArray = Array.from(this.employees.values());
             fs.writeFileSync(EMPLOYEES_FILE, JSON.stringify(employeesArray, null, 2), 'utf-8');
         } catch (error) {
-            console.error('Failed to save employees:', error);
+            logger.error('Failed to save employees:', error);
             throw new Error('Failed to save employee data');
         }
     }
@@ -59,7 +61,7 @@ export class PayrollSystem {
                 this.payrollRecords = JSON.parse(data);
             }
         } catch (error) {
-            console.error('Failed to load payroll records:', error);
+            logger.error('Failed to load payroll records:', error);
             this.payrollRecords = [];
         }
     }
@@ -69,7 +71,7 @@ export class PayrollSystem {
         try {
             fs.writeFileSync(PAYROLL_RECORDS_FILE, JSON.stringify(this.payrollRecords, null, 2), 'utf-8');
         } catch (error) {
-            console.error('Failed to save payroll records:', error);
+            logger.error('Failed to save payroll records:', error);
             throw new Error('Failed to save payroll records');
         }
     }

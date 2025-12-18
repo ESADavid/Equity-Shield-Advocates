@@ -200,7 +200,7 @@ app.post('/api/sync/all', async (req, res) => {
     await syncJobs.syncAllData();
     res.status(200).json({ message: 'Data synchronization completed successfully' });
   } catch (error) {
-    console.error('Error during data synchronization:', error);
+    logger.error('Error during data synchronization:', error);
     res.status(500).json({ error: 'Data synchronization failed' });
   }
 });
@@ -436,14 +436,14 @@ app.get('/', (req, res) => {
 const HOST = '0.0.0.0'; // Listen on all network interfaces
 
 const server = app.listen(PORT, HOST, () => {
-  console.log(`Earnings dashboard running at http://${HOST}:${PORT}`);
+  logger.info(`Earnings dashboard running at http://${HOST}:${PORT}`);
 });
 
 module.exports = { app, server };
 
 process.on('SIGINT', () => {
   server.close(() => {
-    console.log('Server closed');
+    logger.info('Server closed');
     process.exit(0);
   });
 });

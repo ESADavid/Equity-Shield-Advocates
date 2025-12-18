@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 /**
  * JPMorgan Authentication Routes
  * Provides authentication endpoints for the JPMorgan payment system
@@ -59,7 +61,7 @@ router.post('/login', async (req, res) => {
 
     res.json(result);
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error during login'
@@ -93,7 +95,7 @@ router.post('/admin-override',
 
       res.json(result);
     } catch (error) {
-      console.error('Admin override error:', error);
+      logger.error('Admin override error:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error during admin override'
@@ -126,7 +128,7 @@ router.post('/refresh-token', async (req, res) => {
 
     res.json(result);
   } catch (error) {
-    console.error('Token refresh error:', error);
+    logger.error('Token refresh error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error during token refresh'
@@ -151,7 +153,7 @@ router.post('/logout',
         res.json({ success: true, message: 'Logged out successfully' });
       }
     } catch (error) {
-      console.error('Logout error:', error);
+      logger.error('Logout error:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error during logout'
@@ -180,7 +182,7 @@ router.get('/profile',
         profile
       });
     } catch (error) {
-      console.error('Profile retrieval error:', error);
+      logger.error('Profile retrieval error:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error retrieving profile'
@@ -207,7 +209,7 @@ router.get('/verify',
         }
       });
     } catch (error) {
-      console.error('Token verification error:', error);
+      logger.error('Token verification error:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error during token verification'
@@ -250,7 +252,7 @@ router.get('/status', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Status check error:', error);
+    logger.error('Status check error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error during status check'

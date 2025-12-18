@@ -62,7 +62,7 @@ export class BlockchainLedger {
 
     block.mineBlock(this.difficulty);
 
-    console.log('Block successfully mined!');
+    logger.info('Block successfully mined!');
     this.chain.push(block);
 
     this.pendingTransactions = [];
@@ -194,7 +194,7 @@ export class Block {
       this.hash = this.calculateHash();
     }
 
-    console.log(`Block mined: ${this.hash}`);
+    logger.info(`Block mined: ${this.hash}`);
   }
 
   // Calculate block hash

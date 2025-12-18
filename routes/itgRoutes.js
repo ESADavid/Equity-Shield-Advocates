@@ -37,7 +37,7 @@ router.post('/calculate-strategy', authenticate, async (req, res) => {
       message: '👑 ITG Strategy calculated for King Sachem Yochanan'
     });
   } catch (error) {
-    console.error('ITG strategy calculation error:', error);
+    logger.error('ITG strategy calculation error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -60,7 +60,7 @@ router.get('/quick-assessment', authenticate, async (req, res) => {
       message: '✅ Quick assessment complete'
     });
   } catch (error) {
-    console.error('Quick assessment error:', error);
+    logger.error('Quick assessment error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -83,7 +83,7 @@ router.post('/initialize-kingdom', authenticate, async (req, res) => {
       message: '👑 Kingdom initialized successfully'
     });
   } catch (error) {
-    console.error('Kingdom initialization error:', error);
+    logger.error('Kingdom initialization error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -113,7 +113,7 @@ router.get('/kingdom-metrics', authenticate, async (req, res) => {
       fullMetrics: metrics
     });
   } catch (error) {
-    console.error('Get kingdom metrics error:', error);
+    logger.error('Get kingdom metrics error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -176,7 +176,7 @@ router.put('/update-metrics', authenticate, async (req, res) => {
       message: '✅ Kingdom metrics updated successfully'
     });
   } catch (error) {
-    console.error('Update metrics error:', error);
+    logger.error('Update metrics error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -199,7 +199,7 @@ router.post('/sacred-geometry/analyze', authenticate, async (req, res) => {
       message: '✨ Sacred geometry analysis complete'
     });
   } catch (error) {
-    console.error('Sacred geometry analysis error:', error);
+    logger.error('Sacred geometry analysis error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -224,7 +224,7 @@ router.post('/sacred-geometry/fibonacci', authenticate, async (req, res) => {
       goldenRatio: sacredGeometry.phi
     });
   } catch (error) {
-    console.error('Fibonacci calculation error:', error);
+    logger.error('Fibonacci calculation error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -248,7 +248,7 @@ router.post('/sacred-geometry/golden-ratio-growth', authenticate, async (req, re
       goldenRatio: sacredGeometry.phi
     });
   } catch (error) {
-    console.error('Golden ratio growth error:', error);
+    logger.error('Golden ratio growth error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -272,7 +272,7 @@ router.post('/sacred-geometry/covenant-multiplication', authenticate, async (req
       message: `💰 ${result.multiplier}-fold return prophesied`
     });
   } catch (error) {
-    console.error('Covenant multiplication error:', error);
+    logger.error('Covenant multiplication error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -296,7 +296,7 @@ router.post('/divine-wisdom/evaluate', authenticate, async (req, res) => {
       message: '🙏 Divine wisdom evaluation complete'
     });
   } catch (error) {
-    console.error('Divine wisdom evaluation error:', error);
+    logger.error('Divine wisdom evaluation error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -319,7 +319,7 @@ router.post('/divine-wisdom/multi-factor', authenticate, async (req, res) => {
       message: '✅ Multi-factor wisdom score calculated'
     });
   } catch (error) {
-    console.error('Multi-factor wisdom error:', error);
+    logger.error('Multi-factor wisdom error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -343,7 +343,7 @@ router.post('/divine-wisdom/prophetic-patterns', authenticate, async (req, res) 
       message: '🕊️ Prophetic patterns recognized'
     });
   } catch (error) {
-    console.error('Prophetic pattern recognition error:', error);
+    logger.error('Prophetic pattern recognition error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -374,7 +374,7 @@ router.post('/record-decision', authenticate, async (req, res) => {
       message: '📝 Decision recorded successfully'
     });
   } catch (error) {
-    console.error('Record decision error:', error);
+    logger.error('Record decision error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -405,7 +405,7 @@ router.get('/sovereignty-status', authenticate, async (req, res) => {
       message: '👑 Sovereignty verified'
     });
   } catch (error) {
-    console.error('Sovereignty status error:', error);
+    logger.error('Sovereignty status error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -436,7 +436,7 @@ router.get('/divine-favor', authenticate, async (req, res) => {
       message: '✨ Divine favor measured'
     });
   } catch (error) {
-    console.error('Divine favor error:', error);
+    logger.error('Divine favor error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -467,7 +467,7 @@ router.get('/kingdom-expansion', authenticate, async (req, res) => {
       message: '📈 Kingdom expansion tracked'
     });
   } catch (error) {
-    console.error('Kingdom expansion error:', error);
+    logger.error('Kingdom expansion error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -498,7 +498,7 @@ router.get('/covenant-status', authenticate, async (req, res) => {
       message: '📜 Covenant status retrieved'
     });
   } catch (error) {
-    console.error('Covenant status error:', error);
+    logger.error('Covenant status error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -539,7 +539,7 @@ router.get('/dashboard-data', authenticate, async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error('Dashboard data error:', error);
+    logger.error('Dashboard data error:', error);
     res.status(500).json({
       success: false,
       error: error.message

@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 /**
  * QUANTUM CONTROL CENTER
  * Advanced quantum-powered control and data synchronization system
@@ -110,9 +112,9 @@ class QuantumControlCenter extends EventEmitter {
         connectionId: this.jpmorganConnection.authToken.substring(0, 8)
       });
 
-      console.log('✅ JPMorgan connection established');
+      logger.info('✅ JPMorgan connection established');
     } catch (error) {
-      console.error('❌ JPMorgan connection failed:', error.message);
+      logger.error('❌ JPMorgan connection failed:', error.message);
       this.emit('jpmorgan-connection-failed', { error: error.message });
     }
   }
@@ -123,13 +125,13 @@ class QuantumControlCenter extends EventEmitter {
       await this.performDataSynchronization();
     }, this.syncStatus.syncInterval);
 
-    console.log('🔄 Data synchronization started');
+    logger.info('🔄 Data synchronization started');
   }
 
   async performDataSynchronization() {
     try {
       if (!this.jpmorganConnection?.connected) {
-        console.warn('⚠️ JPMorgan connection not available for sync');
+        logger.warn('⚠️ JPMorgan connection not available for sync');
         return;
       }
 
@@ -160,7 +162,7 @@ class QuantumControlCenter extends EventEmitter {
         dataPoints: this.syncStatus.dataPoints
       });
 
-      console.log(`✅ Data synchronization completed in ${syncDuration.toFixed(2)}ms`);
+      logger.info(`✅ Data synchronization completed in ${syncDuration.toFixed(2)}ms`);
 
     } catch (error) {
       this.syncStatus.errors++;
@@ -171,7 +173,7 @@ class QuantumControlCenter extends EventEmitter {
         timestamp: new Date().toISOString()
       });
 
-      console.error('❌ Data synchronization failed:', error.message);
+      logger.error('❌ Data synchronization failed:', error.message);
     }
   }
 
@@ -185,7 +187,7 @@ class QuantumControlCenter extends EventEmitter {
     };
 
     this.quantumEngine.setQuantumState('jpmorgan_accounts', accountsData);
-    console.log('📊 Accounts data synchronized');
+    logger.info('📊 Accounts data synchronized');
   }
 
   async syncTransactionsData() {
@@ -198,7 +200,7 @@ class QuantumControlCenter extends EventEmitter {
     };
 
     this.quantumEngine.setQuantumState('jpmorgan_transactions', transactionsData);
-    console.log('💰 Transactions data synchronized');
+    logger.info('💰 Transactions data synchronized');
   }
 
   async syncPaymentsData() {
@@ -212,7 +214,7 @@ class QuantumControlCenter extends EventEmitter {
     };
 
     this.quantumEngine.setQuantumState('jpmorgan_payments', paymentsData);
-    console.log('💳 Payments data synchronized');
+    logger.info('💳 Payments data synchronized');
   }
 
   async syncReportsData() {
@@ -226,7 +228,7 @@ class QuantumControlCenter extends EventEmitter {
     };
 
     this.quantumEngine.setQuantumState('jpmorgan_reports', reportsData);
-    console.log('📈 Reports data synchronized');
+    logger.info('📈 Reports data synchronized');
   }
 
   // Control Commands
@@ -433,7 +435,7 @@ class QuantumControlCenter extends EventEmitter {
     }
 
     // Restore data (simplified)
-    console.log(`Restoring data from backup ${backupId}`);
+    logger.info(`Restoring data from backup ${backupId}`);
 
     return {
       success: true,
@@ -465,7 +467,7 @@ class QuantumControlCenter extends EventEmitter {
 
   async executeEmergencyShutdownCommand(parameters) {
     // Execute emergency shutdown
-    console.log('🚨 EMERGENCY SHUTDOWN INITIATED');
+    logger.info('🚨 EMERGENCY SHUTDOWN INITIATED');
 
     // Stop all operations
     if (this.syncInterval) {
@@ -556,7 +558,7 @@ class QuantumControlCenter extends EventEmitter {
 
   // Emergency Controls
   async emergencyStop() {
-    console.log('🚨 EMERGENCY STOP ACTIVATED');
+    logger.info('🚨 EMERGENCY STOP ACTIVATED');
 
     // Stop all sync operations
     if (this.syncInterval) {
@@ -575,7 +577,7 @@ class QuantumControlCenter extends EventEmitter {
   }
 
   async emergencyRestart() {
-    console.log('🔄 EMERGENCY RESTART INITIATED');
+    logger.info('🔄 EMERGENCY RESTART INITIATED');
 
     // Restart all systems
     await this.initializeControlCenter();

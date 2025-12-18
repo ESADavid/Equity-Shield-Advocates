@@ -78,7 +78,7 @@ router.post('/wallet-decrypt', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan wallet decryption error:', error.response?.data || error.message);
+    logger.error('JPMorgan wallet decryption error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to decrypt wallet data',
@@ -121,7 +121,7 @@ router.post('/wallet-encrypt', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan wallet encryption error:', error.response?.data || error.message);
+    logger.error('JPMorgan wallet encryption error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to encrypt wallet data',
@@ -162,7 +162,7 @@ router.post('/wallet-validate', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan wallet validation error:', error.response?.data || error.message);
+    logger.error('JPMorgan wallet validation error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to validate wallet data',
@@ -207,7 +207,7 @@ router.post('/wallet-tokenize', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan wallet tokenization error:', error.response?.data || error.message);
+    logger.error('JPMorgan wallet tokenization error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to tokenize wallet data',
@@ -246,7 +246,7 @@ router.post('/wallet-detokenize', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan wallet detokenization error:', error.response?.data || error.message);
+    logger.error('JPMorgan wallet detokenization error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to detokenize wallet data',
@@ -303,7 +303,7 @@ router.post('/create-payment', createPaymentLimiter, validatePayment, async (req
     });
 
   } catch (error) {
-    console.error('JPMorgan payment creation error:', error.response?.data || error.message);
+    logger.error('JPMorgan payment creation error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to create payment',
@@ -330,7 +330,7 @@ router.get('/payment-status/:paymentId', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan payment status error:', error.response?.data || error.message);
+    logger.error('JPMorgan payment status error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to get payment status',
@@ -375,7 +375,7 @@ router.post('/refund', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan refund error:', error.response?.data || error.message);
+    logger.error('JPMorgan refund error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to process refund',
@@ -419,7 +419,7 @@ router.post('/capture', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan capture error:', error.response?.data || error.message);
+    logger.error('JPMorgan capture error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to capture payment',
@@ -460,7 +460,7 @@ router.post('/void', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan void error:', error.response?.data || error.message);
+    logger.error('JPMorgan void error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to void payment',
@@ -494,7 +494,7 @@ router.get('/transactions', generalLimiter, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('JPMorgan transactions error:', error.response?.data || error.message);
+    logger.error('JPMorgan transactions error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch transactions',
@@ -526,7 +526,7 @@ const verifyWebhookSignature = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Webhook verification error:', error);
+    logger.error('Webhook verification error:', error);
     res.status(500).json({ error: 'Webhook verification failed' });
   }
 };
@@ -536,42 +536,42 @@ router.post('/webhook', webhookLimiter, express.json(), verifyWebhookSignature, 
   try {
     const event = req.body;
 
-    console.log('Received JPMorgan webhook event:', event.type, event.id);
+    logger.info('Received JPMorgan webhook event:', event.type, event.id);
 
     switch (event.type) {
       case 'payment.authorized':
         // Handle authorized payment
-        console.log('Payment authorized:', event.data.paymentId);
+        logger.info('Payment authorized:', event.data.paymentId);
         break;
 
       case 'payment.captured':
         // Handle captured payment
-        console.log('Payment captured:', event.data.paymentId);
+        logger.info('Payment captured:', event.data.paymentId);
         break;
 
       case 'payment.refunded':
         // Handle refund
-        console.log('Payment refunded:', event.data.paymentId);
+        logger.info('Payment refunded:', event.data.paymentId);
         break;
 
       case 'payment.voided':
         // Handle voided payment
-        console.log('Payment voided:', event.data.paymentId);
+        logger.info('Payment voided:', event.data.paymentId);
         break;
 
       case 'payment.failed':
         // Handle failed payment
-        console.log('Payment failed:', event.data.paymentId, event.data.reason);
+        logger.info('Payment failed:', event.data.paymentId, event.data.reason);
         break;
 
       default:
-        console.log('Unhandled webhook event type:', event.type);
+        logger.info('Unhandled webhook event type:', event.type);
     }
 
     res.json({ received: true });
 
   } catch (error) {
-    console.error('Webhook processing error:', error);
+    logger.error('Webhook processing error:', error);
     res.status(500).json({ error: 'Webhook processing failed' });
   }
 });

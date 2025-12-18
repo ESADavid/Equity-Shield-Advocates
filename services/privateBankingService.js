@@ -83,7 +83,7 @@ class PrivateBankingService {
       });
     });
 
-    console.log(`Initialized ${accountsToInitialize.length} private banking accounts`);
+    logger.info(`Initialized ${accountsToInitialize.length} private banking accounts`);
   }
 
   /**
@@ -191,7 +191,7 @@ class PrivateBankingService {
       this.assetHistory.set(asset.id, []);
     });
 
-    console.log(`Initialized ${assetsToInitialize.length} asset classes`);
+    logger.info(`Initialized ${assetsToInitialize.length} asset classes`);
   }
 
   /**

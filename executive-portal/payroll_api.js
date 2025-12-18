@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 // Payroll API for Executive Dashboard
 // Simple mock API to provide employee data for payroll calculations
 
@@ -48,7 +50,7 @@ router.get('/employees', (req, res) => {
     try {
         res.json(employees);
     } catch (error) {
-        console.error('Error fetching employees:', error);
+        logger.error('Error fetching employees:', error);
         res.status(500).json({ error: 'Failed to fetch employee data' });
     }
 });
@@ -62,7 +64,7 @@ router.get('/employees/:id', (req, res) => {
         }
         res.json(employee);
     } catch (error) {
-        console.error('Error fetching employee:', error);
+        logger.error('Error fetching employee:', error);
         res.status(500).json({ error: 'Failed to fetch employee data' });
     }
 });
@@ -103,7 +105,7 @@ router.post('/calculate', (req, res) => {
 
         res.json(calculation);
     } catch (error) {
-        console.error('Error calculating payroll:', error);
+        logger.error('Error calculating payroll:', error);
         res.status(500).json({ error: 'Failed to calculate payroll' });
     }
 });

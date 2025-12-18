@@ -10,40 +10,40 @@ import { registerUser } from './auth/login_override.js';
 
 async function createOscarBroomeLogin() {
   try {
-    console.log('🚀 Creating login for Oscar Broome at JPMorgan.com');
-    console.log('=' .repeat(60));
+    logger.info('🚀 Creating login for Oscar Broome at JPMorgan.com');
+    logger.info('=' .repeat(60));
 
     const username = 'oscar.broome';
     const email = 'oscar.broome@jpmorgan.com';
     const password = 'SecurePass2024!';
     const role = 'admin';
 
-    console.log('👤 Registering user:', email);
+    logger.info('👤 Registering user:', email);
 
     const result = await registerUser(username, email, password, role);
 
     if (result.success) {
-      console.log('✅ User registered successfully!');
-      console.log('📋 User details:');
-      console.log('   - User ID:', result.userId);
-      console.log('   - Username:', username);
-      console.log('   - Email:', email);
-      console.log('   - Role:', role);
+      logger.info('✅ User registered successfully!');
+      logger.info('📋 User details:');
+      logger.info('   - User ID:', result.userId);
+      logger.info('   - Username:', username);
+      logger.info('   - Email:', email);
+      logger.info('   - Role:', role);
 
-      console.log('\n🔐 Login credentials:');
-      console.log('   - Username/Email:', email);
-      console.log('   - Password:', password);
+      logger.info('\n🔐 Login credentials:');
+      logger.info('   - Username/Email:', email);
+      logger.info('   - Password:', password);
 
-      console.log('\n🎉 Login creation completed successfully!');
-      console.log('💡 This uses the JSON-based login override system');
-      console.log('💡 For full MongoDB integration, install MongoDB and use the full script');
+      logger.info('\n🎉 Login creation completed successfully!');
+      logger.info('💡 This uses the JSON-based login override system');
+      logger.info('💡 For full MongoDB integration, install MongoDB and use the full script');
     } else {
-      console.log('❌ Registration failed');
+      logger.info('❌ Registration failed');
       process.exit(1);
     }
 
   } catch (error) {
-    console.error('❌ Failed to create login:', error.message);
+    logger.error('❌ Failed to create login:', error.message);
     process.exit(1);
   }
 }

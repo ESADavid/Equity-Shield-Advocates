@@ -49,12 +49,12 @@ async function fetchEmployeeIds() {
             return employeeIds;
         }
         else {
-            console.warn('Employee IDs data is not an array, returning empty list.');
+            logger.warn('Employee IDs data is not an array, returning empty list.');
             return [];
         }
     }
     catch (error) {
-        console.error('Failed to read employee IDs file:', error);
+        logger.error('Failed to read employee IDs file:', error);
         return [];
     }
 }

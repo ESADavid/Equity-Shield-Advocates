@@ -4,8 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-console.log('🚀 OSCAR BROOME REVENUE - Production Deployment Script');
-console.log('====================================================\n');
+logger.info('🚀 OSCAR BROOME REVENUE - Production Deployment Script');
+logger.info('====================================================\n');
 
 // Configuration
 const CONFIG = {
@@ -46,7 +46,7 @@ class ProductionDeployer {
       step: '🔧 '
     }[type] || '📝 ';
 
-    console.log(`[${timestamp}] ${prefix}${message}`);
+    logger.info(`[${timestamp}] ${prefix}${message}`);
   }
 
   async run() {
@@ -309,38 +309,38 @@ class ProductionDeployer {
   }
 
   showSummary() {
-    console.log('\n📊 DEPLOYMENT SUMMARY');
-    console.log('====================');
+    logger.info('\n📊 DEPLOYMENT SUMMARY');
+    logger.info('====================');
 
     if (this.errors.length > 0) {
-      console.log('\n❌ ERRORS:');
-      this.errors.forEach(error => console.log(`   - ${error}`));
+      logger.info('\n❌ ERRORS:');
+      this.errors.forEach(error => logger.info(`   - ${error}`));
     }
 
     if (this.warnings.length > 0) {
-      console.log('\n⚠️  WARNINGS:');
-      this.warnings.forEach(warning => console.log(`   - ${warning}`));
+      logger.info('\n⚠️  WARNINGS:');
+      this.warnings.forEach(warning => logger.info(`   - ${warning}`));
     }
 
-    console.log('\n✅ COMPLETED STEPS:');
-    console.log('   - Environment validation');
-    console.log('   - Dependency installation');
-    console.log('   - Configuration setup');
-    console.log('   - Pre-flight checks');
-    console.log('   - Production server startup');
+    logger.info('\n✅ COMPLETED STEPS:');
+    logger.info('   - Environment validation');
+    logger.info('   - Dependency installation');
+    logger.info('   - Configuration setup');
+    logger.info('   - Pre-flight checks');
+    logger.info('   - Production server startup');
 
-    console.log('\n🔧 NEXT STEPS:');
-    console.log('   1. Configure your production credentials in .env');
-    console.log('   2. Set up SSL certificates for HTTPS');
-    console.log('   3. Configure reverse proxy (nginx recommended)');
-    console.log('   4. Set up monitoring and alerting');
-    console.log('   5. Configure backup and recovery procedures');
+    logger.info('\n🔧 NEXT STEPS:');
+    logger.info('   1. Configure your production credentials in .env');
+    logger.info('   2. Set up SSL certificates for HTTPS');
+    logger.info('   3. Configure reverse proxy (nginx recommended)');
+    logger.info('   4. Set up monitoring and alerting');
+    logger.info('   5. Configure backup and recovery procedures');
 
-    console.log('\n📝 USEFUL COMMANDS:');
-    console.log('   - View logs: pm2 logs oscar-broome-revenue');
-    console.log('   - Monitor: pm2 monit');
-    console.log('   - Restart: pm2 restart oscar-broome-revenue');
-    console.log('   - Stop: pm2 stop oscar-broome-revenue');
+    logger.info('\n📝 USEFUL COMMANDS:');
+    logger.info('   - View logs: pm2 logs oscar-broome-revenue');
+    logger.info('   - Monitor: pm2 monit');
+    logger.info('   - Restart: pm2 restart oscar-broome-revenue');
+    logger.info('   - Stop: pm2 stop oscar-broome-revenue');
   }
 }
 
@@ -350,8 +350,8 @@ const deployer = new ProductionDeployer();
 deployer.run().then(() => {
   deployer.showSummary();
 }).catch((error) => {
-  console.error('\n💥 DEPLOYMENT FAILED');
-  console.error('==================');
-  console.error(error.message);
+  logger.error('\n💥 DEPLOYMENT FAILED');
+  logger.error('==================');
+  logger.error(error.message);
   process.exit(1);
 });

@@ -194,7 +194,7 @@ class QuantumPayrollSystem extends EventEmitter {
       await this.addEmployee(employee);
     }
 
-    console.log(`✅ Initialized ${employees.length} employees in quantum payroll system`);
+    logger.info(`✅ Initialized ${employees.length} employees in quantum payroll system`);
   }
 
   // Employee Management
@@ -439,9 +439,9 @@ class QuantumPayrollSystem extends EventEmitter {
 
       try {
         await this.transactionEngine.processTransaction(transaction);
-        console.log(`✅ Processed payroll payment for ${employee.name}: $${employeePayroll.netPay.toLocaleString()}`);
+        logger.info(`✅ Processed payroll payment for ${employee.name}: $${employeePayroll.netPay.toLocaleString()}`);
       } catch (error) {
-        console.error(`❌ Failed to process payroll payment for ${employee.name}:`, error.message);
+        logger.error(`❌ Failed to process payroll payment for ${employee.name}:`, error.message);
       }
     }
   }

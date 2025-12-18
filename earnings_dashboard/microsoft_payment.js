@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
@@ -53,7 +55,7 @@ async function getAuthToken() {
 
     return response.data.access_token;
   } catch (error) {
-    console.error('Microsoft authentication error:', error.response?.data || error.message);
+    logger.error('Microsoft authentication error:', error.response?.data || error.message);
     throw new Error('Failed to authenticate with Microsoft Dynamics 365');
   }
 }
@@ -118,7 +120,7 @@ router.post('/create-sales-order', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Microsoft sales order creation error:', error.response?.data || error.message);
+    logger.error('Microsoft sales order creation error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to create sales order',
@@ -145,7 +147,7 @@ router.get('/order-status/:orderId', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Microsoft order status error:', error.response?.data || error.message);
+    logger.error('Microsoft order status error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to get order status',
@@ -195,7 +197,7 @@ router.post('/create-payment', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Microsoft payment creation error:', error.response?.data || error.message);
+    logger.error('Microsoft payment creation error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to create payment',
@@ -222,7 +224,7 @@ router.get('/customer/:customerId', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Microsoft customer lookup error:', error.response?.data || error.message);
+    logger.error('Microsoft customer lookup error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to get customer information',

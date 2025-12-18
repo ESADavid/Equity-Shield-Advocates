@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 const express = require('express');
 const router = express.Router();
 
@@ -78,7 +80,7 @@ class PaymentOrchestrator {
     try {
       return await paymentProvider.processPayment(paymentData);
     } catch (error) {
-      console.error(`Payment processing error for ${provider}:`, error);
+      logger.error(`Payment processing error for ${provider}:`, error);
       throw error;
     }
   }
@@ -92,7 +94,7 @@ class PaymentOrchestrator {
     try {
       return await paymentProvider.getPaymentStatus(paymentId);
     } catch (error) {
-      console.error(`Payment status error for ${provider}:`, error);
+      logger.error(`Payment status error for ${provider}:`, error);
       throw error;
     }
   }
@@ -106,7 +108,7 @@ class PaymentOrchestrator {
     try {
       return await paymentProvider.refundPayment(paymentId, amount);
     } catch (error) {
-      console.error(`Payment refund error for ${provider}:`, error);
+      logger.error(`Payment refund error for ${provider}:`, error);
       throw error;
     }
   }
@@ -228,7 +230,7 @@ class PaymentOrchestrator {
       const response = await axios(config);
       return response.data;
     } catch (error) {
-      console.error(`Python service proxy error for ${provider}:`, error.message);
+      logger.error(`Python service proxy error for ${provider}:`, error.message);
       throw new Error(`Failed to communicate with ${provider} payment service`);
     }
   }
@@ -251,7 +253,7 @@ router.post('/create-payment', async (req, res) => {
     const result = await orchestrator.processPayment(provider, paymentData);
     res.json(result);
   } catch (error) {
-    console.error('Payment creation error:', error);
+    logger.error('Payment creation error:', error);
     res.status(500).json({
       success: false,
       message: 'Payment processing failed',
@@ -266,7 +268,7 @@ router.get('/payment-status/:provider/:paymentId', async (req, res) => {
     const result = await orchestrator.getPaymentStatus(provider, paymentId);
     res.json(result);
   } catch (error) {
-    console.error('Payment status error:', error);
+    logger.error('Payment status error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get payment status',
@@ -283,7 +285,7 @@ router.post('/refund/:provider/:paymentId', async (req, res) => {
     const result = await orchestrator.refundPayment(provider, paymentId, amount);
     res.json(result);
   } catch (error) {
-    console.error('Payment refund error:', error);
+    logger.error('Payment refund error:', error);
     res.status(500).json({
       success: false,
       message: 'Refund processing failed',

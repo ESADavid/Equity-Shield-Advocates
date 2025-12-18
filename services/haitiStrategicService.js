@@ -76,7 +76,7 @@ class HaitiStrategicService {
     // Initialize strategic partners
     this.initializeStrategicPartners();
 
-    console.log('Haiti Strategic Portfolio Initialized');
+    logger.info('Haiti Strategic Portfolio Initialized');
   }
 
   /**

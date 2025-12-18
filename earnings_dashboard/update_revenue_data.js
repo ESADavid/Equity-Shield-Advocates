@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 const fs = require('node:fs').promises;
 const path = require('node:path');
 
@@ -5,7 +7,7 @@ const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/rev
 
 function validateNumber(value, fieldName) {
     if (typeof value !== 'number' || Number.isNaN(value) || value < 0) {
-        console.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
+        logger.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
         return 0;
     }
     return value;
@@ -92,11 +94,11 @@ function integratePayroll(data) {
             if (typeof payrollEntry.amount === 'number' && !Number.isNaN(payrollEntry.amount) && payrollEntry.amount >= 0) {
                 payrollTotal += payrollEntry.amount;
             } else {
-                console.warn('Invalid payroll entry amount detected, skipping:', payrollEntry);
+                logger.warn('Invalid payroll entry amount detected, skipping:', payrollEntry);
             }
         }
         data.payrollTotal = payrollTotal;
-        console.log(`Integrated payroll data total amount: ${payrollTotal}`);
+        logger.info(`Integrated payroll data total amount: ${payrollTotal}`);
     }
 }
 
@@ -128,7 +130,7 @@ async function updateRevenueData(filePath, incremental = false) {
         ensurePurchasesStructure(data);
         validatePurchases(data);
         if (typeof data.totalRevenue !== 'number' || Number.isNaN(data.totalRevenue)) {
-            console.warn('Invalid or missing totalRevenue, defaulting to 0.');
+            logger.warn('Invalid or missing totalRevenue, defaulting to 0.');
             data.totalRevenue = 0;
         }
         addSampleData(data, incremental);
@@ -137,10 +139,10 @@ async function updateRevenueData(filePath, incremental = false) {
         integratePayroll(data);
         addAuditTrail(data, incremental);
         await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
-        console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
+        logger.info('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
         return true;
     } catch (error) {
-        console.error('Error accessing, parsing, or updating revenue data file:', error.message);
+        logger.error('Error accessing, parsing, or updating revenue data file:', error.message);
         return false;
     }
 }

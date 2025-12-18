@@ -37,7 +37,7 @@ class StagingDeployment {
             error: '\x1b[31m',
             reset: '\x1b[0m'
         };
-        console.log(`${colors[type]}[${timestamp}] ${message}${colors.reset}`);
+        logger.info(`${colors[type]}[${timestamp}] ${message}${colors.reset}`);
     }
 
     async run() {
