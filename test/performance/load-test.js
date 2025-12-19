@@ -22,14 +22,14 @@ describe('Load Testing', () => {
           nationality: 'US',
           ssn: '123-45-6789',
           email: `loadtest${i}@test.com`,
-          phone: '+1234567890'
+          phone: '+1234567890',
         })
       );
 
       const results = await Promise.all(promises);
       const duration = Date.now() - startTime;
 
-      expect(results.every(r => r.success)).toBe(true);
+      expect(results.every((r) => r.success)).toBe(true);
       expect(duration).toBeLessThan(10000); // 10 seconds
     });
 
@@ -45,15 +45,15 @@ describe('Load Testing', () => {
           data: {
             citizenName: `User ${i}`,
             citizenId: `CIT-${i}`,
-            registrationDate: new Date().toISOString()
-          }
+            registrationDate: new Date().toISOString(),
+          },
         })
       );
 
       const results = await Promise.all(promises);
       const duration = Date.now() - startTime;
 
-      expect(results.filter(r => r.success).length).toBeGreaterThan(450);
+      expect(results.filter((r) => r.success).length).toBeGreaterThan(450);
       expect(duration).toBeLessThan(15000); // 15 seconds
     });
   });
@@ -73,7 +73,7 @@ describe('Load Testing', () => {
           nationality: 'US',
           ssn: '123-45-6789',
           email: `sustained${i}@test.com`,
-          phone: '+1234567890'
+          phone: '+1234567890',
         });
         times.push(Date.now() - start);
       }

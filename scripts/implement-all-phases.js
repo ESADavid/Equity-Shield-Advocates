@@ -10,13 +10,14 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { info, error } from '../utils/loggerWrapper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.join(__dirname, '..');
 
-console.log('🚀 Implementing All Phases - Complete Code Generation');
-console.log('='.repeat(80));
+info('🚀 Implementing All Phases - Complete Code Generation');
+info('='.repeat(80));
 
 let created = 0;
 let failed = 0;
@@ -33,11 +34,11 @@ function createFile(filePath, content) {
     }
     
     fs.writeFileSync(fullPath, content, 'utf8');
-    console.log(`✅ Created: ${filePath}`);
+    info(`✅ Created: ${filePath}`);
     created++;
     return true;
   } catch (err) {
-    console.error(`❌ Failed: ${filePath} - ${err.message}`);
+    error(`❌ Failed: ${filePath} - ${err.message}`);
     errors.push({ file: filePath, error: err.message });
     failed++;
     return false;
@@ -546,29 +547,29 @@ describe('UBI Payment Flow Integration', () => {
 };
 
 // Create all files
-console.log(\`\nCreating \${Object.keys(files).length} files...\n\`);
+info(\`\nCreating \${Object.keys(files).length} files...\n\`);
 
 for (const [filePath, content] of Object.entries(files)) {
   createFile(filePath, content);
 }
 
 // Summary
-console.log('\n' + '='.repeat(80));
-console.log('📊 Implementation Summary');
-console.log('='.repeat(80));
-console.log(\`✅ Successfully created: \${created} files\`);
-console.log(\`❌ Failed to create: \${failed} files\`);
+info('\n' + '='.repeat(80));
+info('📊 Implementation Summary');
+info('='.repeat(80));
+info(\`✅ Successfully created: \${created} files\`);
+info(\`❌ Failed to create: \${failed} files\`);
 
 if (errors.length > 0) {
-  console.log('\n❌ Errors:');
+  info('\n❌ Errors:');
   errors.forEach(({ file, error }) => {
-    console.log(\`  - \${file}: \${error}\`);
+    info(\`  - \${file}: \${error}\`);
   });
 }
 
-console.log('\n✅ Phase 2 & 3 Implementation Complete!');
-console.log('\nNext steps:');
-console.log('1. Review the generated files');
-console.log('2. Run: npm install (if needed)');
-console.log('3. Run: npm test (to run tests)');
-console.log('4. Start the server and test endpoints');
+info('\n✅ Phase 2 & 3 Implementation Complete!');
+info('\nNext steps:');
+info('1. Review the generated files');
+info('2. Run: npm install (if needed)');
+info('3. Run: npm test (to run tests)');
+info('4. Start the server and test endpoints');

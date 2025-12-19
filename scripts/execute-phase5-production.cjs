@@ -3,7 +3,7 @@
 /**
  * Phase 5: Production Deployment Script
  * Full production deployment for OSCAR BROOME REVENUE
- * 
+ *
  * OWLBAN GROUP / House of David
  */
 
@@ -29,30 +29,31 @@ class ProductionDeployer {
 
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    const prefix = {
-      info: 'ℹ️ ',
-      success: '✅ ',
-      warning: '⚠️ ',
-      error: '❌ ',
-      step: '🔧 ',
-      critical: '🚨 ',
-    }[type] || '📝 ';
+    const prefix =
+      {
+        info: 'ℹ️ ',
+        success: '✅ ',
+        warning: '⚠️ ',
+        error: '❌ ',
+        step: '🔧 ',
+        critical: '🚨 ',
+      }[type] || '📝 ';
 
     console.log(`[${timestamp}] ${prefix}${message}`);
   }
 
   exec(command, description) {
     this.log(description, 'step');
-    
+
     if (this.dryRun) {
       this.log(`DRY RUN: ${command}`, 'info');
       return '';
     }
 
     try {
-      const output = execSync(command, { 
+      const output = execSync(command, {
         encoding: 'utf8',
-        stdio: this.verbose ? 'inherit' : 'pipe'
+        stdio: this.verbose ? 'inherit' : 'pipe',
       });
       return output;
     } catch (error) {
@@ -68,26 +69,29 @@ class ProductionDeployer {
 
     const rl = readline.createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
     });
 
     return new Promise((resolve) => {
-      rl.question('\n🚨 Deploy to PRODUCTION? Type "DEPLOY PRODUCTION" to confirm: ', (answer) => {
-        rl.close();
-        if (answer === 'DEPLOY PRODUCTION') {
-          resolve(true);
-        } else {
-          console.log('❌ Production deployment cancelled');
-          process.exit(0);
+      rl.question(
+        '\n🚨 Deploy to PRODUCTION? Type "DEPLOY PRODUCTION" to confirm: ',
+        (answer) => {
+          rl.close();
+          if (answer === 'DEPLOY PRODUCTION') {
+            resolve(true);
+          } else {
+            console.log('❌ Production deployment cancelled');
+            process.exit(0);
+          }
         }
-      });
+      );
     });
   }
 
   async run() {
     try {
       this.log('Starting production deployment process...', 'critical');
-      
+
       if (this.dryRun) {
         this.log('Running in DRY RUN mode - no actual changes', 'warning');
       }
@@ -108,7 +112,6 @@ class ProductionDeployer {
 
       this.log('Production deployment completed successfully!', 'success');
       this.showSummary();
-
     } catch (error) {
       this.log(`Production deployment failed: ${error.message}`, 'error');
       this.errors.push(error.message);
@@ -144,7 +147,7 @@ class ProductionDeployer {
       'QUICKBOOKS_CLIENT_ID',
       'PLAID_CLIENT_ID',
       'JWT_SECRET',
-      'ENCRYPTION_KEY'
+      'ENCRYPTION_KEY',
     ];
 
     for (const envVar of requiredEnvVars) {
@@ -162,16 +165,19 @@ class ProductionDeployer {
     const backupCommands = [
       {
         name: 'Backup production database',
-        command: 'kubectl exec -n oscar-broome-production mongodb-0 -- mongodump --archive=/tmp/backup.archive'
+        command:
+          'kubectl exec -n oscar-broome-production mongodb-0 -- mongodump --archive=/tmp/backup.archive',
       },
       {
         name: 'Copy backup locally',
-        command: 'kubectl cp oscar-broome-production/mongodb-0:/tmp/backup.archive ./production-backup.archive'
+        command:
+          'kubectl cp oscar-broome-production/mongodb-0:/tmp/backup.archive ./production-backup.archive',
       },
       {
         name: 'Backup Kubernetes configs',
-        command: 'kubectl get all -n oscar-broome-production -o yaml > production-k8s-backup.yaml'
-      }
+        command:
+          'kubectl get all -n oscar-broome-production -o yaml > production-k8s-backup.yaml',
+      },
     ];
 
     for (const cmd of backupCommands) {
@@ -204,7 +210,7 @@ class ProductionDeployer {
       const envContent = Object.entries(productionConfig)
         .map(([key, value]) => `${key}=${value}`)
         .join('\n');
-      
+
       fs.writeFileSync('.env.production', envContent);
       this.log('Production environment configured', 'success');
     } else {
@@ -219,22 +225,25 @@ class ProductionDeployer {
       {
         name: 'Create production namespace',
         command: 'kubectl create namespace oscar-broome-production',
-        skipOnError: true
+        skipOnError: true,
       },
       {
         name: 'Apply production secrets',
-        command: 'kubectl apply -f k8s/production-secrets.yml -n oscar-broome-production'
+        command:
+          'kubectl apply -f k8s/production-secrets.yml -n oscar-broome-production',
       },
       {
         name: 'Deploy load balancer',
-        command: 'kubectl apply -f k8s/load-balancer.yml -n oscar-broome-production',
-        skipOnError: true
+        command:
+          'kubectl apply -f k8s/load-balancer.yml -n oscar-broome-production',
+        skipOnError: true,
       },
       {
         name: 'Configure SSL/TLS',
-        command: 'kubectl apply -f k8s/tls-certificates.yml -n oscar-broome-production',
-        skipOnError: true
-      }
+        command:
+          'kubectl apply -f k8s/tls-certificates.yml -n oscar-broome-production',
+        skipOnError: true,
+      },
     ];
 
     for (const task of tasks) {
@@ -257,21 +266,25 @@ class ProductionDeployer {
     const dbTasks = [
       {
         name: 'Deploy MongoDB cluster',
-        command: 'kubectl apply -f k8s/database-production.yml -n oscar-broome-production'
+        command:
+          'kubectl apply -f k8s/database-production.yml -n oscar-broome-production',
       },
       {
         name: 'Wait for MongoDB ready',
-        command: 'kubectl wait --for=condition=ready pod -l app=mongodb -n oscar-broome-production --timeout=600s'
+        command:
+          'kubectl wait --for=condition=ready pod -l app=mongodb -n oscar-broome-production --timeout=600s',
       },
       {
         name: 'Initialize MongoDB replica set',
-        command: 'kubectl exec -n oscar-broome-production mongodb-0 -- mongo --eval "rs.initiate()"',
-        skipOnError: true
+        command:
+          'kubectl exec -n oscar-broome-production mongodb-0 -- mongo --eval "rs.initiate()"',
+        skipOnError: true,
       },
       {
         name: 'Deploy Redis cluster',
-        command: 'kubectl wait --for=condition=ready pod -l app=redis -n oscar-broome-production --timeout=300s'
-      }
+        command:
+          'kubectl wait --for=condition=ready pod -l app=redis -n oscar-broome-production --timeout=300s',
+      },
     ];
 
     for (const task of dbTasks) {
@@ -294,31 +307,37 @@ class ProductionDeployer {
     const appTasks = [
       {
         name: 'Build production image',
-        command: 'docker build -t oscar-broome-revenue:production -f Dockerfile.production .'
+        command:
+          'docker build -t oscar-broome-revenue:production -f Dockerfile.production .',
       },
       {
         name: 'Tag production image',
-        command: 'docker tag oscar-broome-revenue:production registry.oscarbroome.com/oscar-broome-revenue:latest',
-        skipOnError: true
+        command:
+          'docker tag oscar-broome-revenue:production registry.oscarbroome.com/oscar-broome-revenue:latest',
+        skipOnError: true,
       },
       {
         name: 'Push to registry',
-        command: 'docker push registry.oscarbroome.com/oscar-broome-revenue:latest',
-        skipOnError: true
+        command:
+          'docker push registry.oscarbroome.com/oscar-broome-revenue:latest',
+        skipOnError: true,
       },
       {
         name: 'Deploy application',
-        command: 'kubectl apply -f k8s/production-deployment.yml -n oscar-broome-production'
+        command:
+          'kubectl apply -f k8s/production-deployment.yml -n oscar-broome-production',
       },
       {
         name: 'Wait for application ready',
-        command: 'kubectl wait --for=condition=ready pod -l app=oscar-broome-revenue -n oscar-broome-production --timeout=600s'
+        command:
+          'kubectl wait --for=condition=ready pod -l app=oscar-broome-revenue -n oscar-broome-production --timeout=600s',
       },
       {
         name: 'Configure ingress',
-        command: 'kubectl apply -f k8s/production-ingress.yml -n oscar-broome-production',
-        skipOnError: true
-      }
+        command:
+          'kubectl apply -f k8s/production-ingress.yml -n oscar-broome-production',
+        skipOnError: true,
+      },
     ];
 
     for (const task of appTasks) {
@@ -341,23 +360,27 @@ class ProductionDeployer {
     const monitoringTasks = [
       {
         name: 'Deploy monitoring stack',
-        command: 'kubectl apply -f k8s/monitoring-stack.yml -n oscar-broome-production'
+        command:
+          'kubectl apply -f k8s/monitoring-stack.yml -n oscar-broome-production',
       },
       {
         name: 'Configure Prometheus',
-        command: 'kubectl apply -f k8s/prometheus-config.yml -n oscar-broome-production',
-        skipOnError: true
+        command:
+          'kubectl apply -f k8s/prometheus-config.yml -n oscar-broome-production',
+        skipOnError: true,
       },
       {
         name: 'Deploy Grafana',
-        command: 'kubectl apply -f k8s/grafana-deployment.yml -n oscar-broome-production',
-        skipOnError: true
+        command:
+          'kubectl apply -f k8s/grafana-deployment.yml -n oscar-broome-production',
+        skipOnError: true,
       },
       {
         name: 'Setup alerts',
-        command: 'kubectl apply -f k8s/alertmanager-config.yml -n oscar-broome-production',
-        skipOnError: true
-      }
+        command:
+          'kubectl apply -f k8s/alertmanager-config.yml -n oscar-broome-production',
+        skipOnError: true,
+      },
     ];
 
     for (const task of monitoringTasks) {
@@ -380,19 +403,22 @@ class ProductionDeployer {
     const securityTasks = [
       {
         name: 'Apply network policies',
-        command: 'kubectl apply -f k8s/network-policies.yml -n oscar-broome-production',
-        skipOnError: true
+        command:
+          'kubectl apply -f k8s/network-policies.yml -n oscar-broome-production',
+        skipOnError: true,
       },
       {
         name: 'Configure WAF rules',
-        command: 'kubectl apply -f k8s/waf-rules.yml -n oscar-broome-production',
-        skipOnError: true
+        command:
+          'kubectl apply -f k8s/waf-rules.yml -n oscar-broome-production',
+        skipOnError: true,
       },
       {
         name: 'Enable pod security policies',
-        command: 'kubectl apply -f k8s/pod-security-policies.yml -n oscar-broome-production',
-        skipOnError: true
-      }
+        command:
+          'kubectl apply -f k8s/pod-security-policies.yml -n oscar-broome-production',
+        skipOnError: true,
+      },
     ];
 
     for (const task of securityTasks) {
@@ -411,20 +437,20 @@ class ProductionDeployer {
     const validations = [
       {
         name: 'Check all pods running',
-        command: 'kubectl get pods -n oscar-broome-production'
+        command: 'kubectl get pods -n oscar-broome-production',
       },
       {
         name: 'Check services',
-        command: 'kubectl get services -n oscar-broome-production'
+        command: 'kubectl get services -n oscar-broome-production',
       },
       {
         name: 'Test health endpoint',
-        command: 'curl -f https://api.oscarbroome.com/health'
+        command: 'curl -f https://api.oscarbroome.com/health',
       },
       {
         name: 'Test authentication',
-        command: 'curl -f https://api.oscarbroome.com/auth/status'
-      }
+        command: 'curl -f https://api.oscarbroome.com/auth/status',
+      },
     ];
 
     for (const validation of validations) {
@@ -447,18 +473,18 @@ class ProductionDeployer {
       {
         name: 'Smoke tests',
         command: 'npm run test:smoke:production',
-        skipOnError: true
+        skipOnError: true,
       },
       {
         name: 'Integration tests',
         command: 'npm run test:integration:production',
-        skipOnError: true
+        skipOnError: true,
       },
       {
         name: 'Performance tests',
         command: 'npm run test:performance:production',
-        skipOnError: true
-      }
+        skipOnError: true,
+      },
     ];
 
     for (const test of tests) {
@@ -481,10 +507,10 @@ class ProductionDeployer {
     if (!this.dryRun) {
       // Gradual traffic ramp-up
       const rampSteps = [10, 25, 50, 75, 100];
-      
+
       for (const percentage of rampSteps) {
         this.log(`Ramping traffic to ${percentage}%...`, 'info');
-        
+
         // Update traffic split
         try {
           this.exec(
@@ -492,13 +518,15 @@ class ProductionDeployer {
             `Set traffic to ${percentage}%`
           );
         } catch (error) {
-          this.warnings.push(`Traffic ramp to ${percentage}%: ${error.message}`);
+          this.warnings.push(
+            `Traffic ramp to ${percentage}%: ${error.message}`
+          );
         }
-        
+
         // Wait and monitor
         this.log(`Monitoring for 2 minutes...`, 'info');
         if (!this.dryRun) {
-          await new Promise(resolve => setTimeout(resolve, 120000));
+          await new Promise((resolve) => setTimeout(resolve, 120000));
         }
       }
     }
@@ -544,8 +572,8 @@ class ProductionDeployer {
         'Monitor production for 24 hours',
         'Verify all integrations',
         'Check performance metrics',
-        'Prepare for scaling'
-      ]
+        'Prepare for scaling',
+      ],
     };
 
     if (!this.dryRun) {
@@ -593,7 +621,9 @@ class ProductionDeployer {
     console.log('   2. Check Grafana: https://monitoring.oscarbroome.com');
     console.log('   3. Review logs: kubectl logs -n oscar-broome-production');
     console.log('   4. Monitor for 24 hours');
-    console.log('   5. Proceed to scaling: node scripts/execute-phase5-scaling.cjs');
+    console.log(
+      '   5. Proceed to scaling: node scripts/execute-phase5-scaling.cjs'
+    );
 
     console.log('\n📝 PRODUCTION METRICS:');
     console.log('   - Target: 11.5M citizens');
@@ -605,7 +635,7 @@ class ProductionDeployer {
 
 // Run the production deployer
 const deployer = new ProductionDeployer();
-deployer.run().catch(error => {
+deployer.run().catch((error) => {
   console.error('\n💥 PRODUCTION DEPLOYMENT FAILED');
   console.error('='.repeat(60));
   console.error(error.message);

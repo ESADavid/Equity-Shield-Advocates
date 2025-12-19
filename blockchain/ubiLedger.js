@@ -19,16 +19,16 @@ class UBILedger {
         timestamp: new Date().toISOString(),
         paymentId: payment._id.toString(),
         transactionId: payment.transactionId,
-        status: payment.status
+        status: payment.status,
       };
-      
+
       const hash = await blockchainService.addBlock(record);
       info(`UBI payment recorded on blockchain: ${hash}`);
-      
+
       // Update payment with blockchain hash
       payment.blockchainHash = hash;
       await payment.save();
-      
+
       return hash;
     } catch (err) {
       error('Failed to record payment on blockchain:', err);
@@ -56,13 +56,16 @@ class UBILedger {
   async getPaymentChain(citizenId) {
     try {
       const chain = await blockchainService.getChain();
-      const citizenPayments = chain.filter(block => 
-        block.data && 
-        block.data.type === 'UBI_PAYMENT' &&
-        block.data.citizenId === citizenId.toString()
+      const citizenPayments = chain.filter(
+        (block) =>
+          block.data &&
+          block.data.type === 'UBI_PAYMENT' &&
+          block.data.citizenId === citizenId.toString()
       );
-      
-      info(`Retrieved ${citizenPayments.length} blockchain records for citizen ${citizenId}`);
+
+      info(
+        `Retrieved ${citizenPayments.length} blockchain records for citizen ${citizenId}`
+      );
       return citizenPayments;
     } catch (err) {
       error('Failed to get payment chain:', err);
@@ -76,13 +79,15 @@ class UBILedger {
   async getAuditTrail(startDate, endDate) {
     try {
       const chain = await blockchainService.getChain();
-      const ubiPayments = chain.filter(block => {
+      const ubiPayments = chain.filter((block) => {
         if (!block.data || block.data.type !== 'UBI_PAYMENT') return false;
         const blockDate = new Date(block.data.timestamp);
         return blockDate >= startDate && blockDate <= endDate;
       });
-      
-      info(`Retrieved ${ubiPayments.length} UBI payments from blockchain audit trail`);
+
+      info(
+        `Retrieved ${ubiPayments.length} UBI payments from blockchain audit trail`
+      );
       return ubiPayments;
     } catch (err) {
       error('Failed to get audit trail:', err);

@@ -22,8 +22,8 @@ describe('Notification Delivery Integration Flow', () => {
           citizenName: 'Test User',
           amount: '1000',
           paymentDate: new Date().toISOString(),
-          reference: 'TEST-REF-001'
-        }
+          reference: 'TEST-REF-001',
+        },
       });
 
       expect(result.success).toBe(true);
@@ -39,17 +39,26 @@ describe('Notification Delivery Integration Flow', () => {
           userId: 'user-1',
           templateId: 'citizen-welcome',
           channels: ['email'],
-          data: { citizenName: 'User 1', citizenId: 'CIT-001', registrationDate: new Date().toISOString() }
+          data: {
+            citizenName: 'User 1',
+            citizenId: 'CIT-001',
+            registrationDate: new Date().toISOString(),
+          },
         },
         {
           userId: 'user-2',
           templateId: 'citizen-welcome',
           channels: ['email'],
-          data: { citizenName: 'User 2', citizenId: 'CIT-002', registrationDate: new Date().toISOString() }
-        }
+          data: {
+            citizenName: 'User 2',
+            citizenId: 'CIT-002',
+            registrationDate: new Date().toISOString(),
+          },
+        },
       ];
 
-      const result = await notificationService.sendBatchNotifications(notifications);
+      const result =
+        await notificationService.sendBatchNotifications(notifications);
 
       expect(result.success).toBe(true);
       expect(result.total).toBe(2);
@@ -59,17 +68,20 @@ describe('Notification Delivery Integration Flow', () => {
 
   describe('Preference Management Flow', () => {
     test('should update and retrieve preferences', () => {
-      const updateResult = notificationService.updatePreferences('test-user-001', {
-        email: true,
-        sms: false,
-        push: true,
-        inApp: true
-      });
+      const updateResult = notificationService.updatePreferences(
+        'test-user-001',
+        {
+          email: true,
+          sms: false,
+          push: true,
+          inApp: true,
+        }
+      );
 
       expect(updateResult.success).toBe(true);
 
       const getResult = notificationService.getPreferences('test-user-001');
-      
+
       expect(getResult.success).toBe(true);
       expect(getResult.preferences.email).toBe(true);
       expect(getResult.preferences.sms).toBe(false);

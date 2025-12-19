@@ -25,25 +25,31 @@ describe('Education Enrollment Integration', () => {
       nationality: 'US',
       ssn: '987-65-4321',
       email: 'student@test.com',
-      phone: '+1234567890'
+      phone: '+1234567890',
     });
 
     testCitizenId = registration.citizenId;
 
     // Create course
-    const course = await learningService.createCourse({
-      title: 'Integration Test Course',
-      description: 'Test course for integration testing',
-      category: 'technology',
-      level: 'beginner',
-      duration: 40
-    }, 'test-admin');
+    const course = await learningService.createCourse(
+      {
+        title: 'Integration Test Course',
+        description: 'Test course for integration testing',
+        category: 'technology',
+        level: 'beginner',
+        duration: 40,
+      },
+      'test-admin'
+    );
 
     testCourseId = course.courseId;
   });
 
   test('should enroll citizen in course', async () => {
-    const result = await portalService.enrollInCourse(testCitizenId, testCourseId);
+    const result = await portalService.enrollInCourse(
+      testCitizenId,
+      testCourseId
+    );
     expect(result.success).toBe(true);
   });
 
@@ -54,10 +60,14 @@ describe('Education Enrollment Integration', () => {
   });
 
   test('should track learning progress', async () => {
-    const result = await learningService.updateProgress(testCitizenId, testCourseId, {
-      progress: 50,
-      completedLessons: 5
-    });
+    const result = await learningService.updateProgress(
+      testCitizenId,
+      testCourseId,
+      {
+        progress: 50,
+        completedLessons: 5,
+      }
+    );
     expect(result.success).toBe(true);
   });
 });

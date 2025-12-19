@@ -21,7 +21,7 @@ describe('Service Performance Tests', () => {
         nationality: 'US',
         ssn: '123-45-6789',
         email: 'perf@test.com',
-        phone: '+1234567890'
+        phone: '+1234567890',
       });
 
       const duration = Date.now() - startTime;
@@ -41,7 +41,7 @@ describe('Service Performance Tests', () => {
           nationality: 'US',
           ssn: '123-45-6789',
           email: `user${i}@test.com`,
-          phone: '+1234567890'
+          phone: '+1234567890',
         })
       );
 
@@ -64,8 +64,8 @@ describe('Service Performance Tests', () => {
         data: {
           citizenName: 'Test',
           citizenId: 'CIT-001',
-          registrationDate: new Date().toISOString()
-        }
+          registrationDate: new Date().toISOString(),
+        },
       });
 
       const duration = Date.now() - startTime;
@@ -83,8 +83,8 @@ describe('Service Performance Tests', () => {
         data: {
           citizenName: `User ${i}`,
           citizenId: `CIT-${i}`,
-          registrationDate: new Date().toISOString()
-        }
+          registrationDate: new Date().toISOString(),
+        },
       }));
 
       await notificationService.sendBatchNotifications(notifications);
@@ -99,17 +99,20 @@ describe('Service Performance Tests', () => {
       const partnerService = new PartnerCoordinationService();
       const startTime = Date.now();
 
-      await partnerService.onboardPartner({
-        name: 'Performance Test Partner',
-        type: 'corporate',
-        contact: {
-          primaryContact: {
-            name: 'Test',
-            email: 'test@partner.com',
-            phone: '+1234567890'
-          }
-        }
-      }, 'test-admin');
+      await partnerService.onboardPartner(
+        {
+          name: 'Performance Test Partner',
+          type: 'corporate',
+          contact: {
+            primaryContact: {
+              name: 'Test',
+              email: 'test@partner.com',
+              phone: '+1234567890',
+            },
+          },
+        },
+        'test-admin'
+      );
 
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(150);
@@ -130,7 +133,7 @@ describe('Service Performance Tests', () => {
           nationality: 'US',
           ssn: '123-45-6789',
           email: `memtest${i}@test.com`,
-          phone: '+1234567890'
+          phone: '+1234567890',
         });
       }
 

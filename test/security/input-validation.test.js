@@ -11,7 +11,7 @@ describe('Input Validation Security Tests', () => {
   describe('SQL Injection Prevention', () => {
     test('should sanitize SQL injection attempts in citizen registration', async () => {
       const portalService = new CitizenPortalService();
-      
+
       const result = await portalService.registerCitizen({
         firstName: "'; DROP TABLE citizens; --",
         lastName: 'Test',
@@ -20,18 +20,20 @@ describe('Input Validation Security Tests', () => {
         nationality: 'US',
         ssn: '123-45-6789',
         email: 'test@example.com',
-        phone: '+1234567890'
+        phone: '+1234567890',
       });
 
       expect(result.success).toBe(true);
-      expect(result.citizen.personalInfo.firstName).toBe("'; DROP TABLE citizens; --");
+      expect(result.citizen.personalInfo.firstName).toBe(
+        "'; DROP TABLE citizens; --"
+      );
     });
   });
 
   describe('XSS Prevention', () => {
     test('should sanitize XSS attempts in notification data', async () => {
       const notificationService = new MultiChannelNotificationService();
-      
+
       const result = await notificationService.sendNotification({
         userId: 'test-user',
         templateId: 'citizen-welcome',
@@ -39,8 +41,8 @@ describe('Input Validation Security Tests', () => {
         data: {
           citizenName: '<script>alert("XSS")</script>',
           citizenId: 'CIT-001',
-          registrationDate: new Date().toISOString()
-        }
+          registrationDate: new Date().toISOString(),
+        },
       });
 
       expect(result.success).toBe(true);
@@ -50,7 +52,7 @@ describe('Input Validation Security Tests', () => {
   describe('Data Type Validation', () => {
     test('should reject invalid email format', async () => {
       const portalService = new CitizenPortalService();
-      
+
       const result = await portalService.registerCitizen({
         firstName: 'Test',
         lastName: 'User',
@@ -59,7 +61,7 @@ describe('Input Validation Security Tests', () => {
         nationality: 'US',
         ssn: '123-45-6789',
         email: 'invalid-email',
-        phone: '+1234567890'
+        phone: '+1234567890',
       });
 
       // Should still succeed but with validation warnings
@@ -68,7 +70,7 @@ describe('Input Validation Security Tests', () => {
 
     test('should handle invalid date formats', async () => {
       const portalService = new CitizenPortalService();
-      
+
       const result = await portalService.registerCitizen({
         firstName: 'Test',
         lastName: 'User',
@@ -77,7 +79,7 @@ describe('Input Validation Security Tests', () => {
         nationality: 'US',
         ssn: '123-45-6789',
         email: 'test@example.com',
-        phone: '+1234567890'
+        phone: '+1234567890',
       });
 
       expect(result).toBeDefined();
@@ -88,7 +90,7 @@ describe('Input Validation Security Tests', () => {
     test('should handle extremely long input strings', async () => {
       const portalService = new CitizenPortalService();
       const longString = 'A'.repeat(10000);
-      
+
       const result = await portalService.registerCitizen({
         firstName: longString,
         lastName: 'Test',
@@ -97,7 +99,7 @@ describe('Input Validation Security Tests', () => {
         nationality: 'US',
         ssn: '123-45-6789',
         email: 'test@example.com',
-        phone: '+1234567890'
+        phone: '+1234567890',
       });
 
       expect(result).toBeDefined();
@@ -107,18 +109,21 @@ describe('Input Validation Security Tests', () => {
   describe('Command Injection Prevention', () => {
     test('should sanitize shell command attempts', async () => {
       const partnerService = new PartnerCoordinationService();
-      
-      const result = await partnerService.onboardPartner({
-        name: '; rm -rf /',
-        type: 'corporate',
-        contact: {
-          primaryContact: {
-            name: 'Test',
-            email: 'test@example.com',
-            phone: '+1234567890'
-          }
-        }
-      }, 'test-admin');
+
+      const result = await partnerService.onboardPartner(
+        {
+          name: '; rm -rf /',
+          type: 'corporate',
+          contact: {
+            primaryContact: {
+              name: 'Test',
+              email: 'test@example.com',
+              phone: '+1234567890',
+            },
+          },
+        },
+        'test-admin'
+      );
 
       expect(result.success).toBe(true);
     });

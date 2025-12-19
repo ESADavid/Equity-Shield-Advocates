@@ -16,11 +16,13 @@ const router = express.Router();
 router.post('/process/:citizenId', async (req, res, next) => {
   try {
     info(`Processing UBI payment for citizen: ${req.params.citizenId}`);
-    const payment = await ubiPaymentService.processPayment(req.params.citizenId);
-    res.json({ 
-      success: true, 
+    const payment = await ubiPaymentService.processPayment(
+      req.params.citizenId
+    );
+    res.json({
+      success: true,
       payment,
-      message: 'UBI payment initiated successfully'
+      message: 'UBI payment initiated successfully',
     });
   } catch (err) {
     next(err);
@@ -34,11 +36,14 @@ router.post('/process/:citizenId', async (req, res, next) => {
 router.get('/history/:citizenId', async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
-    const history = await ubiPaymentService.getPaymentHistory(req.params.citizenId, limit);
-    res.json({ 
-      success: true, 
-      history, 
-      count: history.length 
+    const history = await ubiPaymentService.getPaymentHistory(
+      req.params.citizenId,
+      limit
+    );
+    res.json({
+      success: true,
+      history,
+      count: history.length,
     });
   } catch (err) {
     next(err);
@@ -51,16 +56,18 @@ router.get('/history/:citizenId', async (req, res, next) => {
  */
 router.get('/status/:paymentId', async (req, res, next) => {
   try {
-    const payment = await ubiPaymentService.getPaymentStatus(req.params.paymentId);
-    res.json({ 
-      success: true, 
-      payment 
+    const payment = await ubiPaymentService.getPaymentStatus(
+      req.params.paymentId
+    );
+    res.json({
+      success: true,
+      payment,
     });
   } catch (err) {
     if (err.message === 'Payment not found') {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Payment not found' 
+      return res.status(404).json({
+        success: false,
+        message: 'Payment not found',
       });
     }
     next(err);
@@ -74,10 +81,10 @@ router.get('/status/:paymentId', async (req, res, next) => {
 router.get('/pending', async (req, res, next) => {
   try {
     const payments = await ubiPaymentService.getPendingPayments();
-    res.json({ 
-      success: true, 
-      payments, 
-      count: payments.length 
+    res.json({
+      success: true,
+      payments,
+      count: payments.length,
     });
   } catch (err) {
     next(err);
@@ -91,10 +98,10 @@ router.get('/pending', async (req, res, next) => {
 router.post('/retry/:paymentId', async (req, res, next) => {
   try {
     const payment = await ubiPaymentService.retryPayment(req.params.paymentId);
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       payment,
-      message: 'Payment retry initiated'
+      message: 'Payment retry initiated',
     });
   } catch (err) {
     next(err);

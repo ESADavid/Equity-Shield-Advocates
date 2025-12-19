@@ -2,7 +2,7 @@
 
 /**
  * OSCAR BROOME REVENUE - Phase 4 Deployment Execution Script
- * 
+ *
  * This script orchestrates the complete Phase 4 deployment process:
  * 1. Pre-deployment validation
  * 2. Infrastructure setup
@@ -30,7 +30,7 @@ class Phase4Deployer {
       warning: '⚠️',
       error: '❌',
       step: '🔧',
-      progress: '⏳'
+      progress: '⏳',
     };
     const icon = icons[type] || '📝';
     console.log(`[${timestamp}] ${icon} ${message}`);
@@ -48,10 +48,9 @@ class Phase4Deployer {
       await this.validateConfigurations();
       await this.executeDeployment();
       await this.runPostDeploymentChecks();
-      
+
       this.showSummary();
       this.log('Phase 4 deployment execution completed!', 'success');
-      
     } catch (error) {
       this.log(`Deployment failed: ${error.message}`, 'error');
       this.errors.push(error.message);
@@ -66,13 +65,13 @@ class Phase4Deployer {
     // Check Node.js version
     const nodeVersion = process.version;
     this.log(`Node.js version: ${nodeVersion}`);
-    
+
     // Check if required tools are installed
     const tools = {
       docker: 'docker --version',
       'docker-compose': 'docker-compose --version',
       kubectl: 'kubectl version --client',
-      git: 'git --version'
+      git: 'git --version',
     };
 
     for (const [tool, command] of Object.entries(tools)) {
@@ -81,7 +80,10 @@ class Phase4Deployer {
         this.log(`${tool}: ${output.trim().split('\n')[0]}`, 'success');
       } catch (error) {
         if (tool === 'kubectl' && this.deploymentMode !== 'kubernetes') {
-          this.log(`${tool}: Not required for ${this.deploymentMode} mode`, 'warning');
+          this.log(
+            `${tool}: Not required for ${this.deploymentMode} mode`,
+            'warning'
+          );
         } else if (tool === 'docker' || tool === 'docker-compose') {
           this.log(`${tool}: Not installed`, 'warning');
           this.warnings.push(`${tool} is not installed`);
@@ -106,24 +108,26 @@ class Phase4Deployer {
         'docker-compose.production.yml',
         'docker-compose.simple.yml',
         'Dockerfile.production',
-        'nginx.conf'
+        'nginx.conf',
       ],
       kubernetes: [
         'k8s/production-deployment.yml',
         'k8s/database-production.yml',
         'k8s/monitoring-stack.yml',
-        'k8s/simple-deployment.yml'
+        'k8s/simple-deployment.yml',
       ],
       common: [
         'production_deploy.mjs',
         'production_deploy_simple.mjs',
-        '.env.example'
-      ]
+        '.env.example',
+      ],
     };
 
     const filesToCheck = [
       ...requiredFiles.common,
-      ...(this.deploymentMode === 'kubernetes' ? requiredFiles.kubernetes : requiredFiles.docker)
+      ...(this.deploymentMode === 'kubernetes'
+        ? requiredFiles.kubernetes
+        : requiredFiles.docker),
     ];
 
     let missingFiles = [];
@@ -153,9 +157,13 @@ class Phase4Deployer {
       if (fs.existsSync('.env.example')) {
         fs.copyFileSync('.env.example', '.env');
         this.log('.env file created from example', 'success');
-        this.warnings.push('Please configure .env file with actual credentials');
+        this.warnings.push(
+          'Please configure .env file with actual credentials'
+        );
       } else {
-        this.warnings.push('No .env.example found. Manual configuration required');
+        this.warnings.push(
+          'No .env.example found. Manual configuration required'
+        );
       }
     }
 
@@ -165,7 +173,7 @@ class Phase4Deployer {
         const yamlFiles = [
           'k8s/production-deployment.yml',
           'k8s/database-production.yml',
-          'k8s/monitoring-stack.yml'
+          'k8s/monitoring-stack.yml',
         ];
 
         for (const file of yamlFiles) {
@@ -214,13 +222,13 @@ class Phase4Deployer {
       // Build images
       this.log('Building Docker images...', 'progress');
       execSync('docker-compose -f docker-compose.production.yml build', {
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
 
       // Start services
       this.log('Starting services...', 'progress');
       execSync('docker-compose -f docker-compose.production.yml up -d', {
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
 
       this.log('Docker deployment completed', 'success');
@@ -236,23 +244,26 @@ class Phase4Deployer {
       // Apply namespace and configs
       this.log('Creating namespace and configurations...', 'progress');
       execSync('kubectl apply -f k8s/production-deployment.yml', {
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
 
       // Deploy database
       this.log('Deploying database...', 'progress');
       execSync('kubectl apply -f k8s/database-production.yml', {
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
 
       // Deploy monitoring
       this.log('Deploying monitoring stack...', 'progress');
       execSync('kubectl apply -f k8s/monitoring-stack.yml', {
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
 
       this.log('Kubernetes deployment completed', 'success');
-      this.log('Run "kubectl get pods -n oscar-broome-production" to check status', 'info');
+      this.log(
+        'Run "kubectl get pods -n oscar-broome-production" to check status',
+        'info'
+      );
     } catch (error) {
       throw new Error(`Kubernetes deployment failed: ${error.message}`);
     }
@@ -265,7 +276,7 @@ class Phase4Deployer {
       // Use simple docker-compose
       this.log('Starting simple deployment...', 'progress');
       execSync('docker-compose -f docker-compose.simple.yml up -d', {
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
 
       this.log('Simple deployment completed', 'success');
@@ -284,12 +295,13 @@ class Phase4Deployer {
     // Check if services are running
     if (this.deploymentMode === 'docker' || this.deploymentMode === 'simple') {
       try {
-        const composeFile = this.deploymentMode === 'docker' 
-          ? 'docker-compose.production.yml' 
-          : 'docker-compose.simple.yml';
-        
+        const composeFile =
+          this.deploymentMode === 'docker'
+            ? 'docker-compose.production.yml'
+            : 'docker-compose.simple.yml';
+
         const output = execSync(`docker-compose -f ${composeFile} ps`, {
-          encoding: 'utf8'
+          encoding: 'utf8',
         });
         this.log('Service status:', 'info');
         console.log(output);
@@ -301,7 +313,7 @@ class Phase4Deployer {
     if (this.deploymentMode === 'kubernetes') {
       try {
         const output = execSync('kubectl get pods -n oscar-broome-production', {
-          encoding: 'utf8'
+          encoding: 'utf8',
         });
         this.log('Pod status:', 'info');
         console.log(output);
@@ -315,7 +327,7 @@ class Phase4Deployer {
   }
 
   sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   showSummary() {
@@ -324,20 +336,20 @@ class Phase4Deployer {
     console.log('='.repeat(60));
 
     console.log('\n✅ COMPLETED STEPS:');
-    this.completedSteps.forEach(step => {
+    this.completedSteps.forEach((step) => {
       console.log(`   ✓ ${step}`);
     });
 
     if (this.warnings.length > 0) {
       console.log('\n⚠️  WARNINGS:');
-      this.warnings.forEach(warning => {
+      this.warnings.forEach((warning) => {
         console.log(`   - ${warning}`);
       });
     }
 
     if (this.errors.length > 0) {
       console.log('\n❌ ERRORS:');
-      this.errors.forEach(error => {
+      this.errors.forEach((error) => {
         console.log(`   - ${error}`);
       });
     }
@@ -351,17 +363,24 @@ class Phase4Deployer {
 
     console.log('\n🔧 USEFUL COMMANDS:');
     if (this.deploymentMode === 'docker' || this.deploymentMode === 'simple') {
-      const file = this.deploymentMode === 'docker' 
-        ? 'docker-compose.production.yml' 
-        : 'docker-compose.simple.yml';
+      const file =
+        this.deploymentMode === 'docker'
+          ? 'docker-compose.production.yml'
+          : 'docker-compose.simple.yml';
       console.log(`   - View logs: docker-compose -f ${file} logs -f`);
       console.log(`   - Stop services: docker-compose -f ${file} down`);
       console.log(`   - Restart: docker-compose -f ${file} restart`);
     }
     if (this.deploymentMode === 'kubernetes') {
-      console.log('   - View pods: kubectl get pods -n oscar-broome-production');
-      console.log('   - View logs: kubectl logs -f <pod-name> -n oscar-broome-production');
-      console.log('   - Delete deployment: kubectl delete -f k8s/production-deployment.yml');
+      console.log(
+        '   - View pods: kubectl get pods -n oscar-broome-production'
+      );
+      console.log(
+        '   - View logs: kubectl logs -f <pod-name> -n oscar-broome-production'
+      );
+      console.log(
+        '   - Delete deployment: kubectl delete -f k8s/production-deployment.yml'
+      );
     }
 
     console.log('\n' + '='.repeat(60));
@@ -370,7 +389,7 @@ class Phase4Deployer {
 
 // Execute deployment
 const deployer = new Phase4Deployer();
-deployer.execute().catch(error => {
+deployer.execute().catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

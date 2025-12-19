@@ -2,7 +2,7 @@
  * PARTNER COORDINATION SERVICE
  * Manages partner relationships, coordination, and collaboration
  * Part of Phase 2: Heaven on Earth Implementation
- * 
+ *
  * Features:
  * - Partner onboarding and management
  * - Communication workflows
@@ -23,7 +23,7 @@ class PartnerCoordinationService {
     this.projects = new Map();
     this.communications = new Map();
     this.workflows = new Map();
-    
+
     logger.info('Partner Coordination Service initialized');
   }
 
@@ -46,7 +46,8 @@ class PartnerCoordinationService {
         contract: {
           ...partnerData.contract,
           contractId: `CONTRACT-${partnerId}`,
-          startDate: partnerData.contract?.startDate || new Date().toISOString()
+          startDate:
+            partnerData.contract?.startDate || new Date().toISOString(),
         },
         services: partnerData.services || [],
         capabilities: partnerData.capabilities || {},
@@ -59,42 +60,45 @@ class PartnerCoordinationService {
           qualityScore: 0,
           customerSatisfaction: 0,
           incidentRate: 0,
-          reviews: []
+          reviews: [],
         },
         financial: {
           totalRevenue: 0,
           totalPaid: 0,
           outstandingBalance: 0,
           paymentHistory: [],
-          invoices: []
+          invoices: [],
         },
         integration: {
           integrationStatus: 'not-started',
-          customFields: {}
+          customFields: {},
         },
         compliance: {
           backgroundCheckCompleted: false,
           licenses: [],
           certifications: [],
-          auditHistory: []
+          auditHistory: [],
         },
         communication: {
-          preferredChannel: partnerData.communication?.preferredChannel || 'email',
-          communicationLog: []
+          preferredChannel:
+            partnerData.communication?.preferredChannel || 'email',
+          communicationLog: [],
         },
         projects: [],
         deployments: [],
         documents: [],
         notes: [],
-        activityLog: [{
-          timestamp: new Date().toISOString(),
-          action: 'partner_onboarded',
-          performedBy: userId,
-          details: { status: 'pending' }
-        }],
+        activityLog: [
+          {
+            timestamp: new Date().toISOString(),
+            action: 'partner_onboarded',
+            performedBy: userId,
+            details: { status: 'pending' },
+          },
+        ],
         createdBy: userId,
         createdAt: new Date().toISOString(),
-        lastModified: new Date().toISOString()
+        lastModified: new Date().toISOString(),
       };
 
       this.partners.set(partnerId, partner);
@@ -108,13 +112,13 @@ class PartnerCoordinationService {
         success: true,
         partnerId: partnerId,
         partner: partner,
-        message: 'Partner onboarded successfully'
+        message: 'Partner onboarded successfully',
       };
     } catch (error) {
       logger.error('Error onboarding partner:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -146,8 +150,8 @@ class PartnerCoordinationService {
               'Insurance Certificate',
               'Tax ID',
               'Bank Details',
-              'References'
-            ]
+              'References',
+            ],
           },
           {
             stepId: 'step-2',
@@ -159,42 +163,42 @@ class PartnerCoordinationService {
               'Business verification',
               'Credit check',
               'Legal compliance',
-              'Security clearance'
-            ]
+              'Security clearance',
+            ],
           },
           {
             stepId: 'step-3',
             name: 'Contract Negotiation',
             description: 'Negotiate and finalize contract terms',
             status: 'pending',
-            required: true
+            required: true,
           },
           {
             stepId: 'step-4',
             name: 'System Integration',
             description: 'Set up system integration and access',
             status: 'pending',
-            required: true
+            required: true,
           },
           {
             stepId: 'step-5',
             name: 'Training & Orientation',
             description: 'Provide training and orientation',
             status: 'pending',
-            required: false
+            required: false,
           },
           {
             stepId: 'step-6',
             name: 'Activation',
             description: 'Activate partner account',
             status: 'pending',
-            required: true
-          }
+            required: true,
+          },
         ],
         createdBy: userId,
         createdAt: new Date().toISOString(),
         completedSteps: 0,
-        totalSteps: 6
+        totalSteps: 6,
       };
 
       this.workflows.set(workflowId, workflow);
@@ -204,13 +208,13 @@ class PartnerCoordinationService {
       return {
         success: true,
         workflowId: workflowId,
-        workflow: workflow
+        workflow: workflow,
       };
     } catch (error) {
       logger.error('Error creating onboarding workflow:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -230,16 +234,16 @@ class PartnerCoordinationService {
       if (!workflow) {
         return {
           success: false,
-          error: 'Workflow not found'
+          error: 'Workflow not found',
         };
       }
 
-      const step = workflow.steps.find(s => s.stepId === stepId);
+      const step = workflow.steps.find((s) => s.stepId === stepId);
 
       if (!step) {
         return {
           success: false,
-          error: 'Step not found'
+          error: 'Step not found',
         };
       }
 
@@ -248,12 +252,14 @@ class PartnerCoordinationService {
       step.completedAt = new Date().toISOString();
 
       // Update completed steps count
-      workflow.completedSteps = workflow.steps.filter(s => s.status === 'completed').length;
+      workflow.completedSteps = workflow.steps.filter(
+        (s) => s.status === 'completed'
+      ).length;
 
       // Check if all required steps are completed
       const allRequiredCompleted = workflow.steps
-        .filter(s => s.required)
-        .every(s => s.status === 'completed');
+        .filter((s) => s.required)
+        .every((s) => s.status === 'completed');
 
       if (allRequiredCompleted) {
         workflow.status = 'completed';
@@ -265,18 +271,20 @@ class PartnerCoordinationService {
         }
       }
 
-      logger.info(`Workflow step updated: ${workflowId} - ${stepId} - ${status}`);
+      logger.info(
+        `Workflow step updated: ${workflowId} - ${stepId} - ${status}`
+      );
 
       return {
         success: true,
         workflow: workflow,
-        message: 'Workflow step updated successfully'
+        message: 'Workflow step updated successfully',
       };
     } catch (error) {
       logger.error('Error updating workflow step:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -294,7 +302,7 @@ class PartnerCoordinationService {
       if (!partner) {
         return {
           success: false,
-          error: 'Partner not found'
+          error: 'Partner not found',
         };
       }
 
@@ -306,7 +314,7 @@ class PartnerCoordinationService {
         timestamp: new Date().toISOString(),
         action: 'partner_activated',
         performedBy: userId,
-        details: { previousStatus: 'pending', newStatus: 'active' }
+        details: { previousStatus: 'pending', newStatus: 'active' },
       });
 
       logger.info(`Partner activated: ${partnerId} - ${partner.name}`);
@@ -314,13 +322,13 @@ class PartnerCoordinationService {
       return {
         success: true,
         partner: partner,
-        message: 'Partner activated successfully'
+        message: 'Partner activated successfully',
       };
     } catch (error) {
       logger.error('Error activating partner:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -339,14 +347,14 @@ class PartnerCoordinationService {
       if (!partner) {
         return {
           success: false,
-          error: 'Partner not found'
+          error: 'Partner not found',
         };
       }
 
       if (partner.status !== 'active') {
         return {
           success: false,
-          error: 'Partner is not active'
+          error: 'Partner is not active',
         };
       }
 
@@ -372,7 +380,7 @@ class PartnerCoordinationService {
         resources: projectData.resources || [],
         assignedBy: userId,
         assignedAt: new Date().toISOString(),
-        updates: []
+        updates: [],
       };
 
       // Add to partner's projects
@@ -387,7 +395,7 @@ class PartnerCoordinationService {
         timestamp: new Date().toISOString(),
         action: 'project_assigned',
         performedBy: userId,
-        details: { projectId: projectId, projectName: project.name }
+        details: { projectId: projectId, projectName: project.name },
       });
 
       logger.info(`Project assigned to partner ${partnerId}: ${projectId}`);
@@ -396,13 +404,13 @@ class PartnerCoordinationService {
         success: true,
         projectId: projectId,
         project: project,
-        message: 'Project assigned successfully'
+        message: 'Project assigned successfully',
       };
     } catch (error) {
       logger.error('Error assigning project:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -422,7 +430,7 @@ class PartnerCoordinationService {
       if (!project) {
         return {
           success: false,
-          error: 'Project not found'
+          error: 'Project not found',
         };
       }
 
@@ -437,7 +445,7 @@ class PartnerCoordinationService {
         status: status,
         updatedBy: userId,
         notes: updateData.notes || '',
-        data: updateData
+        data: updateData,
       });
 
       // Update partner performance metrics
@@ -450,10 +458,12 @@ class PartnerCoordinationService {
 
           // Calculate success metrics
           if (updateData.onTime) {
-            partner.performance.onTimeDelivery = this.calculateOnTimeDelivery(partner);
+            partner.performance.onTimeDelivery =
+              this.calculateOnTimeDelivery(partner);
           }
           if (updateData.qualityScore) {
-            partner.performance.qualityScore = this.calculateAverageQuality(partner);
+            partner.performance.qualityScore =
+              this.calculateAverageQuality(partner);
           }
         }
 
@@ -464,8 +474,8 @@ class PartnerCoordinationService {
           details: {
             projectId: projectId,
             previousStatus: previousStatus,
-            newStatus: status
-          }
+            newStatus: status,
+          },
         });
       }
 
@@ -474,13 +484,13 @@ class PartnerCoordinationService {
       return {
         success: true,
         project: project,
-        message: `Project status updated to ${status}`
+        message: `Project status updated to ${status}`,
       };
     } catch (error) {
       logger.error('Error updating project status:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -499,7 +509,7 @@ class PartnerCoordinationService {
       if (!partner) {
         return {
           success: false,
-          error: 'Partner not found'
+          error: 'Partner not found',
         };
       }
 
@@ -514,24 +524,26 @@ class PartnerCoordinationService {
         summary: communicationData.summary,
         followUp: communicationData.followUp,
         attachments: communicationData.attachments || [],
-        loggedBy: userId
+        loggedBy: userId,
       };
 
       partner.communication.communicationLog.push(communication);
       this.communications.set(communicationId, communication);
 
-      logger.info(`Communication logged for partner ${partnerId}: ${communicationId}`);
+      logger.info(
+        `Communication logged for partner ${partnerId}: ${communicationId}`
+      );
 
       return {
         success: true,
         communicationId: communicationId,
-        communication: communication
+        communication: communication,
       };
     } catch (error) {
       logger.error('Error logging communication:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -550,7 +562,7 @@ class PartnerCoordinationService {
       if (!partner) {
         return {
           success: false,
-          error: 'Partner not found'
+          error: 'Partner not found',
         };
       }
 
@@ -565,30 +577,36 @@ class PartnerCoordinationService {
           quality: ratingData.quality || 0,
           timeliness: ratingData.timeliness || 0,
           communication: ratingData.communication || 0,
-          professionalism: ratingData.professionalism || 0
-        }
+          professionalism: ratingData.professionalism || 0,
+        },
       };
 
       partner.performance.reviews.push(review);
 
       // Calculate new average rating
-      const totalRating = partner.performance.reviews.reduce((sum, r) => sum + r.rating, 0);
-      partner.performance.rating = totalRating / partner.performance.reviews.length;
+      const totalRating = partner.performance.reviews.reduce(
+        (sum, r) => sum + r.rating,
+        0
+      );
+      partner.performance.rating =
+        totalRating / partner.performance.reviews.length;
       partner.performance.lastReview = new Date().toISOString();
 
-      logger.info(`Performance rating updated for partner ${partnerId}: ${review.rating}`);
+      logger.info(
+        `Performance rating updated for partner ${partnerId}: ${review.rating}`
+      );
 
       return {
         success: true,
         review: review,
         newRating: partner.performance.rating,
-        message: 'Performance rating updated successfully'
+        message: 'Performance rating updated successfully',
       };
     } catch (error) {
       logger.error('Error updating performance rating:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -597,10 +615,12 @@ class PartnerCoordinationService {
    * Calculate on-time delivery percentage
    */
   calculateOnTimeDelivery(partner) {
-    const completedProjects = partner.projects.filter(p => p.status === 'completed');
+    const completedProjects = partner.projects.filter(
+      (p) => p.status === 'completed'
+    );
     if (completedProjects.length === 0) return 0;
 
-    const onTimeProjects = completedProjects.filter(p => {
+    const onTimeProjects = completedProjects.filter((p) => {
       if (!p.endDate || !p.completedAt) return false;
       return new Date(p.completedAt) <= new Date(p.endDate);
     });
@@ -615,7 +635,10 @@ class PartnerCoordinationService {
     const reviews = partner.performance.reviews;
     if (reviews.length === 0) return 0;
 
-    const totalQuality = reviews.reduce((sum, r) => sum + (r.metrics?.quality || 0), 0);
+    const totalQuality = reviews.reduce(
+      (sum, r) => sum + (r.metrics?.quality || 0),
+      0
+    );
     return Math.round(totalQuality / reviews.length);
   }
 
@@ -631,12 +654,14 @@ class PartnerCoordinationService {
       if (!partner) {
         return {
           success: false,
-          error: 'Partner not found'
+          error: 'Partner not found',
         };
       }
 
       // Get active projects
-      const activeProjects = partner.projects.filter(p => p.status === 'active' || p.status === 'assigned');
+      const activeProjects = partner.projects.filter(
+        (p) => p.status === 'active' || p.status === 'assigned'
+      );
 
       // Get recent communications
       const recentCommunications = partner.communication.communicationLog
@@ -651,14 +676,14 @@ class PartnerCoordinationService {
           completedProjects: partner.performance.projectsCompleted,
           rating: partner.performance.rating,
           healthScore: this.calculateHealthScore(partner),
-          recentCommunications: recentCommunications.length
-        }
+          recentCommunications: recentCommunications.length,
+        },
       };
     } catch (error) {
       logger.error('Error getting partner:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -669,19 +694,18 @@ class PartnerCoordinationService {
   calculateHealthScore(partner) {
     const weights = {
       rating: 0.25,
-      successRate: 0.20,
-      onTimeDelivery: 0.20,
-      qualityScore: 0.20,
-      customerSatisfaction: 0.15
+      successRate: 0.2,
+      onTimeDelivery: 0.2,
+      qualityScore: 0.2,
+      customerSatisfaction: 0.15,
     };
 
-    const score = (
-      (partner.performance.rating / 5 * 100) * weights.rating +
+    const score =
+      (partner.performance.rating / 5) * 100 * weights.rating +
       partner.performance.successRate * weights.successRate +
       partner.performance.onTimeDelivery * weights.onTimeDelivery +
       partner.performance.qualityScore * weights.qualityScore +
-      partner.performance.customerSatisfaction * weights.customerSatisfaction
-    );
+      partner.performance.customerSatisfaction * weights.customerSatisfaction;
 
     return Math.round(score);
   }
@@ -697,15 +721,17 @@ class PartnerCoordinationService {
 
       // Apply filters
       if (filters.status) {
-        partners = partners.filter(p => p.status === filters.status);
+        partners = partners.filter((p) => p.status === filters.status);
       }
 
       if (filters.type) {
-        partners = partners.filter(p => p.type === filters.type);
+        partners = partners.filter((p) => p.type === filters.type);
       }
 
       if (filters.minRating) {
-        partners = partners.filter(p => p.performance.rating >= filters.minRating);
+        partners = partners.filter(
+          (p) => p.performance.rating >= filters.minRating
+        );
       }
 
       // Sort
@@ -717,7 +743,7 @@ class PartnerCoordinationService {
 
       return {
         success: true,
-        partners: partners.map(p => ({
+        partners: partners.map((p) => ({
           partnerId: p.partnerId,
           name: p.name,
           type: p.type,
@@ -725,15 +751,15 @@ class PartnerCoordinationService {
           rating: p.performance.rating,
           activeProjects: p.performance.projectsActive,
           completedProjects: p.performance.projectsCompleted,
-          healthScore: this.calculateHealthScore(p)
+          healthScore: this.calculateHealthScore(p),
         })),
-        count: partners.length
+        count: partners.length,
       };
     } catch (error) {
       logger.error('Error getting partners:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -752,34 +778,38 @@ class PartnerCoordinationService {
         statistics: {
           partners: {
             total: partners.length,
-            active: partners.filter(p => p.status === 'active').length,
-            pending: partners.filter(p => p.status === 'pending').length,
-            suspended: partners.filter(p => p.status === 'suspended').length,
-            byType: this.getPartnersByType(partners)
+            active: partners.filter((p) => p.status === 'active').length,
+            pending: partners.filter((p) => p.status === 'pending').length,
+            suspended: partners.filter((p) => p.status === 'suspended').length,
+            byType: this.getPartnersByType(partners),
           },
           projects: {
             total: projects.length,
-            active: projects.filter(p => p.status === 'active').length,
-            completed: projects.filter(p => p.status === 'completed').length,
-            assigned: projects.filter(p => p.status === 'assigned').length
+            active: projects.filter((p) => p.status === 'active').length,
+            completed: projects.filter((p) => p.status === 'completed').length,
+            assigned: projects.filter((p) => p.status === 'assigned').length,
           },
           performance: {
             averageRating: this.calculateAverageRating(partners),
-            topPerformers: this.getTopPerformers(partners, 5)
+            topPerformers: this.getTopPerformers(partners, 5),
           },
           workflows: {
             total: this.workflows.size,
-            inProgress: Array.from(this.workflows.values()).filter(w => w.status === 'in-progress').length,
-            completed: Array.from(this.workflows.values()).filter(w => w.status === 'completed').length
-          }
+            inProgress: Array.from(this.workflows.values()).filter(
+              (w) => w.status === 'in-progress'
+            ).length,
+            completed: Array.from(this.workflows.values()).filter(
+              (w) => w.status === 'completed'
+            ).length,
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('Error getting statistics:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -789,7 +819,7 @@ class PartnerCoordinationService {
    */
   getPartnersByType(partners) {
     const byType = {};
-    partners.forEach(p => {
+    partners.forEach((p) => {
       byType[p.type] = (byType[p.type] || 0) + 1;
     });
     return byType;
@@ -800,7 +830,10 @@ class PartnerCoordinationService {
    */
   calculateAverageRating(partners) {
     if (partners.length === 0) return 0;
-    const totalRating = partners.reduce((sum, p) => sum + p.performance.rating, 0);
+    const totalRating = partners.reduce(
+      (sum, p) => sum + p.performance.rating,
+      0
+    );
     return (totalRating / partners.length).toFixed(2);
   }
 
@@ -809,14 +842,14 @@ class PartnerCoordinationService {
    */
   getTopPerformers(partners, limit = 5) {
     return partners
-      .filter(p => p.status === 'active')
+      .filter((p) => p.status === 'active')
       .sort((a, b) => b.performance.rating - a.performance.rating)
       .slice(0, limit)
-      .map(p => ({
+      .map((p) => ({
         partnerId: p.partnerId,
         name: p.name,
         rating: p.performance.rating,
-        completedProjects: p.performance.projectsCompleted
+        completedProjects: p.performance.projectsCompleted,
       }));
   }
 
@@ -831,7 +864,7 @@ class PartnerCoordinationService {
       partners: this.partners.size,
       activeProjects: this.projects.size,
       activeWorkflows: this.workflows.size,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     };
   }
 }

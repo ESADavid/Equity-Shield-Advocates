@@ -1,6 +1,6 @@
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
-
 #!/usr/bin/env node
+
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 
 const fs = require('fs');
 const path = require('path');
@@ -11,7 +11,7 @@ logger.info('=====================================\n');
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 function askQuestion(question) {
@@ -34,10 +34,10 @@ function askPassword(question) {
 
     let password = '';
 
-    stdin.on('data', function(char) {
+    stdin.on('data', function (char) {
       char = char + '';
 
-      switch(char) {
+      switch (char) {
         case '\n':
         case '\r':
         case '\u0004':
@@ -59,15 +59,21 @@ function askPassword(question) {
 }
 
 async function setupCredentials() {
-  logger.info('This script will help you set up your credentials for the Merchant Bill Pay system.\n');
+  logger.info(
+    'This script will help you set up your credentials for the Merchant Bill Pay system.\n'
+  );
 
   const credentials = {};
 
   // Stripe Setup
   logger.info('1. 🚀 Stripe Configuration');
-  logger.info('   Get your API keys from: https://dashboard.stripe.com/apikeys\n');
+  logger.info(
+    '   Get your API keys from: https://dashboard.stripe.com/apikeys\n'
+  );
 
-  credentials.STRIPE_SECRET_KEY = await askQuestion('   Enter your Stripe Secret Key (sk_test_...): ');
+  credentials.STRIPE_SECRET_KEY = await askQuestion(
+    '   Enter your Stripe Secret Key (sk_test_...): '
+  );
 
   // Email Setup
   logger.info('\n2. 📧 Email Configuration');
@@ -92,9 +98,13 @@ async function setupCredentials() {
   logger.info('\n3. 📱 Twilio SMS Configuration');
   logger.info('   Get your credentials from: https://console.twilio.com\n');
 
-  credentials.TWILIO_ACCOUNT_SID = await askQuestion('   Account SID (AC...): ');
+  credentials.TWILIO_ACCOUNT_SID = await askQuestion(
+    '   Account SID (AC...): '
+  );
   credentials.TWILIO_AUTH_TOKEN = await askPassword('   Auth Token (SK...): ');
-  credentials.TWILIO_PHONE_NUMBER = await askQuestion('   Phone Number (+1...): ');
+  credentials.TWILIO_PHONE_NUMBER = await askQuestion(
+    '   Phone Number (+1...): '
+  );
 
   // Create .env file
   logger.info('\n4. 📝 Creating .env file...');
@@ -136,13 +146,17 @@ async function setupCredentials() {
     const testModule = require('./earnings_dashboard/merchant_bill_pay');
     logger.info('✅ Module loads successfully with your credentials!');
   } catch (error) {
-    logger.info('⚠️  Module loaded with warnings (this is normal for missing optional configs)');
+    logger.info(
+      '⚠️  Module loaded with warnings (this is normal for missing optional configs)'
+    );
   }
 
   logger.info('\n🎉 Setup Complete!');
   logger.info('\n📋 Next Steps:');
   logger.info('1. Review your .env file to ensure all credentials are correct');
-  logger.info('2. Run the comprehensive test: node comprehensive_merchant_test.js');
+  logger.info(
+    '2. Run the comprehensive test: node comprehensive_merchant_test.js'
+  );
   logger.info('3. Start your application with the new credentials');
   logger.info('\n🔒 Security Reminder:');
   logger.info('- Never commit .env files to version control');

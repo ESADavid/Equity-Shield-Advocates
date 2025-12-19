@@ -25,28 +25,27 @@ describe('Partner API Endpoints', () => {
             primaryContact: {
               name: 'Test Contact',
               email: 'test@partner.com',
-              phone: '+1234567890'
-            }
+              phone: '+1234567890',
+            },
           },
           contract: {
             startDate: new Date().toISOString(),
             duration: 12,
-            value: 100000
-          }
+            value: 100000,
+          },
         });
 
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.partnerId).toBeDefined();
-      
+
       testPartnerId = response.body.partnerId;
     });
   });
 
   describe('GET /api/partners', () => {
     test('should get all partners', async () => {
-      const response = await request(app)
-        .get('/api/partners');
+      const response = await request(app).get('/api/partners');
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -54,8 +53,7 @@ describe('Partner API Endpoints', () => {
     });
 
     test('should filter partners by status', async () => {
-      const response = await request(app)
-        .get('/api/partners?status=active');
+      const response = await request(app).get('/api/partners?status=active');
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -64,8 +62,9 @@ describe('Partner API Endpoints', () => {
 
   describe('GET /api/partners/pmc/integration-status', () => {
     test('should get PMC integration status', async () => {
-      const response = await request(app)
-        .get('/api/partners/pmc/integration-status');
+      const response = await request(app).get(
+        '/api/partners/pmc/integration-status'
+      );
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -75,8 +74,7 @@ describe('Partner API Endpoints', () => {
 
   describe('GET /api/partners/pmc/health', () => {
     test('should return PMC health status', async () => {
-      const response = await request(app)
-        .get('/api/partners/pmc/health');
+      const response = await request(app).get('/api/partners/pmc/health');
 
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('operational');

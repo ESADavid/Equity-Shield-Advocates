@@ -20,7 +20,7 @@ const notificationService = new MultiChannelNotificationService();
 router.post('/send', async (req, res) => {
   try {
     const result = await notificationService.sendNotification(req.body);
-    
+
     if (result.success) {
       res.json(result);
     } else {
@@ -30,7 +30,7 @@ router.post('/send', async (req, res) => {
     logger.error('Error sending notification:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to send notification'
+      error: 'Failed to send notification',
     });
   }
 });
@@ -43,21 +43,22 @@ router.post('/send', async (req, res) => {
 router.post('/batch', async (req, res) => {
   try {
     const { notifications } = req.body;
-    
+
     if (!Array.isArray(notifications)) {
       return res.status(400).json({
         success: false,
-        error: 'Notifications must be an array'
+        error: 'Notifications must be an array',
       });
     }
 
-    const result = await notificationService.sendBatchNotifications(notifications);
+    const result =
+      await notificationService.sendBatchNotifications(notifications);
     res.json(result);
   } catch (error) {
     logger.error('Error sending batch notifications:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to send batch notifications'
+      error: 'Failed to send batch notifications',
     });
   }
 });
@@ -76,7 +77,7 @@ router.get('/history/:userId', (req, res) => {
       startDate: req.query.startDate,
       endDate: req.query.endDate,
       page: parseInt(req.query.page) || 1,
-      limit: parseInt(req.query.limit) || 50
+      limit: parseInt(req.query.limit) || 50,
     };
 
     const result = notificationService.getNotificationHistory(userId, filters);
@@ -85,7 +86,7 @@ router.get('/history/:userId', (req, res) => {
     logger.error('Error getting notification history:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get notification history'
+      error: 'Failed to get notification history',
     });
   }
 });
@@ -99,7 +100,7 @@ router.get('/:notificationId', (req, res) => {
   try {
     const { notificationId } = req.params;
     const result = notificationService.getNotification(notificationId);
-    
+
     if (result.success) {
       res.json(result);
     } else {
@@ -109,7 +110,7 @@ router.get('/:notificationId', (req, res) => {
     logger.error('Error getting notification:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get notification'
+      error: 'Failed to get notification',
     });
   }
 });
@@ -128,7 +129,7 @@ router.get('/preferences/:userId', (req, res) => {
     logger.error('Error getting preferences:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get preferences'
+      error: 'Failed to get preferences',
     });
   }
 });
@@ -147,7 +148,7 @@ router.put('/preferences/:userId', (req, res) => {
     logger.error('Error updating preferences:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to update preferences'
+      error: 'Failed to update preferences',
     });
   }
 });
@@ -165,7 +166,7 @@ router.get('/templates', (req, res) => {
     logger.error('Error getting templates:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get templates'
+      error: 'Failed to get templates',
     });
   }
 });
@@ -183,7 +184,7 @@ router.get('/statistics', (req, res) => {
     logger.error('Error getting statistics:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get statistics'
+      error: 'Failed to get statistics',
     });
   }
 });
@@ -201,7 +202,7 @@ router.get('/health', (req, res) => {
     logger.error('Error getting health status:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get health status'
+      error: 'Failed to get health status',
     });
   }
 });

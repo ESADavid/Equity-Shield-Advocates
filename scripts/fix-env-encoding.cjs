@@ -3,7 +3,7 @@
 /**
  * Fix .env File Encoding
  * Converts .env from UTF-16 to UTF-8
- * 
+ *
  * OSCAR BROOME REVENUE - OWLBAN GROUP
  */
 
@@ -24,7 +24,7 @@ try {
   }
 
   console.log('📄 Reading .env file...');
-  
+
   // Read the file with UTF-16 encoding
   let content;
   try {
@@ -47,7 +47,7 @@ try {
   // Verify
   console.log('🔍 Verifying encoding...');
   const verifyContent = fs.readFileSync(envPath, 'utf8');
-  
+
   if (verifyContent === content) {
     console.log('✅ SUCCESS: .env file converted to UTF-8');
     console.log('📦 Backup saved at: .env.backup');
@@ -60,15 +60,14 @@ try {
     fs.copyFileSync(backupPath, envPath);
     process.exit(1);
   }
-
 } catch (error) {
   console.error('❌ Error:', error.message);
-  
+
   // Restore backup if it exists
   if (fs.existsSync(backupPath)) {
     console.log('🔄 Restoring backup...');
     fs.copyFileSync(backupPath, envPath);
   }
-  
+
   process.exit(1);
 }

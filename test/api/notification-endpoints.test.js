@@ -24,8 +24,8 @@ describe('Notification API Endpoints', () => {
             citizenName: 'Test User',
             amount: '1000',
             paymentDate: new Date().toISOString(),
-            reference: 'TEST-001'
-          }
+            reference: 'TEST-001',
+          },
         });
 
       expect(response.status).toBe(200);
@@ -40,7 +40,7 @@ describe('Notification API Endpoints', () => {
           userId: 'test-user',
           templateId: 'invalid-template',
           channels: ['email'],
-          data: {}
+          data: {},
         });
 
       expect(response.status).toBe(400);
@@ -58,9 +58,13 @@ describe('Notification API Endpoints', () => {
               userId: 'user-1',
               templateId: 'citizen-welcome',
               channels: ['email'],
-              data: { citizenName: 'User 1', citizenId: 'CIT-001', registrationDate: new Date().toISOString() }
-            }
-          ]
+              data: {
+                citizenName: 'User 1',
+                citizenId: 'CIT-001',
+                registrationDate: new Date().toISOString(),
+              },
+            },
+          ],
         });
 
       expect(response.status).toBe(200);
@@ -70,8 +74,7 @@ describe('Notification API Endpoints', () => {
 
   describe('GET /api/notifications/templates', () => {
     test('should get all templates', async () => {
-      const response = await request(app)
-        .get('/api/notifications/templates');
+      const response = await request(app).get('/api/notifications/templates');
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -81,8 +84,7 @@ describe('Notification API Endpoints', () => {
 
   describe('GET /api/notifications/health', () => {
     test('should return health status', async () => {
-      const response = await request(app)
-        .get('/api/notifications/health');
+      const response = await request(app).get('/api/notifications/health');
 
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('operational');

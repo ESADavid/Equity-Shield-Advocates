@@ -11,7 +11,7 @@ describe('User Acceptance Tests - Complete Workflows', () => {
   describe('New Citizen Onboarding Workflow', () => {
     test('Complete citizen journey: Registration → Verification → UBI Enrollment → Education', async () => {
       const portalService = new CitizenPortalService();
-      
+
       // Step 1: Register
       const registration = await portalService.registerCitizen({
         firstName: 'UAT',
@@ -27,8 +27,8 @@ describe('User Acceptance Tests - Complete Workflows', () => {
           city: 'Test City',
           state: 'TS',
           country: 'USA',
-          postalCode: '12345'
-        }
+          postalCode: '12345',
+        },
       });
 
       expect(registration.success).toBe(true);
@@ -43,14 +43,17 @@ describe('User Acceptance Tests - Complete Workflows', () => {
         paymentMethod: 'direct_deposit',
         bankAccount: {
           accountNumber: '1234567890',
-          routingNumber: '987654321'
-        }
+          routingNumber: '987654321',
+        },
       });
 
       expect(ubiEnrollment.success).toBe(true);
 
       // Step 4: Enroll in Education
-      const eduEnrollment = await portalService.enrollInCourse(citizenId, 'COURSE-001');
+      const eduEnrollment = await portalService.enrollInCourse(
+        citizenId,
+        'COURSE-001'
+      );
 
       expect(eduEnrollment.success).toBe(true);
 
@@ -68,45 +71,58 @@ describe('User Acceptance Tests - Complete Workflows', () => {
       const partnerService = new PartnerCoordinationService();
 
       // Step 1: Onboard Partner
-      const onboarding = await partnerService.onboardPartner({
-        name: 'UAT Partner Corp',
-        type: 'corporate',
-        contact: {
-          primaryContact: {
-            name: 'UAT Contact',
-            email: 'contact@uatpartner.com',
-            phone: '+1234567890'
-          }
+      const onboarding = await partnerService.onboardPartner(
+        {
+          name: 'UAT Partner Corp',
+          type: 'corporate',
+          contact: {
+            primaryContact: {
+              name: 'UAT Contact',
+              email: 'contact@uatpartner.com',
+              phone: '+1234567890',
+            },
+          },
+          contract: {
+            startDate: new Date().toISOString(),
+            duration: 12,
+            value: 100000,
+          },
         },
-        contract: {
-          startDate: new Date().toISOString(),
-          duration: 12,
-          value: 100000
-        }
-      }, 'uat-admin');
+        'uat-admin'
+      );
 
       expect(onboarding.success).toBe(true);
       const partnerId = onboarding.partnerId;
 
       // Step 2: Complete onboarding workflow
-      const workflow = Array.from(partnerService.workflows.values())
-        .find(w => w.partnerId === partnerId);
+      const workflow = Array.from(partnerService.workflows.values()).find(
+        (w) => w.partnerId === partnerId
+      );
 
-      workflow.steps.forEach(step => {
+      workflow.steps.forEach((step) => {
         if (step.required) {
-          partnerService.updateWorkflowStep(workflow.workflowId, step.stepId, 'completed', 'uat-admin');
+          partnerService.updateWorkflowStep(
+            workflow.workflowId,
+            step.stepId,
+            'completed',
+            'uat-admin'
+          );
         }
       });
 
       // Step 3: Assign Project
-      const projectAssignment = partnerService.assignProject(partnerId, {
-        name: 'UAT Project',
-        description: 'User acceptance test project',
-        type: 'development',
-        priority: 'high',
-        budget: 50000,
-        personnel: 5
-      }, 'uat-admin');
+      const projectAssignment = partnerService.assignProject(
+        partnerId,
+        {
+          name: 'UAT Project',
+          description: 'User acceptance test project',
+          type: 'development',
+          priority: 'high',
+          budget: 50000,
+          personnel: 5,
+        },
+        'uat-admin'
+      );
 
       expect(projectAssignment.success).toBe(true);
 
@@ -114,22 +130,30 @@ describe('User Acceptance Tests - Complete Workflows', () => {
       const completion = partnerService.updateProjectStatus(
         projectAssignment.projectId,
         'completed',
-        { notes: 'Project completed successfully', onTime: true, qualityScore: 95 },
+        {
+          notes: 'Project completed successfully',
+          onTime: true,
+          qualityScore: 95,
+        },
         'uat-admin'
       );
 
       expect(completion.success).toBe(true);
 
       // Step 5: Rate Performance
-      const rating = partnerService.updatePerformanceRating(partnerId, {
-        rating: 4.5,
-        comments: 'Excellent work',
-        category: 'project-delivery',
-        quality: 95,
-        timeliness: 90,
-        communication: 92,
-        professionalism: 94
-      }, 'uat-admin');
+      const rating = partnerService.updatePerformanceRating(
+        partnerId,
+        {
+          rating: 4.5,
+          comments: 'Excellent work',
+          category: 'project-delivery',
+          quality: 95,
+          timeliness: 90,
+          communication: 92,
+          professionalism: 94,
+        },
+        'uat-admin'
+      );
 
       expect(rating.success).toBe(true);
     });
@@ -148,8 +172,8 @@ describe('User Acceptance Tests - Complete Workflows', () => {
           citizenName: 'UAT User',
           amount: '1000',
           paymentDate: new Date().toISOString(),
-          reference: 'UAT-REF-001'
-        }
+          reference: 'UAT-REF-001',
+        },
       });
 
       expect(send.success).toBe(true);
@@ -163,7 +187,9 @@ describe('User Acceptance Tests - Complete Workflows', () => {
 
       // Step 3: Check Delivery Status
       expect(notification.notification.deliveryStatus).toBeDefined();
-      expect(Object.keys(notification.notification.deliveryStatus).length).toBeGreaterThan(0);
+      expect(
+        Object.keys(notification.notification.deliveryStatus).length
+      ).toBeGreaterThan(0);
     });
   });
 
@@ -180,7 +206,7 @@ describe('User Acceptance Tests - Complete Workflows', () => {
         nationality: 'US',
         ssn: '123-45-6789',
         email: 'service@test.com',
-        phone: '+1234567890'
+        phone: '+1234567890',
       });
 
       const citizenId = registration.citizenId;
@@ -191,7 +217,7 @@ describe('User Acceptance Tests - Complete Workflows', () => {
         category: 'technical',
         subject: 'UAT Service Request',
         description: 'Testing service request workflow',
-        priority: 'medium'
+        priority: 'medium',
       });
 
       expect(request.success).toBe(true);

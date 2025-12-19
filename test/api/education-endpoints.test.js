@@ -15,15 +15,13 @@ describe('Education API Endpoints', () => {
   let testCourseId;
 
   test('POST /api/education/courses', async () => {
-    const response = await request(app)
-      .post('/api/education/courses')
-      .send({
-        title: 'API Test Course',
-        description: 'Course for API testing',
-        category: 'technology',
-        level: 'beginner',
-        duration: 40
-      });
+    const response = await request(app).post('/api/education/courses').send({
+      title: 'API Test Course',
+      description: 'Course for API testing',
+      category: 'technology',
+      level: 'beginner',
+      duration: 40,
+    });
 
     expect([200, 201]).toContain(response.status);
     if (response.body.courseId) {
@@ -32,8 +30,7 @@ describe('Education API Endpoints', () => {
   });
 
   test('GET /api/education/courses', async () => {
-    const response = await request(app)
-      .get('/api/education/courses');
+    const response = await request(app).get('/api/education/courses');
 
     expect(response.status).toBe(200);
   });
@@ -43,22 +40,22 @@ describe('Education API Endpoints', () => {
       .post('/api/education/enroll')
       .send({
         studentId: 'STU-TEST-001',
-        courseId: testCourseId || 'COURSE-001'
+        courseId: testCourseId || 'COURSE-001',
       });
 
     expect([200, 201, 400]).toContain(response.status);
   });
 
   test('GET /api/education/recommendations/:studentId', async () => {
-    const response = await request(app)
-      .get('/api/education/recommendations/STU-TEST-001');
+    const response = await request(app).get(
+      '/api/education/recommendations/STU-TEST-001'
+    );
 
     expect(response.status).toBe(200);
   });
 
   test('GET /api/education/health', async () => {
-    const response = await request(app)
-      .get('/api/education/health');
+    const response = await request(app).get('/api/education/health');
 
     expect(response.status).toBe(200);
     expect(response.body.status).toBe('operational');

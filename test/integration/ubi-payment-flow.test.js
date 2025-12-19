@@ -24,7 +24,7 @@ describe('UBI Payment Flow Integration', () => {
       nationality: 'US',
       ssn: '123-45-6789',
       email: 'ubi@test.com',
-      phone: '+1234567890'
+      phone: '+1234567890',
     });
 
     testCitizenId = registration.citizenId;
@@ -36,8 +36,8 @@ describe('UBI Payment Flow Integration', () => {
       paymentMethod: 'direct_deposit',
       bankAccount: {
         accountNumber: '1234567890',
-        routingNumber: '987654321'
-      }
+        routingNumber: '987654321',
+      },
     });
   });
 
@@ -45,7 +45,7 @@ describe('UBI Payment Flow Integration', () => {
     const result = await ubiService.processPayment({
       citizenId: testCitizenId,
       amount: 1000,
-      paymentDate: new Date().toISOString()
+      paymentDate: new Date().toISOString(),
     });
 
     expect(result.success).toBe(true);

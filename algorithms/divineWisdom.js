@@ -102,7 +102,7 @@ class DivineWisdom {
     // Adjust based on context
     let adjustment = 0;
 
-    if (context.hasOwnProperty(principle)) {
+    if (Object.prototype.hasOwnProperty.call(context, principle)) {
       adjustment = context[principle] * 30; // Scale context input
     } else {
       // Use decision attributes if available

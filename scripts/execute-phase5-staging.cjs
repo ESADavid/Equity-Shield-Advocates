@@ -18,14 +18,15 @@ class StagingDeployment {
 
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    const prefix = {
-      info: 'ℹ️ ',
-      success: '✅ ',
-      warning: '⚠️ ',
-      error: '❌ ',
-      step: '🔧 '
-    }[type] || '📝 ';
-    
+    const prefix =
+      {
+        info: 'ℹ️ ',
+        success: '✅ ',
+        warning: '⚠️ ',
+        error: '❌ ',
+        step: '🔧 ',
+      }[type] || '📝 ';
+
     console.log(`[${timestamp}] ${prefix}${message}`);
   }
 
@@ -41,7 +42,7 @@ class StagingDeployment {
       await this.validateStaging();
 
       this.showSummary();
-      
+
       this.log('✅ STAGING DEPLOYMENT COMPLETE', 'success');
       return true;
     } catch (error) {
@@ -80,18 +81,20 @@ class StagingDeployment {
         this.log('Using docker-compose.production.yml', 'info');
         execSync('docker-compose -f docker-compose.production.yml up -d', {
           stdio: 'inherit',
-          env: { ...process.env, NODE_ENV: 'staging' }
+          env: { ...process.env, NODE_ENV: 'staging' },
         });
       } else if (fs.existsSync('docker-compose.simple.yml')) {
         this.log('Using docker-compose.simple.yml', 'info');
         execSync('docker-compose -f docker-compose.simple.yml up -d', {
           stdio: 'inherit',
-          env: { ...process.env, NODE_ENV: 'staging' }
+          env: { ...process.env, NODE_ENV: 'staging' },
         });
       } else {
-        this.warnings.push('No docker-compose file found - using deployment script');
+        this.warnings.push(
+          'No docker-compose file found - using deployment script'
+        );
         execSync('node scripts/execute-phase4-deployment.cjs simple', {
-          stdio: 'inherit'
+          stdio: 'inherit',
         });
       }
       this.log('Deployment command executed', 'success');
@@ -107,7 +110,7 @@ class StagingDeployment {
     this.log('Verifying services...', 'info');
     try {
       const containers = execSync('docker ps --format "{{.Names}}"', {
-        encoding: 'utf-8'
+        encoding: 'utf-8',
       });
       this.log(`Running containers:\n${containers}`, 'info');
     } catch (error) {
@@ -126,7 +129,7 @@ class StagingDeployment {
       if (fs.existsSync('comprehensive_integration_test.js')) {
         execSync('node comprehensive_integration_test.js', {
           stdio: 'inherit',
-          timeout: 120000
+          timeout: 120000,
         });
         this.log('Integration tests passed', 'success');
       } else {
@@ -142,7 +145,7 @@ class StagingDeployment {
       if (fs.existsSync('performance_test.js')) {
         execSync('node performance_test.js', {
           stdio: 'inherit',
-          timeout: 60000
+          timeout: 60000,
         });
         this.log('Performance tests passed', 'success');
       } else {
@@ -155,11 +158,14 @@ class StagingDeployment {
     // Step 3: Check health endpoint
     this.log('Checking health endpoint...', 'info');
     try {
-      const response = execSync('curl -s http://localhost:3000/health || echo "FAILED"', {
-        encoding: 'utf-8',
-        timeout: 10000
-      });
-      
+      const response = execSync(
+        'curl -s http://localhost:3000/health || echo "FAILED"',
+        {
+          encoding: 'utf-8',
+          timeout: 10000,
+        }
+      );
+
       if (response.includes('FAILED') || response.includes('error')) {
         this.warnings.push('Health endpoint check failed');
       } else {
@@ -181,33 +187,33 @@ class StagingDeployment {
   }
 
   sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   showSummary() {
     const duration = ((Date.now() - this.startTime) / 1000).toFixed(2);
-    
+
     console.log('\n' + '='.repeat(60));
     console.log('📊 STAGING DEPLOYMENT SUMMARY');
     console.log('='.repeat(60));
     console.log(`⏱️  Duration: ${duration} seconds`);
-    
+
     if (this.errors.length > 0) {
       console.log('\n❌ ERRORS:');
-      this.errors.forEach(error => console.log(`   - ${error}`));
+      this.errors.forEach((error) => console.log(`   - ${error}`));
     }
-    
+
     if (this.warnings.length > 0) {
       console.log('\n⚠️  WARNINGS:');
-      this.warnings.forEach(warning => console.log(`   - ${warning}`));
+      this.warnings.forEach((warning) => console.log(`   - ${warning}`));
     }
-    
+
     console.log('\n✅ COMPLETED STEPS:');
     console.log('   - Staging environment configured');
     console.log('   - Application deployed');
     console.log('   - Services verified');
     console.log('   - Validation tests run');
-    
+
     console.log('\n📝 NEXT STEPS:');
     console.log('   1. Review staging deployment');
     console.log('   2. Test user workflows manually');
@@ -219,7 +225,7 @@ class StagingDeployment {
 
 // Execute
 const deployment = new StagingDeployment();
-deployment.run().catch(error => {
+deployment.run().catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

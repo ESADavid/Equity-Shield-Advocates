@@ -2,7 +2,7 @@
  * CITIZEN PORTAL SERVICE
  * Backend service for citizen-facing portal
  * Part of Phase 2: Heaven on Earth Implementation
- * 
+ *
  * Features:
  * - Citizen registration and profile management
  * - UBI enrollment and tracking
@@ -23,7 +23,7 @@ class CitizenPortalService {
     this.documents = new Map();
     this.messages = new Map();
     this.notifications = new Map();
-    
+
     logger.info('Citizen Portal Service initialized');
   }
 
@@ -38,7 +38,7 @@ class CitizenPortalService {
 
       const citizen = {
         citizenId: citizenId,
-        
+
         // Personal Information
         personalInfo: {
           firstName: citizenData.firstName,
@@ -48,9 +48,9 @@ class CitizenPortalService {
           gender: citizenData.gender,
           nationality: citizenData.nationality,
           ssn: citizenData.ssn, // Encrypted in production
-          profilePhoto: citizenData.profilePhoto || null
+          profilePhoto: citizenData.profilePhoto || null,
         },
-        
+
         // Contact Information
         contact: {
           email: citizenData.email,
@@ -61,17 +61,17 @@ class CitizenPortalService {
             city: citizenData.address?.city || '',
             state: citizenData.address?.state || '',
             country: citizenData.address?.country || '',
-            postalCode: citizenData.address?.postalCode || ''
+            postalCode: citizenData.address?.postalCode || '',
           },
-          emergencyContact: citizenData.emergencyContact || {}
+          emergencyContact: citizenData.emergencyContact || {},
         },
-        
+
         // Account Status
         status: 'active',
         verificationStatus: 'pending',
         registrationDate: new Date().toISOString(),
         lastLogin: null,
-        
+
         // UBI Enrollment
         ubiEnrollment: {
           enrolled: false,
@@ -81,9 +81,9 @@ class CitizenPortalService {
           bankAccount: null,
           totalReceived: 0,
           lastPayment: null,
-          paymentHistory: []
+          paymentHistory: [],
         },
-        
+
         // Education
         education: {
           enrolled: false,
@@ -92,9 +92,9 @@ class CitizenPortalService {
           inProgressCourses: [],
           certificates: [],
           totalHours: 0,
-          achievements: []
+          achievements: [],
         },
-        
+
         // Healthcare
         healthcare: {
           enrolled: false,
@@ -102,41 +102,41 @@ class CitizenPortalService {
           insuranceNumber: null,
           medicalHistory: [],
           appointments: [],
-          prescriptions: []
+          prescriptions: [],
         },
-        
+
         // Employment
         employment: {
           status: citizenData.employmentStatus || 'unemployed',
           employer: citizenData.employer || null,
           occupation: citizenData.occupation || null,
           income: citizenData.income || 0,
-          employmentHistory: []
+          employmentHistory: [],
         },
-        
+
         // Family
         family: {
           maritalStatus: citizenData.maritalStatus || 'single',
           dependents: citizenData.dependents || 0,
           householdSize: citizenData.householdSize || 1,
-          householdIncome: citizenData.householdIncome || 0
+          householdIncome: citizenData.householdIncome || 0,
         },
-        
+
         // Services
         services: {
           active: [],
           requested: [],
-          completed: []
+          completed: [],
         },
-        
+
         // Documents
         documents: {
           identityProof: null,
           addressProof: null,
           birthCertificate: null,
-          other: []
+          other: [],
         },
-        
+
         // Preferences
         preferences: {
           language: citizenData.language || 'en',
@@ -144,24 +144,26 @@ class CitizenPortalService {
           notifications: {
             email: true,
             sms: true,
-            push: true
+            push: true,
           },
           privacy: {
             shareData: false,
-            publicProfile: false
-          }
+            publicProfile: false,
+          },
         },
-        
+
         // Activity
-        activityLog: [{
-          timestamp: new Date().toISOString(),
-          action: 'citizen_registered',
-          details: { status: 'pending_verification' }
-        }],
-        
+        activityLog: [
+          {
+            timestamp: new Date().toISOString(),
+            action: 'citizen_registered',
+            details: { status: 'pending_verification' },
+          },
+        ],
+
         // Metadata
         createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
 
       this.citizens.set(citizenId, citizen);
@@ -169,19 +171,21 @@ class CitizenPortalService {
       // Send welcome notification
       await this.sendWelcomeNotification(citizenId);
 
-      logger.info(`Citizen registered: ${citizenId} - ${citizen.personalInfo.firstName} ${citizen.personalInfo.lastName}`);
+      logger.info(
+        `Citizen registered: ${citizenId} - ${citizen.personalInfo.firstName} ${citizen.personalInfo.lastName}`
+      );
 
       return {
         success: true,
         citizenId: citizenId,
         citizen: this.sanitizeCitizenData(citizen),
-        message: 'Registration successful. Please verify your account.'
+        message: 'Registration successful. Please verify your account.',
       };
     } catch (error) {
       logger.error('Error registering citizen:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -192,16 +196,17 @@ class CitizenPortalService {
   async sendWelcomeNotification(citizenId) {
     try {
       const notificationId = `NOTIF-${citizenId}-WELCOME`;
-      
+
       const notification = {
         notificationId: notificationId,
         citizenId: citizenId,
         type: 'welcome',
         title: 'Welcome to Heaven on Earth Initiative',
-        message: 'Your registration is complete. Please verify your account to access all services.',
+        message:
+          'Your registration is complete. Please verify your account to access all services.',
         priority: 'high',
         read: false,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
       this.notifications.set(notificationId, notification);
@@ -225,21 +230,21 @@ class CitizenPortalService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
       if (citizen.verificationStatus !== 'verified') {
         return {
           success: false,
-          error: 'Account must be verified before enrolling in UBI'
+          error: 'Account must be verified before enrolling in UBI',
         };
       }
 
       if (citizen.ubiEnrollment.enrolled) {
         return {
           success: false,
-          error: 'Already enrolled in UBI program'
+          error: 'Already enrolled in UBI program',
         };
       }
 
@@ -252,7 +257,7 @@ class CitizenPortalService {
         bankAccount: enrollmentData.bankAccount, // Encrypted in production
         totalReceived: 0,
         lastPayment: null,
-        paymentHistory: []
+        paymentHistory: [],
       };
 
       citizen.services.active.push('ubi');
@@ -261,7 +266,7 @@ class CitizenPortalService {
       citizen.activityLog.push({
         timestamp: new Date().toISOString(),
         action: 'ubi_enrolled',
-        details: { paymentMethod: enrollmentData.paymentMethod }
+        details: { paymentMethod: enrollmentData.paymentMethod },
       });
 
       logger.info(`Citizen ${citizenId} enrolled in UBI program`);
@@ -269,13 +274,13 @@ class CitizenPortalService {
       return {
         success: true,
         enrollment: citizen.ubiEnrollment,
-        message: 'Successfully enrolled in UBI program'
+        message: 'Successfully enrolled in UBI program',
       };
     } catch (error) {
       logger.error('Error enrolling in UBI:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -293,7 +298,7 @@ class CitizenPortalService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
@@ -301,7 +306,7 @@ class CitizenPortalService {
       if (citizen.education.courses.includes(courseId)) {
         return {
           success: false,
-          error: 'Already enrolled in this course'
+          error: 'Already enrolled in this course',
         };
       }
 
@@ -312,7 +317,7 @@ class CitizenPortalService {
         courseId: courseId,
         enrollmentDate: new Date().toISOString(),
         progress: 0,
-        status: 'in-progress'
+        status: 'in-progress',
       });
 
       if (!citizen.services.active.includes('education')) {
@@ -324,7 +329,7 @@ class CitizenPortalService {
       citizen.activityLog.push({
         timestamp: new Date().toISOString(),
         action: 'course_enrolled',
-        details: { courseId: courseId }
+        details: { courseId: courseId },
       });
 
       logger.info(`Citizen ${citizenId} enrolled in course ${courseId}`);
@@ -332,13 +337,13 @@ class CitizenPortalService {
       return {
         success: true,
         courseId: courseId,
-        message: 'Successfully enrolled in course'
+        message: 'Successfully enrolled in course',
       };
     } catch (error) {
       logger.error('Error enrolling in course:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -356,7 +361,7 @@ class CitizenPortalService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
@@ -366,29 +371,31 @@ class CitizenPortalService {
         requestId: requestId,
         citizenId: citizenId,
         citizenName: `${citizen.personalInfo.firstName} ${citizen.personalInfo.lastName}`,
-        
+
         type: requestData.type, // support, complaint, inquiry, etc.
         category: requestData.category,
         subject: requestData.subject,
         description: requestData.description,
         priority: requestData.priority || 'medium',
-        
+
         status: 'submitted',
         assignedTo: null,
-        
+
         attachments: requestData.attachments || [],
-        
-        timeline: [{
-          timestamp: new Date().toISOString(),
-          status: 'submitted',
-          note: 'Service request submitted'
-        }],
-        
+
+        timeline: [
+          {
+            timestamp: new Date().toISOString(),
+            status: 'submitted',
+            note: 'Service request submitted',
+          },
+        ],
+
         responses: [],
         resolution: null,
-        
+
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       this.serviceRequests.set(requestId, serviceRequest);
@@ -397,22 +404,24 @@ class CitizenPortalService {
       citizen.activityLog.push({
         timestamp: new Date().toISOString(),
         action: 'service_request_created',
-        details: { requestId: requestId, type: requestData.type }
+        details: { requestId: requestId, type: requestData.type },
       });
 
-      logger.info(`Service request created: ${requestId} for citizen ${citizenId}`);
+      logger.info(
+        `Service request created: ${requestId} for citizen ${citizenId}`
+      );
 
       return {
         success: true,
         requestId: requestId,
         serviceRequest: serviceRequest,
-        message: 'Service request submitted successfully'
+        message: 'Service request submitted successfully',
       };
     } catch (error) {
       logger.error('Error creating service request:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -430,7 +439,7 @@ class CitizenPortalService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
@@ -448,7 +457,7 @@ class CitizenPortalService {
         uploadDate: new Date().toISOString(),
         status: 'pending-review',
         verifiedBy: null,
-        verifiedAt: null
+        verifiedAt: null,
       };
 
       this.documents.set(documentId, document);
@@ -465,7 +474,7 @@ class CitizenPortalService {
       citizen.activityLog.push({
         timestamp: new Date().toISOString(),
         action: 'document_uploaded',
-        details: { documentId: documentId, type: documentData.type }
+        details: { documentId: documentId, type: documentData.type },
       });
 
       logger.info(`Document uploaded for citizen ${citizenId}: ${documentId}`);
@@ -474,13 +483,13 @@ class CitizenPortalService {
         success: true,
         documentId: documentId,
         document: document,
-        message: 'Document uploaded successfully'
+        message: 'Document uploaded successfully',
       };
     } catch (error) {
       logger.error('Error uploading document:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -497,7 +506,7 @@ class CitizenPortalService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
@@ -510,17 +519,17 @@ class CitizenPortalService {
           activeCourses: citizen.education.inProgressCourses.length,
           completedCourses: citizen.education.completedCourses.length,
           activeServices: citizen.services.active.length,
-          pendingRequests: citizen.services.requested.filter(reqId => {
+          pendingRequests: citizen.services.requested.filter((reqId) => {
             const req = this.serviceRequests.get(reqId);
             return req && req.status !== 'resolved';
-          }).length
-        }
+          }).length,
+        },
       };
     } catch (error) {
       logger.error('Error getting citizen profile:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -538,7 +547,7 @@ class CitizenPortalService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
@@ -548,7 +557,10 @@ class CitizenPortalService {
       }
 
       if (updates.preferences) {
-        citizen.preferences = { ...citizen.preferences, ...updates.preferences };
+        citizen.preferences = {
+          ...citizen.preferences,
+          ...updates.preferences,
+        };
       }
 
       if (updates.employment) {
@@ -560,7 +572,7 @@ class CitizenPortalService {
       citizen.activityLog.push({
         timestamp: new Date().toISOString(),
         action: 'profile_updated',
-        details: { fields: Object.keys(updates) }
+        details: { fields: Object.keys(updates) },
       });
 
       logger.info(`Citizen profile updated: ${citizenId}`);
@@ -568,13 +580,13 @@ class CitizenPortalService {
       return {
         success: true,
         profile: this.sanitizeCitizenData(citizen),
-        message: 'Profile updated successfully'
+        message: 'Profile updated successfully',
       };
     } catch (error) {
       logger.error('Error updating citizen profile:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -587,27 +599,30 @@ class CitizenPortalService {
    */
   getCitizenNotifications(citizenId, filters = {}) {
     try {
-      let notifications = Array.from(this.notifications.values())
-        .filter(n => n.citizenId === citizenId);
+      let notifications = Array.from(this.notifications.values()).filter(
+        (n) => n.citizenId === citizenId
+      );
 
       if (filters.unreadOnly) {
-        notifications = notifications.filter(n => !n.read);
+        notifications = notifications.filter((n) => !n.read);
       }
 
       // Sort by date (newest first)
-      notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      notifications.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
 
       return {
         success: true,
         notifications: notifications,
         count: notifications.length,
-        unreadCount: notifications.filter(n => !n.read).length
+        unreadCount: notifications.filter((n) => !n.read).length,
       };
     } catch (error) {
       logger.error('Error getting citizen notifications:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -624,19 +639,19 @@ class CitizenPortalService {
       if (!request) {
         return {
           success: false,
-          error: 'Service request not found'
+          error: 'Service request not found',
         };
       }
 
       return {
         success: true,
-        serviceRequest: request
+        serviceRequest: request,
       };
     } catch (error) {
       logger.error('Error getting service request:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -646,16 +661,18 @@ class CitizenPortalService {
    */
   sanitizeCitizenData(citizen) {
     const sanitized = { ...citizen };
-    
+
     // Remove or mask sensitive data
     if (sanitized.personalInfo?.ssn) {
-      sanitized.personalInfo.ssn = '***-**-' + sanitized.personalInfo.ssn.slice(-4);
+      sanitized.personalInfo.ssn =
+        '***-**-' + sanitized.personalInfo.ssn.slice(-4);
     }
-    
+
     if (sanitized.ubiEnrollment?.bankAccount) {
       sanitized.ubiEnrollment.bankAccount = {
         ...sanitized.ubiEnrollment.bankAccount,
-        accountNumber: '****' + sanitized.ubiEnrollment.bankAccount.accountNumber?.slice(-4)
+        accountNumber:
+          '****' + sanitized.ubiEnrollment.bankAccount.accountNumber?.slice(-4),
       };
     }
 
@@ -676,34 +693,47 @@ class CitizenPortalService {
         statistics: {
           citizens: {
             total: citizens.length,
-            active: citizens.filter(c => c.status === 'active').length,
-            verified: citizens.filter(c => c.verificationStatus === 'verified').length,
-            pending: citizens.filter(c => c.verificationStatus === 'pending').length
+            active: citizens.filter((c) => c.status === 'active').length,
+            verified: citizens.filter(
+              (c) => c.verificationStatus === 'verified'
+            ).length,
+            pending: citizens.filter((c) => c.verificationStatus === 'pending')
+              .length,
           },
           ubi: {
-            enrolled: citizens.filter(c => c.ubiEnrollment.enrolled).length,
-            totalPaid: citizens.reduce((sum, c) => sum + c.ubiEnrollment.totalReceived, 0)
+            enrolled: citizens.filter((c) => c.ubiEnrollment.enrolled).length,
+            totalPaid: citizens.reduce(
+              (sum, c) => sum + c.ubiEnrollment.totalReceived,
+              0
+            ),
           },
           education: {
-            enrolled: citizens.filter(c => c.education.enrolled).length,
-            totalCourses: citizens.reduce((sum, c) => sum + c.education.courses.length, 0),
-            completedCourses: citizens.reduce((sum, c) => sum + c.education.completedCourses.length, 0)
+            enrolled: citizens.filter((c) => c.education.enrolled).length,
+            totalCourses: citizens.reduce(
+              (sum, c) => sum + c.education.courses.length,
+              0
+            ),
+            completedCourses: citizens.reduce(
+              (sum, c) => sum + c.education.completedCourses.length,
+              0
+            ),
           },
           serviceRequests: {
             total: requests.length,
-            submitted: requests.filter(r => r.status === 'submitted').length,
-            inProgress: requests.filter(r => r.status === 'in-progress').length,
-            resolved: requests.filter(r => r.status === 'resolved').length
+            submitted: requests.filter((r) => r.status === 'submitted').length,
+            inProgress: requests.filter((r) => r.status === 'in-progress')
+              .length,
+            resolved: requests.filter((r) => r.status === 'resolved').length,
           },
-          documents: this.documents.size
+          documents: this.documents.size,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('Error getting statistics:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -720,7 +750,7 @@ class CitizenPortalService {
       serviceRequests: this.serviceRequests.size,
       documents: this.documents.size,
       notifications: this.notifications.size,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     };
   }
 }

@@ -7,13 +7,7 @@ import { info, warn, error } from '../utils/loggerWrapper.js';
 
 class ComplianceMonitoringService {
   constructor() {
-    this.complianceStandards = [
-      'GDPR',
-      'PCI-DSS',
-      'SOC2',
-      'HIPAA',
-      'ISO27001'
-    ];
+    this.complianceStandards = ['GDPR', 'PCI-DSS', 'SOC2', 'HIPAA', 'ISO27001'];
   }
 
   /**
@@ -22,7 +16,7 @@ class ComplianceMonitoringService {
   async monitorCompliance() {
     try {
       info('Starting compliance monitoring...');
-      
+
       const checks = await Promise.all([
         this.checkDataPrivacy(),
         this.checkFinancialCompliance(),
@@ -30,24 +24,25 @@ class ComplianceMonitoringService {
         this.checkAccessControls(),
         this.checkAuditTrails(),
         this.checkDataEncryption(),
-        this.checkUserConsent()
+        this.checkUserConsent(),
       ]);
-      
-      const issues = checks.filter(check => check.status !== 'compliant');
-      const overallStatus = issues.length === 0 ? 'compliant' : 'needs_attention';
-      
+
+      const issues = checks.filter((check) => check.status !== 'compliant');
+      const overallStatus =
+        issues.length === 0 ? 'compliant' : 'needs_attention';
+
       if (issues.length > 0) {
         warn(`Compliance issues found: ${issues.length}`);
       } else {
         info('All compliance checks passed');
       }
-      
+
       return {
         overallStatus,
         checks,
         issueCount: issues.length,
         timestamp: new Date(),
-        nextReview: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        nextReview: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       };
     } catch (err) {
       error('Compliance monitoring failed:', err);
@@ -61,18 +56,18 @@ class ComplianceMonitoringService {
   async checkDataPrivacy() {
     try {
       const issues = [];
-      
+
       // Check for data retention policies
       // Check for user consent mechanisms
       // Check for data deletion capabilities
-      
+
       return {
         area: 'Data Privacy (GDPR)',
         status: 'compliant',
         standard: 'GDPR',
         issues,
         lastChecked: new Date(),
-        score: 100
+        score: 100,
       };
     } catch (err) {
       error('Data privacy check failed:', err);
@@ -80,7 +75,7 @@ class ComplianceMonitoringService {
         area: 'Data Privacy (GDPR)',
         status: 'error',
         issues: [err.message],
-        lastChecked: new Date()
+        lastChecked: new Date(),
       };
     }
   }
@@ -91,18 +86,18 @@ class ComplianceMonitoringService {
   async checkFinancialCompliance() {
     try {
       const issues = [];
-      
+
       // Check payment data encryption
       // Check secure transmission
       // Check access logging
-      
+
       return {
         area: 'Financial Compliance (PCI-DSS)',
         status: 'compliant',
         standard: 'PCI-DSS',
         issues,
         lastChecked: new Date(),
-        score: 100
+        score: 100,
       };
     } catch (err) {
       error('Financial compliance check failed:', err);
@@ -110,7 +105,7 @@ class ComplianceMonitoringService {
         area: 'Financial Compliance (PCI-DSS)',
         status: 'error',
         issues: [err.message],
-        lastChecked: new Date()
+        lastChecked: new Date(),
       };
     }
   }
@@ -121,18 +116,18 @@ class ComplianceMonitoringService {
   async checkSecurityStandards() {
     try {
       const issues = [];
-      
+
       // Check encryption standards
       // Check authentication mechanisms
       // Check security policies
-      
+
       return {
         area: 'Security Standards (ISO27001)',
         status: 'compliant',
         standard: 'ISO27001',
         issues,
         lastChecked: new Date(),
-        score: 100
+        score: 100,
       };
     } catch (err) {
       error('Security standards check failed:', err);
@@ -140,7 +135,7 @@ class ComplianceMonitoringService {
         area: 'Security Standards (ISO27001)',
         status: 'error',
         issues: [err.message],
-        lastChecked: new Date()
+        lastChecked: new Date(),
       };
     }
   }
@@ -151,17 +146,17 @@ class ComplianceMonitoringService {
   async checkAccessControls() {
     try {
       const issues = [];
-      
+
       // Check role-based access control
       // Check authentication requirements
       // Check session management
-      
+
       return {
         area: 'Access Controls',
         status: 'compliant',
         issues,
         lastChecked: new Date(),
-        score: 100
+        score: 100,
       };
     } catch (err) {
       error('Access controls check failed:', err);
@@ -169,7 +164,7 @@ class ComplianceMonitoringService {
         area: 'Access Controls',
         status: 'error',
         issues: [err.message],
-        lastChecked: new Date()
+        lastChecked: new Date(),
       };
     }
   }
@@ -180,17 +175,17 @@ class ComplianceMonitoringService {
   async checkAuditTrails() {
     try {
       const issues = [];
-      
+
       // Check logging completeness
       // Check log retention
       // Check log security
-      
+
       return {
         area: 'Audit Trails',
         status: 'compliant',
         issues,
         lastChecked: new Date(),
-        score: 100
+        score: 100,
       };
     } catch (err) {
       error('Audit trails check failed:', err);
@@ -198,7 +193,7 @@ class ComplianceMonitoringService {
         area: 'Audit Trails',
         status: 'error',
         issues: [err.message],
-        lastChecked: new Date()
+        lastChecked: new Date(),
       };
     }
   }
@@ -209,17 +204,17 @@ class ComplianceMonitoringService {
   async checkDataEncryption() {
     try {
       const issues = [];
-      
+
       // Check encryption at rest
       // Check encryption in transit
       // Check key management
-      
+
       return {
         area: 'Data Encryption',
         status: 'compliant',
         issues,
         lastChecked: new Date(),
-        score: 100
+        score: 100,
       };
     } catch (err) {
       error('Data encryption check failed:', err);
@@ -227,7 +222,7 @@ class ComplianceMonitoringService {
         area: 'Data Encryption',
         status: 'error',
         issues: [err.message],
-        lastChecked: new Date()
+        lastChecked: new Date(),
       };
     }
   }
@@ -238,17 +233,17 @@ class ComplianceMonitoringService {
   async checkUserConsent() {
     try {
       const issues = [];
-      
+
       // Check consent collection
       // Check consent storage
       // Check consent withdrawal
-      
+
       return {
         area: 'User Consent',
         status: 'compliant',
         issues,
         lastChecked: new Date(),
-        score: 100
+        score: 100,
       };
     } catch (err) {
       error('User consent check failed:', err);
@@ -256,7 +251,7 @@ class ComplianceMonitoringService {
         area: 'User Consent',
         status: 'error',
         issues: [err.message],
-        lastChecked: new Date()
+        lastChecked: new Date(),
       };
     }
   }
@@ -267,15 +262,15 @@ class ComplianceMonitoringService {
   async generateComplianceReport() {
     try {
       const results = await this.monitorCompliance();
-      
+
       const report = {
         ...results,
         summary: this.generateSummary(results),
         recommendations: this.generateRecommendations(results),
         riskLevel: this.calculateRiskLevel(results),
-        complianceScore: this.calculateComplianceScore(results)
+        complianceScore: this.calculateComplianceScore(results),
       };
-      
+
       info('Compliance report generated');
       return report;
     } catch (err) {
@@ -289,14 +284,16 @@ class ComplianceMonitoringService {
    */
   generateSummary(results) {
     const total = results.checks.length;
-    const compliant = results.checks.filter(c => c.status === 'compliant').length;
+    const compliant = results.checks.filter(
+      (c) => c.status === 'compliant'
+    ).length;
     const percentage = Math.round((compliant / total) * 100);
-    
+
     return {
       totalChecks: total,
       compliantChecks: compliant,
       compliancePercentage: percentage,
-      status: results.overallStatus
+      status: results.overallStatus,
     };
   }
 
@@ -305,27 +302,27 @@ class ComplianceMonitoringService {
    */
   generateRecommendations(results) {
     const recommendations = [];
-    
-    results.checks.forEach(check => {
+
+    results.checks.forEach((check) => {
       if (check.issues && check.issues.length > 0) {
         recommendations.push({
           area: check.area,
           priority: 'high',
           action: `Address issues in ${check.area}`,
-          issues: check.issues
+          issues: check.issues,
         });
       }
     });
-    
+
     if (recommendations.length === 0) {
       recommendations.push({
         area: 'General',
         priority: 'low',
         action: 'Continue regular monitoring',
-        issues: []
+        issues: [],
       });
     }
-    
+
     return recommendations;
   }
 
@@ -334,7 +331,7 @@ class ComplianceMonitoringService {
    */
   calculateRiskLevel(results) {
     const issueCount = results.issueCount;
-    
+
     if (issueCount === 0) return 'low';
     if (issueCount <= 2) return 'medium';
     return 'high';
@@ -345,7 +342,9 @@ class ComplianceMonitoringService {
    */
   calculateComplianceScore(results) {
     const total = results.checks.length;
-    const compliant = results.checks.filter(c => c.status === 'compliant').length;
+    const compliant = results.checks.filter(
+      (c) => c.status === 'compliant'
+    ).length;
     return Math.round((compliant / total) * 100);
   }
 
@@ -355,13 +354,13 @@ class ComplianceMonitoringService {
   async scheduleComplianceCheck(interval = 'daily') {
     try {
       info(`Scheduling compliance checks: ${interval}`);
-      
+
       const schedule = {
         interval,
         nextRun: this.calculateNextRun(interval),
-        enabled: true
+        enabled: true,
       };
-      
+
       return schedule;
     } catch (err) {
       error('Failed to schedule compliance check:', err);
@@ -374,7 +373,7 @@ class ComplianceMonitoringService {
    */
   calculateNextRun(interval) {
     const now = new Date();
-    
+
     switch (interval) {
       case 'hourly':
         return new Date(now.getTime() + 60 * 60 * 1000);

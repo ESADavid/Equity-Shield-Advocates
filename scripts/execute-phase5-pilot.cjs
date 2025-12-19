@@ -3,7 +3,7 @@
 /**
  * Phase 5: Pilot Deployment Script
  * Deploy pilot program for 100K citizens
- * 
+ *
  * OSCAR BROOME REVENUE - OWLBAN GROUP / House of David
  */
 
@@ -25,29 +25,30 @@ class PilotDeployer {
 
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    const prefix = {
-      info: 'ℹ️ ',
-      success: '✅ ',
-      warning: '⚠️ ',
-      error: '❌ ',
-      step: '🔧 ',
-    }[type] || '📝 ';
+    const prefix =
+      {
+        info: 'ℹ️ ',
+        success: '✅ ',
+        warning: '⚠️ ',
+        error: '❌ ',
+        step: '🔧 ',
+      }[type] || '📝 ';
 
     console.log(`[${timestamp}] ${prefix}${message}`);
   }
 
   exec(command, description) {
     this.log(description, 'step');
-    
+
     if (this.dryRun) {
       this.log(`DRY RUN: ${command}`, 'info');
       return '';
     }
 
     try {
-      const output = execSync(command, { 
+      const output = execSync(command, {
         encoding: 'utf8',
-        stdio: this.verbose ? 'inherit' : 'pipe'
+        stdio: this.verbose ? 'inherit' : 'pipe',
       });
       return output;
     } catch (error) {
@@ -59,7 +60,7 @@ class PilotDeployer {
   async run() {
     try {
       this.log('Starting pilot deployment process...', 'step');
-      
+
       if (this.dryRun) {
         this.log('Running in DRY RUN mode - no actual changes', 'warning');
       }
@@ -75,7 +76,6 @@ class PilotDeployer {
 
       this.log('Pilot deployment completed successfully!', 'success');
       this.showSummary();
-
     } catch (error) {
       this.log(`Pilot deployment failed: ${error.message}`, 'error');
       this.errors.push(error.message);
@@ -135,7 +135,7 @@ class PilotDeployer {
       const envContent = Object.entries(pilotConfig)
         .map(([key, value]) => `${key}=${value}`)
         .join('\n');
-      
+
       fs.writeFileSync('.env.pilot', envContent);
       this.log('Pilot environment configured', 'success');
     } else {
@@ -150,20 +150,23 @@ class PilotDeployer {
       {
         name: 'Deploy pilot namespace',
         command: 'kubectl create namespace oscar-broome-pilot',
-        skipOnError: true
+        skipOnError: true,
       },
       {
         name: 'Deploy pilot database',
-        command: 'kubectl apply -f k8s/database-production.yml -n oscar-broome-pilot'
+        command:
+          'kubectl apply -f k8s/database-production.yml -n oscar-broome-pilot',
       },
       {
         name: 'Wait for database',
-        command: 'kubectl wait --for=condition=ready pod -l app=mongodb -n oscar-broome-pilot --timeout=300s'
+        command:
+          'kubectl wait --for=condition=ready pod -l app=mongodb -n oscar-broome-pilot --timeout=300s',
       },
       {
         name: 'Deploy pilot Redis',
-        command: 'kubectl wait --for=condition=ready pod -l app=redis -n oscar-broome-pilot --timeout=120s'
-      }
+        command:
+          'kubectl wait --for=condition=ready pod -l app=redis -n oscar-broome-pilot --timeout=120s',
+      },
     ];
 
     for (const task of tasks) {
@@ -199,10 +202,15 @@ class PilotDeployer {
     if (!this.dryRun) {
       fs.writeFileSync('temp-pilot-init.js', initScript);
       try {
-        this.exec('node temp-pilot-init.js', 'Running pilot data initialization');
+        this.exec(
+          'node temp-pilot-init.js',
+          'Running pilot data initialization'
+        );
         fs.unlinkSync('temp-pilot-init.js');
       } catch (error) {
-        this.warnings.push('Pilot data initialization failed - manual setup required');
+        this.warnings.push(
+          'Pilot data initialization failed - manual setup required'
+        );
       }
     } else {
       this.log('Would initialize 100K test citizens', 'info');
@@ -215,21 +223,25 @@ class PilotDeployer {
     const deployCommands = [
       {
         name: 'Build pilot image',
-        command: 'docker build -t oscar-broome-pilot:latest -f Dockerfile.production .'
+        command:
+          'docker build -t oscar-broome-pilot:latest -f Dockerfile.production .',
       },
       {
         name: 'Deploy pilot application',
-        command: 'kubectl apply -f k8s/production-deployment.yml -n oscar-broome-pilot'
+        command:
+          'kubectl apply -f k8s/production-deployment.yml -n oscar-broome-pilot',
       },
       {
         name: 'Wait for application',
-        command: 'kubectl wait --for=condition=ready pod -l app=oscar-broome-revenue -n oscar-broome-pilot --timeout=300s'
+        command:
+          'kubectl wait --for=condition=ready pod -l app=oscar-broome-revenue -n oscar-broome-pilot --timeout=300s',
       },
       {
         name: 'Expose pilot service',
-        command: 'kubectl expose deployment oscar-broome-app --type=LoadBalancer --port=80 --target-port=3000 -n oscar-broome-pilot',
-        skipOnError: true
-      }
+        command:
+          'kubectl expose deployment oscar-broome-app --type=LoadBalancer --port=80 --target-port=3000 -n oscar-broome-pilot',
+        skipOnError: true,
+      },
     ];
 
     for (const cmd of deployCommands) {
@@ -252,18 +264,21 @@ class PilotDeployer {
     const monitoringTasks = [
       {
         name: 'Deploy monitoring stack',
-        command: 'kubectl apply -f k8s/monitoring-stack.yml -n oscar-broome-pilot'
+        command:
+          'kubectl apply -f k8s/monitoring-stack.yml -n oscar-broome-pilot',
       },
       {
         name: 'Configure Grafana dashboards',
-        command: 'kubectl apply -f k8s/grafana-dashboards.yml -n oscar-broome-pilot',
-        skipOnError: true
+        command:
+          'kubectl apply -f k8s/grafana-dashboards.yml -n oscar-broome-pilot',
+        skipOnError: true,
       },
       {
         name: 'Setup alerts',
-        command: 'kubectl apply -f k8s/prometheus-alerts.yml -n oscar-broome-pilot',
-        skipOnError: true
-      }
+        command:
+          'kubectl apply -f k8s/prometheus-alerts.yml -n oscar-broome-pilot',
+        skipOnError: true,
+      },
     ];
 
     for (const task of monitoringTasks) {
@@ -286,17 +301,18 @@ class PilotDeployer {
     const validations = [
       {
         name: 'Check pod status',
-        command: 'kubectl get pods -n oscar-broome-pilot'
+        command: 'kubectl get pods -n oscar-broome-pilot',
       },
       {
         name: 'Check service endpoints',
-        command: 'kubectl get services -n oscar-broome-pilot'
+        command: 'kubectl get services -n oscar-broome-pilot',
       },
       {
         name: 'Test health endpoint',
-        command: 'curl -f http://pilot.oscarbroome.com/health || echo "Health check pending"',
-        skipOnError: true
-      }
+        command:
+          'curl -f http://pilot.oscarbroome.com/health || echo "Health check pending"',
+        skipOnError: true,
+      },
     ];
 
     for (const validation of validations) {
@@ -335,8 +351,8 @@ class PilotDeployer {
         'Monitor pilot performance for 24-48 hours',
         'Collect user feedback',
         'Analyze performance metrics',
-        'Prepare for production deployment'
-      ]
+        'Prepare for production deployment',
+      ],
     };
 
     if (!this.dryRun) {
@@ -380,7 +396,9 @@ class PilotDeployer {
     console.log('   2. Check Grafana: http://pilot.oscarbroome.com:3000');
     console.log('   3. Review logs: kubectl logs -n oscar-broome-pilot');
     console.log('   4. Collect feedback for 24-48 hours');
-    console.log('   5. Proceed to production: node scripts/execute-phase5-production.cjs');
+    console.log(
+      '   5. Proceed to production: node scripts/execute-phase5-production.cjs'
+    );
 
     console.log('\n📝 PILOT METRICS TO MONITOR:');
     console.log('   - Response time < 200ms');
@@ -392,7 +410,7 @@ class PilotDeployer {
 
 // Run the pilot deployer
 const deployer = new PilotDeployer();
-deployer.run().catch(error => {
+deployer.run().catch((error) => {
   console.error('\n💥 PILOT DEPLOYMENT FAILED');
   console.error('='.repeat(60));
   console.error(error.message);

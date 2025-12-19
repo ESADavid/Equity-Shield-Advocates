@@ -22,19 +22,19 @@ class UBIPaymentService {
       if (!citizen) {
         throw new Error('Citizen not found');
       }
-      
+
       let amount = this.baseAmount;
-      
+
       // Add dependent bonuses
       if (citizen.dependents && citizen.dependents > 0) {
         amount += citizen.dependents * this.dependentBonus;
       }
-      
+
       // Apply any adjustments based on citizen status
       if (citizen.status === 'veteran') {
         amount += 500; // Veteran bonus
       }
-      
+
       info(`UBI calculated for citizen ${citizenId}: $${amount}`);
       return amount;
     } catch (err) {
@@ -49,21 +49,21 @@ class UBIPaymentService {
   async processPayment(citizenId) {
     try {
       const amount = await this.calculateUBIAmount(citizenId);
-      
+
       const payment = new UBIPayment({
         citizenId,
         amount,
         status: 'processing',
         transactionId: `UBI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        paymentMethod: 'jpmorgan'
+        paymentMethod: 'jpmorgan',
       });
-      
+
       await payment.save();
       info(`UBI payment initiated: ${payment._id}`);
-      
+
       // Simulate async payment processing
       this.completePayment(payment._id);
-      
+
       return payment;
     } catch (err) {
       error('Payment processing failed:', err);
@@ -97,7 +97,7 @@ class UBIPaymentService {
       const history = await UBIPayment.find({ citizenId })
         .sort({ paymentDate: -1 })
         .limit(limit);
-      
+
       info(`Retrieved ${history.length} payments for citizen ${citizenId}`);
       return history;
     } catch (err) {
@@ -143,16 +143,16 @@ class UBIPaymentService {
       if (!payment) {
         throw new Error('Payment not found');
       }
-      
+
       if (payment.status !== 'failed') {
         throw new Error('Only failed payments can be retried');
       }
-      
+
       payment.status = 'processing';
       await payment.save();
-      
+
       this.completePayment(paymentId);
-      
+
       info(`Payment retry initiated: ${paymentId}`);
       return payment;
     } catch (err) {

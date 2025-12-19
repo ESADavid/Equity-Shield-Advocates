@@ -1,6 +1,6 @@
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
-
 #!/usr/bin/env node
+
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 
 /**
  * Simple JPMorgan Integration Validation
@@ -23,11 +23,11 @@ const requiredFiles = [
   'package.json',
   'JPMORGAN_SETUP_GUIDE.md',
   'setup_jpmorgan_credentials.js',
-  'comprehensive_jpmorgan_test.js'
+  'comprehensive_jpmorgan_test.js',
 ];
 
 let filesExist = true;
-requiredFiles.forEach(file => {
+requiredFiles.forEach((file) => {
   const filePath = path.join(__dirname, file);
   if (fs.existsSync(filePath)) {
     logger.info(`✅ ${file} - Found`);
@@ -50,10 +50,10 @@ if (fs.existsSync(envPath)) {
   const requiredVars = [
     'JPMORGAN_PROJECT_ID',
     'JPMORGAN_ORGANIZATION_ID',
-    'JPMORGAN_BASE_URL'
+    'JPMORGAN_BASE_URL',
   ];
 
-  requiredVars.forEach(varName => {
+  requiredVars.forEach((varName) => {
     if (envContent.includes(varName + '=')) {
       logger.info(`✅ ${varName} configured`);
       envConfigured = true;
@@ -76,7 +76,7 @@ if (fs.existsSync(packagePath)) {
   const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
   const requiredDeps = ['express', 'axios', 'dotenv', 'cors'];
 
-  requiredDeps.forEach(dep => {
+  requiredDeps.forEach((dep) => {
     if (packageJson.dependencies && packageJson.dependencies[dep]) {
       logger.info(`✅ ${dep} dependency found`);
     } else {
@@ -90,7 +90,10 @@ if (fs.existsSync(packagePath)) {
 // Test 4: Validate JPMorgan payment module structure
 logger.info('\n🏗️  Validating JPMorgan payment module...');
 
-const jpmorganPath = path.join(__dirname, 'earnings_dashboard/jpmorgan_payment.js');
+const jpmorganPath = path.join(
+  __dirname,
+  'earnings_dashboard/jpmorgan_payment.js'
+);
 if (fs.existsSync(jpmorganPath)) {
   const jpmorganContent = fs.readFileSync(jpmorganPath, 'utf-8');
 
@@ -103,10 +106,10 @@ if (fs.existsSync(jpmorganPath)) {
     'void',
     'transactions',
     'webhook',
-    'health'
+    'health',
   ];
 
-  requiredFunctions.forEach(func => {
+  requiredFunctions.forEach((func) => {
     if (jpmorganContent.includes(func)) {
       logger.info(`✅ ${func} function/route found`);
     } else {
@@ -130,10 +133,10 @@ if (fs.existsSync(guidePath)) {
     'API Credentials',
     'Available Endpoints',
     'Testing Your Setup',
-    'Production Deployment'
+    'Production Deployment',
   ];
 
-  requiredSections.forEach(section => {
+  requiredSections.forEach((section) => {
     if (guideContent.includes(section)) {
       logger.info(`✅ ${section} section found`);
     } else {
@@ -151,14 +154,9 @@ const setupPath = path.join(__dirname, 'setup_jpmorgan_credentials.js');
 if (fs.existsSync(setupPath)) {
   const setupContent = fs.readFileSync(setupPath, 'utf-8');
 
-  const setupFeatures = [
-    'interactive',
-    'credentials',
-    'validation',
-    '.env'
-  ];
+  const setupFeatures = ['interactive', 'credentials', 'validation', '.env'];
 
-  setupFeatures.forEach(feature => {
+  setupFeatures.forEach((feature) => {
     if (setupContent.includes(feature)) {
       logger.info(`✅ ${feature} feature found`);
     } else {
@@ -180,7 +178,7 @@ const summary = {
   dependencies: '✅ Ready',
   module: '✅ Valid',
   documentation: '✅ Complete',
-  setup: '✅ Ready'
+  setup: '✅ Ready',
 };
 
 Object.entries(summary).forEach(([key, value]) => {
@@ -193,7 +191,9 @@ if (filesExist && envConfigured) {
   logger.info('🎉 JPMorgan integration is fully configured and ready!');
   logger.info('\n🚀 Next steps:');
   logger.info('1. Start your server: node test_server.js');
-  logger.info('2. Run comprehensive tests: node comprehensive_jpmorgan_test.js');
+  logger.info(
+    '2. Run comprehensive tests: node comprehensive_jpmorgan_test.js'
+  );
   logger.info('3. Test live API calls with real credentials');
 } else {
   logger.info('⚠️  JPMorgan integration needs setup:');
@@ -205,5 +205,7 @@ if (filesExist && envConfigured) {
   }
 }
 
-logger.info('\n📄 For detailed setup instructions, see: JPMORGAN_SETUP_GUIDE.md');
+logger.info(
+  '\n📄 For detailed setup instructions, see: JPMORGAN_SETUP_GUIDE.md'
+);
 logger.info('='.repeat(50));

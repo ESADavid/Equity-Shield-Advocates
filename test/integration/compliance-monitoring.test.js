@@ -17,7 +17,7 @@ describe('Compliance Monitoring Integration', () => {
       dataProcessing: true,
       userConsent: true,
       dataRetention: true,
-      rightToErasure: true
+      rightToErasure: true,
     });
 
     expect(result.success).toBe(true);
@@ -29,7 +29,7 @@ describe('Compliance Monitoring Integration', () => {
       encryption: true,
       accessControl: true,
       monitoring: true,
-      testing: true
+      testing: true,
     });
 
     expect(result.success).toBe(true);
@@ -46,7 +46,7 @@ describe('Compliance Monitoring Integration', () => {
       gdprCompliant: true,
       pciCompliant: true,
       iso27001Compliant: true,
-      recentViolations: 0
+      recentViolations: 0,
     });
 
     expect(result.success).toBe(true);

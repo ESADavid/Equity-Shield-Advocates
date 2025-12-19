@@ -23,7 +23,7 @@ router.post('/onboard', async (req, res) => {
   try {
     const userId = req.user?.id || 'system';
     const result = await partnerService.onboardPartner(req.body, userId);
-    
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -33,7 +33,7 @@ router.post('/onboard', async (req, res) => {
     logger.error('Error onboarding partner:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to onboard partner'
+      error: 'Failed to onboard partner',
     });
   }
 });
@@ -49,7 +49,7 @@ router.get('/', (req, res) => {
       status: req.query.status,
       type: req.query.type,
       minRating: parseFloat(req.query.minRating),
-      sortBy: req.query.sortBy
+      sortBy: req.query.sortBy,
     };
 
     const result = partnerService.getPartners(filters);
@@ -58,7 +58,7 @@ router.get('/', (req, res) => {
     logger.error('Error getting partners:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get partners'
+      error: 'Failed to get partners',
     });
   }
 });
@@ -72,7 +72,7 @@ router.get('/:partnerId', (req, res) => {
   try {
     const { partnerId } = req.params;
     const result = partnerService.getPartner(partnerId);
-    
+
     if (result.success) {
       res.json(result);
     } else {
@@ -82,7 +82,7 @@ router.get('/:partnerId', (req, res) => {
     logger.error('Error getting partner:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get partner'
+      error: 'Failed to get partner',
     });
   }
 });
@@ -96,9 +96,9 @@ router.post('/:partnerId/activate', (req, res) => {
   try {
     const { partnerId } = req.params;
     const userId = req.user?.id || 'system';
-    
+
     const result = partnerService.activatePartner(partnerId, userId);
-    
+
     if (result.success) {
       res.json(result);
     } else {
@@ -108,7 +108,7 @@ router.post('/:partnerId/activate', (req, res) => {
     logger.error('Error activating partner:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to activate partner'
+      error: 'Failed to activate partner',
     });
   }
 });
@@ -122,9 +122,9 @@ router.post('/:partnerId/projects', (req, res) => {
   try {
     const { partnerId } = req.params;
     const userId = req.user?.id || 'system';
-    
+
     const result = partnerService.assignProject(partnerId, req.body, userId);
-    
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -134,7 +134,7 @@ router.post('/:partnerId/projects', (req, res) => {
     logger.error('Error assigning project:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to assign project'
+      error: 'Failed to assign project',
     });
   }
 });
@@ -149,9 +149,14 @@ router.put('/projects/:projectId', (req, res) => {
     const { projectId } = req.params;
     const { status, ...updateData } = req.body;
     const userId = req.user?.id || 'system';
-    
-    const result = partnerService.updateProjectStatus(projectId, status, updateData, userId);
-    
+
+    const result = partnerService.updateProjectStatus(
+      projectId,
+      status,
+      updateData,
+      userId
+    );
+
     if (result.success) {
       res.json(result);
     } else {
@@ -161,7 +166,7 @@ router.put('/projects/:projectId', (req, res) => {
     logger.error('Error updating project:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to update project'
+      error: 'Failed to update project',
     });
   }
 });
@@ -175,9 +180,9 @@ router.post('/:partnerId/communication', (req, res) => {
   try {
     const { partnerId } = req.params;
     const userId = req.user?.id || 'system';
-    
+
     const result = partnerService.logCommunication(partnerId, req.body, userId);
-    
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -187,7 +192,7 @@ router.post('/:partnerId/communication', (req, res) => {
     logger.error('Error logging communication:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to log communication'
+      error: 'Failed to log communication',
     });
   }
 });
@@ -201,9 +206,13 @@ router.post('/:partnerId/rating', (req, res) => {
   try {
     const { partnerId } = req.params;
     const userId = req.user?.id || 'system';
-    
-    const result = partnerService.updatePerformanceRating(partnerId, req.body, userId);
-    
+
+    const result = partnerService.updatePerformanceRating(
+      partnerId,
+      req.body,
+      userId
+    );
+
     if (result.success) {
       res.json(result);
     } else {
@@ -213,7 +222,7 @@ router.post('/:partnerId/rating', (req, res) => {
     logger.error('Error updating rating:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to update rating'
+      error: 'Failed to update rating',
     });
   }
 });
@@ -228,9 +237,14 @@ router.put('/workflows/:workflowId/steps/:stepId', (req, res) => {
     const { workflowId, stepId } = req.params;
     const { status } = req.body;
     const userId = req.user?.id || 'system';
-    
-    const result = partnerService.updateWorkflowStep(workflowId, stepId, status, userId);
-    
+
+    const result = partnerService.updateWorkflowStep(
+      workflowId,
+      stepId,
+      status,
+      userId
+    );
+
     if (result.success) {
       res.json(result);
     } else {
@@ -240,7 +254,7 @@ router.put('/workflows/:workflowId/steps/:stepId', (req, res) => {
     logger.error('Error updating workflow step:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to update workflow step'
+      error: 'Failed to update workflow step',
     });
   }
 });
@@ -258,7 +272,7 @@ router.get('/statistics', (req, res) => {
     logger.error('Error getting statistics:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get statistics'
+      error: 'Failed to get statistics',
     });
   }
 });
@@ -276,7 +290,7 @@ router.get('/health', (req, res) => {
     logger.error('Error getting health status:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get health status'
+      error: 'Failed to get health status',
     });
   }
 });
@@ -292,7 +306,7 @@ router.post('/pmc/operations', (req, res) => {
   try {
     const userId = req.user?.id || 'system';
     const result = pmcService.createCoordinatedOperation(req.body, userId);
-    
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -302,7 +316,7 @@ router.post('/pmc/operations', (req, res) => {
     logger.error('Error creating PMC operation:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to create PMC operation'
+      error: 'Failed to create PMC operation',
     });
   }
 });
@@ -317,7 +331,7 @@ router.get('/pmc/operations', (req, res) => {
     const filters = {
       status: req.query.status,
       type: req.query.type,
-      priority: req.query.priority
+      priority: req.query.priority,
     };
 
     const result = pmcService.getOperations(filters);
@@ -326,7 +340,7 @@ router.get('/pmc/operations', (req, res) => {
     logger.error('Error getting PMC operations:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get PMC operations'
+      error: 'Failed to get PMC operations',
     });
   }
 });
@@ -340,7 +354,7 @@ router.get('/pmc/operations/:operationId', (req, res) => {
   try {
     const { operationId } = req.params;
     const result = pmcService.getOperation(operationId);
-    
+
     if (result.success) {
       res.json(result);
     } else {
@@ -350,7 +364,7 @@ router.get('/pmc/operations/:operationId', (req, res) => {
     logger.error('Error getting PMC operation:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get PMC operation'
+      error: 'Failed to get PMC operation',
     });
   }
 });
@@ -365,9 +379,14 @@ router.put('/pmc/operations/:operationId/status', (req, res) => {
     const { operationId } = req.params;
     const { status, ...updateData } = req.body;
     const userId = req.user?.id || 'system';
-    
-    const result = pmcService.updateOperationStatus(operationId, status, updateData, userId);
-    
+
+    const result = pmcService.updateOperationStatus(
+      operationId,
+      status,
+      updateData,
+      userId
+    );
+
     if (result.success) {
       res.json(result);
     } else {
@@ -377,7 +396,7 @@ router.put('/pmc/operations/:operationId/status', (req, res) => {
     logger.error('Error updating PMC operation status:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to update PMC operation status'
+      error: 'Failed to update PMC operation status',
     });
   }
 });
@@ -391,9 +410,9 @@ router.post('/pmc/operations/:operationId/resources', (req, res) => {
   try {
     const { operationId } = req.params;
     const userId = req.user?.id || 'system';
-    
+
     const result = pmcService.allocateResources(operationId, req.body, userId);
-    
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -403,7 +422,7 @@ router.post('/pmc/operations/:operationId/resources', (req, res) => {
     logger.error('Error allocating resources:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to allocate resources'
+      error: 'Failed to allocate resources',
     });
   }
 });
@@ -418,9 +437,13 @@ router.post('/pmc/operations/:operationId/report', (req, res) => {
     const { operationId } = req.params;
     const { reportType } = req.body;
     const userId = req.user?.id || 'system';
-    
-    const result = pmcService.generateOperationReport(operationId, reportType, userId);
-    
+
+    const result = pmcService.generateOperationReport(
+      operationId,
+      reportType,
+      userId
+    );
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -430,7 +453,7 @@ router.post('/pmc/operations/:operationId/report', (req, res) => {
     logger.error('Error generating operation report:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to generate operation report'
+      error: 'Failed to generate operation report',
     });
   }
 });
@@ -444,7 +467,7 @@ router.post('/pmc/training', (req, res) => {
   try {
     const userId = req.user?.id || 'system';
     const result = pmcService.createTrainingProgram(req.body, userId);
-    
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -454,7 +477,7 @@ router.post('/pmc/training', (req, res) => {
     logger.error('Error creating training program:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to create training program'
+      error: 'Failed to create training program',
     });
   }
 });
@@ -472,7 +495,7 @@ router.get('/pmc/integration-status', (req, res) => {
     logger.error('Error getting PMC integration status:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get PMC integration status'
+      error: 'Failed to get PMC integration status',
     });
   }
 });
@@ -490,7 +513,7 @@ router.get('/pmc/statistics', (req, res) => {
     logger.error('Error getting PMC statistics:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get PMC statistics'
+      error: 'Failed to get PMC statistics',
     });
   }
 });
@@ -508,7 +531,7 @@ router.get('/pmc/health', (req, res) => {
     logger.error('Error getting PMC health status:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get PMC health status'
+      error: 'Failed to get PMC health status',
     });
   }
 });

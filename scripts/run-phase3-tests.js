@@ -13,23 +13,19 @@ const testSuites = {
     'test/integration/citizen-portal-flow.test.js',
     'test/integration/partner-coordination-flow.test.js',
     'test/integration/notification-delivery-flow.test.js',
-    'test/integration/pmc-operations-flow.test.js'
+    'test/integration/pmc-operations-flow.test.js',
   ],
   api: [
     'test/api/notification-endpoints.test.js',
     'test/api/partner-endpoints.test.js',
-    'test/api/citizen-portal-endpoints.test.js'
+    'test/api/citizen-portal-endpoints.test.js',
   ],
   security: [
     'test/security/input-validation.test.js',
-    'test/security/data-sanitization.test.js'
+    'test/security/data-sanitization.test.js',
   ],
-  performance: [
-    'test/performance/service-performance.test.js'
-  ],
-  uat: [
-    'test/uat/user-workflows.test.js'
-  ]
+  performance: ['test/performance/service-performance.test.js'],
+  uat: ['test/uat/user-workflows.test.js'],
 };
 
 async function runTestSuite(suiteName, tests) {
@@ -67,7 +63,7 @@ async function runAllTests() {
   logger.info('\n✅ Phase 3 Testing Framework Operational\n');
 }
 
-runAllTests().catch(error => {
+runAllTests().catch((error) => {
   logger.error('Test execution failed:', error);
   process.exit(1);
 });

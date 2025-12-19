@@ -29,20 +29,20 @@ describe('Citizen Portal Integration Flow', () => {
           city: 'Test City',
           state: 'TS',
           country: 'USA',
-          postalCode: '12345'
-        }
+          postalCode: '12345',
+        },
       });
 
       expect(result.success).toBe(true);
       expect(result.citizenId).toBeDefined();
       expect(result.citizen.personalInfo.ssn).toContain('***');
-      
+
       testCitizenId = result.citizenId;
     });
 
     test('should retrieve citizen profile', () => {
       const result = portalService.getCitizenProfile(testCitizenId);
-      
+
       expect(result.success).toBe(true);
       expect(result.profile).toBeDefined();
       expect(result.summary).toBeDefined();
@@ -50,9 +50,9 @@ describe('Citizen Portal Integration Flow', () => {
 
     test('should update citizen profile', () => {
       const result = portalService.updateCitizenProfile(testCitizenId, {
-        contact: { phone: '+1987654321' }
+        contact: { phone: '+1987654321' },
       });
-      
+
       expect(result.success).toBe(true);
     });
   });
@@ -63,10 +63,10 @@ describe('Citizen Portal Integration Flow', () => {
         paymentMethod: 'direct_deposit',
         bankAccount: {
           accountNumber: '1234567890',
-          routingNumber: '987654321'
-        }
+          routingNumber: '987654321',
+        },
       });
-      
+
       expect(result.success).toBe(false);
       expect(result.error).toContain('verified');
     });
@@ -75,16 +75,16 @@ describe('Citizen Portal Integration Flow', () => {
       // Simulate verification
       const citizen = portalService.citizens.get(testCitizenId);
       citizen.verificationStatus = 'verified';
-      
+
       const result = await portalService.enrollInUBI(testCitizenId, {
         paymentMethod: 'direct_deposit',
         bankAccount: {
           accountNumber: '1234567890',
           routingNumber: '987654321',
-          bankName: 'Test Bank'
-        }
+          bankName: 'Test Bank',
+        },
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.enrollment.enrolled).toBe(true);
     });
@@ -92,15 +92,21 @@ describe('Citizen Portal Integration Flow', () => {
 
   describe('Education Enrollment Flow', () => {
     test('should enroll in education course', async () => {
-      const result = await portalService.enrollInCourse(testCitizenId, 'COURSE-TEST-001');
-      
+      const result = await portalService.enrollInCourse(
+        testCitizenId,
+        'COURSE-TEST-001'
+      );
+
       expect(result.success).toBe(true);
       expect(result.courseId).toBe('COURSE-TEST-001');
     });
 
     test('should prevent duplicate course enrollment', async () => {
-      const result = await portalService.enrollInCourse(testCitizenId, 'COURSE-TEST-001');
-      
+      const result = await portalService.enrollInCourse(
+        testCitizenId,
+        'COURSE-TEST-001'
+      );
+
       expect(result.success).toBe(false);
       expect(result.error).toContain('already enrolled');
     });
@@ -113,9 +119,9 @@ describe('Citizen Portal Integration Flow', () => {
         category: 'technical',
         subject: 'Test Request',
         description: 'Integration test request',
-        priority: 'medium'
+        priority: 'medium',
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.requestId).toBeDefined();
     });
@@ -129,9 +135,9 @@ describe('Citizen Portal Integration Flow', () => {
         name: 'Test Document',
         fileUrl: '/test/doc.pdf',
         fileSize: 1024,
-        mimeType: 'application/pdf'
+        mimeType: 'application/pdf',
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.documentId).toBeDefined();
     });

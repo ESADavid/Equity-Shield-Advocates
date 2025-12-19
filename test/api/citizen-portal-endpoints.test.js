@@ -32,22 +32,23 @@ describe('Citizen Portal API Endpoints', () => {
             city: 'Test City',
             state: 'TS',
             country: 'USA',
-            postalCode: '12345'
-          }
+            postalCode: '12345',
+          },
         });
 
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.citizenId).toBeDefined();
-      
+
       testCitizenId = response.body.citizenId;
     });
   });
 
   describe('GET /api/citizen-portal/profile/:citizenId', () => {
     test('should get citizen profile', async () => {
-      const response = await request(app)
-        .get(`/api/citizen-portal/profile/${testCitizenId}`);
+      const response = await request(app).get(
+        `/api/citizen-portal/profile/${testCitizenId}`
+      );
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -55,8 +56,9 @@ describe('Citizen Portal API Endpoints', () => {
     });
 
     test('should return 404 for non-existent citizen', async () => {
-      const response = await request(app)
-        .get('/api/citizen-portal/profile/INVALID-ID');
+      const response = await request(app).get(
+        '/api/citizen-portal/profile/INVALID-ID'
+      );
 
       expect(response.status).toBe(404);
     });
@@ -67,7 +69,7 @@ describe('Citizen Portal API Endpoints', () => {
       const response = await request(app)
         .put(`/api/citizen-portal/profile/${testCitizenId}`)
         .send({
-          contact: { phone: '+1987654321' }
+          contact: { phone: '+1987654321' },
         });
 
       expect(response.status).toBe(200);
@@ -77,8 +79,7 @@ describe('Citizen Portal API Endpoints', () => {
 
   describe('GET /api/citizen-portal/statistics', () => {
     test('should get portal statistics', async () => {
-      const response = await request(app)
-        .get('/api/citizen-portal/statistics');
+      const response = await request(app).get('/api/citizen-portal/statistics');
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -88,8 +89,7 @@ describe('Citizen Portal API Endpoints', () => {
 
   describe('GET /api/citizen-portal/health', () => {
     test('should return health status', async () => {
-      const response = await request(app)
-        .get('/api/citizen-portal/health');
+      const response = await request(app).get('/api/citizen-portal/health');
 
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('operational');

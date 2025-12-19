@@ -20,7 +20,7 @@ const portalService = new CitizenPortalService();
 router.post('/register', async (req, res) => {
   try {
     const result = await portalService.registerCitizen(req.body);
-    
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -30,7 +30,7 @@ router.post('/register', async (req, res) => {
     logger.error('Error registering citizen:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to register citizen'
+      error: 'Failed to register citizen',
     });
   }
 });
@@ -44,7 +44,7 @@ router.get('/profile/:citizenId', (req, res) => {
   try {
     const { citizenId } = req.params;
     const result = portalService.getCitizenProfile(citizenId);
-    
+
     if (result.success) {
       res.json(result);
     } else {
@@ -54,7 +54,7 @@ router.get('/profile/:citizenId', (req, res) => {
     logger.error('Error getting citizen profile:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get citizen profile'
+      error: 'Failed to get citizen profile',
     });
   }
 });
@@ -68,7 +68,7 @@ router.put('/profile/:citizenId', (req, res) => {
   try {
     const { citizenId } = req.params;
     const result = portalService.updateCitizenProfile(citizenId, req.body);
-    
+
     if (result.success) {
       res.json(result);
     } else {
@@ -78,7 +78,7 @@ router.put('/profile/:citizenId', (req, res) => {
     logger.error('Error updating citizen profile:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to update citizen profile'
+      error: 'Failed to update citizen profile',
     });
   }
 });
@@ -92,7 +92,7 @@ router.post('/:citizenId/ubi/enroll', async (req, res) => {
   try {
     const { citizenId } = req.params;
     const result = await portalService.enrollInUBI(citizenId, req.body);
-    
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -102,7 +102,7 @@ router.post('/:citizenId/ubi/enroll', async (req, res) => {
     logger.error('Error enrolling in UBI:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to enroll in UBI'
+      error: 'Failed to enroll in UBI',
     });
   }
 });
@@ -116,9 +116,9 @@ router.post('/:citizenId/education/enroll', async (req, res) => {
   try {
     const { citizenId } = req.params;
     const { courseId } = req.body;
-    
+
     const result = await portalService.enrollInCourse(citizenId, courseId);
-    
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -128,7 +128,7 @@ router.post('/:citizenId/education/enroll', async (req, res) => {
     logger.error('Error enrolling in course:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to enroll in course'
+      error: 'Failed to enroll in course',
     });
   }
 });
@@ -141,8 +141,11 @@ router.post('/:citizenId/education/enroll', async (req, res) => {
 router.post('/:citizenId/service-requests', async (req, res) => {
   try {
     const { citizenId } = req.params;
-    const result = await portalService.createServiceRequest(citizenId, req.body);
-    
+    const result = await portalService.createServiceRequest(
+      citizenId,
+      req.body
+    );
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -152,7 +155,7 @@ router.post('/:citizenId/service-requests', async (req, res) => {
     logger.error('Error creating service request:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to create service request'
+      error: 'Failed to create service request',
     });
   }
 });
@@ -166,7 +169,7 @@ router.get('/service-requests/:requestId', (req, res) => {
   try {
     const { requestId } = req.params;
     const result = portalService.getServiceRequest(requestId);
-    
+
     if (result.success) {
       res.json(result);
     } else {
@@ -176,7 +179,7 @@ router.get('/service-requests/:requestId', (req, res) => {
     logger.error('Error getting service request:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get service request'
+      error: 'Failed to get service request',
     });
   }
 });
@@ -190,7 +193,7 @@ router.post('/:citizenId/documents', async (req, res) => {
   try {
     const { citizenId } = req.params;
     const result = await portalService.uploadDocument(citizenId, req.body);
-    
+
     if (result.success) {
       res.status(201).json(result);
     } else {
@@ -200,7 +203,7 @@ router.post('/:citizenId/documents', async (req, res) => {
     logger.error('Error uploading document:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to upload document'
+      error: 'Failed to upload document',
     });
   }
 });
@@ -214,16 +217,16 @@ router.get('/:citizenId/notifications', (req, res) => {
   try {
     const { citizenId } = req.params;
     const filters = {
-      unreadOnly: req.query.unreadOnly === 'true'
+      unreadOnly: req.query.unreadOnly === 'true',
     };
-    
+
     const result = portalService.getCitizenNotifications(citizenId, filters);
     res.json(result);
   } catch (error) {
     logger.error('Error getting notifications:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get notifications'
+      error: 'Failed to get notifications',
     });
   }
 });
@@ -241,7 +244,7 @@ router.get('/statistics', (req, res) => {
     logger.error('Error getting statistics:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get statistics'
+      error: 'Failed to get statistics',
     });
   }
 });
@@ -259,7 +262,7 @@ router.get('/health', (req, res) => {
     logger.error('Error getting health status:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get health status'
+      error: 'Failed to get health status',
     });
   }
 });

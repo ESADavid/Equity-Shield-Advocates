@@ -2,7 +2,7 @@
  * PMC INTEGRATION SERVICE
  * Enhanced integration with Private Military Contractors
  * Part of Phase 2: Heaven on Earth Implementation
- * 
+ *
  * Integrates with existing privateMilitaryService.js
  * Provides enhanced coordination, resource allocation, and mission management
  */
@@ -19,7 +19,7 @@ class PMCIntegrationService {
     this.resourceAllocations = new Map();
     this.missionCoordination = new Map();
     this.trainingPrograms = new Map();
-    
+
     logger.info('PMC Integration Service initialized');
   }
 
@@ -40,7 +40,7 @@ class PMCIntegrationService {
         classification: operationData.classification || 'confidential',
         priority: operationData.priority || 'medium',
         status: 'planning',
-        
+
         // Operation Details
         objective: operationData.objective,
         description: operationData.description,
@@ -48,53 +48,53 @@ class PMCIntegrationService {
         startDate: operationData.startDate,
         endDate: operationData.endDate,
         duration: operationData.duration,
-        
+
         // PMC Assignments
         assignedPMCs: operationData.assignedPMCs || [],
         pmcRoles: operationData.pmcRoles || {},
-        
+
         // Resources
         personnel: {
           required: operationData.personnel?.required || 0,
           allocated: 0,
-          breakdown: operationData.personnel?.breakdown || {}
+          breakdown: operationData.personnel?.breakdown || {},
         },
         equipment: {
           required: operationData.equipment?.required || [],
           allocated: [],
-          status: {}
+          status: {},
         },
         budget: {
           total: operationData.budget || 0,
           allocated: 0,
           spent: 0,
-          breakdown: {}
+          breakdown: {},
         },
-        
+
         // Coordination
         commandStructure: operationData.commandStructure || {},
         communicationProtocol: operationData.communicationProtocol || {},
         coordinationMeetings: [],
-        
+
         // Phases
         phases: operationData.phases || [],
         currentPhase: null,
-        
+
         // Risk Assessment
         riskLevel: operationData.riskLevel || 'medium',
         threats: operationData.threats || [],
         mitigationStrategies: operationData.mitigationStrategies || [],
-        
+
         // Reporting
         reports: [],
         incidents: [],
         achievements: [],
-        
+
         // Metadata
         createdBy: userId,
         createdAt: new Date().toISOString(),
         lastUpdated: new Date().toISOString(),
-        updates: []
+        updates: [],
       };
 
       this.operations.set(operationId, operation);
@@ -105,19 +105,21 @@ class PMCIntegrationService {
         this.createPMCMission(operationId, pmcId, role, userId);
       }
 
-      logger.info(`Coordinated operation created: ${operationId} - ${operation.name}`);
+      logger.info(
+        `Coordinated operation created: ${operationId} - ${operation.name}`
+      );
 
       return {
         success: true,
         operationId: operationId,
         operation: operation,
-        message: 'Coordinated operation created successfully'
+        message: 'Coordinated operation created successfully',
       };
     } catch (error) {
       logger.error('Error creating coordinated operation:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -133,11 +135,11 @@ class PMCIntegrationService {
   createPMCMission(operationId, pmcId, role, userId) {
     try {
       const operation = this.operations.get(operationId);
-      
+
       if (!operation) {
         return {
           success: false,
-          error: 'Operation not found'
+          error: 'Operation not found',
         };
       }
 
@@ -153,7 +155,7 @@ class PMCIntegrationService {
         equipment: role.equipment || [],
         startDate: operation.startDate,
         endDate: operation.endDate,
-        budget: role.budget || 0
+        budget: role.budget || 0,
       };
 
       const missionResult = this.pmcService.createMission(missionData, userId);
@@ -163,9 +165,13 @@ class PMCIntegrationService {
         if (!this.missionCoordination.has(operationId)) {
           this.missionCoordination.set(operationId, []);
         }
-        this.missionCoordination.get(operationId).push(missionResult.mission.id);
+        this.missionCoordination
+          .get(operationId)
+          .push(missionResult.mission.id);
 
-        logger.info(`PMC mission created for operation ${operationId}: ${missionResult.mission.id}`);
+        logger.info(
+          `PMC mission created for operation ${operationId}: ${missionResult.mission.id}`
+        );
       }
 
       return missionResult;
@@ -173,7 +179,7 @@ class PMCIntegrationService {
       logger.error('Error creating PMC mission:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -192,7 +198,7 @@ class PMCIntegrationService {
       if (!operation) {
         return {
           success: false,
-          error: 'Operation not found'
+          error: 'Operation not found',
         };
       }
 
@@ -203,18 +209,20 @@ class PMCIntegrationService {
         operationId: operationId,
         timestamp: new Date().toISOString(),
         allocatedBy: userId,
-        
+
         personnel: resources.personnel || {},
         equipment: resources.equipment || [],
         budget: resources.budget || 0,
-        
+
         status: 'allocated',
-        notes: resources.notes || ''
+        notes: resources.notes || '',
       };
 
       // Update operation resources
       if (resources.personnel) {
-        operation.personnel.allocated += Object.values(resources.personnel).reduce((sum, val) => sum + val, 0);
+        operation.personnel.allocated += Object.values(
+          resources.personnel
+        ).reduce((sum, val) => sum + val, 0);
       }
 
       if (resources.equipment) {
@@ -231,10 +239,12 @@ class PMCIntegrationService {
         timestamp: new Date().toISOString(),
         type: 'resource_allocation',
         performedBy: userId,
-        details: allocation
+        details: allocation,
       });
 
-      logger.info(`Resources allocated to operation ${operationId}: ${allocationId}`);
+      logger.info(
+        `Resources allocated to operation ${operationId}: ${allocationId}`
+      );
 
       return {
         success: true,
@@ -244,14 +254,14 @@ class PMCIntegrationService {
           personnelAllocated: operation.personnel.allocated,
           personnelRequired: operation.personnel.required,
           budgetAllocated: operation.budget.allocated,
-          budgetTotal: operation.budget.total
-        }
+          budgetTotal: operation.budget.total,
+        },
       };
     } catch (error) {
       logger.error('Error allocating resources:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -271,7 +281,7 @@ class PMCIntegrationService {
       if (!operation) {
         return {
           success: false,
-          error: 'Operation not found'
+          error: 'Operation not found',
         };
       }
 
@@ -286,25 +296,30 @@ class PMCIntegrationService {
         newStatus: status,
         performedBy: userId,
         notes: updateData.notes || '',
-        data: updateData
+        data: updateData,
       });
 
       // Handle status-specific actions
       if (status === 'active') {
         operation.activatedAt = new Date().toISOString();
         operation.activatedBy = userId;
-        
+
         // Update all linked missions to active
         const linkedMissions = this.missionCoordination.get(operationId) || [];
         for (const missionId of linkedMissions) {
-          this.pmcService.updateMissionStatus(missionId, 'active', updateData, userId);
+          this.pmcService.updateMissionStatus(
+            missionId,
+            'active',
+            updateData,
+            userId
+          );
         }
       }
 
       if (status === 'completed') {
         operation.completedAt = new Date().toISOString();
         operation.completedBy = userId;
-        
+
         // Generate completion report
         this.generateOperationReport(operationId, 'completion', userId);
       }
@@ -314,13 +329,13 @@ class PMCIntegrationService {
       return {
         success: true,
         operation: operation,
-        message: `Operation status updated to ${status}`
+        message: `Operation status updated to ${status}`,
       };
     } catch (error) {
       logger.error('Error updating operation status:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -339,7 +354,7 @@ class PMCIntegrationService {
       if (!operation) {
         return {
           success: false,
-          error: 'Operation not found'
+          error: 'Operation not found',
         };
       }
 
@@ -352,37 +367,47 @@ class PMCIntegrationService {
         type: reportType,
         generatedAt: new Date().toISOString(),
         generatedBy: userId,
-        
+
         summary: {
           status: operation.status,
-          duration: this.calculateDuration(operation.startDate, operation.endDate),
+          duration: this.calculateDuration(
+            operation.startDate,
+            operation.endDate
+          ),
           personnelDeployed: operation.personnel.allocated,
           budgetSpent: operation.budget.spent,
-          budgetUtilization: ((operation.budget.spent / operation.budget.total) * 100).toFixed(2) + '%'
+          budgetUtilization:
+            ((operation.budget.spent / operation.budget.total) * 100).toFixed(
+              2
+            ) + '%',
         },
-        
+
         pmcPerformance: this.assessPMCPerformance(operationId),
-        
+
         achievements: operation.achievements,
         incidents: operation.incidents,
-        
+
         resourceUtilization: {
           personnel: {
             required: operation.personnel.required,
             allocated: operation.personnel.allocated,
-            utilization: ((operation.personnel.allocated / operation.personnel.required) * 100).toFixed(2) + '%'
+            utilization:
+              (
+                (operation.personnel.allocated / operation.personnel.required) *
+                100
+              ).toFixed(2) + '%',
           },
           budget: {
             total: operation.budget.total,
             allocated: operation.budget.allocated,
             spent: operation.budget.spent,
-            remaining: operation.budget.total - operation.budget.spent
-          }
+            remaining: operation.budget.total - operation.budget.spent,
+          },
         },
-        
+
         recommendations: this.generateRecommendations(operation),
-        
-        lessonsLearned: operation.lessonsLearned || []
+
+        lessonsLearned: operation.lessonsLearned || [],
       };
 
       operation.reports.push(report);
@@ -392,13 +417,13 @@ class PMCIntegrationService {
       return {
         success: true,
         reportId: reportId,
-        report: report
+        report: report,
       };
     } catch (error) {
       logger.error('Error generating operation report:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -413,7 +438,7 @@ class PMCIntegrationService {
     for (const missionId of linkedMissions) {
       // Get mission details from PMC service
       const missions = this.pmcService.getActiveMissions({ status: 'all' });
-      const mission = missions.missions?.find(m => m.id === missionId);
+      const mission = missions.missions?.find((m) => m.id === missionId);
 
       if (mission) {
         const pmcId = mission.assignedPMCs[0];
@@ -421,7 +446,7 @@ class PMCIntegrationService {
           performance[pmcId] = {
             missions: 0,
             completed: 0,
-            rating: 0
+            rating: 0,
           };
         }
         performance[pmcId].missions += 1;
@@ -445,7 +470,8 @@ class PMCIntegrationService {
       recommendations.push({
         category: 'budget',
         priority: 'high',
-        recommendation: 'Budget utilization exceeded 90%. Consider increasing budget allocation for similar operations.'
+        recommendation:
+          'Budget utilization exceeded 90%. Consider increasing budget allocation for similar operations.',
       });
     }
 
@@ -454,7 +480,8 @@ class PMCIntegrationService {
       recommendations.push({
         category: 'personnel',
         priority: 'medium',
-        recommendation: 'Personnel allocation was below 80% of requirements. Review staffing strategy.'
+        recommendation:
+          'Personnel allocation was below 80% of requirements. Review staffing strategy.',
       });
     }
 
@@ -463,7 +490,8 @@ class PMCIntegrationService {
       recommendations.push({
         category: 'risk',
         priority: 'high',
-        recommendation: 'High incident rate detected. Review risk mitigation strategies.'
+        recommendation:
+          'High incident rate detected. Review risk mitigation strategies.',
       });
     }
 
@@ -475,11 +503,11 @@ class PMCIntegrationService {
    */
   calculateDuration(startDate, endDate) {
     if (!startDate || !endDate) return 'N/A';
-    
+
     const start = new Date(startDate);
     const end = new Date(endDate);
     const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-    
+
     return `${days} days`;
   }
 
@@ -498,26 +526,26 @@ class PMCIntegrationService {
         name: programData.name,
         type: programData.type, // tactical, technical, leadership, etc.
         description: programData.description,
-        
+
         targetPMCs: programData.targetPMCs || [],
         targetPersonnel: programData.targetPersonnel || 0,
-        
+
         curriculum: programData.curriculum || [],
         duration: programData.duration, // hours
         schedule: programData.schedule,
-        
+
         instructors: programData.instructors || [],
         location: programData.location,
-        
+
         requirements: programData.requirements || [],
         certifications: programData.certifications || [],
-        
+
         status: 'scheduled',
         enrollments: [],
         completions: [],
-        
+
         createdBy: userId,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
       this.trainingPrograms.set(programId, program);
@@ -528,13 +556,13 @@ class PMCIntegrationService {
         success: true,
         programId: programId,
         program: program,
-        message: 'Training program created successfully'
+        message: 'Training program created successfully',
       };
     } catch (error) {
       logger.error('Error creating training program:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -554,34 +582,38 @@ class PMCIntegrationService {
           pmcContractors: pmcContractors.count,
           totalPersonnel: pmcContractors.totalPersonnel,
           totalContractValue: pmcContractors.totalContractValue,
-          
+
           operations: {
             total: this.operations.size,
-            active: Array.from(this.operations.values()).filter(o => o.status === 'active').length,
-            completed: Array.from(this.operations.values()).filter(o => o.status === 'completed').length
+            active: Array.from(this.operations.values()).filter(
+              (o) => o.status === 'active'
+            ).length,
+            completed: Array.from(this.operations.values()).filter(
+              (o) => o.status === 'completed'
+            ).length,
           },
-          
+
           resourceAllocations: this.resourceAllocations.size,
           trainingPrograms: this.trainingPrograms.size,
-          
+
           jointForce: jointForce.jointForce,
-          
+
           capabilities: [
             'Multi-PMC coordination',
             'Resource allocation',
             'Mission management',
             'Training programs',
             'Performance tracking',
-            'Reporting & analytics'
-          ]
+            'Reporting & analytics',
+          ],
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('Error getting integration status:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -598,7 +630,7 @@ class PMCIntegrationService {
       if (!operation) {
         return {
           success: false,
-          error: 'Operation not found'
+          error: 'Operation not found',
         };
       }
 
@@ -609,14 +641,15 @@ class PMCIntegrationService {
         success: true,
         operation: operation,
         linkedMissions: linkedMissions.length,
-        resourceAllocations: Array.from(this.resourceAllocations.values())
-          .filter(a => a.operationId === operationId)
+        resourceAllocations: Array.from(
+          this.resourceAllocations.values()
+        ).filter((a) => a.operationId === operationId),
       };
     } catch (error) {
       logger.error('Error getting operation:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -631,27 +664,27 @@ class PMCIntegrationService {
       let operations = Array.from(this.operations.values());
 
       if (filters.status) {
-        operations = operations.filter(o => o.status === filters.status);
+        operations = operations.filter((o) => o.status === filters.status);
       }
 
       if (filters.type) {
-        operations = operations.filter(o => o.type === filters.type);
+        operations = operations.filter((o) => o.type === filters.type);
       }
 
       if (filters.priority) {
-        operations = operations.filter(o => o.priority === filters.priority);
+        operations = operations.filter((o) => o.priority === filters.priority);
       }
 
       return {
         success: true,
         operations: operations,
-        count: operations.length
+        count: operations.length,
       };
     } catch (error) {
       logger.error('Error getting operations:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -670,28 +703,37 @@ class PMCIntegrationService {
         statistics: {
           operations: {
             total: operations.length,
-            active: operations.filter(o => o.status === 'active').length,
-            completed: operations.filter(o => o.status === 'completed').length,
-            planning: operations.filter(o => o.status === 'planning').length
+            active: operations.filter((o) => o.status === 'active').length,
+            completed: operations.filter((o) => o.status === 'completed')
+              .length,
+            planning: operations.filter((o) => o.status === 'planning').length,
           },
           resources: {
             allocations: this.resourceAllocations.size,
-            totalBudgetAllocated: operations.reduce((sum, o) => sum + o.budget.allocated, 0),
-            totalPersonnelDeployed: operations.reduce((sum, o) => sum + o.personnel.allocated, 0)
+            totalBudgetAllocated: operations.reduce(
+              (sum, o) => sum + o.budget.allocated,
+              0
+            ),
+            totalPersonnelDeployed: operations.reduce(
+              (sum, o) => sum + o.personnel.allocated,
+              0
+            ),
           },
           training: {
             programs: this.trainingPrograms.size,
-            active: Array.from(this.trainingPrograms.values()).filter(p => p.status === 'active').length
+            active: Array.from(this.trainingPrograms.values()).filter(
+              (p) => p.status === 'active'
+            ).length,
           },
-          pmcIntegration: pmcStats.statistics
+          pmcIntegration: pmcStats.statistics,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('Error getting statistics:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -702,7 +744,7 @@ class PMCIntegrationService {
    */
   getHealthStatus() {
     const pmcHealth = this.pmcService.getHealthStatus();
-    
+
     return {
       status: 'operational',
       service: 'PMC Integration Service',
@@ -710,7 +752,7 @@ class PMCIntegrationService {
       operations: this.operations.size,
       resourceAllocations: this.resourceAllocations.size,
       trainingPrograms: this.trainingPrograms.size,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     };
   }
 }

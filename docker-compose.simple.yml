@@ -11,7 +11,7 @@ services:
     container_name: oscar-broome-app-simple
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=development
       - PORT=3000
@@ -28,7 +28,7 @@ services:
     container_name: oscar-broome-mongodb-simple
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - '27017:27017'
     environment:
       - MONGO_INITDB_DATABASE=oscar-broome-dev
     volumes:
@@ -39,7 +39,7 @@ services:
     container_name: oscar-broome-redis-simple
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - '6379:6379'
     command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
 
 volumes:
