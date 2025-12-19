@@ -5,11 +5,11 @@
  */
 
 import Citizen from '../models/Citizen.js';
-import { payrollSystem } from '../payrollSystem.js';
+// import { payrollSystem } from '../payrollSystem.js'; // Temporarily disabled due to TypeScript module issue
 import BlockchainService from '../blockchain/blockchainService.js';
-import { createLogger } from '../config/logger.js';
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 
-const logger = createLogger('UBI-Service');
+
 
 class UniversalBasicIncomeService {
   constructor() {
@@ -21,7 +21,7 @@ class UniversalBasicIncomeService {
     this.totalPaymentsProcessed = 0;
     this.totalAmountDisbursed = 0;
 
-    logger.info('Universal Basic Income Service initialized');
+    info('Universal Basic Income Service initialized');
   }
 
   /**
@@ -32,7 +32,7 @@ class UniversalBasicIncomeService {
    */
   async registerCitizen(citizenData, userId) {
     try {
-      logger.info(
+      info(
         `Registering new citizen: ${citizenData.personalInfo?.firstName} ${citizenData.personalInfo?.lastName}`
       );
 
@@ -99,7 +99,7 @@ class UniversalBasicIncomeService {
           citizen.blockchain.publicKey = wallet.publicKey;
           await citizen.save();
         } catch (blockchainError) {
-          logger.warn(
+          warn(
             `Blockchain wallet creation failed for ${citizen.citizenId}:`,
             blockchainError.message
           );
@@ -108,7 +108,7 @@ class UniversalBasicIncomeService {
 
       this.totalCitizens++;
 
-      logger.info(`Citizen registered successfully: ${citizen.citizenId}`);
+      info(`Citizen registered successfully: ${citizen.citizenId}`);
 
       return {
         success: true,
@@ -122,7 +122,7 @@ class UniversalBasicIncomeService {
         message: 'Citizen registered successfully for Universal Basic Income',
       };
     } catch (error) {
-      logger.error('Error registering citizen:', error);
+      error('Error registering citizen:', error);
       return {
         success: false,
         error: error.message,
@@ -137,7 +137,7 @@ class UniversalBasicIncomeService {
    */
   async processMonthlyPayments(userId) {
     try {
-      logger.info('Starting monthly UBI payment processing...');
+      info('Starting monthly UBI payment processing...');
 
       const startTime = Date.now();
       const paymentDate = new Date();
@@ -152,7 +152,7 @@ class UniversalBasicIncomeService {
         'verification.bankingVerified': true,
       });
 
-      logger.info(
+      info(
         `Found ${eligibleCitizens.length} eligible citizens for payment`
       );
 
@@ -191,7 +191,7 @@ class UniversalBasicIncomeService {
           }
         });
 
-        logger.info(
+        info(
           `Processed batch ${Math.floor(i / batchSize) + 1}: ${results.successful} successful, ${results.failed} failed`
         );
       }
@@ -202,7 +202,7 @@ class UniversalBasicIncomeService {
       this.totalPaymentsProcessed += results.successful;
       this.totalAmountDisbursed += results.totalAmount;
 
-      logger.info(
+      info(
         `Monthly UBI payment processing completed: ${results.successful}/${results.totalProcessed} successful in ${duration}ms`
       );
 
@@ -224,7 +224,7 @@ class UniversalBasicIncomeService {
         errors: results.errors,
       };
     } catch (error) {
-      logger.error('Error processing monthly payments:', error);
+      error('Error processing monthly payments:', error);
       return {
         success: false,
         error: error.message,
@@ -289,7 +289,7 @@ class UniversalBasicIncomeService {
           blockchainTxHash = blockchainTx.hash;
           citizen.blockchain.transactionHashes.push(blockchainTxHash);
         } catch (blockchainError) {
-          logger.warn(
+          warn(
             `Blockchain recording failed for ${citizen.citizenId}:`,
             blockchainError.message
           );
@@ -329,7 +329,7 @@ class UniversalBasicIncomeService {
         paymentsCount: citizen.ubiStatus.paymentsCount,
       };
     } catch (error) {
-      logger.error(
+      error(
         `Error processing payment for citizen ${citizen.citizenId}:`,
         error
       );
@@ -413,7 +413,7 @@ class UniversalBasicIncomeService {
         verification: citizen.verification,
       };
     } catch (error) {
-      logger.error('Error getting citizen UBI status:', error);
+      error('Error getting citizen UBI status:', error);
       return {
         success: false,
         error: error.message,
@@ -457,7 +457,7 @@ class UniversalBasicIncomeService {
 
       await citizen.save();
 
-      logger.info(`UBI suspended for citizen ${citizenId}: ${reason}`);
+      info(`UBI suspended for citizen ${citizenId}: ${reason}`);
 
       return {
         success: true,
@@ -467,7 +467,7 @@ class UniversalBasicIncomeService {
         gracePeriodEnd: gracePeriodEnd,
       };
     } catch (error) {
-      logger.error('Error suspending UBI:', error);
+      error('Error suspending UBI:', error);
       return {
         success: false,
         error: error.message,
@@ -518,7 +518,7 @@ class UniversalBasicIncomeService {
 
       await citizen.save();
 
-      logger.info(`UBI reinstated for citizen ${citizenId}`);
+      info(`UBI reinstated for citizen ${citizenId}`);
 
       return {
         success: true,
@@ -526,7 +526,7 @@ class UniversalBasicIncomeService {
         citizenId: citizenId,
       };
     } catch (error) {
-      logger.error('Error reinstating UBI:', error);
+      error('Error reinstating UBI:', error);
       return {
         success: false,
         error: error.message,
@@ -588,7 +588,7 @@ class UniversalBasicIncomeService {
         },
       };
     } catch (error) {
-      logger.error('Error getting system statistics:', error);
+      error('Error getting system statistics:', error);
       return {
         success: false,
         error: error.message,

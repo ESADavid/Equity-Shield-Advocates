@@ -13,10 +13,8 @@
  * - Batch notifications
  */
 
-import { createLogger } from '../config/logger.js';
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 import nodemailer from 'nodemailer';
-
-const logger = createLogger('Multi-Channel-Notification-Service');
 
 class MultiChannelNotificationService {
   constructor() {
@@ -29,7 +27,7 @@ class MultiChannelNotificationService {
     this.initializeEmailService();
     this.initializeTemplates();
 
-    logger.info('Multi-Channel Notification Service initialized');
+    info('Multi-Channel Notification Service initialized');
   }
 
   /**
@@ -51,14 +49,14 @@ class MultiChannelNotificationService {
             pass: process.env.SMTP_PASS,
           },
         });
-        logger.info('Email service initialized');
+        info('Email service initialized');
       } else {
-        logger.warn(
+        warn(
           'Email service not configured - set SMTP environment variables'
         );
       }
     } catch (error) {
-      logger.error('Error initializing email service:', error);
+      error('Error initializing email service:', error);
     }
   }
 
@@ -170,7 +168,7 @@ class MultiChannelNotificationService {
       });
     }
 
-    logger.info(
+    info(
       `Initialized ${defaultTemplates.length} notification templates`
     );
   }
@@ -229,7 +227,7 @@ class MultiChannelNotificationService {
 
       // If scheduled, don't send immediately
       if (scheduledFor) {
-        logger.info(
+        info(
           `Notification ${notificationId} scheduled for ${scheduledFor}`
         );
         return {
@@ -257,7 +255,7 @@ class MultiChannelNotificationService {
             // Log delivery
             this.logDelivery(notificationId, channel, result);
           } catch (error) {
-            logger.error(`Error sending to ${channel}:`, error);
+            error(`Error sending to ${channel}:`, error);
             deliveryResults[channel] = {
               success: false,
               error: error.message,
@@ -276,7 +274,7 @@ class MultiChannelNotificationService {
       notification.sentAt = new Date().toISOString();
       notification.deliveryStatus = deliveryResults;
 
-      logger.info(
+      info(
         `Notification ${notificationId} sent through ${Object.keys(deliveryResults).length} channels`
       );
 
@@ -287,7 +285,7 @@ class MultiChannelNotificationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Error sending notification:', error);
+      error('Error sending notification:', error);
       return {
         success: false,
         error: error.message,
@@ -353,7 +351,7 @@ class MultiChannelNotificationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Email send error:', error);
+      error('Email send error:', error);
       return {
         success: false,
         error: error.message,
@@ -371,7 +369,7 @@ class MultiChannelNotificationService {
       // In production, integrate with Twilio or similar service
       const phoneNumber = data.phone || `+1234567890`;
 
-      logger.info(`SMS sent to ${phoneNumber}: ${message}`);
+      info(`SMS sent to ${phoneNumber}: ${message}`);
 
       return {
         success: true,
@@ -381,7 +379,7 @@ class MultiChannelNotificationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('SMS send error:', error);
+      error('SMS send error:', error);
       return {
         success: false,
         error: error.message,
@@ -397,7 +395,7 @@ class MultiChannelNotificationService {
       const message = this.replaceTemplateVariables(template.pushBody, data);
 
       // In production, integrate with Firebase Cloud Messaging or similar
-      logger.info(`Push notification sent to user ${userId}: ${message}`);
+      info(`Push notification sent to user ${userId}: ${message}`);
 
       return {
         success: true,
@@ -407,7 +405,7 @@ class MultiChannelNotificationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Push notification error:', error);
+      error('Push notification error:', error);
       return {
         success: false,
         error: error.message,
@@ -432,7 +430,7 @@ class MultiChannelNotificationService {
       };
 
       // In production, store in database and emit via WebSocket
-      logger.info(`In-app notification created for user ${userId}`);
+      info(`In-app notification created for user ${userId}`);
 
       return {
         success: true,
@@ -442,7 +440,7 @@ class MultiChannelNotificationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('In-app notification error:', error);
+      error('In-app notification error:', error);
       return {
         success: false,
         error: error.message,
@@ -509,14 +507,14 @@ class MultiChannelNotificationService {
 
       this.preferences.set(userId, updatedPreferences);
 
-      logger.info(`Updated notification preferences for user ${userId}`);
+      info(`Updated notification preferences for user ${userId}`);
 
       return {
         success: true,
         preferences: updatedPreferences,
       };
     } catch (error) {
-      logger.error('Error updating preferences:', error);
+      error('Error updating preferences:', error);
       return {
         success: false,
         error: error.message,
@@ -543,7 +541,7 @@ class MultiChannelNotificationService {
         preferences: preferences,
       };
     } catch (error) {
-      logger.error('Error getting preferences:', error);
+      error('Error getting preferences:', error);
       return {
         success: false,
         error: error.message,
@@ -611,7 +609,7 @@ class MultiChannelNotificationService {
         },
       };
     } catch (error) {
-      logger.error('Error getting notification history:', error);
+      error('Error getting notification history:', error);
       return {
         success: false,
         error: error.message,
@@ -640,7 +638,7 @@ class MultiChannelNotificationService {
         notification: notification,
       };
     } catch (error) {
-      logger.error('Error getting notification:', error);
+      error('Error getting notification:', error);
       return {
         success: false,
         error: error.message,
@@ -668,7 +666,7 @@ class MultiChannelNotificationService {
       const successCount = results.filter((r) => r.result.success).length;
       const failureCount = results.length - successCount;
 
-      logger.info(
+      info(
         `Batch notifications sent: ${successCount} success, ${failureCount} failed`
       );
 
@@ -680,7 +678,7 @@ class MultiChannelNotificationService {
         results: results,
       };
     } catch (error) {
-      logger.error('Error sending batch notifications:', error);
+      error('Error sending batch notifications:', error);
       return {
         success: false,
         error: error.message,
@@ -707,7 +705,7 @@ class MultiChannelNotificationService {
         count: templates.length,
       };
     } catch (error) {
-      logger.error('Error getting templates:', error);
+      error('Error getting templates:', error);
       return {
         success: false,
         error: error.message,
@@ -761,7 +759,7 @@ class MultiChannelNotificationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Error getting statistics:', error);
+      error('Error getting statistics:', error);
       return {
         success: false,
         error: error.message,

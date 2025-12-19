@@ -7,10 +7,8 @@
  * Provides enhanced coordination, resource allocation, and mission management
  */
 
-import { createLogger } from '../config/logger.js';
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 import PrivateMilitaryService from './privateMilitaryService.js';
-
-const logger = createLogger('PMC-Integration-Service');
 
 class PMCIntegrationService {
   constructor() {
@@ -20,7 +18,7 @@ class PMCIntegrationService {
     this.missionCoordination = new Map();
     this.trainingPrograms = new Map();
 
-    logger.info('PMC Integration Service initialized');
+    info('PMC Integration Service initialized');
   }
 
   /**
@@ -105,7 +103,7 @@ class PMCIntegrationService {
         this.createPMCMission(operationId, pmcId, role, userId);
       }
 
-      logger.info(
+      info(
         `Coordinated operation created: ${operationId} - ${operation.name}`
       );
 
@@ -116,7 +114,7 @@ class PMCIntegrationService {
         message: 'Coordinated operation created successfully',
       };
     } catch (error) {
-      logger.error('Error creating coordinated operation:', error);
+      error('Error creating coordinated operation:', error);
       return {
         success: false,
         error: error.message,
@@ -169,14 +167,14 @@ class PMCIntegrationService {
           .get(operationId)
           .push(missionResult.mission.id);
 
-        logger.info(
+        info(
           `PMC mission created for operation ${operationId}: ${missionResult.mission.id}`
         );
       }
 
       return missionResult;
     } catch (error) {
-      logger.error('Error creating PMC mission:', error);
+      error('Error creating PMC mission:', error);
       return {
         success: false,
         error: error.message,
@@ -242,7 +240,7 @@ class PMCIntegrationService {
         details: allocation,
       });
 
-      logger.info(
+      info(
         `Resources allocated to operation ${operationId}: ${allocationId}`
       );
 
@@ -258,7 +256,7 @@ class PMCIntegrationService {
         },
       };
     } catch (error) {
-      logger.error('Error allocating resources:', error);
+      error('Error allocating resources:', error);
       return {
         success: false,
         error: error.message,
@@ -324,7 +322,7 @@ class PMCIntegrationService {
         this.generateOperationReport(operationId, 'completion', userId);
       }
 
-      logger.info(`Operation ${operationId} status updated to ${status}`);
+      info(`Operation ${operationId} status updated to ${status}`);
 
       return {
         success: true,
@@ -332,7 +330,7 @@ class PMCIntegrationService {
         message: `Operation status updated to ${status}`,
       };
     } catch (error) {
-      logger.error('Error updating operation status:', error);
+      error('Error updating operation status:', error);
       return {
         success: false,
         error: error.message,
@@ -412,7 +410,7 @@ class PMCIntegrationService {
 
       operation.reports.push(report);
 
-      logger.info(`Operation report generated: ${reportId}`);
+      info(`Operation report generated: ${reportId}`);
 
       return {
         success: true,
@@ -420,7 +418,7 @@ class PMCIntegrationService {
         report: report,
       };
     } catch (error) {
-      logger.error('Error generating operation report:', error);
+      error('Error generating operation report:', error);
       return {
         success: false,
         error: error.message,
@@ -550,7 +548,7 @@ class PMCIntegrationService {
 
       this.trainingPrograms.set(programId, program);
 
-      logger.info(`Training program created: ${programId} - ${program.name}`);
+      info(`Training program created: ${programId} - ${program.name}`);
 
       return {
         success: true,
@@ -559,7 +557,7 @@ class PMCIntegrationService {
         message: 'Training program created successfully',
       };
     } catch (error) {
-      logger.error('Error creating training program:', error);
+      error('Error creating training program:', error);
       return {
         success: false,
         error: error.message,
@@ -610,7 +608,7 @@ class PMCIntegrationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Error getting integration status:', error);
+      error('Error getting integration status:', error);
       return {
         success: false,
         error: error.message,
@@ -646,7 +644,7 @@ class PMCIntegrationService {
         ).filter((a) => a.operationId === operationId),
       };
     } catch (error) {
-      logger.error('Error getting operation:', error);
+      error('Error getting operation:', error);
       return {
         success: false,
         error: error.message,
@@ -681,7 +679,7 @@ class PMCIntegrationService {
         count: operations.length,
       };
     } catch (error) {
-      logger.error('Error getting operations:', error);
+      error('Error getting operations:', error);
       return {
         success: false,
         error: error.message,
@@ -730,7 +728,7 @@ class PMCIntegrationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Error getting statistics:', error);
+      error('Error getting statistics:', error);
       return {
         success: false,
         error: error.message,

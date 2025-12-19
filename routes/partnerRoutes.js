@@ -7,10 +7,9 @@
 import express from 'express';
 import PartnerCoordinationService from '../services/partnerCoordinationService.js';
 import PMCIntegrationService from '../services/pmcIntegrationService.js';
-import { createLogger } from '../config/logger.js';
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
-const logger = createLogger('Partner-Routes');
 const partnerService = new PartnerCoordinationService();
 const pmcService = new PMCIntegrationService();
 
@@ -30,7 +29,7 @@ router.post('/onboard', async (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error onboarding partner:', error);
+    error('Error onboarding partner:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to onboard partner',
@@ -55,7 +54,7 @@ router.get('/', (req, res) => {
     const result = partnerService.getPartners(filters);
     res.json(result);
   } catch (error) {
-    logger.error('Error getting partners:', error);
+    error('Error getting partners:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get partners',
@@ -79,7 +78,7 @@ router.get('/:partnerId', (req, res) => {
       res.status(404).json(result);
     }
   } catch (error) {
-    logger.error('Error getting partner:', error);
+    error('Error getting partner:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get partner',
@@ -105,7 +104,7 @@ router.post('/:partnerId/activate', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error activating partner:', error);
+    error('Error activating partner:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to activate partner',
@@ -131,7 +130,7 @@ router.post('/:partnerId/projects', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error assigning project:', error);
+    error('Error assigning project:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to assign project',
@@ -163,7 +162,7 @@ router.put('/projects/:projectId', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error updating project:', error);
+    error('Error updating project:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to update project',
@@ -189,7 +188,7 @@ router.post('/:partnerId/communication', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error logging communication:', error);
+    error('Error logging communication:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to log communication',
@@ -219,7 +218,7 @@ router.post('/:partnerId/rating', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error updating rating:', error);
+    error('Error updating rating:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to update rating',
@@ -251,7 +250,7 @@ router.put('/workflows/:workflowId/steps/:stepId', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error updating workflow step:', error);
+    error('Error updating workflow step:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to update workflow step',
@@ -269,7 +268,7 @@ router.get('/statistics', (req, res) => {
     const result = partnerService.getStatistics();
     res.json(result);
   } catch (error) {
-    logger.error('Error getting statistics:', error);
+    error('Error getting statistics:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get statistics',
@@ -287,7 +286,7 @@ router.get('/health', (req, res) => {
     const result = partnerService.getHealthStatus();
     res.json(result);
   } catch (error) {
-    logger.error('Error getting health status:', error);
+    error('Error getting health status:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get health status',
@@ -313,7 +312,7 @@ router.post('/pmc/operations', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error creating PMC operation:', error);
+    error('Error creating PMC operation:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to create PMC operation',
@@ -337,7 +336,7 @@ router.get('/pmc/operations', (req, res) => {
     const result = pmcService.getOperations(filters);
     res.json(result);
   } catch (error) {
-    logger.error('Error getting PMC operations:', error);
+    error('Error getting PMC operations:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get PMC operations',
@@ -361,7 +360,7 @@ router.get('/pmc/operations/:operationId', (req, res) => {
       res.status(404).json(result);
     }
   } catch (error) {
-    logger.error('Error getting PMC operation:', error);
+    error('Error getting PMC operation:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get PMC operation',
@@ -393,7 +392,7 @@ router.put('/pmc/operations/:operationId/status', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error updating PMC operation status:', error);
+    error('Error updating PMC operation status:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to update PMC operation status',
@@ -419,7 +418,7 @@ router.post('/pmc/operations/:operationId/resources', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error allocating resources:', error);
+    error('Error allocating resources:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to allocate resources',
@@ -450,7 +449,7 @@ router.post('/pmc/operations/:operationId/report', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error generating operation report:', error);
+    error('Error generating operation report:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to generate operation report',
@@ -474,7 +473,7 @@ router.post('/pmc/training', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error creating training program:', error);
+    error('Error creating training program:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to create training program',
@@ -492,7 +491,7 @@ router.get('/pmc/integration-status', (req, res) => {
     const result = pmcService.getIntegrationStatus();
     res.json(result);
   } catch (error) {
-    logger.error('Error getting PMC integration status:', error);
+    error('Error getting PMC integration status:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get PMC integration status',
@@ -510,7 +509,7 @@ router.get('/pmc/statistics', (req, res) => {
     const result = pmcService.getStatistics();
     res.json(result);
   } catch (error) {
-    logger.error('Error getting PMC statistics:', error);
+    error('Error getting PMC statistics:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get PMC statistics',
@@ -528,7 +527,7 @@ router.get('/pmc/health', (req, res) => {
     const result = pmcService.getHealthStatus();
     res.json(result);
   } catch (error) {
-    logger.error('Error getting PMC health status:', error);
+    error('Error getting PMC health status:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get PMC health status',

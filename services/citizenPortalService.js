@@ -12,9 +12,7 @@
  * - Communication with administrators
  */
 
-import { createLogger } from '../config/logger.js';
-
-const logger = createLogger('Citizen-Portal-Service');
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 
 class CitizenPortalService {
   constructor() {
@@ -24,7 +22,7 @@ class CitizenPortalService {
     this.messages = new Map();
     this.notifications = new Map();
 
-    logger.info('Citizen Portal Service initialized');
+    info('Citizen Portal Service initialized');
   }
 
   /**
@@ -171,7 +169,7 @@ class CitizenPortalService {
       // Send welcome notification
       await this.sendWelcomeNotification(citizenId);
 
-      logger.info(
+      info(
         `Citizen registered: ${citizenId} - ${citizen.personalInfo.firstName} ${citizen.personalInfo.lastName}`
       );
 
@@ -182,7 +180,7 @@ class CitizenPortalService {
         message: 'Registration successful. Please verify your account.',
       };
     } catch (error) {
-      logger.error('Error registering citizen:', error);
+      error('Error registering citizen:', error);
       return {
         success: false,
         error: error.message,
@@ -211,9 +209,9 @@ class CitizenPortalService {
 
       this.notifications.set(notificationId, notification);
 
-      logger.info(`Welcome notification sent to citizen ${citizenId}`);
+      info(`Welcome notification sent to citizen ${citizenId}`);
     } catch (error) {
-      logger.error('Error sending welcome notification:', error);
+      error('Error sending welcome notification:', error);
     }
   }
 
@@ -269,7 +267,7 @@ class CitizenPortalService {
         details: { paymentMethod: enrollmentData.paymentMethod },
       });
 
-      logger.info(`Citizen ${citizenId} enrolled in UBI program`);
+      info(`Citizen ${citizenId} enrolled in UBI program`);
 
       return {
         success: true,
@@ -277,7 +275,7 @@ class CitizenPortalService {
         message: 'Successfully enrolled in UBI program',
       };
     } catch (error) {
-      logger.error('Error enrolling in UBI:', error);
+      error('Error enrolling in UBI:', error);
       return {
         success: false,
         error: error.message,
@@ -332,7 +330,7 @@ class CitizenPortalService {
         details: { courseId: courseId },
       });
 
-      logger.info(`Citizen ${citizenId} enrolled in course ${courseId}`);
+      info(`Citizen ${citizenId} enrolled in course ${courseId}`);
 
       return {
         success: true,
@@ -340,7 +338,7 @@ class CitizenPortalService {
         message: 'Successfully enrolled in course',
       };
     } catch (error) {
-      logger.error('Error enrolling in course:', error);
+      error('Error enrolling in course:', error);
       return {
         success: false,
         error: error.message,
@@ -407,7 +405,7 @@ class CitizenPortalService {
         details: { requestId: requestId, type: requestData.type },
       });
 
-      logger.info(
+      info(
         `Service request created: ${requestId} for citizen ${citizenId}`
       );
 
@@ -418,7 +416,7 @@ class CitizenPortalService {
         message: 'Service request submitted successfully',
       };
     } catch (error) {
-      logger.error('Error creating service request:', error);
+      error('Error creating service request:', error);
       return {
         success: false,
         error: error.message,
@@ -477,7 +475,7 @@ class CitizenPortalService {
         details: { documentId: documentId, type: documentData.type },
       });
 
-      logger.info(`Document uploaded for citizen ${citizenId}: ${documentId}`);
+      info(`Document uploaded for citizen ${citizenId}: ${documentId}`);
 
       return {
         success: true,
@@ -486,7 +484,7 @@ class CitizenPortalService {
         message: 'Document uploaded successfully',
       };
     } catch (error) {
-      logger.error('Error uploading document:', error);
+      error('Error uploading document:', error);
       return {
         success: false,
         error: error.message,
@@ -526,7 +524,7 @@ class CitizenPortalService {
         },
       };
     } catch (error) {
-      logger.error('Error getting citizen profile:', error);
+      error('Error getting citizen profile:', error);
       return {
         success: false,
         error: error.message,
@@ -575,7 +573,7 @@ class CitizenPortalService {
         details: { fields: Object.keys(updates) },
       });
 
-      logger.info(`Citizen profile updated: ${citizenId}`);
+      info(`Citizen profile updated: ${citizenId}`);
 
       return {
         success: true,
@@ -583,7 +581,7 @@ class CitizenPortalService {
         message: 'Profile updated successfully',
       };
     } catch (error) {
-      logger.error('Error updating citizen profile:', error);
+      error('Error updating citizen profile:', error);
       return {
         success: false,
         error: error.message,
@@ -619,7 +617,7 @@ class CitizenPortalService {
         unreadCount: notifications.filter((n) => !n.read).length,
       };
     } catch (error) {
-      logger.error('Error getting citizen notifications:', error);
+      error('Error getting citizen notifications:', error);
       return {
         success: false,
         error: error.message,
@@ -648,7 +646,7 @@ class CitizenPortalService {
         serviceRequest: request,
       };
     } catch (error) {
-      logger.error('Error getting service request:', error);
+      error('Error getting service request:', error);
       return {
         success: false,
         error: error.message,
@@ -730,7 +728,7 @@ class CitizenPortalService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Error getting statistics:', error);
+      error('Error getting statistics:', error);
       return {
         success: false,
         error: error.message,

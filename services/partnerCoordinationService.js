@@ -12,10 +12,8 @@
  * - Resource allocation
  */
 
-import { createLogger } from '../config/logger.js';
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 import Partner from '../models/Partner.js';
-
-const logger = createLogger('Partner-Coordination-Service');
 
 class PartnerCoordinationService {
   constructor() {
@@ -24,7 +22,7 @@ class PartnerCoordinationService {
     this.communications = new Map();
     this.workflows = new Map();
 
-    logger.info('Partner Coordination Service initialized');
+    info('Partner Coordination Service initialized');
   }
 
   /**
@@ -106,7 +104,7 @@ class PartnerCoordinationService {
       // Create onboarding workflow
       await this.createOnboardingWorkflow(partnerId, userId);
 
-      logger.info(`Partner onboarded: ${partnerId} - ${partner.name}`);
+      info(`Partner onboarded: ${partnerId} - ${partner.name}`);
 
       return {
         success: true,
@@ -115,7 +113,7 @@ class PartnerCoordinationService {
         message: 'Partner onboarded successfully',
       };
     } catch (error) {
-      logger.error('Error onboarding partner:', error);
+      error('Error onboarding partner:', error);
       return {
         success: false,
         error: error.message,
@@ -203,7 +201,7 @@ class PartnerCoordinationService {
 
       this.workflows.set(workflowId, workflow);
 
-      logger.info(`Onboarding workflow created for partner ${partnerId}`);
+      info(`Onboarding workflow created for partner ${partnerId}`);
 
       return {
         success: true,
@@ -211,7 +209,7 @@ class PartnerCoordinationService {
         workflow: workflow,
       };
     } catch (error) {
-      logger.error('Error creating onboarding workflow:', error);
+      error('Error creating onboarding workflow:', error);
       return {
         success: false,
         error: error.message,
@@ -271,7 +269,7 @@ class PartnerCoordinationService {
         }
       }
 
-      logger.info(
+      info(
         `Workflow step updated: ${workflowId} - ${stepId} - ${status}`
       );
 
@@ -281,7 +279,7 @@ class PartnerCoordinationService {
         message: 'Workflow step updated successfully',
       };
     } catch (error) {
-      logger.error('Error updating workflow step:', error);
+      error('Error updating workflow step:', error);
       return {
         success: false,
         error: error.message,
@@ -317,7 +315,7 @@ class PartnerCoordinationService {
         details: { previousStatus: 'pending', newStatus: 'active' },
       });
 
-      logger.info(`Partner activated: ${partnerId} - ${partner.name}`);
+      info(`Partner activated: ${partnerId} - ${partner.name}`);
 
       return {
         success: true,
@@ -325,7 +323,7 @@ class PartnerCoordinationService {
         message: 'Partner activated successfully',
       };
     } catch (error) {
-      logger.error('Error activating partner:', error);
+      error('Error activating partner:', error);
       return {
         success: false,
         error: error.message,
@@ -398,7 +396,7 @@ class PartnerCoordinationService {
         details: { projectId: projectId, projectName: project.name },
       });
 
-      logger.info(`Project assigned to partner ${partnerId}: ${projectId}`);
+      info(`Project assigned to partner ${partnerId}: ${projectId}`);
 
       return {
         success: true,
@@ -407,7 +405,7 @@ class PartnerCoordinationService {
         message: 'Project assigned successfully',
       };
     } catch (error) {
-      logger.error('Error assigning project:', error);
+      error('Error assigning project:', error);
       return {
         success: false,
         error: error.message,
@@ -479,7 +477,7 @@ class PartnerCoordinationService {
         });
       }
 
-      logger.info(`Project ${projectId} status updated to ${status}`);
+      info(`Project ${projectId} status updated to ${status}`);
 
       return {
         success: true,
@@ -487,7 +485,7 @@ class PartnerCoordinationService {
         message: `Project status updated to ${status}`,
       };
     } catch (error) {
-      logger.error('Error updating project status:', error);
+      error('Error updating project status:', error);
       return {
         success: false,
         error: error.message,
@@ -530,7 +528,7 @@ class PartnerCoordinationService {
       partner.communication.communicationLog.push(communication);
       this.communications.set(communicationId, communication);
 
-      logger.info(
+      info(
         `Communication logged for partner ${partnerId}: ${communicationId}`
       );
 
@@ -540,7 +538,7 @@ class PartnerCoordinationService {
         communication: communication,
       };
     } catch (error) {
-      logger.error('Error logging communication:', error);
+      error('Error logging communication:', error);
       return {
         success: false,
         error: error.message,
@@ -592,7 +590,7 @@ class PartnerCoordinationService {
         totalRating / partner.performance.reviews.length;
       partner.performance.lastReview = new Date().toISOString();
 
-      logger.info(
+      info(
         `Performance rating updated for partner ${partnerId}: ${review.rating}`
       );
 
@@ -603,7 +601,7 @@ class PartnerCoordinationService {
         message: 'Performance rating updated successfully',
       };
     } catch (error) {
-      logger.error('Error updating performance rating:', error);
+      error('Error updating performance rating:', error);
       return {
         success: false,
         error: error.message,
@@ -680,7 +678,7 @@ class PartnerCoordinationService {
         },
       };
     } catch (error) {
-      logger.error('Error getting partner:', error);
+      error('Error getting partner:', error);
       return {
         success: false,
         error: error.message,
@@ -756,7 +754,7 @@ class PartnerCoordinationService {
         count: partners.length,
       };
     } catch (error) {
-      logger.error('Error getting partners:', error);
+      error('Error getting partners:', error);
       return {
         success: false,
         error: error.message,
@@ -806,7 +804,7 @@ class PartnerCoordinationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Error getting statistics:', error);
+      error('Error getting statistics:', error);
       return {
         success: false,
         error: error.message,

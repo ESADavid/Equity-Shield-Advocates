@@ -6,10 +6,9 @@
 
 import express from 'express';
 import CitizenPortalService from '../services/citizenPortalService.js';
-import { createLogger } from '../config/logger.js';
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
-const logger = createLogger('Citizen-Portal-Routes');
 const portalService = new CitizenPortalService();
 
 /**
@@ -27,7 +26,7 @@ router.post('/register', async (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error registering citizen:', error);
+    error('Error registering citizen:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to register citizen',
@@ -51,7 +50,7 @@ router.get('/profile/:citizenId', (req, res) => {
       res.status(404).json(result);
     }
   } catch (error) {
-    logger.error('Error getting citizen profile:', error);
+    error('Error getting citizen profile:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get citizen profile',
@@ -75,7 +74,7 @@ router.put('/profile/:citizenId', (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error updating citizen profile:', error);
+    error('Error updating citizen profile:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to update citizen profile',
@@ -99,7 +98,7 @@ router.post('/:citizenId/ubi/enroll', async (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error enrolling in UBI:', error);
+    error('Error enrolling in UBI:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to enroll in UBI',
@@ -125,7 +124,7 @@ router.post('/:citizenId/education/enroll', async (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error enrolling in course:', error);
+    error('Error enrolling in course:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to enroll in course',
@@ -152,7 +151,7 @@ router.post('/:citizenId/service-requests', async (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error creating service request:', error);
+    error('Error creating service request:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to create service request',
@@ -176,7 +175,7 @@ router.get('/service-requests/:requestId', (req, res) => {
       res.status(404).json(result);
     }
   } catch (error) {
-    logger.error('Error getting service request:', error);
+    error('Error getting service request:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get service request',
@@ -200,7 +199,7 @@ router.post('/:citizenId/documents', async (req, res) => {
       res.status(400).json(result);
     }
   } catch (error) {
-    logger.error('Error uploading document:', error);
+    error('Error uploading document:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to upload document',
@@ -223,7 +222,7 @@ router.get('/:citizenId/notifications', (req, res) => {
     const result = portalService.getCitizenNotifications(citizenId, filters);
     res.json(result);
   } catch (error) {
-    logger.error('Error getting notifications:', error);
+    error('Error getting notifications:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get notifications',
@@ -241,7 +240,7 @@ router.get('/statistics', (req, res) => {
     const result = portalService.getStatistics();
     res.json(result);
   } catch (error) {
-    logger.error('Error getting statistics:', error);
+    error('Error getting statistics:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get statistics',
@@ -259,7 +258,7 @@ router.get('/health', (req, res) => {
     const result = portalService.getHealthStatus();
     res.json(result);
   } catch (error) {
-    logger.error('Error getting health status:', error);
+    error('Error getting health status:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to get health status',

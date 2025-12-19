@@ -14,9 +14,7 @@
 
 import EducationProgram from '../models/Education.js';
 import Citizen from '../models/Citizen.js';
-import { createLogger } from '../config/logger.js';
-
-const logger = createLogger('Education-Service');
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 
 class EducationService {
   constructor() {
@@ -29,7 +27,7 @@ class EducationService {
     };
     this.totalRequiredMonths = 20;
 
-    logger.info('Education Service initialized');
+    info('Education Service initialized');
   }
 
   /**
@@ -40,7 +38,7 @@ class EducationService {
    */
   async createProgram(programData, userId) {
     try {
-      logger.info(
+      info(
         `Creating ${programData.programType} program: ${programData.programInfo?.name}`
       );
 
@@ -71,7 +69,7 @@ class EducationService {
 
       await program.save();
 
-      logger.info(`Program created successfully: ${program.programId}`);
+      info(`Program created successfully: ${program.programId}`);
 
       return {
         success: true,
@@ -86,7 +84,7 @@ class EducationService {
         message: 'Education program created successfully',
       };
     } catch (error) {
-      logger.error('Error creating program:', error);
+      error('Error creating program:', error);
       return {
         success: false,
         error: error.message,
@@ -103,7 +101,7 @@ class EducationService {
    */
   async enrollCitizen(citizenId, programId, userId) {
     try {
-      logger.info(`Enrolling citizen ${citizenId} in program ${programId}`);
+      info(`Enrolling citizen ${citizenId} in program ${programId}`);
 
       // Get citizen
       const citizen = await Citizen.findOne({ citizenId });
@@ -160,7 +158,7 @@ class EducationService {
 
       await citizen.save();
 
-      logger.info(
+      info(
         `Citizen ${citizenId} enrolled successfully in ${programType} program`
       );
 
@@ -178,7 +176,7 @@ class EducationService {
         message: 'Citizen enrolled successfully',
       };
     } catch (error) {
-      logger.error('Error enrolling citizen:', error);
+      error('Error enrolling citizen:', error);
       return {
         success: false,
         error: error.message,
@@ -196,7 +194,7 @@ class EducationService {
    */
   async updateProgress(citizenId, programId, progressData, userId) {
     try {
-      logger.info(
+      info(
         `Updating progress for citizen ${citizenId} in program ${programId}`
       );
 
@@ -257,7 +255,7 @@ class EducationService {
         await citizen.save();
       }
 
-      logger.info(`Progress updated successfully for citizen ${citizenId}`);
+      info(`Progress updated successfully for citizen ${citizenId}`);
 
       return {
         success: true,
@@ -272,7 +270,7 @@ class EducationService {
         message: 'Progress updated successfully',
       };
     } catch (error) {
-      logger.error('Error updating progress:', error);
+      error('Error updating progress:', error);
       return {
         success: false,
         error: error.message,
@@ -318,7 +316,7 @@ class EducationService {
         count: programs.length,
       };
     } catch (error) {
-      logger.error('Error getting programs:', error);
+      error('Error getting programs:', error);
       return {
         success: false,
         error: error.message,
@@ -389,7 +387,7 @@ class EducationService {
         },
       };
     } catch (error) {
-      logger.error('Error getting citizen progress:', error);
+      error('Error getting citizen progress:', error);
       return {
         success: false,
         error: error.message,
@@ -406,7 +404,7 @@ class EducationService {
    */
   async issueCertification(citizenId, programId, userId) {
     try {
-      logger.info(
+      info(
         `Issuing certification for citizen ${citizenId} in program ${programId}`
       );
 
@@ -487,7 +485,7 @@ class EducationService {
 
       await citizen.save();
 
-      logger.info(`Certification issued: ${certificationId}`);
+      info(`Certification issued: ${certificationId}`);
 
       return {
         success: true,
@@ -504,7 +502,7 @@ class EducationService {
         message: 'Certification issued successfully',
       };
     } catch (error) {
-      logger.error('Error issuing certification:', error);
+      error('Error issuing certification:', error);
       return {
         success: false,
         error: error.message,
@@ -594,7 +592,7 @@ class EducationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Error getting statistics:', error);
+      error('Error getting statistics:', error);
       return {
         success: false,
         error: error.message,
@@ -609,7 +607,7 @@ class EducationService {
    */
   async initializeDefaultPrograms(userId) {
     try {
-      logger.info('Initializing default education programs');
+      info('Initializing default education programs');
 
       const defaultPrograms = [
         {
@@ -691,7 +689,7 @@ class EducationService {
         }
       }
 
-      logger.info(`Initialized ${createdPrograms.length} default programs`);
+      info(`Initialized ${createdPrograms.length} default programs`);
 
       return {
         success: true,
@@ -699,7 +697,7 @@ class EducationService {
         message: `${createdPrograms.length} default programs initialized`,
       };
     } catch (error) {
-      logger.error('Error initializing default programs:', error);
+      error('Error initializing default programs:', error);
       return {
         success: false,
         error: error.message,

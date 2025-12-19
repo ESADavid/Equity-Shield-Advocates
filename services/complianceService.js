@@ -13,9 +13,7 @@
 import Citizen from '../models/Citizen.js';
 import EducationProgram from '../models/Education.js';
 import UniversalBasicIncomeService from './universalBasicIncomeService.js';
-import { createLogger } from '../config/logger.js';
-
-const logger = createLogger('Compliance-Service');
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 
 class ComplianceService {
   constructor() {
@@ -24,7 +22,7 @@ class ComplianceService {
     this.GRACE_PERIOD_DAYS = 30;
     this.PROGRESS_CHECKPOINT_MONTHS = 3;
 
-    logger.info('Compliance Service initialized');
+    info('Compliance Service initialized');
   }
 
   /**
@@ -34,7 +32,7 @@ class ComplianceService {
    */
   async runComplianceCheck(userId) {
     try {
-      logger.info('Starting compliance check for all citizens');
+      info('Starting compliance check for all citizens');
 
       const startTime = Date.now();
 
@@ -99,7 +97,7 @@ class ComplianceService {
 
       const duration = Date.now() - startTime;
 
-      logger.info(
+      info(
         `Compliance check completed: ${results.totalChecked} citizens checked in ${duration}ms`
       );
 
@@ -121,7 +119,7 @@ class ComplianceService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Error running compliance check:', error);
+      error('Error running compliance check:', error);
       return {
         success: false,
         error: error.message,
@@ -227,7 +225,7 @@ class ComplianceService {
         reason: 'Education compliance deadline exceeded (already suspended)',
       };
     } catch (error) {
-      logger.error(
+      error(
         `Error checking compliance for citizen ${citizen.citizenId}:`,
         error
       );
@@ -271,7 +269,7 @@ class ComplianceService {
 
       await citizen.save();
 
-      logger.info(`Exemption granted to citizen ${citizenId}: ${reason}`);
+      info(`Exemption granted to citizen ${citizenId}: ${reason}`);
 
       return {
         success: true,
@@ -280,7 +278,7 @@ class ComplianceService {
         exemptionReason: reason,
       };
     } catch (error) {
-      logger.error('Error granting exemption:', error);
+      error('Error granting exemption:', error);
       return {
         success: false,
         error: error.message,
@@ -327,7 +325,7 @@ class ComplianceService {
 
       await citizen.save();
 
-      logger.info(`Exemption revoked for citizen ${citizenId}`);
+      info(`Exemption revoked for citizen ${citizenId}`);
 
       return {
         success: true,
@@ -335,7 +333,7 @@ class ComplianceService {
         citizenId: citizenId,
       };
     } catch (error) {
-      logger.error('Error revoking exemption:', error);
+      error('Error revoking exemption:', error);
       return {
         success: false,
         error: error.message,
@@ -402,7 +400,7 @@ class ComplianceService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Error getting compliance statistics:', error);
+      error('Error getting compliance statistics:', error);
       return {
         success: false,
         error: error.message,

@@ -131,8 +131,9 @@ try {
   payrollRouter = payrollModule.default || payrollModule;
   logger.info('✅ Payroll system loaded successfully');
 } catch (error) {
-  logger.error('❌ Failed to load payroll system:', error.message);
-  process.exit(1);
+  logger.warn('⚠️ Payroll system not loaded (TypeScript module issue):', error.message);
+  logger.info('   Server will continue without payroll routes');
+  // Don't exit - continue without payroll system
 }
 
 // Import analytics system
@@ -166,8 +167,9 @@ try {
   haitiStrategicRouter = haitiModule.default || haitiModule;
   logger.info('✅ Haiti strategic acquisition system loaded successfully');
 } catch (error) {
-  logger.error('❌ Failed to load Haiti strategic system:', error.message);
-  process.exit(1);
+  logger.warn('⚠️ Haiti strategic system not loaded (module issue):', error.message);
+  logger.info('   Server will continue without Haiti strategic routes');
+  // Don't exit - continue without Haiti strategic system
 }
 
 // Import UBI (Universal Basic Income) routes - HEAVEN ON EARTH
@@ -178,7 +180,7 @@ try {
   logger.info('✅ Universal Basic Income system loaded successfully');
 } catch (error) {
   logger.error('❌ Failed to load UBI system:', error.message);
-  process.exit(1);
+  logger.info('   Server will continue without UBI system routes');
 }
 
 // Import Education routes - HEAVEN ON EARTH
@@ -189,7 +191,7 @@ try {
   logger.info('✅ Education system loaded successfully');
 } catch (error) {
   logger.error('❌ Failed to load Education system:', error.message);
-  process.exit(1);
+  logger.info('   Server will continue without Education system routes');
 }
 
 // Import Partner routes - PHASE 2
@@ -200,7 +202,7 @@ try {
   logger.info('✅ Partner coordination system loaded successfully');
 } catch (error) {
   logger.error('❌ Failed to load Partner system:', error.message);
-  process.exit(1);
+  logger.info('   Server will continue without Partner system routes');
 }
 
 // Import Citizen Portal routes - PHASE 2
@@ -211,7 +213,7 @@ try {
   logger.info('✅ Citizen portal system loaded successfully');
 } catch (error) {
   logger.error('❌ Failed to load Citizen portal:', error.message);
-  process.exit(1);
+  logger.info('   Server will continue without Citizen portal routes');
 }
 
 // Import UBI Payment routes - PHASE 2
@@ -222,7 +224,7 @@ try {
   logger.info('✅ UBI payment system loaded successfully');
 } catch (error) {
   logger.error('❌ Failed to load UBI payment system:', error.message);
-  process.exit(1);
+  logger.info('   Server will continue without UBI payment system routes');
 }
 
 // Import Notification routes - PHASE 2
@@ -233,7 +235,7 @@ try {
   logger.info('✅ Multi-channel notification routes loaded successfully');
 } catch (error) {
   logger.error('❌ Failed to load notification routes:', error.message);
-  process.exit(1);
+  logger.info('   Server will continue without notification routes routes');
 }
 
 // Import ITG (Integrated Technology Growth) routes - KING SACHEM YOCHANAN
@@ -244,7 +246,7 @@ try {
   logger.info('✅ King Sachem Yochanan ITG Algorithm loaded successfully');
 } catch (error) {
   logger.error('❌ Failed to load ITG system:', error.message);
-  process.exit(1);
+  logger.info('   Server will continue without ITG routes');
 }
 
 // Security middleware

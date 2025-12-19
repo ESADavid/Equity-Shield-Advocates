@@ -6,11 +6,10 @@
 
 import express from 'express';
 import UniversalBasicIncomeService from '../services/universalBasicIncomeService.js';
-import { createLogger } from '../config/logger.js';
+import logger from '../utils/loggerWrapper.js';
 
 const router = express.Router();
 const ubiService = new UniversalBasicIncomeService();
-const logger = createLogger('UBI-Routes');
 
 /**
  * @route   POST /api/ubi/register-citizen
@@ -31,12 +30,12 @@ router.post('/register-citizen', async (req, res) => {
     } else {
       res.status(400).json(result);
     }
-  } catch (error) {
-    logger.error('Error in register-citizen route:', error);
+  } catch (err) {
+    logger.error('Error in register-citizen route:', err);
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message,
+      message: err.message,
     });
   }
 });
@@ -59,12 +58,12 @@ router.post('/process-monthly-payments', async (req, res) => {
     } else {
       res.status(500).json(result);
     }
-  } catch (error) {
-    logger.error('Error in process-monthly-payments route:', error);
+  } catch (err) {
+    logger.error('Error in process-monthly-payments route:', err);
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message,
+      message: err.message,
     });
   }
 });
@@ -87,12 +86,12 @@ router.get('/citizen/:citizenId', async (req, res) => {
     } else {
       res.status(404).json(result);
     }
-  } catch (error) {
-    logger.error('Error in get citizen route:', error);
+  } catch (err) {
+    logger.error('Error in get citizen route:', err);
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message,
+      message: err.message,
     });
   }
 });
@@ -129,12 +128,12 @@ router.get('/payment-history/:citizenId', async (req, res) => {
     } else {
       res.status(404).json(result);
     }
-  } catch (error) {
-    logger.error('Error in payment-history route:', error);
+  } catch (err) {
+    logger.error('Error in payment-history route:', err);
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message,
+      message: err.message,
     });
   }
 });
@@ -168,12 +167,12 @@ router.post('/suspend/:citizenId', async (req, res) => {
     } else {
       res.status(400).json(result);
     }
-  } catch (error) {
-    logger.error('Error in suspend route:', error);
+  } catch (err) {
+    logger.error('Error in suspend route:', err);
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message,
+      message: err.message,
     });
   }
 });
@@ -199,12 +198,12 @@ router.post('/reinstate/:citizenId', async (req, res) => {
     } else {
       res.status(400).json(result);
     }
-  } catch (error) {
-    logger.error('Error in reinstate route:', error);
+  } catch (err) {
+    logger.error('Error in reinstate route:', err);
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message,
+      message: err.message,
     });
   }
 });
@@ -245,12 +244,12 @@ router.post('/verify-eligibility/:citizenId', async (req, res) => {
     } else {
       res.status(404).json(result);
     }
-  } catch (error) {
-    logger.error('Error in verify-eligibility route:', error);
+  } catch (err) {
+    logger.error('Error in verify-eligibility route:', err);
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message,
+      message: err.message,
     });
   }
 });
@@ -271,12 +270,12 @@ router.get('/statistics', async (req, res) => {
     } else {
       res.status(500).json(result);
     }
-  } catch (error) {
-    logger.error('Error in statistics route:', error);
+  } catch (err) {
+    logger.error('Error in statistics route:', err);
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message,
+      message: err.message,
     });
   }
 });
@@ -290,11 +289,11 @@ router.get('/health', (req, res) => {
   try {
     const health = ubiService.getHealthStatus();
     res.status(200).json(health);
-  } catch (error) {
-    logger.error('Error in health route:', error);
+  } catch (err) {
+    logger.error('Error in health route:', err);
     res.status(500).json({
       status: 'error',
-      error: error.message,
+      error: err.message,
     });
   }
 });

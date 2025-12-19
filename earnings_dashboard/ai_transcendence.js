@@ -1,4 +1,5 @@
 import { matrix, multiply, add, pi } from 'mathjs';
+import { info } from '../utils/loggerWrapper.js';
 
 // Advanced AI Transcendence Engine
 // Goes beyond traditional analytics with deep learning, quantum optimization, and autonomous decision making
@@ -25,7 +26,7 @@ class AITranscendence {
     this.quantumOptimizer.initialize();
     this.selfLearner.initialize();
     this.decisionEngine.initialize();
-    logger.info('🤖 AI Transcendence Engine initialized');
+    info('🤖 AI Transcendence Engine initialized');
   }
 
   // Deep Learning Revenue Prediction
@@ -167,7 +168,7 @@ class DeepLearningPredictor {
       hidden: matrix(randomMatrix(1, 50)),
       output: matrix([[0.1]]),
     };
-    logger.info('🧠 Advanced Neural Network model initialized with math.js');
+    info('🧠 Advanced Neural Network model initialized with math.js');
   }
 
   async predict(data, horizon) {
@@ -274,7 +275,7 @@ class QuantumInspiredOptimizer {
       phase: Math.random() * 2 * pi,
       entanglement: Math.random(),
     };
-    logger.info('⚛️ Quantum optimizer initialized');
+    info('⚛️ Quantum optimizer initialized');
   }
 
   optimizePredictions(predictions) {
@@ -323,7 +324,7 @@ class AutonomousDecisionEngine {
   }
 
   initialize() {
-    logger.info('🎯 Autonomous decision engine initialized');
+    info('🎯 Autonomous decision engine initialized');
   }
 
   async makeDecisions(analysis) {
@@ -395,7 +396,7 @@ class SelfLearningSystem {
       successfulStrategies: [],
       riskPatterns: [],
     };
-    logger.info('🧠 Self-learning system initialized');
+    info('🧠 Self-learning system initialized');
   }
 
   async learn(newData) {

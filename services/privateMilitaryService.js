@@ -12,9 +12,7 @@
  */
 
 import HaitiStrategicService from './haitiStrategicService.js';
-import { createLogger } from '../config/logger.js';
-
-const logger = createLogger('Private-Military-Service');
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 
 class PrivateMilitaryService {
   constructor() {
@@ -28,7 +26,7 @@ class PrivateMilitaryService {
     // Initialize PMC contractors
     this.initializePMCContractors();
 
-    logger.info('Private Military Service initialized');
+    info('Private Military Service initialized');
   }
 
   /**
@@ -242,7 +240,7 @@ class PrivateMilitaryService {
       });
     }
 
-    logger.info(`Initialized ${contractors.length} PMC contractors`);
+    info(`Initialized ${contractors.length} PMC contractors`);
   }
 
   /**
@@ -293,7 +291,7 @@ class PrivateMilitaryService {
         ),
       };
     } catch (error) {
-      logger.error('Error getting PMC contractors:', error);
+      error('Error getting PMC contractors:', error);
       return {
         success: false,
         error: error.message,
@@ -346,7 +344,7 @@ class PrivateMilitaryService {
 
       this.activeDeployments.set(deploymentId, deployment);
 
-      logger.info(
+      info(
         `Deployed ${deploymentData.personnel} personnel from ${contractor.name} to ${deploymentData.location}`
       );
 
@@ -356,7 +354,7 @@ class PrivateMilitaryService {
         message: 'Personnel deployed successfully',
       };
     } catch (error) {
-      logger.error('Error deploying personnel:', error);
+      error('Error deploying personnel:', error);
       return {
         success: false,
         error: error.message,
@@ -396,7 +394,7 @@ class PrivateMilitaryService {
 
       this.missions.set(missionId, mission);
 
-      logger.info(`Mission created: ${missionId} - ${mission.name}`);
+      info(`Mission created: ${missionId} - ${mission.name}`);
 
       return {
         success: true,
@@ -404,7 +402,7 @@ class PrivateMilitaryService {
         message: 'Mission created successfully',
       };
     } catch (error) {
-      logger.error('Error creating mission:', error);
+      error('Error creating mission:', error);
       return {
         success: false,
         error: error.message,
@@ -455,7 +453,7 @@ class PrivateMilitaryService {
         });
       }
 
-      logger.info(`Mission ${missionId} updated to status: ${status}`);
+      info(`Mission ${missionId} updated to status: ${status}`);
 
       return {
         success: true,
@@ -463,7 +461,7 @@ class PrivateMilitaryService {
         message: `Mission status updated to ${status}`,
       };
     } catch (error) {
-      logger.error('Error updating mission status:', error);
+      error('Error updating mission status:', error);
       return {
         success: false,
         error: error.message,
@@ -545,7 +543,7 @@ class PrivateMilitaryService {
         },
       };
     } catch (error) {
-      logger.error('Error getting joint force status:', error);
+      error('Error getting joint force status:', error);
       return {
         success: false,
         error: error.message,
@@ -597,7 +595,7 @@ class PrivateMilitaryService {
         },
       };
     } catch (error) {
-      logger.error('Error getting PMC details:', error);
+      error('Error getting PMC details:', error);
       return {
         success: false,
         error: error.message,
@@ -638,7 +636,7 @@ class PrivateMilitaryService {
         },
       };
     } catch (error) {
-      logger.error('Error getting active missions:', error);
+      error('Error getting active missions:', error);
       return {
         success: false,
         error: error.message,
@@ -712,7 +710,7 @@ class PrivateMilitaryService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Error getting statistics:', error);
+      error('Error getting statistics:', error);
       return {
         success: false,
         error: error.message,

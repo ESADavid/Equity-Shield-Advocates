@@ -1,4 +1,5 @@
 import express from 'express';
+import { error as logError } from '../utils/loggerWrapper.js';
 import { getAnalytics } from './ai_analytics.js';
 import {
   getTranscendenceAnalytics,
@@ -20,7 +21,7 @@ router.get('/', (req, res) => {
     };
     res.json(response);
   } catch (error) {
-    logger.error('Analytics error:', error);
+    logError('Analytics error:', error);
     res.status(500).json({ error: 'Failed to retrieve analytics' });
   }
 });
@@ -37,7 +38,7 @@ router.get('/transcendence', async (req, res) => {
     };
     res.json(response);
   } catch (error) {
-    logger.error('Transcendence analytics error:', error);
+    logError('Transcendence analytics error:', error);
     res
       .status(500)
       .json({ error: 'Failed to retrieve transcendence analytics' });
@@ -66,14 +67,14 @@ router.post('/optimize', async (req, res) => {
     };
     res.json(response);
   } catch (error) {
-    logger.error('Optimization error:', error);
+    logError('Optimization error:', error);
     res.status(500).json({ error: 'Failed to optimize revenue' });
   }
 });
 
 // Initialize transcendence engine on router load
 initializeTranscendence().catch((err) => {
-  logger.error('Failed to initialize AI transcendence engine:', err);
+  logError('Failed to initialize AI transcendence engine:', err);
 });
 
 export default router;

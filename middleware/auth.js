@@ -384,3 +384,42 @@ export const validateAuthRequest = (schema) => {
     next();
   };
 };
+
+/**
+ * Authorization middleware - checks if user has required role
+ * @param {string[]} roles - Array of allowed roles
+ */
+export const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ 
+        success: false,
+        error: 'Authentication required' 
+      });
+    }
+
+    if (roles.length && !roles.includes(req.user.role)) {
+      logger.warn('Authorization failed', {
+        userId: req.user._id,
+        userRole: req.user.role,
+        requiredRoles: roles,
+        path: req.path,
+      });
+
+      return res.status(403).json({ 
+        success: false,
+        error: 'Insufficient permissions',
+        required: roles,
+        current: req.user.role
+      });
+    }
+
+    logger.debug('Authorization successful', {
+      userId: req.user._id,
+      role: req.user.role,
+      path: req.path,
+    });
+
+    next();
+  };
+};

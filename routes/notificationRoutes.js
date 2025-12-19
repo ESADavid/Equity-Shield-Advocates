@@ -6,10 +6,9 @@
 
 import express from 'express';
 import MultiChannelNotificationService from '../services/multiChannelNotificationService.js';
-import { createLogger } from '../config/logger.js';
+import logger from '../utils/loggerWrapper.js';
 
 const router = express.Router();
-const logger = createLogger('Notification-Routes');
 const notificationService = new MultiChannelNotificationService();
 
 /**
@@ -26,8 +25,8 @@ router.post('/send', async (req, res) => {
     } else {
       res.status(400).json(result);
     }
-  } catch (error) {
-    logger.error('Error sending notification:', error);
+  } catch (err) {
+    logger.error('Error sending notification:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to send notification',
@@ -54,8 +53,8 @@ router.post('/batch', async (req, res) => {
     const result =
       await notificationService.sendBatchNotifications(notifications);
     res.json(result);
-  } catch (error) {
-    logger.error('Error sending batch notifications:', error);
+  } catch (err) {
+    logger.error('Error sending batch notifications:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to send batch notifications',
@@ -82,8 +81,8 @@ router.get('/history/:userId', (req, res) => {
 
     const result = notificationService.getNotificationHistory(userId, filters);
     res.json(result);
-  } catch (error) {
-    logger.error('Error getting notification history:', error);
+  } catch (err) {
+    logger.error('Error getting notification history:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to get notification history',
@@ -106,8 +105,8 @@ router.get('/:notificationId', (req, res) => {
     } else {
       res.status(404).json(result);
     }
-  } catch (error) {
-    logger.error('Error getting notification:', error);
+  } catch (err) {
+    logger.error('Error getting notification:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to get notification',
@@ -125,8 +124,8 @@ router.get('/preferences/:userId', (req, res) => {
     const { userId } = req.params;
     const result = notificationService.getPreferences(userId);
     res.json(result);
-  } catch (error) {
-    logger.error('Error getting preferences:', error);
+  } catch (err) {
+    logger.error('Error getting preferences:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to get preferences',
@@ -144,8 +143,8 @@ router.put('/preferences/:userId', (req, res) => {
     const { userId } = req.params;
     const result = notificationService.updatePreferences(userId, req.body);
     res.json(result);
-  } catch (error) {
-    logger.error('Error updating preferences:', error);
+  } catch (err) {
+    logger.error('Error updating preferences:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to update preferences',
@@ -162,8 +161,8 @@ router.get('/templates', (req, res) => {
   try {
     const result = notificationService.getTemplates();
     res.json(result);
-  } catch (error) {
-    logger.error('Error getting templates:', error);
+  } catch (err) {
+    logger.error('Error getting templates:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to get templates',
@@ -180,8 +179,8 @@ router.get('/statistics', (req, res) => {
   try {
     const result = notificationService.getStatistics();
     res.json(result);
-  } catch (error) {
-    logger.error('Error getting statistics:', error);
+  } catch (err) {
+    logger.error('Error getting statistics:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to get statistics',
@@ -198,8 +197,8 @@ router.get('/health', (req, res) => {
   try {
     const result = notificationService.getHealthStatus();
     res.json(result);
-  } catch (error) {
-    logger.error('Error getting health status:', error);
+  } catch (err) {
+    logger.error('Error getting health status:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to get health status',
