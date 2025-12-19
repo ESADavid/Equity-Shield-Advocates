@@ -13,6 +13,17 @@ module.exports = {
     ecmaVersion: 2022,
     sourceType: 'module',
   },
+  ignorePatterns: [
+    '**/*.d.ts',           // Ignore all TypeScript declaration files
+    'node_modules/',
+    'dist/',
+    'build/',
+    'coverage/',
+    '*.min.js'
+  ],
+  globals: {
+    logger: 'readonly',    // Define logger as a global variable
+  },
   rules: {
     'no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
     'no-undef': 'error',
@@ -49,17 +60,29 @@ module.exports = {
         'no-unused-vars': 'off',
       },
     },
-    // Exclude .d.ts files from TypeScript parsing
+    // JSX and React files
     {
-      files: ['**/*.d.ts'],
-      parser: 'espree',
+      files: ['**/*.jsx', '**/*.tsx'],
       parserOptions: {
-        ecmaVersion: 2022,
-        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
       rules: {
         'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': 'off',
+        'no-undef': 'off', // React and JSX globals handled by environment
+      },
+    },
+    // Files with ES module syntax that need module sourceType
+    {
+      files: ['algorithms/**/*.js', 'app.js', 'check_credentials.js', 'setup_credentials.js', 'setup_jpmorgan_credentials.js', 'simple_jpmorgan_validation.js', 'delete_babel_config_cjs.js', 'diagnose_integration.js'],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 2022,
+      },
+      rules: {
+        'no-unused-vars': 'off',
       },
     },
     {
@@ -191,13 +214,6 @@ module.exports = {
         'no-unused-expressions': 'off', // Cypress often uses expressions in tests
         'no-console': 'off', // Allow console in Cypress tests
       },
-    },
-    {
-      files: ['*.d.ts'],
-      rules: {
-        'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': 'off',
-      }
     },
     // JavaScript files using ES modules
     {

@@ -110,7 +110,6 @@ class AssetManagementService {
           { symbol: 'GOOGL', shares: 15000, price: 200, value: 3000000 }
         ],
         performance: {
-<<<<<<< HEAD
           daily: .012,
           weekly: .034,
           monthly: .045,
@@ -118,15 +117,6 @@ class AssetManagementService {
           yearly: .128,
           volatility: .18,
           sharpeRatio: .71
-=======
-          daily: PERFORMANCE_CONSTANTS.US_EQUITIES_DAILY,
-          weekly: PERFORMANCE_CONSTANTS.US_EQUITIES_WEEKLY,
-          monthly: PERFORMANCE_CONSTANTS.US_EQUITIES_MONTHLY,
-          quarterly: PERFORMANCE_CONSTANTS.US_EQUITIES_QUARTERLY,
-          yearly: PERFORMANCE_CONSTANTS.US_EQUITIES_YEARLY,
-          volatility: PERFORMANCE_CONSTANTS.US_EQUITIES_VOLATILITY,
-          sharpeRatio: PERFORMANCE_CONSTANTS.US_EQUITIES_SHARPE
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
         }
       },
       {
@@ -136,18 +126,13 @@ class AssetManagementService {
         region: 'International',
         value: 15000000,
         currency: 'USD',
-<<<<<<< HEAD
         allocation: .20,
-=======
-        allocation: PERFORMANCE_CONSTANTS.DEFAULT_INTL_EQUITIES_ALLOCATION,
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
         benchmark: 'MSCI World ex-US',
         holdings: [
           { symbol: 'TSM', shares: 20000, price: 80, value: 1600000 },
           { symbol: 'ASML.AS', shares: 5000, price: 400, value: 2000000 }
         ],
         performance: {
-<<<<<<< HEAD
           daily: .008,
           weekly: .022,
           monthly: .031,
@@ -155,15 +140,6 @@ class AssetManagementService {
           yearly: .095,
           volatility: .22,
           sharpeRatio: .43
-=======
-          daily: PERFORMANCE_CONSTANTS.INTL_EQUITIES_DAILY,
-          weekly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_WEEKLY,
-          monthly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_MONTHLY,
-          quarterly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_QUARTERLY,
-          yearly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_YEARLY,
-          volatility: PERFORMANCE_CONSTANTS.INTL_EQUITIES_VOLATILITY,
-          sharpeRatio: PERFORMANCE_CONSTANTS.INTL_EQUITIES_SHARPE
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
         }
       },
       {
@@ -173,11 +149,7 @@ class AssetManagementService {
         region: 'Global',
         value: 20000000,
         currency: 'USD',
-<<<<<<< HEAD
         allocation: .25,
-=======
-        allocation: PERFORMANCE_CONSTANTS.DEFAULT_FIXED_INCOME_ALLOCATION,
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
         benchmark: 'Bloomberg Barclays Global Aggregate',
         holdings: [
           { name: 'US Treasury 10Y', value: 10000000, yield: .045, duration: 8.5 },
@@ -185,7 +157,6 @@ class AssetManagementService {
           { name: 'Corporate Bonds', value: 5000000, yield: .038, duration: 6.8 }
         ],
         performance: {
-<<<<<<< HEAD
           daily: .003,
           weekly: .008,
           monthly: .012,
@@ -193,15 +164,6 @@ class AssetManagementService {
           yearly: .042,
           volatility: .08,
           sharpeRatio: .53
-=======
-          daily: PERFORMANCE_CONSTANTS.FIXED_INCOME_DAILY,
-          weekly: PERFORMANCE_CONSTANTS.FIXED_INCOME_WEEKLY,
-          monthly: PERFORMANCE_CONSTANTS.FIXED_INCOME_MONTHLY,
-          quarterly: PERFORMANCE_CONSTANTS.FIXED_INCOME_QUARTERLY,
-          yearly: PERFORMANCE_CONSTANTS.FIXED_INCOME_YEARLY,
-          volatility: PERFORMANCE_CONSTANTS.FIXED_INCOME_VOLATILITY,
-          sharpeRatio: PERFORMANCE_CONSTANTS.FIXED_INCOME_SHARPE
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
         }
       },
       {
@@ -211,11 +173,7 @@ class AssetManagementService {
         region: 'Global',
         value: 10000000,
         currency: 'USD',
-<<<<<<< HEAD
         allocation: .12,
-=======
-        allocation: PERFORMANCE_CONSTANTS.DEFAULT_ALTERNATIVE_ALLOCATION,
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
         benchmark: 'HFRX Global Hedge Fund Index',
         holdings: [
           { name: 'Private Equity Fund A', value: 4000000, vintage: 2020 },
@@ -223,7 +181,6 @@ class AssetManagementService {
           { name: 'Infrastructure Fund', value: 3000000, vintage: 2019 }
         ],
         performance: {
-<<<<<<< HEAD
           daily: .005,
           weekly: .015,
           monthly: .025,
@@ -231,15 +188,6 @@ class AssetManagementService {
           yearly: .089,
           volatility: .15,
           sharpeRatio: .59
-=======
-          daily: PERFORMANCE_CONSTANTS.ALTERNATIVE_DAILY,
-          weekly: PERFORMANCE_CONSTANTS.ALTERNATIVE_WEEKLY,
-          monthly: PERFORMANCE_CONSTANTS.ALTERNATIVE_MONTHLY,
-          quarterly: PERFORMANCE_CONSTANTS.ALTERNATIVE_QUARTERLY,
-          yearly: PERFORMANCE_CONSTANTS.ALTERNATIVE_YEARLY,
-          volatility: PERFORMANCE_CONSTANTS.ALTERNATIVE_VOLATILITY,
-          sharpeRatio: PERFORMANCE_CONSTANTS.ALTERNATIVE_SHARPE
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
         }
       },
       {
@@ -249,18 +197,13 @@ class AssetManagementService {
         region: 'US',
         value: 5000000,
         currency: 'USD',
-<<<<<<< HEAD
         allocation: .08,
-=======
-        allocation: PERFORMANCE_CONSTANTS.DEFAULT_CASH_ALLOCATION,
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
         benchmark: '3-Month T-Bill',
         holdings: [
           { name: 'Money Market Fund', value: 3000000, yield: .052 },
           { name: 'Commercial Paper', value: 2000000, yield: .048 }
         ],
         performance: {
-<<<<<<< HEAD
           daily: .001,
           weekly: .003,
           monthly: .005,
@@ -268,15 +211,6 @@ class AssetManagementService {
           yearly: .025,
           volatility: .02,
           sharpeRatio: 1.25
-=======
-          daily: PERFORMANCE_CONSTANTS.CASH_DAILY,
-          weekly: PERFORMANCE_CONSTANTS.CASH_WEEKLY,
-          monthly: PERFORMANCE_CONSTANTS.CASH_MONTHLY,
-          quarterly: PERFORMANCE_CONSTANTS.CASH_QUARTERLY,
-          yearly: PERFORMANCE_CONSTANTS.CASH_YEARLY,
-          volatility: PERFORMANCE_CONSTANTS.CASH_VOLATILITY,
-          sharpeRatio: PERFORMANCE_CONSTANTS.CASH_SHARPE
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
         }
       }
     ];
@@ -362,17 +296,12 @@ class AssetManagementService {
     const history = this.performanceHistory.get(assetId) || [];
     history.push(historyEntry);
 
-<<<<<<< HEAD
     // Keep only last 1000 entries
     if (history.length > 1000) {
       this.performanceHistory.set(assetId, history.slice(-1000));
     } else {
       this.performanceHistory.set(assetId, history);
     }
-=======
-    // Keep only last PERFORMANCE_HISTORY_LIMIT entries
-    this.performanceHistory.set(assetId, history.slice(-PERFORMANCE_CONSTANTS.PERFORMANCE_HISTORY_LIMIT));
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
 
     return {
       success: true,
@@ -619,17 +548,10 @@ class AssetManagementService {
    */
   getTargetAllocation(assetType) {
     const targets = {
-<<<<<<< HEAD
       'equity': .55,
       'fixed_income': .30,
       'alternative': 0.10,
       'cash': .05
-=======
-      'equity': PERFORMANCE_CONSTANTS.TARGET_EQUITY_ALLOCATION,
-      'fixed_income': PERFORMANCE_CONSTANTS.TARGET_FIXED_INCOME_ALLOCATION,
-      'alternative': PERFORMANCE_CONSTANTS.TARGET_ALTERNATIVE_ALLOCATION,
-      'cash': PERFORMANCE_CONSTANTS.TARGET_CASH_ALLOCATION
->>>>>>> 3e7c1be7898ced26614d517a92861219bebcb85c
     };
 
     return targets[assetType] || PERFORMANCE_CONSTANTS.DEFAULT_ALLOCATION_DEFAULT;
