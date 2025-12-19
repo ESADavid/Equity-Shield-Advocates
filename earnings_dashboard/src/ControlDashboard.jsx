@@ -13,7 +13,7 @@ function ControlDashboard({ controlStatus, onStatusUpdate }) {
     try {
       const response = await fetch('/jpmorgan/control/metrics', {
         headers: {
-          'Authorization': 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+          Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
         },
       });
       if (response.ok) {
@@ -29,7 +29,7 @@ function ControlDashboard({ controlStatus, onStatusUpdate }) {
     try {
       const response = await fetch('/jpmorgan/control/activities', {
         headers: {
-          'Authorization': 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+          Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
         },
       });
       if (response.ok) {
@@ -47,7 +47,7 @@ function ControlDashboard({ controlStatus, onStatusUpdate }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+          Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
         },
         body: JSON.stringify({ action, target }),
       });
@@ -74,25 +74,33 @@ function ControlDashboard({ controlStatus, onStatusUpdate }) {
           <div className="status-indicators">
             <div className="indicator">
               <span className="label">Payment Systems:</span>
-              <span className={`status ${controlStatus?.paymentStatus || 'unknown'}`}>
+              <span
+                className={`status ${controlStatus?.paymentStatus || 'unknown'}`}
+              >
                 {controlStatus?.paymentStatus || 'Unknown'}
               </span>
             </div>
             <div className="indicator">
               <span className="label">Treasury Services:</span>
-              <span className={`status ${controlStatus?.treasuryStatus || 'unknown'}`}>
+              <span
+                className={`status ${controlStatus?.treasuryStatus || 'unknown'}`}
+              >
                 {controlStatus?.treasuryStatus || 'Unknown'}
               </span>
             </div>
             <div className="indicator">
               <span className="label">Website Access:</span>
-              <span className={`status ${controlStatus?.websiteStatus || 'unknown'}`}>
+              <span
+                className={`status ${controlStatus?.websiteStatus || 'unknown'}`}
+              >
                 {controlStatus?.websiteStatus || 'Unknown'}
               </span>
             </div>
             <div className="indicator">
               <span className="label">Private Banking:</span>
-              <span className={`status ${controlStatus?.bankingStatus || 'unknown'}`}>
+              <span
+                className={`status ${controlStatus?.bankingStatus || 'unknown'}`}
+              >
                 {controlStatus?.bankingStatus || 'Unknown'}
               </span>
             </div>
@@ -136,11 +144,15 @@ function ControlDashboard({ controlStatus, onStatusUpdate }) {
           {systemMetrics ? (
             <div className="metrics-grid">
               <div className="metric">
-                <span className="value">{systemMetrics.totalTransactions || 0}</span>
+                <span className="value">
+                  {systemMetrics.totalTransactions || 0}
+                </span>
                 <span className="label">Total Transactions</span>
               </div>
               <div className="metric">
-                <span className="value">{systemMetrics.activeConnections || 0}</span>
+                <span className="value">
+                  {systemMetrics.activeConnections || 0}
+                </span>
                 <span className="label">Active Connections</span>
               </div>
               <div className="metric">
@@ -164,10 +176,14 @@ function ControlDashboard({ controlStatus, onStatusUpdate }) {
             {recentActivities.length > 0 ? (
               recentActivities.slice(0, 10).map((activity, index) => (
                 <div key={index} className="activity-item">
-                  <span className="timestamp">{new Date(activity.timestamp).toLocaleString()}</span>
+                  <span className="timestamp">
+                    {new Date(activity.timestamp).toLocaleString()}
+                  </span>
                   <span className="action">{activity.action}</span>
                   <span className="target">{activity.target}</span>
-                  <span className={`status ${activity.status}`}>{activity.status}</span>
+                  <span className={`status ${activity.status}`}>
+                    {activity.status}
+                  </span>
                 </div>
               ))
             ) : (

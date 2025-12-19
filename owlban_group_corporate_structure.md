@@ -2,39 +2,35 @@
 
 ## Executive Team
 
-- **CEO:** __________
+- **CEO:** ****\_\_****
 
-- **CFO:** __________
+- **CFO:** ****\_\_****
 
-- **CTO:** __________
+- **CTO:** ****\_\_****
 
-- **COO:** __________
+- **COO:** ****\_\_****
 
 ## Departments
 
 - **Research and Development**
+  - Head: ****\_\_****
 
-  - Head: __________
-
-  - Team Members: __________
+  - Team Members: ****\_\_****
 
 - **Marketing**
+  - Head: ****\_\_****
 
-  - Head: __________
-
-  - Team Members: __________
+  - Team Members: ****\_\_****
 
 - **Sales**
+  - Head: ****\_\_****
 
-  - Head: __________
-
-  - Team Members: __________
+  - Team Members: ****\_\_****
 
 - **Customer Support**
+  - Head: ****\_\_****
 
-  - Head: __________
-
-  - Team Members: __________
+  - Team Members: ****\_\_****
 
 ## Companies with Stake
 
@@ -46,4 +42,4 @@
 
 ## Additional Notes
 
-- ______________________________________________________
+- ***

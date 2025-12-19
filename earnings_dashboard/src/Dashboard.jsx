@@ -1,10 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 import JPMorganControlCenter from './JPMorganControlCenter.jsx';
 import WalletWebapp from './WalletWebapp.jsx';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function Dashboard() {
   const [earningsData, setEarningsData] = useState(null);
@@ -22,7 +37,7 @@ function Dashboard() {
     try {
       const response = await fetch('/api/earnings', {
         headers: {
-          'Authorization': 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+          Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
         },
       });
       if (!response.ok) {
@@ -38,11 +53,14 @@ function Dashboard() {
   };
 
   const renderEarningsDashboard = () => {
-    if (loading) return <div className="loading">Loading earnings dashboard...</div>;
+    if (loading)
+      return <div className="loading">Loading earnings dashboard...</div>;
     if (error) return <div className="error">Error loading data: {error}</div>;
 
     const labels = Object.keys(earningsData.revenueStreams);
-    const amounts = labels.map(label => earningsData.revenueStreams[label].amount);
+    const amounts = labels.map(
+      (label) => earningsData.revenueStreams[label].amount
+    );
 
     const data = {
       labels,

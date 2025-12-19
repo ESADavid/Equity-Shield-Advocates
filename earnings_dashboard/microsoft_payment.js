@@ -8,14 +8,19 @@ const fs = require('fs');
 const path = require('path');
 
 // Microsoft Dynamics 365 Payments Configuration
-const DYNAMICS365_BASE_URL = process.env.DYNAMICS365_BASE_URL || 'https://api.businesscentral.dynamics.com';
+const DYNAMICS365_BASE_URL =
+  process.env.DYNAMICS365_BASE_URL ||
+  'https://api.businesscentral.dynamics.com';
 const DYNAMICS365_TENANT_ID = process.env.DYNAMICS365_TENANT_ID;
 const DYNAMICS365_CLIENT_ID = process.env.DYNAMICS365_CLIENT_ID;
 const DYNAMICS365_CLIENT_SECRET = process.env.DYNAMICS365_CLIENT_SECRET;
 const DYNAMICS365_COMPANY_ID = process.env.DYNAMICS365_COMPANY_ID;
 
 // Revenue data path
-const revenueDataPath = path.resolve(__dirname, '../earnings_report_updated.json');
+const revenueDataPath = path.resolve(
+  __dirname,
+  '../earnings_report_updated.json'
+);
 
 function readRevenueData() {
   if (!fs.existsSync(revenueDataPath)) {
@@ -26,7 +31,7 @@ function readRevenueData() {
     data.purchases = {
       corporateHomes: 0,
       autoFleet: 0,
-      autoFleetDetails: []
+      autoFleetDetails: [],
     };
   }
   return data;
@@ -40,7 +45,7 @@ function writeRevenueData(data) {
 async function getAuthToken() {
   try {
     const tokenUrl = `https://login.microsoftonline.com/${DYNAMICS365_TENANT_ID}/oauth2/v2.0/token`;
-    
+
     const params = new URLSearchParams();
     params.append('client_id', DYNAMICS365_CLIENT_ID);
     params.append('client_secret', DYNAMICS365_CLIENT_SECRET);
@@ -49,13 +54,16 @@ async function getAuthToken() {
 
     const response = await axios.post(tokenUrl, params, {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     });
 
     return response.data.access_token;
   } catch (error) {
-    logger.error('Microsoft authentication error:', error.response?.data || error.message);
+    logger.error(
+      'Microsoft authentication error:',
+      error.response?.data || error.message
+    );
     throw new Error('Failed to authenticate with Microsoft Dynamics 365');
   }
 }
@@ -63,24 +71,30 @@ async function getAuthToken() {
 // Generate Microsoft authentication headers
 async function generateAuthHeaders() {
   const token = await getAuthToken();
-  
+
   return {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`,
+    Authorization: `Bearer ${token}`,
     'OData-MaxVersion': '4.0',
-    'OData-Version': '4.0'
+    'OData-Version': '4.0',
   };
 }
 
 // Create sales order (payment equivalent in Dynamics 365)
 router.post('/create-sales-order', async (req, res) => {
   try {
-    const { customerId, amount, currency = 'USD', description, items } = req.body;
+    const {
+      customerId,
+      amount,
+      currency = 'USD',
+      description,
+      items,
+    } = req.body;
 
     if (!customerId || !amount) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Customer ID and amount are required' 
+      return res.status(400).json({
+        success: false,
+        error: 'Customer ID and amount are required',
       });
     }
 
@@ -92,7 +106,9 @@ router.post('/create-sales-order', async (req, res) => {
       currencyCode: currency,
       paymentTermsId: '30D',
       pricesIncludeTax: false,
-      requestDeliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      requestDeliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split('T')[0],
       salesOrderLines: items || [
         {
           lineType: 'Item',
@@ -100,9 +116,9 @@ router.post('/create-sales-order', async (req, res) => {
           description: description || 'Payment for services',
           quantity: 1,
           unitPrice: amount,
-          amount: amount
-        }
-      ]
+          amount: amount,
+        },
+      ],
     };
 
     const response = await axios.post(
@@ -116,15 +132,17 @@ router.post('/create-sales-order', async (req, res) => {
       salesOrderId: response.data.id,
       orderNumber: response.data.number,
       status: response.data.status,
-      orderDetails: response.data
+      orderDetails: response.data,
     });
-
   } catch (error) {
-    logger.error('Microsoft sales order creation error:', error.response?.data || error.message);
+    logger.error(
+      'Microsoft sales order creation error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to create sales order',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -133,9 +151,9 @@ router.post('/create-sales-order', async (req, res) => {
 router.get('/order-status/:orderId', async (req, res) => {
   try {
     const { orderId } = req.params;
-    
+
     const headers = await generateAuthHeaders();
-    
+
     const response = await axios.get(
       `${DYNAMICS365_BASE_URL}/v2.0/${DYNAMICS365_COMPANY_ID}/api/v2.0/salesOrders(${orderId})`,
       { headers }
@@ -143,15 +161,17 @@ router.get('/order-status/:orderId', async (req, res) => {
 
     res.json({
       success: true,
-      orderStatus: response.data
+      orderStatus: response.data,
     });
-
   } catch (error) {
-    logger.error('Microsoft order status error:', error.response?.data || error.message);
+    logger.error(
+      'Microsoft order status error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to get order status',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -159,12 +179,18 @@ router.get('/order-status/:orderId', async (req, res) => {
 // Create payment journal entry
 router.post('/create-payment', async (req, res) => {
   try {
-    const { customerId, amount, currency = 'USD', description, documentNumber } = req.body;
+    const {
+      customerId,
+      amount,
+      currency = 'USD',
+      description,
+      documentNumber,
+    } = req.body;
 
     if (!customerId || !amount || !documentNumber) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Customer ID, amount, and document number are required' 
+      return res.status(400).json({
+        success: false,
+        error: 'Customer ID, amount, and document number are required',
       });
     }
 
@@ -179,7 +205,7 @@ router.post('/create-payment', async (req, res) => {
       accountId: customerId,
       amount: amount,
       description: description || 'Payment received',
-      currencyCode: currency
+      currencyCode: currency,
     };
 
     const response = await axios.post(
@@ -193,15 +219,17 @@ router.post('/create-payment', async (req, res) => {
       paymentId: response.data.id,
       journalLineNumber: response.data.lineNumber,
       status: 'Posted',
-      paymentDetails: response.data
+      paymentDetails: response.data,
     });
-
   } catch (error) {
-    logger.error('Microsoft payment creation error:', error.response?.data || error.message);
+    logger.error(
+      'Microsoft payment creation error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to create payment',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -210,9 +238,9 @@ router.post('/create-payment', async (req, res) => {
 router.get('/customer/:customerId', async (req, res) => {
   try {
     const { customerId } = req.params;
-    
+
     const headers = await generateAuthHeaders();
-    
+
     const response = await axios.get(
       `${DYNAMICS365_BASE_URL}/v2.0/${DYNAMICS365_COMPANY_ID}/api/v2.0/customers(${customerId})`,
       { headers }
@@ -220,15 +248,17 @@ router.get('/customer/:customerId', async (req, res) => {
 
     res.json({
       success: true,
-      customer: response.data
+      customer: response.data,
     });
-
   } catch (error) {
-    logger.error('Microsoft customer lookup error:', error.response?.data || error.message);
+    logger.error(
+      'Microsoft customer lookup error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to get customer information',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -237,7 +267,7 @@ router.get('/customer/:customerId', async (req, res) => {
 router.get('/health', async (req, res) => {
   try {
     const headers = await generateAuthHeaders();
-    
+
     // Simple health check by making a small API call
     const response = await axios.get(
       `${DYNAMICS365_BASE_URL}/v2.0/${DYNAMICS365_COMPANY_ID}/api/v2.0/companies`,
@@ -247,14 +277,13 @@ router.get('/health', async (req, res) => {
     res.json({
       status: 'healthy',
       microsoftStatus: 'Connected',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     res.status(503).json({
       status: 'unhealthy',
       error: 'Microsoft Dynamics 365 API unavailable',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -262,5 +291,5 @@ router.get('/health', async (req, res) => {
 module.exports = {
   router,
   generateAuthHeaders,
-  getAuthToken
+  getAuthToken,
 };

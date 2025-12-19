@@ -71,7 +71,7 @@ const employee = {
   salary: 50000,
   taxRate: 0.2,
   accountNumber: '123456789',
-  routingNumber: '123456789'
+  routingNumber: '123456789',
 };
 const result = await integration.addOrUpdateEmployeePayroll(employee);
 ```

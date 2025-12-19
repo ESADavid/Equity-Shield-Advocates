@@ -32,30 +32,28 @@ class AccountValidationService {
         return {
           valid: false,
           error: 'Account number is required and must be a string',
-          accountNumber: null
+          accountNumber: null,
         };
       }
 
       // Remove spaces and dashes
       const cleanAccountNumber = accountNumber.replace(/[\s-]/g, '');
 
-
       // Check length (typically 8-17 digits)
       if (cleanAccountNumber.length < 8 || cleanAccountNumber.length > 17) {
         return {
           valid: false,
           error: 'Account number must be 8-17 digits long',
-          accountNumber: cleanAccountNumber
+          accountNumber: cleanAccountNumber,
         };
       }
-
 
       // Check if all characters are digits
       if (!/^\d+$/.test(cleanAccountNumber)) {
         return {
           valid: false,
           error: 'Account number must contain only digits',
-          accountNumber: cleanAccountNumber
+          accountNumber: cleanAccountNumber,
         };
       }
 
@@ -66,7 +64,7 @@ class AccountValidationService {
           return {
             valid: false,
             error: `Invalid routing number: ${routingValidation.error}`,
-            accountNumber: cleanAccountNumber
+            accountNumber: cleanAccountNumber,
           };
         }
       }
@@ -76,18 +74,20 @@ class AccountValidationService {
         return {
           valid: false,
           error: 'Account number cannot be all zeros',
-          accountNumber: cleanAccountNumber
+          accountNumber: cleanAccountNumber,
         };
       }
 
       // Check for sequential numbers
       const sequential = '0123456789';
-      if (sequential.includes(cleanAccountNumber) ||
-          cleanAccountNumber.split('').reverse().join('') === sequential) {
+      if (
+        sequential.includes(cleanAccountNumber) ||
+        cleanAccountNumber.split('').reverse().join('') === sequential
+      ) {
         return {
           valid: false,
           error: 'Account number cannot be sequential digits',
-          accountNumber: cleanAccountNumber
+          accountNumber: cleanAccountNumber,
         };
       }
 
@@ -95,14 +95,13 @@ class AccountValidationService {
         valid: true,
         accountNumber: cleanAccountNumber,
         maskedNumber: this.maskAccountNumber(cleanAccountNumber),
-        validationTimestamp: new Date().toISOString()
+        validationTimestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         valid: false,
         error: `Validation error: ${error.message}`,
-        accountNumber: accountNumber
+        accountNumber: accountNumber,
       };
     }
   }
@@ -117,42 +116,40 @@ class AccountValidationService {
       if (!routingNumber || typeof routingNumber !== 'string') {
         return {
           valid: false,
-          error: 'Routing number is required and must be a string'
+          error: 'Routing number is required and must be a string',
         };
       }
 
-      
       // Remove spaces and dashes
       const cleanRouting = routingNumber.replace(/[\s-]/g, '');
-
 
       // Must be exactly 9 digits
       if (cleanRouting.length !== 9) {
         return {
           valid: false,
-          error: 'Routing number must be exactly 9 digits'
+          error: 'Routing number must be exactly 9 digits',
         };
       }
-
 
       // Must contain only digits
       if (!/^\d{9}$/.test(cleanRouting)) {
         return {
           valid: false,
-          error: 'Routing number must contain only digits'
+          error: 'Routing number must contain only digits',
         };
       }
 
       // ABA checksum validation
       const digits = cleanRouting.split('').map(Number);
-      const checksum = (3 * (digits[0] + digits[3] + digits[6])) +
-                      (7 * (digits[1] + digits[4] + digits[7])) +
-                      (digits[2] + digits[5] + digits[8]);
+      const checksum =
+        3 * (digits[0] + digits[3] + digits[6]) +
+        7 * (digits[1] + digits[4] + digits[7]) +
+        (digits[2] + digits[5] + digits[8]);
 
       if (checksum % 10 !== 0) {
         return {
           valid: false,
-          error: 'Invalid routing number checksum'
+          error: 'Invalid routing number checksum',
         };
       }
 
@@ -161,7 +158,7 @@ class AccountValidationService {
       if (fedDistrict < 1 || fedDistrict > 12) {
         return {
           valid: false,
-          error: 'Invalid Federal Reserve district code'
+          error: 'Invalid Federal Reserve district code',
         };
       }
 
@@ -170,13 +167,12 @@ class AccountValidationService {
         routingNumber: cleanRouting,
         federalReserveDistrict: fedDistrict,
         checkType: 'ABA',
-        validationTimestamp: new Date().toISOString()
+        validationTimestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         valid: false,
-        error: `Routing number validation error: ${error.message}`
+        error: `Routing number validation error: ${error.message}`,
       };
     }
   }
@@ -192,7 +188,7 @@ class AccountValidationService {
       if (!address || typeof address !== 'string') {
         return {
           valid: false,
-          error: 'Wallet address is required and must be a string'
+          error: 'Wallet address is required and must be a string',
         };
       }
 
@@ -201,15 +197,18 @@ class AccountValidationService {
       switch (network.toUpperCase()) {
         case 'BTC':
         case 'BITCOIN':
-        // Bitcoin address validation (P2PKH, P2SH, Bech32)
-        if (!/^([13][a-km-zA-HJ-NP-Z1-9]{25,34}|bc1[a-z0-9]{39,59})$/.test(cleanAddress)) {
-          return {
-            valid: false,
-            error: 'Invalid Bitcoin address format'
-          };
-        }
+          // Bitcoin address validation (P2PKH, P2SH, Bech32)
+          if (
+            !/^([13][a-km-zA-HJ-NP-Z1-9]{25,34}|bc1[a-z0-9]{39,59})$/.test(
+              cleanAddress
+            )
+          ) {
+            return {
+              valid: false,
+              error: 'Invalid Bitcoin address format',
+            };
+          }
           break;
-
 
         case 'ETH':
         case 'ETHEREUM':
@@ -217,11 +216,10 @@ class AccountValidationService {
           if (!/^0x[a-fA-F0-9]{40}$/.test(cleanAddress)) {
             return {
               valid: false,
-              error: 'Invalid Ethereum address format'
+              error: 'Invalid Ethereum address format',
             };
           }
           break;
-
 
         case 'USDC':
         case 'USDT':
@@ -229,7 +227,7 @@ class AccountValidationService {
           if (!/^0x[a-fA-F0-9]{40}$/.test(cleanAddress)) {
             return {
               valid: false,
-              error: `Invalid ${network} address format`
+              error: `Invalid ${network} address format`,
             };
           }
           break;
@@ -239,7 +237,7 @@ class AccountValidationService {
           if (cleanAddress.length < 20 || cleanAddress.length > 100) {
             return {
               valid: false,
-              error: 'Wallet address length is invalid for this network'
+              error: 'Wallet address length is invalid for this network',
             };
           }
       }
@@ -249,13 +247,12 @@ class AccountValidationService {
         address: cleanAddress,
         network: network.toUpperCase(),
         maskedAddress: this.maskWalletAddress(cleanAddress),
-        validationTimestamp: new Date().toISOString()
+        validationTimestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         valid: false,
-        error: `Wallet validation error: ${error.message}`
+        error: `Wallet validation error: ${error.message}`,
       };
     }
   }
@@ -278,7 +275,7 @@ class AccountValidationService {
         routingValidation: null,
         walletValidation: null,
         balanceValidation: null,
-        errors: []
+        errors: [],
       };
 
       // Validate account number
@@ -295,7 +292,9 @@ class AccountValidationService {
 
       // Validate routing number
       if (accountData.routingNumber) {
-        results.routingValidation = this.validateRoutingNumber(accountData.routingNumber);
+        results.routingValidation = this.validateRoutingNumber(
+          accountData.routingNumber
+        );
         if (!results.routingValidation.valid) {
           results.overallValid = false;
           results.errors.push(results.routingValidation.error);
@@ -327,7 +326,7 @@ class AccountValidationService {
       this.validatedAccounts.set(validationId, {
         accountData,
         results,
-        timestamp
+        timestamp,
       });
 
       // Add to history
@@ -335,7 +334,7 @@ class AccountValidationService {
         validationId,
         accountType: accountData.type || 'unknown',
         overallValid: results.overallValid,
-        timestamp
+        timestamp,
       });
 
       // Keep only last 1000 validations in history
@@ -344,13 +343,12 @@ class AccountValidationService {
       }
 
       return results;
-
     } catch (error) {
       return {
         validationId,
         timestamp,
         overallValid: false,
-        errors: [`Validation system error: ${error.message}`]
+        errors: [`Validation system error: ${error.message}`],
       };
     }
   }
@@ -365,21 +363,23 @@ class AccountValidationService {
       if (typeof balance !== 'number' || Number.isNaN(balance)) {
         return {
           valid: false,
-          error: 'Balance must be a valid number'
+          error: 'Balance must be a valid number',
         };
       }
 
-      if (balance < -1000000) { // Allow reasonable negative balances
+      if (balance < -1000000) {
+        // Allow reasonable negative balances
         return {
           valid: false,
-          error: 'Balance appears unreasonably negative'
+          error: 'Balance appears unreasonably negative',
         };
       }
 
-      if (balance > 1000000000) { // Flag extremely high balances
+      if (balance > 1000000000) {
+        // Flag extremely high balances
         return {
           valid: false,
-          warning: 'Balance appears unusually high - please verify'
+          warning: 'Balance appears unusually high - please verify',
         };
       }
 
@@ -388,15 +388,14 @@ class AccountValidationService {
         balance: balance,
         formattedBalance: new Intl.NumberFormat('en-US', {
           style: 'currency',
-          currency: 'USD'
+          currency: 'USD',
         }).format(balance),
-        validationTimestamp: new Date().toISOString()
+        validationTimestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         valid: false,
-        error: `Balance validation error: ${error.message}`
+        error: `Balance validation error: ${error.message}`,
       };
     }
   }
@@ -417,16 +416,17 @@ class AccountValidationService {
   getValidationStats() {
     const history = this.validationHistory;
     const total = history.length;
-    const valid = history.filter(h => h.overallValid).length;
+    const valid = history.filter((h) => h.overallValid).length;
     const invalid = total - valid;
 
     return {
       totalValidations: total,
       validAccounts: valid,
       invalidAccounts: invalid,
-      successRate: total > 0 ? (valid / total * 100).toFixed(2) + '%' : '0%',
-      lastValidation: history.length > 0 ? history[history.length - 1].timestamp : null,
-      timestamp: new Date().toISOString()
+      successRate: total > 0 ? ((valid / total) * 100).toFixed(2) + '%' : '0%',
+      lastValidation:
+        history.length > 0 ? history[history.length - 1].timestamp : null,
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -447,7 +447,11 @@ class AccountValidationService {
    */
   maskWalletAddress(address) {
     if (!address || address.length < 8) return address;
-    return address.substring(0, 6) + '*'.repeat(address.length - 10) + address.slice(-4);
+    return (
+      address.substring(0, 6) +
+      '*'.repeat(address.length - 10) +
+      address.slice(-4)
+    );
   }
 
   /**
@@ -467,7 +471,7 @@ class AccountValidationService {
       stats: this.getValidationStats(),
       history: this.getValidationHistory(500),
       cacheSize: this.validatedAccounts.size,
-      exportTimestamp: new Date().toISOString()
+      exportTimestamp: new Date().toISOString(),
     };
   }
 }

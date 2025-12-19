@@ -55,7 +55,11 @@ class QuantumEngine extends EventEmitter {
   }
 
   verifyQuantumIntegrity(state) {
-    const expectedHash = this.generateQuantumHash(state.key, state.value, state.timestamp);
+    const expectedHash = this.generateQuantumHash(
+      state.key,
+      state.value,
+      state.timestamp
+    );
     return state.quantumHash === expectedHash;
   }
 
@@ -120,7 +124,10 @@ class QuantumEngine extends EventEmitter {
     return {
       totalStates,
       corruptedStates,
-      integrityRate: totalStates > 0 ? ((totalStates - corruptedStates) / totalStates) * 100 : 100,
+      integrityRate:
+        totalStates > 0
+          ? ((totalStates - corruptedStates) / totalStates) * 100
+          : 100,
     };
   }
 }

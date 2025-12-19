@@ -136,4 +136,4 @@
 
 ---
 
-*"From the House of David, through the OWLBAN GROUP, we create Heaven on Earth."*
+_"From the House of David, through the OWLBAN GROUP, we create Heaven on Earth."_

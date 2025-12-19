@@ -16,7 +16,7 @@ function WalletWebapp() {
     cvv: '123',
     cardholderName: 'OWLBAN GROUP',
     accountNumber: '123456789012',
-    routingNumber: '021000021'
+    routingNumber: '021000021',
   };
 
   const oscarBroomeWalletData = {
@@ -26,7 +26,7 @@ function WalletWebapp() {
     cvv: '456',
     cardholderName: 'OSCAR BROOME',
     accountNumber: '987654321098',
-    routingNumber: '021000021'
+    routingNumber: '021000021',
   };
 
   useEffect(() => {
@@ -40,7 +40,7 @@ function WalletWebapp() {
           cvv: '',
           cardholderName: '',
           accountNumber: '',
-          routingNumber: ''
+          routingNumber: '',
         });
         break;
       case 'decrypt':
@@ -64,9 +64,9 @@ function WalletWebapp() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -117,9 +117,9 @@ function WalletWebapp() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+          Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -129,7 +129,6 @@ function WalletWebapp() {
       }
 
       setResult(data);
-
     } catch (err) {
       setError(err.message);
     } finally {
@@ -144,13 +143,24 @@ function WalletWebapp() {
           <div className="wallet-form">
             <div className="wallet-section">
               <h2>Encrypt Wallet Data</h2>
-              <p>Enter card and account information to generate secure encrypted wallet data.</p>
+              <p>
+                Enter card and account information to generate secure encrypted
+                wallet data.
+              </p>
 
               <div className="wallet-presets">
-                <button type="button" className="btn btn-primary" onClick={loadOwlbanWallet}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={loadOwlbanWallet}
+                >
                   Load OWLBAN GROUP Wallet
                 </button>
-                <button type="button" className="btn btn-primary" onClick={loadOscarBroomeWallet}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={loadOscarBroomeWallet}
+                >
                   Load OSCAR BROOME Wallet
                 </button>
               </div>
@@ -250,7 +260,11 @@ function WalletWebapp() {
                   </div>
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={loading}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
                   {loading ? 'Encrypting...' : 'Encrypt Wallet Data'}
                 </button>
               </form>
@@ -263,11 +277,16 @@ function WalletWebapp() {
           <div className="wallet-form">
             <div className="wallet-section">
               <h2>Decrypt Wallet Data</h2>
-              <p>Paste encrypted wallet data to retrieve original card information.</p>
+              <p>
+                Paste encrypted wallet data to retrieve original card
+                information.
+              </p>
 
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                  <label htmlFor="encryptedWalletData">Encrypted Wallet Data</label>
+                  <label htmlFor="encryptedWalletData">
+                    Encrypted Wallet Data
+                  </label>
                   <textarea
                     id="encryptedWalletData"
                     name="encryptedWalletData"
@@ -279,7 +298,11 @@ function WalletWebapp() {
                   />
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={loading}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
                   {loading ? 'Decrypting...' : 'Decrypt Wallet Data'}
                 </button>
               </form>
@@ -292,7 +315,9 @@ function WalletWebapp() {
           <div className="wallet-form">
             <div className="wallet-section">
               <h2>Validate Wallet Data</h2>
-              <p>Check if wallet data meets security and compliance standards.</p>
+              <p>
+                Check if wallet data meets security and compliance standards.
+              </p>
 
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -308,7 +333,11 @@ function WalletWebapp() {
                   />
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={loading}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
                   {loading ? 'Validating...' : 'Validate Wallet Data'}
                 </button>
               </form>
@@ -337,7 +366,11 @@ function WalletWebapp() {
                   />
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={loading}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
                   {loading ? 'Tokenizing...' : 'Create Token'}
                 </button>
               </form>
@@ -366,7 +399,11 @@ function WalletWebapp() {
                   />
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={loading}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
                   {loading ? 'Detokenizing...' : 'Detokenize Data'}
                 </button>
               </form>

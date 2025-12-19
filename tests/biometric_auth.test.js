@@ -9,8 +9,10 @@ describe('BiometricAuth', () => {
 
     // Mock globalThis.PublicKeyCredential and its static methods
     globalThis.PublicKeyCredential = {
-      isUserVerifyingPlatformAuthenticatorAvailable: jest.fn().mockResolvedValue(true),
-      isConditionalMediationAvailable: jest.fn().mockResolvedValue(true)
+      isUserVerifyingPlatformAuthenticatorAvailable: jest
+        .fn()
+        .mockResolvedValue(true),
+      isConditionalMediationAvailable: jest.fn().mockResolvedValue(true),
     };
 
     // Mock navigator.credentials.create and get
@@ -47,7 +49,10 @@ describe('BiometricAuth', () => {
   });
 
   test('should register biometric credential successfully (mock)', async () => {
-    const result = await biometricAuth.registerBiometricCredential('user1', 'userid1');
+    const result = await biometricAuth.registerBiometricCredential(
+      'user1',
+      'userid1'
+    );
     expect(result).toHaveProperty('success', true);
     expect(result).toHaveProperty('credentialId');
     expect(globalThis.navigator.credentials.create).toHaveBeenCalled();
@@ -67,7 +72,9 @@ describe('BiometricAuth', () => {
     try {
       await biometricAuth.registerBiometricCredential('user2', 'userid2');
     } catch (err) {
-      expect(err.message).toBe('Biometric authentication failed. Please try again.');
+      expect(err.message).toBe(
+        'Biometric authentication failed. Please try again.'
+      );
     }
   });
 
@@ -78,7 +85,9 @@ describe('BiometricAuth', () => {
     try {
       await biometricAuth.authenticateBiometric('user2');
     } catch (err) {
-      expect(err.message).toBe('Biometric authentication failed. Please try again.');
+      expect(err.message).toBe(
+        'Biometric authentication failed. Please try again.'
+      );
     }
   });
 });

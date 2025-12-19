@@ -25,23 +25,25 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"]
-  }
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  },
 });
 
 // Quantum middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "ws:", "wss:"]
-    }
-  }
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+        connectSrc: ["'self'", 'ws:', 'wss:'],
+      },
+    },
+  })
+);
 
 app.use(compression());
 app.use(cors());
@@ -54,7 +56,7 @@ const quantumLimiter = rateLimit({
   max: 10000, // 10k requests per millisecond
   message: 'Quantum rate limit exceeded',
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
 });
 
 app.use(quantumLimiter);
@@ -67,7 +69,7 @@ app.use((req, res, next) => {
       ip: req.ip || '127.0.0.1',
       userAgent: req.get('User-Agent') || 'test-agent',
       timestamp: Date.now(),
-      signature: req.get('X-Quantum-Signature')
+      signature: req.get('X-Quantum-Signature'),
     });
   } catch (error) {
     // Log the security verification failure but allow requests to pass for testing
@@ -89,7 +91,7 @@ app.get('/quantum/status', (req, res) => {
     security: quantumSecurity.getSecurityMetrics(),
     optimizer: quantumOptimizer.optimize(),
     uptime: process.uptime(),
-    memory: process.memoryUsage()
+    memory: process.memoryUsage(),
   };
 
   res.json(status);
@@ -114,7 +116,7 @@ io.on('connection', (socket) => {
     socket.emit('quantum-update', {
       timestamp: Date.now(),
       metrics: quantumOptimizer.optimize(),
-      security: quantumSecurity.getSecurityMetrics()
+      security: quantumSecurity.getSecurityMetrics(),
     });
   }, 1);
 
@@ -129,7 +131,7 @@ app.use((err, req, res, next) => {
   logger.error('Quantum error:', err);
   res.status(500).json({
     error: 'Quantum perfection maintained',
-    quantum: true
+    quantum: true,
   });
 });
 
@@ -140,7 +142,7 @@ app.get('/quantum/health', (req, res) => {
     quantum: true,
     uptime: process.uptime(),
     memory: process.memoryUsage(),
-    performance: quantumOptimizer.optimize()
+    performance: quantumOptimizer.optimize(),
   });
 });
 
@@ -150,14 +152,14 @@ const PORT = process.env.QUANTUM_PORT || 8082;
 server.listen(PORT, () => {
   logger.info(`🚀 Quantum server running on port ${PORT}`);
   logger.info('✨ Quantum perfection achieved');
-  
+
   // Initialize quantum systems
   quantumOptimizer.optimize();
   logger.info('🔧 Quantum optimizer initialized');
-  
+
   quantumSecurity.verifySecurity();
   logger.info('🔒 Quantum security verified');
-  
+
   logger.info('🌟 System is now quantumly perfect');
 });
 

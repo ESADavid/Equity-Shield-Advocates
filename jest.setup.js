@@ -1,6 +1,8 @@
-global.setImmediate = global.setImmediate || function (fn) {
-  return setTimeout(fn, 0);
-};
+global.setImmediate =
+  global.setImmediate ||
+  function (fn) {
+    return setTimeout(fn, 0);
+  };
 
 // Set NODE_ENV to test for test environment detection
 process.env.NODE_ENV = 'test';

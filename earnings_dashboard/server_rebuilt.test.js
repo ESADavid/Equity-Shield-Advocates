@@ -14,7 +14,9 @@ afterAll(async () => {
 
 describe('Critical-path API tests for earnings_dashboard/server_rebuilt.js', () => {
   test('GET /api/earnings returns earnings data', async () => {
-    const res = await request(app).get('/api/earnings').auth(auth.user, auth.pass);
+    const res = await request(app)
+      .get('/api/earnings')
+      .auth(auth.user, auth.pass);
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('totalAnnualRevenue');
     expect(res.body).toHaveProperty('revenueStreams');
@@ -39,7 +41,7 @@ describe('Critical-path API tests for earnings_dashboard/server_rebuilt.js', () 
       cost: 1,
       model: 'Test Model',
       vin: 'VIN123456',
-      dealership: 'Test Dealership'
+      dealership: 'Test Dealership',
     };
     const res = await request(app)
       .post('/api/purchase/auto')
@@ -56,8 +58,13 @@ describe('Critical-path API tests for earnings_dashboard/server_rebuilt.js', () 
 
   test('POST /api/delivery/mark-delivered with valid vin', async () => {
     // First, get current autoFleetDetails to find a VIN
-    const earningsRes = await request(app).get('/api/earnings').auth(auth.user, auth.pass);
-    if (earningsRes.statusCode !== 200 || !earningsRes.body.purchases.autoFleetDetails.length) {
+    const earningsRes = await request(app)
+      .get('/api/earnings')
+      .auth(auth.user, auth.pass);
+    if (
+      earningsRes.statusCode !== 200 ||
+      !earningsRes.body.purchases.autoFleetDetails.length
+    ) {
       return; // Skip if no cars to mark delivered
     }
     const vin = earningsRes.body.purchases.autoFleetDetails[0].vin;
@@ -75,7 +82,9 @@ describe('Critical-path API tests for earnings_dashboard/server_rebuilt.js', () 
   });
 
   test('GET /api/delivery/status returns autoFleetDetails', async () => {
-    const res = await request(app).get('/api/delivery/status').auth(auth.user, auth.pass);
+    const res = await request(app)
+      .get('/api/delivery/status')
+      .auth(auth.user, auth.pass);
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('autoFleetDetails');
     expect(Array.isArray(res.body.autoFleetDetails)).toBe(true);
@@ -88,9 +97,14 @@ describe('Critical-path API tests for earnings_dashboard/server_rebuilt.js', () 
       console.log('Mocked syncAllData called');
     });
 
-    const res = await request(app).post('/api/sync/all').auth(auth.user, auth.pass);
+    const res = await request(app)
+      .post('/api/sync/all')
+      .auth(auth.user, auth.pass);
     expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Data synchronization completed successfully');
+    expect(res.body).toHaveProperty(
+      'message',
+      'Data synchronization completed successfully'
+    );
 
     // Restore original function
     require('./sync_jobs').syncAllData = originalSyncAllData;

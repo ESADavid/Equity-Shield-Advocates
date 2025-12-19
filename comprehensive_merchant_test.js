@@ -6,7 +6,6 @@ console.log('🧪 Comprehensive Merchant Bill Pay Test Suite\n');
 
 async function runTests() {
   try {
-
     // Test 1: Module Import and Basic Setup
     console.log('1. Testing module import and basic setup...');
     console.log('✅ Module loaded successfully');
@@ -21,11 +20,14 @@ async function runTests() {
       'createMerchantPaymentIntent',
       'getMerchantEmail',
       'getMerchantPhone',
-      'router'
+      'router',
     ];
 
-    requiredFunctions.forEach(func => {
-      if (typeof merchantBillPay[func] === 'function' || (func === 'router' && merchantBillPay[func])) {
+    requiredFunctions.forEach((func) => {
+      if (
+        typeof merchantBillPay[func] === 'function' ||
+        (func === 'router' && merchantBillPay[func])
+      ) {
         console.log(`✅ ${func} exists`);
       } else {
         console.log(`❌ ${func} missing`);
@@ -36,7 +38,7 @@ async function runTests() {
     console.log('\n3. Testing merchant contact lookup...');
     const testMerchants = ['merchant_001', 'merchant_002', 'unknown_merchant'];
 
-    testMerchants.forEach(merchantId => {
+    testMerchants.forEach((merchantId) => {
       const email = merchantBillPay.getMerchantEmail(merchantId);
       const phone = merchantBillPay.getMerchantPhone(merchantId);
       console.log(`${merchantId}: email=${email}, phone=${phone}`);
@@ -49,7 +51,7 @@ async function runTests() {
       const result = await merchantBillPay.createMerchantPaymentIntent({
         amount: 1000,
         merchantId: 'merchant_001',
-        description: 'Test payment'
+        description: 'Test payment',
       });
       console.log('❌ Expected error but got success');
     } catch (error) {
@@ -63,7 +65,7 @@ async function runTests() {
     try {
       await merchantBillPay.sendMerchantPaymentSuccessNotification(
         'merchant_001',
-        10.00,
+        10.0,
         'pi_test_123'
       );
       console.log('✅ Success notification sent (mock)');
@@ -75,7 +77,7 @@ async function runTests() {
     try {
       await merchantBillPay.sendMerchantPaymentFailureNotification(
         'merchant_001',
-        10.00,
+        10.0,
         'pi_test_123',
         'Card declined'
       );
@@ -101,7 +103,7 @@ async function runTests() {
     // Mock request/response objects
     const mockReq = {
       headers: {
-        'stripe-signature': 'mock_signature'
+        'stripe-signature': 'mock_signature',
       },
       body: {
         id: 'evt_test_webhook',
@@ -113,17 +115,18 @@ async function runTests() {
             amount: 1000,
             metadata: { merchantId: 'merchant_001' },
             description: 'Test payment',
-            last_payment_error: null
-          }
-        }
-      }
+            last_payment_error: null,
+          },
+        },
+      },
     };
 
     const mockRes = {
       json: (data) => console.log('✅ Webhook response:', data),
       status: (code) => ({
-        send: (msg) => console.log(`✅ Webhook error response: ${code} - ${msg}`)
-      })
+        send: (msg) =>
+          console.log(`✅ Webhook error response: ${code} - ${msg}`),
+      }),
     };
 
     try {
@@ -140,7 +143,7 @@ async function runTests() {
     try {
       await merchantBillPay.sendMerchantPaymentSuccessNotification(
         'invalid_merchant',
-        10.00,
+        10.0,
         'pi_test_123'
       );
       console.log('✅ Invalid merchant handled gracefully');
@@ -169,7 +172,6 @@ async function runTests() {
     console.log('- ✅ Mock services handle missing credentials gracefully');
     console.log('- ✅ Error handling works for invalid inputs');
     console.log('- ✅ Webhook handler processes mock events');
-
   } catch (error) {
     console.error('\n💥 Error during comprehensive testing:', error.message);
     console.error('Stack trace:', error.stack);

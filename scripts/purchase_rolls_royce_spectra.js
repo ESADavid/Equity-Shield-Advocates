@@ -3,7 +3,7 @@ import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 /**
  * Script to simulate purchasing a Rolls Royce Spectra Black Badge
  * using the existing purchase auto API endpoint in the earnings dashboard system.
- * 
+ *
  * This script sends a POST request to /api/purchase/auto with the required details.
  */
 
@@ -16,7 +16,8 @@ async function purchaseRollsRoyceSpectra() {
     cost: 799996,
     model: '2025 ROLLS-ROYCE BLACK BADGE SPECTRA',
     vin: 'SCATK4CO4SU229567',
-    dealership: 'ROLLS-ROYCE MOTORS CARS CHARLOTTE, 1316 SOUTH TRYON ST. CHARLOTTE NC 28203'
+    dealership:
+      'ROLLS-ROYCE MOTORS CARS CHARLOTTE, 1316 SOUTH TRYON ST. CHARLOTTE NC 28203',
   };
 
   try {
@@ -24,9 +25,10 @@ async function purchaseRollsRoyceSpectra() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + Buffer.from('admin:securepassword').toString('base64') // Basic auth as per server setup
+        Authorization:
+          'Basic ' + Buffer.from('admin:securepassword').toString('base64'), // Basic auth as per server setup
       },
-      body: JSON.stringify(purchaseDetails)
+      body: JSON.stringify(purchaseDetails),
     });
 
     const result = await response.json();

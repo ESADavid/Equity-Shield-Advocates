@@ -35,7 +35,9 @@ describe('Earnings Dashboard API Tests', () => {
         .auth('admin', 'securepassword'); // Replace with environment variables if needed
       expect(response.status).toBe(200);
       expect(response.headers['content-type']).toMatch(/^application\/json/);
-      expect(response.headers['content-disposition']).toContain('attachment; filename="earnings_report.json"');
+      expect(response.headers['content-disposition']).toContain(
+        'attachment; filename="earnings_report.json"'
+      );
     });
   });
 
@@ -54,15 +56,20 @@ describe('Earnings Dashboard API Tests', () => {
   describe('Error Handling', () => {
     it('should return 500 for an internal server error', async () => {
       // Mock the getRevenueReport method to throw an error
-      jest.spyOn(app.locals.wealthEngine, 'getRevenueReport').mockImplementationOnce(() => {
-        throw new Error('Test error');
-      });
+      jest
+        .spyOn(app.locals.wealthEngine, 'getRevenueReport')
+        .mockImplementationOnce(() => {
+          throw new Error('Test error');
+        });
 
       const response = await request(server)
         .get('/api/earnings')
         .auth('admin', 'securepassword');
       expect(response.status).toBe(500);
-      expect(response.body).toHaveProperty('error', 'Failed to fetch earnings data');
+      expect(response.body).toHaveProperty(
+        'error',
+        'Failed to fetch earnings data'
+      );
 
       // Restore the original implementation
       app.locals.wealthEngine.getRevenueReport.mockRestore();

@@ -2,7 +2,7 @@
  * COMPLIANCE SERVICE
  * Monitors education compliance and enforces UBI eligibility
  * Part of the OWLBAN GROUP Heaven on Earth Initiative
- * 
+ *
  * Compliance Rules:
  * - Citizens must complete all 4 education tracks within 24 months
  * - Failure to comply results in UBI suspension
@@ -23,7 +23,7 @@ class ComplianceService {
     this.COMPLIANCE_DEADLINE_MONTHS = 24;
     this.GRACE_PERIOD_DAYS = 30;
     this.PROGRESS_CHECKPOINT_MONTHS = 3;
-    
+
     logger.info('Compliance Service initialized');
   }
 
@@ -37,10 +37,10 @@ class ComplianceService {
       logger.info('Starting compliance check for all citizens');
 
       const startTime = Date.now();
-      
+
       // Get all active citizens
       const citizens = await Citizen.find({ status: 'active' });
-      
+
       const results = {
         totalChecked: 0,
         compliant: 0,
@@ -49,14 +49,17 @@ class ComplianceService {
         gracePeriod: 0,
         exempt: 0,
         actionsTaken: [],
-        warnings: []
+        warnings: [],
       };
 
       for (const citizen of citizens) {
         results.totalChecked++;
-        
-        const complianceResult = await this.checkCitizenCompliance(citizen, userId);
-        
+
+        const complianceResult = await this.checkCitizenCompliance(
+          citizen,
+          userId
+        );
+
         // Update counters
         switch (complianceResult.status) {
           case 'compliant':
@@ -81,7 +84,7 @@ class ComplianceService {
           results.actionsTaken.push({
             citizenId: citizen.citizenId,
             action: complianceResult.actionTaken,
-            reason: complianceResult.reason
+            reason: complianceResult.reason,
           });
         }
 
@@ -89,14 +92,16 @@ class ComplianceService {
         if (complianceResult.warning) {
           results.warnings.push({
             citizenId: citizen.citizenId,
-            warning: complianceResult.warning
+            warning: complianceResult.warning,
           });
         }
       }
 
       const duration = Date.now() - startTime;
 
-      logger.info(`Compliance check completed: ${results.totalChecked} citizens checked in ${duration}ms`);
+      logger.info(
+        `Compliance check completed: ${results.totalChecked} citizens checked in ${duration}ms`
+      );
 
       return {
         success: true,
@@ -107,19 +112,19 @@ class ComplianceService {
           nonCompliant: results.nonCompliant,
           gracePeriod: results.gracePeriod,
           exempt: results.exempt,
-          complianceRate: ((results.compliant / results.totalChecked) * 100).toFixed(2) + '%',
-          duration: `${duration}ms`
+          complianceRate:
+            ((results.compliant / results.totalChecked) * 100).toFixed(2) + '%',
+          duration: `${duration}ms`,
         },
         actionsTaken: results.actionsTaken,
         warnings: results.warnings,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       logger.error('Error running compliance check:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -136,16 +141,20 @@ class ComplianceService {
       if (citizen.educationStatus.complianceStatus === 'exempt') {
         return {
           status: 'exempt',
-          reason: citizen.educationStatus.exemptionReason
+          reason: citizen.educationStatus.exemptionReason,
         };
       }
 
       // Calculate enrollment duration
-      const enrollmentDate = citizen.ubiStatus.enrollmentDate || citizen.createdAt;
-      const monthsSinceEnrollment = this.calculateMonthsDifference(enrollmentDate, new Date());
+      const enrollmentDate =
+        citizen.ubiStatus.enrollmentDate || citizen.createdAt;
+      const monthsSinceEnrollment = this.calculateMonthsDifference(
+        enrollmentDate,
+        new Date()
+      );
 
       // Check if all tracks completed
-      const allTracksCompleted = 
+      const allTracksCompleted =
         citizen.educationStatus.military.completed &&
         citizen.educationStatus.law.completed &&
         citizen.educationStatus.tech.completed &&
@@ -157,10 +166,10 @@ class ComplianceService {
           citizen.educationStatus.complianceStatus = 'compliant';
           await citizen.save();
         }
-        
+
         return {
           status: 'compliant',
-          reason: 'All education tracks completed'
+          reason: 'All education tracks completed',
         };
       }
 
@@ -176,13 +185,13 @@ class ComplianceService {
         if (monthsSinceEnrollment >= this.COMPLIANCE_DEADLINE_MONTHS - 3) {
           return {
             status: 'in_progress',
-            warning: `Approaching compliance deadline. ${this.COMPLIANCE_DEADLINE_MONTHS - monthsSinceEnrollment} months remaining.`
+            warning: `Approaching compliance deadline. ${this.COMPLIANCE_DEADLINE_MONTHS - monthsSinceEnrollment} months remaining.`,
           };
         }
 
         return {
           status: 'in_progress',
-          reason: `${monthsSinceEnrollment} months elapsed, ${this.COMPLIANCE_DEADLINE_MONTHS - monthsSinceEnrollment} months remaining`
+          reason: `${monthsSinceEnrollment} months elapsed, ${this.COMPLIANCE_DEADLINE_MONTHS - monthsSinceEnrollment} months remaining`,
         };
       }
 
@@ -192,7 +201,7 @@ class ComplianceService {
         if (new Date() < gracePeriodEnd) {
           return {
             status: 'grace_period',
-            reason: `Grace period active until ${gracePeriodEnd.toISOString().split('T')[0]}`
+            reason: `Grace period active until ${gracePeriodEnd.toISOString().split('T')[0]}`,
           };
         }
       }
@@ -209,17 +218,19 @@ class ComplianceService {
           status: 'non_compliant',
           reason: 'Education compliance deadline exceeded',
           actionTaken: 'UBI_SUSPENDED',
-          suspensionResult: suspensionResult
+          suspensionResult: suspensionResult,
         };
       }
 
       return {
         status: 'non_compliant',
-        reason: 'Education compliance deadline exceeded (already suspended)'
+        reason: 'Education compliance deadline exceeded (already suspended)',
       };
-
     } catch (error) {
-      logger.error(`Error checking compliance for citizen ${citizen.citizenId}:`, error);
+      logger.error(
+        `Error checking compliance for citizen ${citizen.citizenId}:`,
+        error
+      );
       throw error;
     }
   }
@@ -238,7 +249,7 @@ class ComplianceService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
@@ -255,7 +266,7 @@ class ComplianceService {
         action: 'EXEMPTION_GRANTED',
         performedBy: userId,
         timestamp: new Date(),
-        details: { reason: reason }
+        details: { reason: reason },
       });
 
       await citizen.save();
@@ -266,14 +277,13 @@ class ComplianceService {
         success: true,
         message: 'Exemption granted successfully',
         citizenId: citizenId,
-        exemptionReason: reason
+        exemptionReason: reason,
       };
-
     } catch (error) {
       logger.error('Error granting exemption:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -291,19 +301,19 @@ class ComplianceService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
       if (citizen.educationStatus.complianceStatus !== 'exempt') {
         return {
           success: false,
-          error: 'Citizen does not have an active exemption'
+          error: 'Citizen does not have an active exemption',
         };
       }
 
       const previousReason = citizen.educationStatus.exemptionReason;
-      
+
       citizen.educationStatus.complianceStatus = 'in_progress';
       citizen.educationStatus.exemptionReason = null;
       citizen.educationStatus.exemptionApprovedBy = null;
@@ -312,7 +322,7 @@ class ComplianceService {
         action: 'EXEMPTION_REVOKED',
         performedBy: userId,
         timestamp: new Date(),
-        details: { previousReason: previousReason }
+        details: { previousReason: previousReason },
       });
 
       await citizen.save();
@@ -322,14 +332,13 @@ class ComplianceService {
       return {
         success: true,
         message: 'Exemption revoked successfully',
-        citizenId: citizenId
+        citizenId: citizenId,
       };
-
     } catch (error) {
       logger.error('Error revoking exemption:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -341,13 +350,15 @@ class ComplianceService {
   async getComplianceStatistics() {
     try {
       const totalCitizens = await Citizen.countDocuments({ status: 'active' });
-      
+
       const complianceStats = await Citizen.aggregate([
         { $match: { status: 'active' } },
-        { $group: {
-          _id: '$educationStatus.complianceStatus',
-          count: { $sum: 1 }
-        }}
+        {
+          $group: {
+            _id: '$educationStatus.complianceStatus',
+            count: { $sum: 1 },
+          },
+        },
       ]);
 
       const stats = complianceStats.reduce((acc, item) => {
@@ -360,15 +371,15 @@ class ComplianceService {
         status: 'active',
         'educationStatus.complianceStatus': 'in_progress',
         'educationStatus.complianceDeadline': {
-          $lte: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // Within 90 days
-        }
+          $lte: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // Within 90 days
+        },
       });
 
       // Get suspended due to non-compliance
       const suspendedForCompliance = await Citizen.countDocuments({
         status: 'active',
         'ubiStatus.suspended': true,
-        'ubiStatus.suspensionReason': /compliance|education/i
+        'ubiStatus.suspensionReason': /compliance|education/i,
       });
 
       return {
@@ -380,20 +391,21 @@ class ComplianceService {
           nonCompliant: stats.non_compliant || 0,
           gracePeriod: stats.grace_period || 0,
           exempt: stats.exempt || 0,
-          complianceRate: totalCitizens > 0 
-            ? ((stats.compliant || 0) / totalCitizens * 100).toFixed(2) + '%'
-            : '0%',
+          complianceRate:
+            totalCitizens > 0
+              ? (((stats.compliant || 0) / totalCitizens) * 100).toFixed(2) +
+                '%'
+              : '0%',
           approachingDeadline: approachingDeadline,
-          suspendedForCompliance: suspendedForCompliance
+          suspendedForCompliance: suspendedForCompliance,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       logger.error('Error getting compliance statistics:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -407,11 +419,11 @@ class ComplianceService {
   calculateMonthsDifference(startDate, endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
+
     let months = (end.getFullYear() - start.getFullYear()) * 12;
     months -= start.getMonth();
     months += end.getMonth();
-    
+
     return months <= 0 ? 0 : months;
   }
 
@@ -426,7 +438,7 @@ class ComplianceService {
       complianceDeadline: `${this.COMPLIANCE_DEADLINE_MONTHS} months`,
       gracePeriod: `${this.GRACE_PERIOD_DAYS} days`,
       checkpointInterval: `${this.PROGRESS_CHECKPOINT_MONTHS} months`,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     };
   }
 }

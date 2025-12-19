@@ -26,13 +26,13 @@ The console log replacement and logger import fixes have been successfully compl
 
 **Status:** 5/6 PASSED (83% success rate)
 
-| Service | Status | Notes |
-|---------|--------|-------|
-| plaidService.js | ✅ PASSED | Logger import working correctly |
-| nvidiaBlackwellService.js | ✅ PASSED | Logger import working correctly |
-| privateBankingService.js | ✅ PASSED | Logger import working correctly |
-| debtAcquisitionService.js | ✅ PASSED | Logger import working correctly |
-| haitiStrategicService.js | ✅ PASSED | Logger import working correctly |
+| Service                   | Status    | Notes                                                                |
+| ------------------------- | --------- | -------------------------------------------------------------------- |
+| plaidService.js           | ✅ PASSED | Logger import working correctly                                      |
+| nvidiaBlackwellService.js | ✅ PASSED | Logger import working correctly                                      |
+| privateBankingService.js  | ✅ PASSED | Logger import working correctly                                      |
+| debtAcquisitionService.js | ✅ PASSED | Logger import working correctly                                      |
+| haitiStrategicService.js  | ✅ PASSED | Logger import working correctly                                      |
 | assetManagementService.js | ⚠️ FAILED | **Pre-existing Git merge conflicts** (not related to logger changes) |
 
 ### Test 3: Logger Functionality ✅
@@ -41,7 +41,7 @@ The console log replacement and logger import fixes have been successfully compl
 **Result:** All logger methods executed successfully
 
 - info() - Working
-- warn() - Working  
+- warn() - Working
 - error() - Working
 - debug() - Working
 
@@ -108,7 +108,7 @@ All test files kept their console.log statements for debugging purposes.
 # Option 1: Accept current changes
 git checkout --ours services/assetManagementService.js
 
-# Option 2: Accept incoming changes  
+# Option 2: Accept incoming changes
 git checkout --theirs services/assetManagementService.js
 
 # Option 3: Manual resolution

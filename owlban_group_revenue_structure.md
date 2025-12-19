@@ -3,24 +3,24 @@
 ## Revenue Sources
 
 - **Source 1:**
-  - Description: __________
-  - Amount: __________
-  - Notes: __________
+  - Description: ****\_\_****
+  - Amount: ****\_\_****
+  - Notes: ****\_\_****
 
 - **Source 2:**
-  - Description: __________
-  - Amount: __________
-  - Notes: __________
+  - Description: ****\_\_****
+  - Amount: ****\_\_****
+  - Notes: ****\_\_****
 
 - **Source 3:**
-  - Description: __________
-  - Amount: __________
-  - Notes: __________
+  - Description: ****\_\_****
+  - Amount: ****\_\_****
+  - Notes: ****\_\_****
 
 ## Total Revenue
 
-- Total Amount: __________
+- Total Amount: ****\_\_****
 
 ## Additional Notes
 
-- ______________________________________________________
+- ***

@@ -32,7 +32,10 @@ app.get('/api/payroll/employees', (_req, res) => {
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
-    logger.error('Error getting employees:', { error: (error as Error).message, stack: (error as Error).stack });
+    logger.error('Error getting employees:', {
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+    });
     res.status(500).json({ error: 'Failed to get employees' });
   }
 });
@@ -46,11 +49,15 @@ app.post('/api/payroll/employees', (req, res) => {
       return res.status(500).json({ error: employeesResult.error });
     }
 
-    const existing = employeesResult.data?.find((e: any) => e.id === employee.id);
+    const existing = employeesResult.data?.find(
+      (e: any) => e.id === employee.id
+    );
     if (existing) {
       const updateResult = payrollSystem.updateEmployee(employee.id, employee);
       if (updateResult.success) {
-        return res.status(200).json({ message: 'Employee updated successfully' });
+        return res
+          .status(200)
+          .json({ message: 'Employee updated successfully' });
       } else {
         return res.status(400).json({ error: updateResult.error });
       }
@@ -59,11 +66,16 @@ app.post('/api/payroll/employees', (req, res) => {
       if (addResult.success) {
         return res.status(200).json({ message: 'Employee added successfully' });
       } else {
-        return res.status(400).json({ error: addResult.error || addResult.errors });
+        return res
+          .status(400)
+          .json({ error: addResult.error || addResult.errors });
       }
     }
   } catch (error) {
-    logger.error('Error adding/updating employee:', { error: (error as Error).message, stack: (error as Error).stack });
+    logger.error('Error adding/updating employee:', {
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+    });
     return res.status(400).json({ error: (error as Error).message });
   }
 });
@@ -79,7 +91,10 @@ app.delete('/api/payroll/employees/:id', (req, res) => {
       res.status(400).json({ error: deleteResult.error });
     }
   } catch (error) {
-    logger.error('Error deleting employee:', { error: (error as Error).message, stack: (error as Error).stack });
+    logger.error('Error deleting employee:', {
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+    });
     res.status(400).json({ error: (error as Error).message });
   }
 });
@@ -87,7 +102,9 @@ app.delete('/api/payroll/employees/:id', (req, res) => {
 // Welcome endpoint with request logging
 app.get('/api/payroll/welcome', (req, res) => {
   // Log request metadata
-  console.log(`Request received: ${req.method} ${req.path} from ${req.ip} at ${new Date().toISOString()}`);
+  console.log(
+    `Request received: ${req.method} ${req.path} from ${req.ip} at ${new Date().toISOString()}`
+  );
 
   res.json({
     message: 'Welcome to the Payroll API Service!',
@@ -96,8 +113,8 @@ app.get('/api/payroll/welcome', (req, res) => {
       method: req.method,
       path: req.path,
       ip: req.ip,
-      userAgent: req.get('User-Agent')
-    }
+      userAgent: req.get('User-Agent'),
+    },
   });
 });
 
@@ -112,7 +129,10 @@ app.post('/api/payroll/process', (_req, res) => {
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
-    logger.error('Error processing payroll:', { error: (error as Error).message, stack: (error as Error).stack });
+    logger.error('Error processing payroll:', {
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+    });
     res.status(500).json({ error: 'Failed to process payroll' });
   }
 });

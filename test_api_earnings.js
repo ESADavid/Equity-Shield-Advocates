@@ -6,15 +6,15 @@ const options = {
   path: '/api/earnings',
   method: 'GET',
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 };
 
-const req = http.request(options, res => {
+const req = http.request(options, (res) => {
   let data = '';
   console.log('Status Code: ' + res.statusCode);
 
-  res.on('data', chunk => {
+  res.on('data', (chunk) => {
     data += chunk;
   });
 
@@ -29,7 +29,7 @@ const req = http.request(options, res => {
   });
 });
 
-req.on('error', error => {
+req.on('error', (error) => {
   console.error('Request error:', error);
 });
 

@@ -1,7 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+const revenueDataPath = path.resolve(
+  __dirname,
+  '../owlban_repos/sample_repo/revenue.json'
+);
 
 function validateNumber(value: any, fieldName: string): number {
   if (typeof value === 'number' && !Number.isNaN(value) && value >= 0) {
@@ -25,7 +28,7 @@ function ensurePurchasesStructure(data: any): void {
       corporateHomes: 0,
       corporateHomesDetails: [],
       autoFleet: 0,
-      autoFleetDetails: []
+      autoFleetDetails: [],
     };
   } else {
     if (!Array.isArray(data.purchases.autoFleetDetails)) {
@@ -38,8 +41,14 @@ function ensurePurchasesStructure(data: any): void {
 }
 
 function validatePurchases(data: any): void {
-  data.purchases.autoFleet = validateNumber(data.purchases.autoFleet, 'autoFleet');
-  data.purchases.corporateHomes = validateNumber(data.purchases.corporateHomes, 'corporateHomes');
+  data.purchases.autoFleet = validateNumber(
+    data.purchases.autoFleet,
+    'autoFleet'
+  );
+  data.purchases.corporateHomes = validateNumber(
+    data.purchases.corporateHomes,
+    'corporateHomes'
+  );
 }
 
 function addSampleData(data: any, incremental: boolean): void {
@@ -50,7 +59,7 @@ function addSampleData(data: any, incremental: boolean): void {
         vin: 'SAMPLEVIN123456789',
         dealership: 'Sample Dealership',
         cost: 50000,
-        purchaseDate: new Date().toISOString()
+        purchaseDate: new Date().toISOString(),
       });
       data.purchases.autoFleet += 50000;
       data.totalRevenue -= 50000;
@@ -62,7 +71,7 @@ function addSampleData(data: any, incremental: boolean): void {
         city: 'Metropolis',
         state: 'CA',
         cost: 250000,
-        purchaseDate: new Date().toISOString()
+        purchaseDate: new Date().toISOString(),
       });
       data.purchases.corporateHomes += 250000;
       data.totalRevenue -= 250000;
@@ -88,9 +97,12 @@ function addTransactionDetails(data: any): void {
     if (data.revenueStreamsDetails[streamName].length === 0) {
       data.revenueStreamsDetails[streamName].push({
         transactionId: `TXN-${Math.floor(Math.random() * 1000000)}`,
-        amount: validateNumber(data.revenueStreams[streamName].amount, `revenueStreams.${streamName}.amount`),
+        amount: validateNumber(
+          data.revenueStreams[streamName].amount,
+          `revenueStreams.${streamName}.amount`
+        ),
         date: new Date().toISOString(),
-        description: `Initial transaction for ${streamName}`
+        description: `Initial transaction for ${streamName}`,
       });
     }
   }
@@ -100,10 +112,17 @@ function integratePayroll(data: any): void {
   if (Array.isArray(data.payroll)) {
     let payrollTotal = 0;
     for (const payrollEntry of data.payroll) {
-      if (typeof payrollEntry.amount === 'number' && Number.isNaN(payrollEntry.amount) === false && payrollEntry.amount >= 0) {
+      if (
+        typeof payrollEntry.amount === 'number' &&
+        Number.isNaN(payrollEntry.amount) === false &&
+        payrollEntry.amount >= 0
+      ) {
         payrollTotal += payrollEntry.amount;
       } else {
-        console.warn('Invalid payroll entry amount detected, skipping:', payrollEntry);
+        console.warn(
+          'Invalid payroll entry amount detected, skipping:',
+          payrollEntry
+        );
       }
     }
     data.payrollTotal = payrollTotal;
@@ -122,15 +141,18 @@ function addAuditTrail(data: any, incremental: boolean): void {
       totalRevenue: data.totalRevenue,
       purchases: {
         autoFleet: data.purchases.autoFleet,
-        corporateHomes: data.purchases.corporateHomes
+        corporateHomes: data.purchases.corporateHomes,
       },
       payrollTotal: data.payrollTotal || 0,
-      incrementalUpdate: incremental
-    }
+      incrementalUpdate: incremental,
+    },
   });
 }
 
-async function updateRevenueData(incremental: boolean = false, filePath?: string): Promise<boolean> {
+async function updateRevenueData(
+  incremental: boolean = false,
+  filePath?: string
+): Promise<boolean> {
   try {
     const dataPath = filePath || revenueDataPath;
 
@@ -149,7 +171,10 @@ async function updateRevenueData(incremental: boolean = false, filePath?: string
     ensurePurchasesStructure(data);
     validatePurchases(data);
 
-    if (typeof data.totalRevenue !== 'number' || Number.isNaN(data.totalRevenue)) {
+    if (
+      typeof data.totalRevenue !== 'number' ||
+      Number.isNaN(data.totalRevenue)
+    ) {
       console.warn('Invalid or missing totalRevenue, defaulting to 0.');
       data.totalRevenue = 0;
     }
@@ -161,7 +186,9 @@ async function updateRevenueData(incremental: boolean = false, filePath?: string
     addAuditTrail(data, incremental);
 
     await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
-    console.log('Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.');
+    console.log(
+      'Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.'
+    );
     return true;
   } catch (error) {
     console.error('Error in updateRevenueData:', error);

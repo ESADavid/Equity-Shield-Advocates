@@ -9,9 +9,11 @@ This document provides comprehensive documentation for integrating JPMorgan Paym
 The JPMorgan Payments integration provides the following API endpoints:
 
 ### Base URL
+
 All endpoints are mounted under `/api/jpmorgan-payment/`
 
 ### 1. Create Payment
+
 - **Endpoint**: `POST /api/jpmorgan-payment/create-payment`
 - **Description**: Creates a new payment transaction
 - **Request Body**:
@@ -40,6 +42,7 @@ All endpoints are mounted under `/api/jpmorgan-payment/`
   ```
 
 ### 2. Get Payment Status
+
 - **Endpoint**: `GET /api/jpmorgan-payment/payment-status/:paymentId`
 - **Description**: Retrieves the status of a specific payment
 - **Response**:
@@ -57,6 +60,7 @@ All endpoints are mounted under `/api/jpmorgan-payment/`
   ```
 
 ### 3. Refund Payment
+
 - **Endpoint**: `POST /api/jpmorgan-payment/refund`
 - **Description**: Processes a refund for an existing payment
 - **Request Body**:
@@ -78,6 +82,7 @@ All endpoints are mounted under `/api/jpmorgan-payment/`
   ```
 
 ### 4. Capture Payment
+
 - **Endpoint**: `POST /api/jpmorgan-payment/capture`
 - **Description**: Captures a previously authorized payment
 - **Request Body**:
@@ -98,6 +103,7 @@ All endpoints are mounted under `/api/jpmorgan-payment/`
   ```
 
 ### 5. Void Payment
+
 - **Endpoint**: `POST /api/jpmorgan-payment/void`
 - **Description**: Voids/cancels an authorized payment
 - **Request Body**:
@@ -118,6 +124,7 @@ All endpoints are mounted under `/api/jpmorgan-payment/`
   ```
 
 ### 6. Get Transaction History
+
 - **Endpoint**: `GET /api/jpmorgan-payment/transactions`
 - **Query Parameters**:
   - `startDate`: Start date for filtering (ISO format)
@@ -134,6 +141,7 @@ All endpoints are mounted under `/api/jpmorgan-payment/`
   ```
 
 ### 7. Webhook Endpoint
+
 - **Endpoint**: `POST /api/jpmorgan-payment/webhook`
 - **Description**: Receives webhook events from JPMorgan Payments
 - **Headers**: Requires JPMorgan signature verification headers
@@ -145,6 +153,7 @@ All endpoints are mounted under `/api/jpmorgan-payment/`
   - `payment.failed`
 
 ### 8. Wallet Decryption
+
 - **Endpoint**: `POST /api/jpmorgan-payment/wallet-decrypt`
 - **Description**: Decrypts encrypted wallet data using JPMorgan's wallet decryption API
 - **Request Body**:
@@ -181,6 +190,7 @@ All endpoints are mounted under `/api/jpmorgan-payment/`
   ```
 
 ### 9. Health Check
+
 - **Endpoint**: `GET /api/jpmorgan-payment/health`
 - **Description**: Checks the health of the JPMorgan Payments integration
 - **Response**:
@@ -211,6 +221,7 @@ JPMORGAN_DEBUG=true
 ## Authentication
 
 The integration uses HMAC-SHA256 authentication with the following headers:
+
 - `Client-Id`: Your JPMorgan client ID
 - `Timestamp`: Current UNIX timestamp
 - `Nonce`: Random 16-byte hex string
@@ -221,6 +232,7 @@ The integration uses HMAC-SHA256 authentication with the following headers:
 ## Webhook Security
 
 Webhook requests are verified using HMAC signatures. The signature is computed as:
+
 ```
 signature = HMAC-SHA256(secret_key, timestamp + nonce + request_body)
 ```
@@ -240,6 +252,7 @@ All endpoints return standardized error responses:
 ## Integration with Existing System
 
 The JPMorgan Payments integration works alongside existing payment providers:
+
 - Mounted under `/api/jpmorgan-payment/` route
 - Uses the same revenue data structure
 - Follows the same authentication patterns as other API endpoints
@@ -265,6 +278,7 @@ To test the integration:
 ## Support
 
 For issues with the JPMorgan Payments integration:
+
 1. Check the server logs for detailed error messages
 2. Verify all environment variables are set correctly
 3. Test connectivity using the health endpoint

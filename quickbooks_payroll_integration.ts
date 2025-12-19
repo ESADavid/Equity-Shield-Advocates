@@ -52,16 +52,20 @@ class QuickBooksPayrollIntegration {
 
   private async refreshAccessToken(): Promise<void> {
     try {
-      const response = await axios.post('https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer', null, {
-        params: {
-          grant_type: 'refresh_token',
-          refresh_token: this.refreshToken,
-        },
-        auth: {
-          username: this.clientId,
-          password: this.clientSecret,
-        },
-      });
+      const response = await axios.post(
+        'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',
+        null,
+        {
+          params: {
+            grant_type: 'refresh_token',
+            refresh_token: this.refreshToken,
+          },
+          auth: {
+            username: this.clientId,
+            password: this.clientSecret,
+          },
+        }
+      );
 
       this.accessToken = response.data.access_token;
       this.refreshToken = response.data.refresh_token || this.refreshToken;
@@ -72,7 +76,11 @@ class QuickBooksPayrollIntegration {
     }
   }
 
-  private async retryRequest<T>(fn: () => Promise<T>, retries = 3, delayMs = 1000): Promise<T> {
+  private async retryRequest<T>(
+    fn: () => Promise<T>,
+    retries = 3,
+    delayMs = 1000
+  ): Promise<T> {
     let lastError: any;
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
@@ -88,18 +96,23 @@ class QuickBooksPayrollIntegration {
             console.error('Failed to refresh token:', refreshError);
           }
         }
-        console.warn(`Attempt ${attempt} failed: ${error}. Retrying in ${delayMs}ms...`);
+        console.warn(
+          `Attempt ${attempt} failed: ${error}. Retrying in ${delayMs}ms...`
+        );
         await new Promise((resolve) => setTimeout(resolve, delayMs));
       }
     }
     throw lastError;
   }
 
-  async addOrUpdateEmployeePayroll(employee: QuickBooksEmployee): Promise<QuickBooksPayrollResponse> {
+  async addOrUpdateEmployeePayroll(
+    employee: QuickBooksEmployee
+  ): Promise<QuickBooksPayrollResponse> {
     try {
       // Validate bank account info for direct deposit
       if (!employee.accountNumber || !employee.routingNumber) {
-        const message = 'Missing bank account or routing number for direct deposit';
+        const message =
+          'Missing bank account or routing number for direct deposit';
         console.error(message);
         return { success: false, message };
       }
@@ -125,14 +138,24 @@ class QuickBooksPayrollIntegration {
           headers: this.getAuthHeaders(),
         })
       );
-      return { success: true, message: 'Employee payroll data updated', data: response.data };
+      return {
+        success: true,
+        message: 'Employee payroll data updated',
+        data: response.data,
+      };
     } catch (error) {
       console.error('Error updating QuickBooks payroll data:', error);
-      return { success: false, message: 'Failed to update payroll data', data: error };
+      return {
+        success: false,
+        message: 'Failed to update payroll data',
+        data: error,
+      };
     }
   }
 
-  async getEmployeePayroll(employeeId: string): Promise<QuickBooksPayrollResponse> {
+  async getEmployeePayroll(
+    employeeId: string
+  ): Promise<QuickBooksPayrollResponse> {
     try {
       const url = `${this.baseUrl}/company/${this.companyId}/employee/${employeeId}`;
       const response = await this.retryRequest(() =>
@@ -152,10 +175,18 @@ class QuickBooksPayrollIntegration {
         amount: (employee.Compensation?.HourlyRate || 0) * 40, // Weekly calculation placeholder
       };
 
-      return { success: true, message: 'Payroll data fetched', data: payrollData };
+      return {
+        success: true,
+        message: 'Payroll data fetched',
+        data: payrollData,
+      };
     } catch (error) {
       console.error('Error fetching QuickBooks payroll data:', error);
-      return { success: false, message: 'Failed to fetch payroll data', data: error };
+      return {
+        success: false,
+        message: 'Failed to fetch payroll data',
+        data: error,
+      };
     }
   }
 
@@ -168,15 +199,25 @@ class QuickBooksPayrollIntegration {
           headers: this.getAuthHeaders(),
         })
       );
-      return { success: true, message: 'Employees fetched', data: response.data.QueryResponse.Employee };
+      return {
+        success: true,
+        message: 'Employees fetched',
+        data: response.data.QueryResponse.Employee,
+      };
     } catch (error) {
       console.error('Error fetching QuickBooks employees:', error);
-      return { success: false, message: 'Failed to fetch employees', data: error };
+      return {
+        success: false,
+        message: 'Failed to fetch employees',
+        data: error,
+      };
     }
   }
 
   // Method to create payroll run (simplified)
-  async createPayrollRun(employeeIds: string[]): Promise<QuickBooksPayrollResponse> {
+  async createPayrollRun(
+    employeeIds: string[]
+  ): Promise<QuickBooksPayrollResponse> {
     try {
       const url = `${this.baseUrl}/company/${this.companyId}/payrollrun`;
       const payrollRunData = {
@@ -190,10 +231,18 @@ class QuickBooksPayrollIntegration {
           headers: this.getAuthHeaders(),
         })
       );
-      return { success: true, message: 'Payroll run created', data: response.data };
+      return {
+        success: true,
+        message: 'Payroll run created',
+        data: response.data,
+      };
     } catch (error) {
       console.error('Error creating QuickBooks payroll run:', error);
-      return { success: false, message: 'Failed to create payroll run', data: error };
+      return {
+        success: false,
+        message: 'Failed to create payroll run',
+        data: error,
+      };
     }
   }
 }

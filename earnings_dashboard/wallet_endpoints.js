@@ -5,8 +5,10 @@ import crypto from 'node:crypto';
 const router = express.Router();
 
 // JPMorgan Payments API Configuration
-const JPMORGAN_BASE_URL = process.env.JPMORGAN_BASE_URL || 'https://api.payments.jpmorgan.com';
-const JPMORGAN_ORGANIZATION_ID = process.env.JPMORGAN_ORGANIZATION_ID || 'D3R56WRGSR3R';
+const JPMORGAN_BASE_URL =
+  process.env.JPMORGAN_BASE_URL || 'https://api.payments.jpmorgan.com';
+const JPMORGAN_ORGANIZATION_ID =
+  process.env.JPMORGAN_ORGANIZATION_ID || 'D3R56WRGSR3R';
 const JPMORGAN_PROJECT_ID = process.env.JPMORGAN_PROJECT_ID || 'DK2MQSR1FS7V';
 const JPMORGAN_CLIENT_ID = process.env.JPMORGAN_CLIENT_ID;
 const JPMORGAN_CLIENT_SECRET = process.env.JPMORGAN_CLIENT_SECRET;
@@ -26,23 +28,24 @@ function generateAuthHeaders() {
   return {
     'Content-Type': 'application/json',
     'Client-Id': JPMORGAN_CLIENT_ID,
-    'Timestamp': timestamp.toString(),
-    'Nonce': nonce,
-    'Signature': signature,
+    Timestamp: timestamp.toString(),
+    Nonce: nonce,
+    Signature: signature,
     'Merchant-Id': JPMORGAN_MERCHANT_ID,
-    'Terminal-Id': JPMORGAN_TERMINAL_ID
+    'Terminal-Id': JPMORGAN_TERMINAL_ID,
   };
 }
 
 // Wallet Encryption API endpoint
 router.post('/wallet-encrypt', async (req, res) => {
   try {
-    const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } = req.body;
+    const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } =
+      req.body;
 
     if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
       return res.status(400).json({
         success: false,
-        error: 'cardNumber, expiryDate, cvv, and cardholderName are required'
+        error: 'cardNumber, expiryDate, cvv, and cardholderName are required',
       });
     }
 
@@ -53,7 +56,7 @@ router.post('/wallet-encrypt', async (req, res) => {
       expiryDate: expiryDate,
       cvv: cvv,
       cardholderName: cardholderName,
-      billingAddress: billingAddress || {}
+      billingAddress: billingAddress || {},
     };
 
     const response = await axios.post(
@@ -65,15 +68,17 @@ router.post('/wallet-encrypt', async (req, res) => {
     res.json({
       success: true,
       encryptedData: response.data.encryptedWalletData,
-      walletId: response.data.walletId
+      walletId: response.data.walletId,
     });
-
   } catch (error) {
-    logger.error('JPMorgan wallet encryption error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan wallet encryption error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to encrypt wallet data',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -86,14 +91,14 @@ router.post('/wallet-validate', async (req, res) => {
     if (!walletData) {
       return res.status(400).json({
         success: false,
-        error: 'walletData is required'
+        error: 'walletData is required',
       });
     }
 
     const headers = generateAuthHeaders();
 
     const validatePayload = {
-      walletData: walletData
+      walletData: walletData,
     };
 
     const response = await axios.post(
@@ -106,15 +111,17 @@ router.post('/wallet-validate', async (req, res) => {
       success: true,
       isValid: response.data.isValid,
       message: response.data.message,
-      validationDetails: response.data.details
+      validationDetails: response.data.details,
     });
-
   } catch (error) {
-    logger.error('JPMorgan wallet validation error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan wallet validation error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to validate wallet data',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -122,12 +129,13 @@ router.post('/wallet-validate', async (req, res) => {
 // Wallet Tokenization API endpoint
 router.post('/wallet-tokenize', async (req, res) => {
   try {
-    const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } = req.body;
+    const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } =
+      req.body;
 
     if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
       return res.status(400).json({
         success: false,
-        error: 'cardNumber, expiryDate, cvv, and cardholderName are required'
+        error: 'cardNumber, expiryDate, cvv, and cardholderName are required',
       });
     }
 
@@ -138,7 +146,7 @@ router.post('/wallet-tokenize', async (req, res) => {
       expiryDate: expiryDate,
       cvv: cvv,
       cardholderName: cardholderName,
-      billingAddress: billingAddress || {}
+      billingAddress: billingAddress || {},
     };
 
     const response = await axios.post(
@@ -151,15 +159,17 @@ router.post('/wallet-tokenize', async (req, res) => {
       success: true,
       token: response.data.token,
       tokenId: response.data.tokenId,
-      expiresAt: response.data.expiresAt
+      expiresAt: response.data.expiresAt,
     });
-
   } catch (error) {
-    logger.error('JPMorgan wallet tokenization error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan wallet tokenization error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to tokenize wallet data',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -172,14 +182,14 @@ router.post('/wallet-detokenize', async (req, res) => {
     if (!token) {
       return res.status(400).json({
         success: false,
-        error: 'token is required'
+        error: 'token is required',
       });
     }
 
     const headers = generateAuthHeaders();
 
     const detokenizePayload = {
-      token: token
+      token: token,
     };
 
     const response = await axios.post(
@@ -190,15 +200,17 @@ router.post('/wallet-detokenize', async (req, res) => {
 
     res.json({
       success: true,
-      walletData: response.data
+      walletData: response.data,
     });
-
   } catch (error) {
-    logger.error('JPMorgan wallet detokenization error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan wallet detokenization error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to detokenize wallet data',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });

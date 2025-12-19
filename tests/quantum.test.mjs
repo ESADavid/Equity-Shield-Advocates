@@ -3,7 +3,13 @@
  * Tests core quantum system components and server endpoints
  */
 import request from 'supertest';
-import { app, server, quantumEngine, quantumSecurity, quantumOptimizer } from '../server-quantum.js';
+import {
+  app,
+  server,
+  quantumEngine,
+  quantumSecurity,
+  quantumOptimizer,
+} from '../server-quantum.js';
 import { QuantumEngine } from '../quantum/quantumEngine.js';
 import { QuantumSecurity } from '../quantum/quantumSecurity.js';
 import { QuantumOptimizer } from '../quantum/quantumOptimizer.js';
@@ -34,11 +40,11 @@ describe('🚀 Quantum System Critical Testing', () => {
       const engine = new QuantumEngine();
       const testKey = 'test-transaction-123';
       const testValue = { amount: 1000, currency: 'USD' };
-      
+
       const hash = engine.setQuantumState(testKey, testValue);
       expect(hash).toBeDefined();
       expect(typeof hash).toBe('string');
-      
+
       const retrieved = engine.getQuantumState(testKey);
       expect(retrieved).toEqual(testValue);
     });
@@ -47,7 +53,7 @@ describe('🚀 Quantum System Critical Testing', () => {
       const engine = new QuantumEngine();
       const testKey = 'test-recovery';
       const testValue = { status: 'pending' };
-      
+
       engine.setQuantumState(testKey, testValue);
       const retrieved = engine.getQuantumState(testKey);
       expect(retrieved).toEqual(testValue);
@@ -57,7 +63,7 @@ describe('🚀 Quantum System Critical Testing', () => {
       const engine = new QuantumEngine();
       const testKey = 'test-entanglement';
       const testValue = { entangled: true };
-      
+
       engine.setQuantumState(testKey, testValue);
       expect(engine.entanglementNodes.has(testKey)).toBe(true);
     });
@@ -74,12 +80,12 @@ describe('🚀 Quantum System Critical Testing', () => {
     test('should encrypt and decrypt data correctly', () => {
       const security = new QuantumSecurity();
       const testData = { transactionId: 'TX-123', amount: 5000 };
-      
+
       const encrypted = security.encrypt(testData);
       expect(encrypted).toBeDefined();
       expect(encrypted.encrypted).toBeDefined();
       expect(encrypted.authTag).toBeDefined();
-      
+
       const decrypted = security.decrypt(encrypted);
       expect(decrypted).toEqual(testData);
     });
@@ -87,11 +93,11 @@ describe('🚀 Quantum System Critical Testing', () => {
     test('should generate and verify quantum tokens', () => {
       const security = new QuantumSecurity();
       const payload = { userId: 'user-123', role: 'admin' };
-      
+
       const token = security.generateQuantumToken(payload);
       expect(token).toBeDefined();
       expect(typeof token).toBe('string');
-      
+
       const verified = security.verifyQuantumToken(token);
       expect(verified.userId).toBe(payload.userId);
       expect(verified.role).toBe(payload.role);
@@ -103,9 +109,9 @@ describe('🚀 Quantum System Critical Testing', () => {
         ip: '192.168.1.100',
         userAgent: 'test-agent',
         timestamp: Date.now(),
-        signature: 'test-signature'
+        signature: 'test-signature',
       };
-      
+
       const isSecure = security.verifyZeroTrust(request);
       expect(typeof isSecure).toBe('boolean');
     });
@@ -122,7 +128,7 @@ describe('🚀 Quantum System Critical Testing', () => {
     test('should optimize performance successfully', () => {
       const optimizer = new QuantumOptimizer();
       const optimization = optimizer.optimize();
-      
+
       expect(optimization).toBeDefined();
       expect(optimization.performance).toBeDefined();
       expect(optimization.memory).toBeDefined();
@@ -134,7 +140,7 @@ describe('🚀 Quantum System Critical Testing', () => {
     test('should provide real-time metrics', () => {
       const optimizer = new QuantumOptimizer();
       const metrics = optimizer.getRealTimeMetrics();
-      
+
       expect(metrics).toBeDefined();
       expect(metrics.performance).toBeDefined();
       expect(metrics.security).toBeDefined();
@@ -145,7 +151,7 @@ describe('🚀 Quantum System Critical Testing', () => {
     test('should predict optimization needs', () => {
       const optimizer = new QuantumOptimizer();
       const predictions = optimizer.predictOptimization();
-      
+
       expect(predictions).toBeDefined();
       expect(predictions.nextHour).toBeDefined();
       expect(predictions.nextDay).toBeDefined();
@@ -155,10 +161,8 @@ describe('🚀 Quantum System Critical Testing', () => {
 
   describe('🌐 Quantum Server Endpoint Tests', () => {
     test('GET /quantum/status should return quantum status', async () => {
-      const response = await request(app)
-        .get('/quantum/status')
-        .expect(200);
-      
+      const response = await request(app).get('/quantum/status').expect(200);
+
       expect(response.body).toBeDefined();
       expect(response.body.quantum).toBe(true);
       expect(response.body.engine).toBeDefined();
@@ -167,30 +171,24 @@ describe('🚀 Quantum System Critical Testing', () => {
     });
 
     test('GET /quantum/optimize should return optimization results', async () => {
-      const response = await request(app)
-        .get('/quantum/optimize')
-        .expect(200);
-      
+      const response = await request(app).get('/quantum/optimize').expect(200);
+
       expect(response.body).toBeDefined();
       expect(response.body.optimization).toBeDefined();
       expect(response.body.quantum).toBe(true);
     });
 
     test('GET /quantum/security should return security verification', async () => {
-      const response = await request(app)
-        .get('/quantum/security')
-        .expect(200);
-      
+      const response = await request(app).get('/quantum/security').expect(200);
+
       expect(response.body).toBeDefined();
       expect(response.body.security).toBeDefined();
       expect(response.body.quantum).toBe(true);
     });
 
     test('GET /quantum/health should return health status', async () => {
-      const response = await request(app)
-        .get('/quantum/health')
-        .expect(200);
-      
+      const response = await request(app).get('/quantum/health').expect(200);
+
       expect(response.body).toBeDefined();
       expect(response.body.status).toBe('perfect');
       expect(response.body.quantum).toBe(true);
@@ -201,7 +199,7 @@ describe('🚀 Quantum System Critical Testing', () => {
         .get('/quantum/status')
         .set('X-Quantum-Signature', 'test-signature')
         .expect(200);
-      
+
       expect(response.headers['x-quantum-secure']).toBe('true');
       expect(response.headers['x-quantum-optimized']).toBe('true');
     });
@@ -212,7 +210,7 @@ describe('🚀 Quantum System Critical Testing', () => {
       expect(quantumEngine).toBeDefined();
       expect(quantumSecurity).toBeDefined();
       expect(quantumOptimizer).toBeDefined();
-      
+
       expect(typeof quantumEngine.setQuantumState).toBe('function');
       expect(typeof quantumSecurity.encrypt).toBe('function');
       expect(typeof quantumOptimizer.optimize).toBe('function');
@@ -221,10 +219,10 @@ describe('🚀 Quantum System Critical Testing', () => {
     test('should handle quantum state across systems', () => {
       const testKey = 'integration-test';
       const testValue = { integrated: true, quantum: true };
-      
+
       quantumEngine.setQuantumState(testKey, testValue);
       const retrieved = quantumEngine.getQuantumState(testKey);
-      
+
       expect(retrieved).toEqual(testValue);
     });
   });
@@ -232,7 +230,7 @@ describe('🚀 Quantum System Critical Testing', () => {
   describe('🚨 Error Handling Tests', () => {
     test('should handle invalid quantum token verification', () => {
       const security = new QuantumSecurity();
-      
+
       expect(() => {
         security.verifyQuantumToken('invalid-token');
       }).toThrow();
@@ -241,7 +239,7 @@ describe('🚀 Quantum System Critical Testing', () => {
     test('should handle missing quantum state gracefully', () => {
       const engine = new QuantumEngine();
       const retrieved = engine.getQuantumState('non-existent-key');
-      
+
       expect(retrieved).toBeNull();
     });
   });

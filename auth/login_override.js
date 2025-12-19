@@ -28,9 +28,9 @@ const overrideLogger = winston.createLogger({
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.simple()
-      )
-    })
-  ]
+      ),
+    }),
+  ],
 });
 
 // Standard authentication logger
@@ -47,41 +47,50 @@ const authLogger = winston.createLogger({
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.simple()
-      )
-    })
-  ]
+      ),
+    }),
+  ],
 });
 
 // Override configuration
 const OVERRIDE_CONFIG = {
-  EMERGENCY_CODE: process.env.EMERGENCY_OVERRIDE_CODE || 'OSCAR_BROOME_EMERGENCY_2024',
+  EMERGENCY_CODE:
+    process.env.EMERGENCY_OVERRIDE_CODE || 'OSCAR_BROOME_EMERGENCY_2024',
   ADMIN_OVERRIDE_CODE: process.env.ADMIN_OVERRIDE_CODE || 'ADMIN_OVERRIDE_2024',
-  MAX_OVERRIDE_ATTEMPTS: Number.parseInt(process.env.MAX_OVERRIDE_ATTEMPTS) || 3,
-  OVERRIDE_WINDOW_MINUTES: Number.parseInt(process.env.OVERRIDE_WINDOW_MINUTES) || 15,
+  MAX_OVERRIDE_ATTEMPTS:
+    Number.parseInt(process.env.MAX_OVERRIDE_ATTEMPTS) || 3,
+  OVERRIDE_WINDOW_MINUTES:
+    Number.parseInt(process.env.OVERRIDE_WINDOW_MINUTES) || 15,
   REQUIRE_ADDITIONAL_AUTH: process.env.REQUIRE_ADDITIONAL_AUTH === 'true',
-  NOTIFICATION_EMAILS: (process.env.NOTIFICATION_EMAILS || '').split(',').filter(email => email.trim()),
+  NOTIFICATION_EMAILS: (process.env.NOTIFICATION_EMAILS || '')
+    .split(',')
+    .filter((email) => email.trim()),
   // Enhanced security settings
-  RATE_LIMIT_WINDOW_MS: Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  RATE_LIMIT_MAX_REQUESTS: Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 5,
+  RATE_LIMIT_WINDOW_MS:
+    Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
+  RATE_LIMIT_MAX_REQUESTS:
+    Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 5,
   MFA_ENFORCEMENT_LEVEL: process.env.MFA_ENFORCEMENT_LEVEL || 'required', // 'required', 'optional', 'disabled'
-  SESSION_TIMEOUT_MINUTES: Number.parseInt(process.env.SESSION_TIMEOUT_MINUTES) || 30,
+  SESSION_TIMEOUT_MINUTES:
+    Number.parseInt(process.env.SESSION_TIMEOUT_MINUTES) || 30,
   PASSWORD_MIN_LENGTH: Number.parseInt(process.env.PASSWORD_MIN_LENGTH) || 12,
-  PASSWORD_REQUIRE_COMPLEXITY: process.env.PASSWORD_REQUIRE_COMPLEXITY !== 'false'
+  PASSWORD_REQUIRE_COMPLEXITY:
+    process.env.PASSWORD_REQUIRE_COMPLEXITY !== 'false',
 };
 
-  // Override session storage
-  const activeOverrides = new Map();
-  const overrideAttempts = new Map();
+// Override session storage
+const activeOverrides = new Map();
+const overrideAttempts = new Map();
 
-  // Rate limiting storage
-  const rateLimitStore = new Map();
+// Rate limiting storage
+const rateLimitStore = new Map();
 
 // Override types
 const OVERRIDE_TYPES = {
   EMERGENCY: 'emergency',
   ADMIN: 'admin',
   TECHNICAL: 'technical',
-  SECURITY: 'security'
+  SECURITY: 'security',
 };
 
 // Override reasons
@@ -91,7 +100,7 @@ const OVERRIDE_REASONS = {
   PASSWORD_RESET: 'password_reset',
   SYSTEM_MAINTENANCE: 'system_maintenance',
   EMERGENCY_ACCESS: 'emergency_access',
-  TECHNICAL_ISSUE: 'technical_issue'
+  TECHNICAL_ISSUE: 'technical_issue',
 };
 
 class LoginOverrideManager {
@@ -111,7 +120,9 @@ class LoginOverrideManager {
 
     // Check additional authentication if required
     if (OVERRIDE_CONFIG.REQUIRE_ADDITIONAL_AUTH && !additionalAuth) {
-      throw new Error('Additional authentication required for emergency override');
+      throw new Error(
+        'Additional authentication required for emergency override'
+      );
     }
 
     // Create override session
@@ -121,11 +132,13 @@ class LoginOverrideManager {
       userId: userId,
       reason: reason,
       timestamp: timestamp,
-      expiresAt: new Date(Date.now() + OVERRIDE_CONFIG.OVERRIDE_WINDOW_MINUTES * 60 * 1000).toISOString(),
+      expiresAt: new Date(
+        Date.now() + OVERRIDE_CONFIG.OVERRIDE_WINDOW_MINUTES * 60 * 1000
+      ).toISOString(),
       status: 'active',
       additionalAuth: additionalAuth,
       approvedBy: 'SYSTEM_EMERGENCY_PROTOCOL',
-      notificationsSent: []
+      notificationsSent: [],
     };
 
     // Store override session
@@ -137,7 +150,7 @@ class LoginOverrideManager {
       userId,
       reason,
       timestamp,
-      expiresAt: overrideSession.expiresAt
+      expiresAt: overrideSession.expiresAt,
     });
 
     // Send notifications
@@ -151,7 +164,7 @@ class LoginOverrideManager {
       overrideId,
       message: 'Emergency override activated for Oscar Broome',
       expiresAt: overrideSession.expiresAt,
-      accessGranted: true
+      accessGranted: true,
     };
   }
 
@@ -179,10 +192,12 @@ class LoginOverrideManager {
       reason: reason,
       justification: justification,
       timestamp: timestamp,
-      expiresAt: new Date(Date.now() + OVERRIDE_CONFIG.OVERRIDE_WINDOW_MINUTES * 60 * 1000).toISOString(),
+      expiresAt: new Date(
+        Date.now() + OVERRIDE_CONFIG.OVERRIDE_WINDOW_MINUTES * 60 * 1000
+      ).toISOString(),
       status: 'active',
       approvedBy: adminUserId,
-      notificationsSent: []
+      notificationsSent: [],
     };
 
     // Store override session
@@ -196,7 +211,7 @@ class LoginOverrideManager {
       reason,
       justification,
       timestamp,
-      expiresAt: overrideSession.expiresAt
+      expiresAt: overrideSession.expiresAt,
     });
 
     // Send notifications
@@ -207,7 +222,7 @@ class LoginOverrideManager {
       overrideId,
       message: 'Administrative override activated',
       expiresAt: overrideSession.expiresAt,
-      accessGranted: true
+      accessGranted: true,
     };
   }
 
@@ -235,10 +250,12 @@ class LoginOverrideManager {
       reason: reason,
       ticketNumber: ticketNumber,
       timestamp: timestamp,
-      expiresAt: new Date(Date.now() + OVERRIDE_CONFIG.OVERRIDE_WINDOW_MINUTES * 60 * 1000).toISOString(),
+      expiresAt: new Date(
+        Date.now() + OVERRIDE_CONFIG.OVERRIDE_WINDOW_MINUTES * 60 * 1000
+      ).toISOString(),
       status: 'active',
       approvedBy: supportUserId,
-      notificationsSent: []
+      notificationsSent: [],
     };
 
     // Store override session
@@ -252,7 +269,7 @@ class LoginOverrideManager {
       reason,
       ticketNumber,
       timestamp,
-      expiresAt: overrideSession.expiresAt
+      expiresAt: overrideSession.expiresAt,
     });
 
     // Send notifications
@@ -263,7 +280,7 @@ class LoginOverrideManager {
       overrideId,
       message: 'Technical support override activated',
       expiresAt: overrideSession.expiresAt,
-      accessGranted: true
+      accessGranted: true,
     };
   }
 
@@ -290,7 +307,7 @@ class LoginOverrideManager {
         valid: true,
         session: session,
         type: session.type,
-        expiresAt: session.expiresAt
+        expiresAt: session.expiresAt,
       };
     } else {
       return { valid: false, reason: 'Override session not found' };
@@ -317,7 +334,7 @@ class LoginOverrideManager {
       overrideId,
       revokedBy,
       reason,
-      originalSession: session
+      originalSession: session,
     });
 
     // Send revocation notifications
@@ -331,15 +348,17 @@ class LoginOverrideManager {
     const userOverrides = [];
 
     for (const [overrideId, session] of activeOverrides) {
-      if ((session.userId === userId || session.targetUserId === userId) &&
-          session.status === 'active' &&
-          new Date() < new Date(session.expiresAt)) {
+      if (
+        (session.userId === userId || session.targetUserId === userId) &&
+        session.status === 'active' &&
+        new Date() < new Date(session.expiresAt)
+      ) {
         userOverrides.push({
           id: overrideId,
           type: session.type,
           reason: session.reason,
           expiresAt: session.expiresAt,
-          approvedBy: session.approvedBy
+          approvedBy: session.approvedBy,
         });
       }
     }
@@ -349,11 +368,17 @@ class LoginOverrideManager {
 
   // Check override attempts
   checkOverrideAttempts(userId) {
-    const attempts = overrideAttempts.get(userId) || { count: 0, lastAttempt: null };
+    const attempts = overrideAttempts.get(userId) || {
+      count: 0,
+      lastAttempt: null,
+    };
     const now = new Date();
 
     // Reset attempts if more than 1 hour has passed
-    if (attempts.lastAttempt && (now - new Date(attempts.lastAttempt)) > 60 * 60 * 1000) {
+    if (
+      attempts.lastAttempt &&
+      now - new Date(attempts.lastAttempt) > 60 * 60 * 1000
+    ) {
       attempts.count = 0;
     }
 
@@ -372,7 +397,7 @@ class LoginOverrideManager {
         overrideLogger.error('MAX OVERRIDE ATTEMPTS EXCEEDED', {
           userId,
           attempts: attempts.count,
-          timestamp: attempts.lastAttempt
+          timestamp: attempts.lastAttempt,
         });
 
         // Send security alert
@@ -390,7 +415,7 @@ class LoginOverrideManager {
     const criticalReasons = [
       OVERRIDE_REASONS.EMERGENCY_ACCESS,
       OVERRIDE_REASONS.SYSTEM_MAINTENANCE,
-      OVERRIDE_REASONS.TECHNICAL_ISSUE
+      OVERRIDE_REASONS.TECHNICAL_ISSUE,
     ];
 
     return criticalReasons.includes(reason);
@@ -424,7 +449,7 @@ class LoginOverrideManager {
       overrideLogger.info('EMERGENCY OVERRIDE NOTIFICATION SENT', {
         overrideId: session.id,
         email: email,
-        type: 'emergency_override_activated'
+        type: 'emergency_override_activated',
       });
     }
 
@@ -439,7 +464,7 @@ class LoginOverrideManager {
       overrideLogger.info('ADMIN OVERRIDE NOTIFICATION SENT', {
         overrideId: session.id,
         email: email,
-        type: 'admin_override_activated'
+        type: 'admin_override_activated',
       });
     }
 
@@ -454,7 +479,7 @@ class LoginOverrideManager {
       overrideLogger.info('TECHNICAL OVERRIDE NOTIFICATION SENT', {
         overrideId: session.id,
         email: email,
-        type: 'technical_override_activated'
+        type: 'technical_override_activated',
       });
     }
 
@@ -469,7 +494,7 @@ class LoginOverrideManager {
       overrideLogger.info('OVERRIDE REVOCATION NOTIFICATION SENT', {
         overrideId: session.id,
         email: email,
-        type: 'override_revoked'
+        type: 'override_revoked',
       });
     }
   }
@@ -483,7 +508,7 @@ class LoginOverrideManager {
         userId,
         alertType,
         email: email,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   }
@@ -495,15 +520,22 @@ class LoginOverrideManager {
       if (fs.existsSync(historyPath)) {
         const history = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
         // Restore active overrides from history
-        for (const [id, session] of Object.entries(history.activeOverrides || {})) {
-          if (session.status === 'active' && new Date() < new Date(session.expiresAt)) {
+        for (const [id, session] of Object.entries(
+          history.activeOverrides || {}
+        )) {
+          if (
+            session.status === 'active' &&
+            new Date() < new Date(session.expiresAt)
+          ) {
             activeOverrides.set(id, session);
           }
         }
       }
     } catch (error) {
       // Log error but don't rethrow - this is a utility method that should fail gracefully
-      overrideLogger.error('Failed to load override history', { error: error.message });
+      overrideLogger.error('Failed to load override history', {
+        error: error.message,
+      });
     }
   }
 
@@ -513,12 +545,14 @@ class LoginOverrideManager {
       const historyPath = path.join(__dirname, '../logs/override_history.json');
       const history = {
         activeOverrides: Object.fromEntries(activeOverrides),
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
 
       fs.writeFileSync(historyPath, JSON.stringify(history, null, 2), 'utf-8');
     } catch (error) {
-      overrideLogger.error('Failed to save override history', { error: error.message });
+      overrideLogger.error('Failed to save override history', {
+        error: error.message,
+      });
     }
   }
 
@@ -547,14 +581,15 @@ class LoginOverrideManager {
       totalActive: 0,
       byType: {},
       byReason: {},
-      recentActivity: []
+      recentActivity: [],
     };
 
     for (const session of activeOverrides.values()) {
       if (session.status === 'active') {
         stats.totalActive++;
         stats.byType[session.type] = (stats.byType[session.type] || 0) + 1;
-        stats.byReason[session.reason] = (stats.byReason[session.reason] || 0) + 1;
+        stats.byReason[session.reason] =
+          (stats.byReason[session.reason] || 0) + 1;
       }
 
       // Add to recent activity (last 24 hours)
@@ -567,7 +602,7 @@ class LoginOverrideManager {
           type: session.type,
           reason: session.reason,
           timestamp: session.timestamp,
-          status: session.status
+          status: session.status,
         });
       }
     }
@@ -606,7 +641,7 @@ class LoginOverrideManager {
         loginAttempts: 0,
         lockoutUntil: null,
         mfaEnabled: false,
-        mfaSecret: null
+        mfaSecret: null,
       };
 
       // Save user (in production, use database)
@@ -618,19 +653,19 @@ class LoginOverrideManager {
         username,
         email,
         role,
-        timestamp: user.createdAt
+        timestamp: user.createdAt,
       });
 
       return {
         success: true,
         userId: user.id,
-        message: 'User registered successfully'
+        message: 'User registered successfully',
       };
     } catch (error) {
       authLogger.error('USER REGISTRATION FAILED', {
         username,
         email,
-        error: error.message
+        error: error.message,
       });
       throw error;
     }
@@ -650,7 +685,9 @@ class LoginOverrideManager {
 
       // Check if account is locked
       if (user.lockoutUntil && new Date() < new Date(user.lockoutUntil)) {
-        throw new Error('Account is temporarily locked due to too many failed attempts');
+        throw new Error(
+          'Account is temporarily locked due to too many failed attempts'
+        );
       }
 
       // Verify password
@@ -678,7 +715,7 @@ class LoginOverrideManager {
           userId: user.id,
           username: user.username,
           email: user.email,
-          role: user.role
+          role: user.role,
         },
         process.env.JWT_SECRET || 'your_jwt_secret_key',
         { expiresIn: '24h' }
@@ -688,7 +725,7 @@ class LoginOverrideManager {
       authLogger.info('USER LOGIN SUCCESSFUL', {
         userId: user.id,
         username: user.username,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       return {
@@ -699,14 +736,14 @@ class LoginOverrideManager {
           username: user.username,
           email: user.email,
           role: user.role,
-          lastLogin: user.lastLogin
-        }
+          lastLogin: user.lastLogin,
+        },
       };
     } catch (error) {
       authLogger.warn('USER LOGIN FAILED', {
         usernameOrEmail,
         error: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
       throw error;
     }
@@ -720,7 +757,10 @@ class LoginOverrideManager {
       }
 
       // Verify current password
-      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+      const isValidPassword = await bcrypt.compare(
+        currentPassword,
+        user.password
+      );
       if (!isValidPassword) {
         throw new Error('Current password is incorrect');
       }
@@ -741,17 +781,17 @@ class LoginOverrideManager {
       // Log password change
       authLogger.info('PASSWORD CHANGED', {
         userId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       return {
         success: true,
-        message: 'Password changed successfully'
+        message: 'Password changed successfully',
       };
     } catch (error) {
       authLogger.error('PASSWORD CHANGE FAILED', {
         userId,
-        error: error.message
+        error: error.message,
       });
       throw error;
     }
@@ -773,18 +813,18 @@ class LoginOverrideManager {
 
       authLogger.info('MFA ENABLED', {
         userId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       return {
         success: true,
         mfaSecret,
-        message: 'MFA enabled successfully'
+        message: 'MFA enabled successfully',
       };
     } catch (error) {
       authLogger.error('MFA ENABLEMENT FAILED', {
         userId,
-        error: error.message
+        error: error.message,
       });
       throw error;
     }
@@ -798,7 +838,8 @@ class LoginOverrideManager {
       }
 
       // Simple token verification (in production, use proper TOTP)
-      const expectedToken = crypto.createHmac('sha256', user.mfaSecret)
+      const expectedToken = crypto
+        .createHmac('sha256', user.mfaSecret)
         .update(Math.floor(Date.now() / 30000).toString()) // 30-second window
         .digest('hex')
         .substring(0, 6);
@@ -811,7 +852,7 @@ class LoginOverrideManager {
     } catch (error) {
       authLogger.warn('MFA VERIFICATION FAILED', {
         userId,
-        error: error.message
+        error: error.message,
       });
       throw error;
     }
@@ -835,18 +876,18 @@ class LoginOverrideManager {
       authLogger.info('USER DEACTIVATED', {
         userId,
         adminUserId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       return {
         success: true,
-        message: 'User deactivated successfully'
+        message: 'User deactivated successfully',
       };
     } catch (error) {
       authLogger.error('USER DEACTIVATION FAILED', {
         userId,
         adminUserId,
-        error: error.message
+        error: error.message,
       });
       throw error;
     }
@@ -915,7 +956,9 @@ class LoginOverrideManager {
       if (!fs.existsSync(usersPath)) return null;
 
       const users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
-      return Object.values(users).find(user => user.username === username) || null;
+      return (
+        Object.values(users).find((user) => user.username === username) || null
+      );
     } catch (error) {
       return null;
     }
@@ -927,7 +970,7 @@ class LoginOverrideManager {
       if (!fs.existsSync(usersPath)) return null;
 
       const users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
-      return Object.values(users).find(user => user.email === email) || null;
+      return Object.values(users).find((user) => user.email === email) || null;
     } catch (error) {
       return null;
     }
@@ -940,7 +983,10 @@ class LoginOverrideManager {
   // Validate JWT token
   validateToken(token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key');
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET || 'your_jwt_secret_key'
+      );
       return { valid: true, user: decoded };
     } catch (error) {
       return { valid: false, error: error.message };
@@ -960,7 +1006,9 @@ class LoginOverrideManager {
     }
 
     // Clean old requests outside the window
-    rateData.requests = rateData.requests.filter(timestamp => timestamp > windowStart);
+    rateData.requests = rateData.requests.filter(
+      (timestamp) => timestamp > windowStart
+    );
 
     // Check if under limit
     if (rateData.requests.length >= OVERRIDE_CONFIG.RATE_LIMIT_MAX_REQUESTS) {
@@ -970,7 +1018,7 @@ class LoginOverrideManager {
         allowed: false,
         resetTime: resetTime,
         remainingRequests: 0,
-        resetInMs: resetTime - now
+        resetInMs: resetTime - now,
       };
     }
 
@@ -980,8 +1028,9 @@ class LoginOverrideManager {
     return {
       allowed: true,
       resetTime: now + OVERRIDE_CONFIG.RATE_LIMIT_WINDOW_MS,
-      remainingRequests: OVERRIDE_CONFIG.RATE_LIMIT_MAX_REQUESTS - rateData.requests.length,
-      resetInMs: OVERRIDE_CONFIG.RATE_LIMIT_WINDOW_MS
+      remainingRequests:
+        OVERRIDE_CONFIG.RATE_LIMIT_MAX_REQUESTS - rateData.requests.length,
+      resetInMs: OVERRIDE_CONFIG.RATE_LIMIT_WINDOW_MS,
     };
   }
 
@@ -990,7 +1039,8 @@ class LoginOverrideManager {
     if (password && password.length >= OVERRIDE_CONFIG.PASSWORD_MIN_LENGTH) {
       if (OVERRIDE_CONFIG.PASSWORD_REQUIRE_COMPLEXITY) {
         // At least 1 uppercase, 1 lowercase, 1 number, 1 special character
-        const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+        const complexityRegex =
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
         return complexityRegex.test(password);
       }
 
@@ -1030,10 +1080,10 @@ class LoginOverrideManager {
   // Cleanup rate limit data periodically
   cleanupRateLimitData() {
     const now = Date.now();
-    const cutoff = now - (OVERRIDE_CONFIG.RATE_LIMIT_WINDOW_MS * 2); // Keep 2x window for safety
+    const cutoff = now - OVERRIDE_CONFIG.RATE_LIMIT_WINDOW_MS * 2; // Keep 2x window for safety
 
     for (const [identifier, data] of rateLimitStore) {
-      data.requests = data.requests.filter(timestamp => timestamp > cutoff);
+      data.requests = data.requests.filter((timestamp) => timestamp > cutoff);
       if (data.requests.length === 0) {
         rateLimitStore.delete(identifier);
       }
@@ -1041,7 +1091,7 @@ class LoginOverrideManager {
 
     overrideLogger.info('Rate limit data cleaned up', {
       activeIdentifiers: rateLimitStore.size,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 }
@@ -1050,25 +1100,46 @@ class LoginOverrideManager {
 const loginOverrideManager = new LoginOverrideManager();
 
 // Periodic cleanup
-setInterval(() => {
-  loginOverrideManager.cleanupExpiredOverrides();
-}, 5 * 60 * 1000); // Every 5 minutes
+setInterval(
+  () => {
+    loginOverrideManager.cleanupExpiredOverrides();
+  },
+  5 * 60 * 1000
+); // Every 5 minutes
 
 // Periodic save
-setInterval(() => {
-  loginOverrideManager.saveOverrideHistory();
-}, 10 * 60 * 1000); // Every 10 minutes
+setInterval(
+  () => {
+    loginOverrideManager.saveOverrideHistory();
+  },
+  10 * 60 * 1000
+); // Every 10 minutes
 
-export { LoginOverrideManager, loginOverrideManager, OVERRIDE_TYPES, OVERRIDE_REASONS };
+export {
+  LoginOverrideManager,
+  loginOverrideManager,
+  OVERRIDE_TYPES,
+  OVERRIDE_REASONS,
+};
 
 // Export standard authentication methods
-export const registerUser = loginOverrideManager.registerUser.bind(loginOverrideManager);
-export const authenticateUser = loginOverrideManager.authenticateUser.bind(loginOverrideManager);
-export const changePassword = loginOverrideManager.changePassword.bind(loginOverrideManager);
-export const enableMFA = loginOverrideManager.enableMFA.bind(loginOverrideManager);
-export const verifyMFAToken = loginOverrideManager.verifyMFAToken.bind(loginOverrideManager);
-export const deactivateUser = loginOverrideManager.deactivateUser.bind(loginOverrideManager);
-export const validateToken = loginOverrideManager.validateToken.bind(loginOverrideManager);
-export const getUserById = loginOverrideManager.getUserById.bind(loginOverrideManager);
-export const getUserByUsername = loginOverrideManager.getUserByUsername.bind(loginOverrideManager);
-export const getUserByEmail = loginOverrideManager.getUserByEmail.bind(loginOverrideManager);
+export const registerUser =
+  loginOverrideManager.registerUser.bind(loginOverrideManager);
+export const authenticateUser =
+  loginOverrideManager.authenticateUser.bind(loginOverrideManager);
+export const changePassword =
+  loginOverrideManager.changePassword.bind(loginOverrideManager);
+export const enableMFA =
+  loginOverrideManager.enableMFA.bind(loginOverrideManager);
+export const verifyMFAToken =
+  loginOverrideManager.verifyMFAToken.bind(loginOverrideManager);
+export const deactivateUser =
+  loginOverrideManager.deactivateUser.bind(loginOverrideManager);
+export const validateToken =
+  loginOverrideManager.validateToken.bind(loginOverrideManager);
+export const getUserById =
+  loginOverrideManager.getUserById.bind(loginOverrideManager);
+export const getUserByUsername =
+  loginOverrideManager.getUserByUsername.bind(loginOverrideManager);
+export const getUserByEmail =
+  loginOverrideManager.getUserByEmail.bind(loginOverrideManager);

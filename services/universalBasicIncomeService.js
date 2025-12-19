@@ -20,7 +20,7 @@ class UniversalBasicIncomeService {
     this.totalCitizens = 0;
     this.totalPaymentsProcessed = 0;
     this.totalAmountDisbursed = 0;
-    
+
     logger.info('Universal Basic Income Service initialized');
   }
 
@@ -32,7 +32,9 @@ class UniversalBasicIncomeService {
    */
   async registerCitizen(citizenData, userId) {
     try {
-      logger.info(`Registering new citizen: ${citizenData.personalInfo?.firstName} ${citizenData.personalInfo?.lastName}`);
+      logger.info(
+        `Registering new citizen: ${citizenData.personalInfo?.firstName} ${citizenData.personalInfo?.lastName}`
+      );
 
       // Validate required fields
       const validation = this.validateCitizenData(citizenData);
@@ -40,20 +42,20 @@ class UniversalBasicIncomeService {
         return {
           success: false,
           error: 'Validation failed',
-          errors: validation.errors
+          errors: validation.errors,
         };
       }
 
       // Check for duplicate national ID
       const existingCitizen = await Citizen.findOne({
-        'personalInfo.nationalId': citizenData.personalInfo.nationalId
+        'personalInfo.nationalId': citizenData.personalInfo.nationalId,
       });
 
       if (existingCitizen) {
         return {
           success: false,
           error: 'Citizen with this National ID already exists',
-          citizenId: existingCitizen.citizenId
+          citizenId: existingCitizen.citizenId,
         };
       }
 
@@ -68,18 +70,21 @@ class UniversalBasicIncomeService {
           totalReceived: 0,
           paymentsCount: 0,
           suspended: false,
-          paymentMethod: citizenData.ubiStatus?.paymentMethod || 'direct_deposit'
+          paymentMethod:
+            citizenData.ubiStatus?.paymentMethod || 'direct_deposit',
         },
         metadata: {
           ...citizenData.metadata,
-          registeredBy: userId
+          registeredBy: userId,
         },
-        auditLog: [{
-          action: 'CITIZEN_REGISTERED',
-          performedBy: userId,
-          timestamp: new Date(),
-          details: { source: 'UBI Registration' }
-        }]
+        auditLog: [
+          {
+            action: 'CITIZEN_REGISTERED',
+            performedBy: userId,
+            timestamp: new Date(),
+            details: { source: 'UBI Registration' },
+          },
+        ],
       });
 
       await citizen.save();
@@ -87,12 +92,17 @@ class UniversalBasicIncomeService {
       // Create blockchain wallet for citizen
       if (this.blockchainService) {
         try {
-          const wallet = await this.blockchainService.createWallet(citizen.citizenId);
+          const wallet = await this.blockchainService.createWallet(
+            citizen.citizenId
+          );
           citizen.blockchain.walletAddress = wallet.address;
           citizen.blockchain.publicKey = wallet.publicKey;
           await citizen.save();
         } catch (blockchainError) {
-          logger.warn(`Blockchain wallet creation failed for ${citizen.citizenId}:`, blockchainError.message);
+          logger.warn(
+            `Blockchain wallet creation failed for ${citizen.citizenId}:`,
+            blockchainError.message
+          );
         }
       }
 
@@ -107,16 +117,15 @@ class UniversalBasicIncomeService {
           fullName: citizen.fullName,
           nationalId: citizen.personalInfo.nationalId,
           ubiStatus: citizen.ubiStatus,
-          educationStatus: citizen.educationStatus
+          educationStatus: citizen.educationStatus,
         },
-        message: 'Citizen registered successfully for Universal Basic Income'
+        message: 'Citizen registered successfully for Universal Basic Income',
       };
-
     } catch (error) {
       logger.error('Error registering citizen:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -140,10 +149,12 @@ class UniversalBasicIncomeService {
         'ubiStatus.eligible': true,
         'ubiStatus.suspended': false,
         'verification.identityVerified': true,
-        'verification.bankingVerified': true
+        'verification.bankingVerified': true,
       });
 
-      logger.info(`Found ${eligibleCitizens.length} eligible citizens for payment`);
+      logger.info(
+        `Found ${eligibleCitizens.length} eligible citizens for payment`
+      );
 
       const results = {
         totalProcessed: 0,
@@ -151,7 +162,7 @@ class UniversalBasicIncomeService {
         failed: 0,
         totalAmount: 0,
         payments: [],
-        errors: []
+        errors: [],
       };
 
       // Process payments in batches
@@ -159,12 +170,14 @@ class UniversalBasicIncomeService {
       for (let i = 0; i < eligibleCitizens.length; i += batchSize) {
         const batch = eligibleCitizens.slice(i, i + batchSize);
         const batchResults = await Promise.allSettled(
-          batch.map(citizen => this.processSinglePayment(citizen, paymentDate, userId))
+          batch.map((citizen) =>
+            this.processSinglePayment(citizen, paymentDate, userId)
+          )
         );
 
         batchResults.forEach((result, index) => {
           results.totalProcessed++;
-          
+
           if (result.status === 'fulfilled' && result.value.success) {
             results.successful++;
             results.totalAmount += result.value.amount;
@@ -173,12 +186,14 @@ class UniversalBasicIncomeService {
             results.failed++;
             results.errors.push({
               citizenId: batch[index].citizenId,
-              error: result.reason || result.value?.error
+              error: result.reason || result.value?.error,
             });
           }
         });
 
-        logger.info(`Processed batch ${Math.floor(i / batchSize) + 1}: ${results.successful} successful, ${results.failed} failed`);
+        logger.info(
+          `Processed batch ${Math.floor(i / batchSize) + 1}: ${results.successful} successful, ${results.failed} failed`
+        );
       }
 
       const duration = Date.now() - startTime;
@@ -187,7 +202,9 @@ class UniversalBasicIncomeService {
       this.totalPaymentsProcessed += results.successful;
       this.totalAmountDisbursed += results.totalAmount;
 
-      logger.info(`Monthly UBI payment processing completed: ${results.successful}/${results.totalProcessed} successful in ${duration}ms`);
+      logger.info(
+        `Monthly UBI payment processing completed: ${results.successful}/${results.totalProcessed} successful in ${duration}ms`
+      );
 
       return {
         success: true,
@@ -198,17 +215,19 @@ class UniversalBasicIncomeService {
           failed: results.failed,
           totalAmount: results.totalAmount,
           duration: `${duration}ms`,
-          averagePerPayment: results.successful > 0 ? `${(duration / results.successful).toFixed(2)}ms` : 'N/A'
+          averagePerPayment:
+            results.successful > 0
+              ? `${(duration / results.successful).toFixed(2)}ms`
+              : 'N/A',
         },
         payments: results.payments,
-        errors: results.errors
+        errors: results.errors,
       };
-
     } catch (error) {
       logger.error('Error processing monthly payments:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -230,7 +249,7 @@ class UniversalBasicIncomeService {
 
       // Check if already paid this month
       const paymentMonth = paymentDate.toISOString().slice(0, 7);
-      const lastPaymentMonth = citizen.ubiStatus.lastPaymentDate 
+      const lastPaymentMonth = citizen.ubiStatus.lastPaymentDate
         ? new Date(citizen.ubiStatus.lastPaymentDate).toISOString().slice(0, 7)
         : null;
 
@@ -243,7 +262,11 @@ class UniversalBasicIncomeService {
       // Process payment through existing payroll system
       let paymentResult;
       try {
-        paymentResult = await this.processPaymentThroughPayroll(citizen, amount, paymentDate);
+        paymentResult = await this.processPaymentThroughPayroll(
+          citizen,
+          amount,
+          paymentDate
+        );
       } catch (paymentError) {
         throw new Error(`Payment processing failed: ${paymentError.message}`);
       }
@@ -260,13 +283,16 @@ class UniversalBasicIncomeService {
             metadata: {
               citizenId: citizen.citizenId,
               paymentDate: paymentDate.toISOString(),
-              paymentMonth: paymentMonth
-            }
+              paymentMonth: paymentMonth,
+            },
           });
           blockchainTxHash = blockchainTx.hash;
           citizen.blockchain.transactionHashes.push(blockchainTxHash);
         } catch (blockchainError) {
-          logger.warn(`Blockchain recording failed for ${citizen.citizenId}:`, blockchainError.message);
+          logger.warn(
+            `Blockchain recording failed for ${citizen.citizenId}:`,
+            blockchainError.message
+          );
         }
       }
 
@@ -285,8 +311,8 @@ class UniversalBasicIncomeService {
           amount: amount,
           paymentMonth: paymentMonth,
           transactionHash: blockchainTxHash,
-          paymentMethod: citizen.ubiStatus.paymentMethod
-        }
+          paymentMethod: citizen.ubiStatus.paymentMethod,
+        },
       });
 
       await citizen.save();
@@ -300,11 +326,13 @@ class UniversalBasicIncomeService {
         paymentMonth: paymentMonth,
         transactionHash: blockchainTxHash,
         totalReceived: citizen.ubiStatus.totalReceived,
-        paymentsCount: citizen.ubiStatus.paymentsCount
+        paymentsCount: citizen.ubiStatus.paymentsCount,
       };
-
     } catch (error) {
-      logger.error(`Error processing payment for citizen ${citizen.citizenId}:`, error);
+      logger.error(
+        `Error processing payment for citizen ${citizen.citizenId}:`,
+        error
+      );
       throw error;
     }
   }
@@ -319,7 +347,7 @@ class UniversalBasicIncomeService {
   async processPaymentThroughPayroll(citizen, amount, paymentDate) {
     // Integration with existing payroll system
     // This would connect to JPMorgan, QuickBooks, etc.
-    
+
     const paymentData = {
       recipientId: citizen.citizenId,
       recipientName: citizen.fullName,
@@ -331,7 +359,7 @@ class UniversalBasicIncomeService {
       bankName: citizen.bankingInfo.bankName,
       paymentDate: paymentDate,
       description: `Universal Basic Income - ${paymentDate.toISOString().slice(0, 7)}`,
-      category: 'UBI_PAYMENT'
+      category: 'UBI_PAYMENT',
     };
 
     // Simulate payment processing (replace with actual integration)
@@ -341,7 +369,7 @@ class UniversalBasicIncomeService {
           success: true,
           transactionId: `UBI-${Date.now()}-${citizen.citizenId}`,
           amount: amount,
-          status: 'completed'
+          status: 'completed',
         });
       }, 100);
     });
@@ -359,7 +387,7 @@ class UniversalBasicIncomeService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
@@ -370,7 +398,7 @@ class UniversalBasicIncomeService {
         citizen: {
           citizenId: citizen.citizenId,
           fullName: citizen.fullName,
-          age: citizen.age
+          age: citizen.age,
         },
         ubiStatus: citizen.ubiStatus,
         eligibility: eligibility,
@@ -380,16 +408,15 @@ class UniversalBasicIncomeService {
           military: citizen.educationStatus.military.completed,
           law: citizen.educationStatus.law.completed,
           tech: citizen.educationStatus.tech.completed,
-          agriculture: citizen.educationStatus.agriculture.completed
+          agriculture: citizen.educationStatus.agriculture.completed,
         },
-        verification: citizen.verification
+        verification: citizen.verification,
       };
-
     } catch (error) {
       logger.error('Error getting citizen UBI status:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -408,14 +435,14 @@ class UniversalBasicIncomeService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
       citizen.ubiStatus.suspended = true;
       citizen.ubiStatus.suspensionReason = reason;
       citizen.ubiStatus.suspensionDate = new Date();
-      
+
       // Set grace period (30 days)
       const gracePeriodEnd = new Date();
       gracePeriodEnd.setDate(gracePeriodEnd.getDate() + 30);
@@ -425,7 +452,7 @@ class UniversalBasicIncomeService {
         action: 'UBI_SUSPENDED',
         performedBy: userId,
         timestamp: new Date(),
-        details: { reason: reason }
+        details: { reason: reason },
       });
 
       await citizen.save();
@@ -437,14 +464,13 @@ class UniversalBasicIncomeService {
         message: 'UBI payments suspended',
         citizenId: citizenId,
         suspensionReason: reason,
-        gracePeriodEnd: gracePeriodEnd
+        gracePeriodEnd: gracePeriodEnd,
       };
-
     } catch (error) {
       logger.error('Error suspending UBI:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -462,16 +488,19 @@ class UniversalBasicIncomeService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
       // Check if eligible for reinstatement
       const eligibility = citizen.checkUBIEligibility();
-      if (!eligibility.eligible && eligibility.reason !== citizen.ubiStatus.suspensionReason) {
+      if (
+        !eligibility.eligible &&
+        eligibility.reason !== citizen.ubiStatus.suspensionReason
+      ) {
         return {
           success: false,
-          error: `Cannot reinstate: ${eligibility.reason}`
+          error: `Cannot reinstate: ${eligibility.reason}`,
         };
       }
 
@@ -484,7 +513,7 @@ class UniversalBasicIncomeService {
         action: 'UBI_REINSTATED',
         performedBy: userId,
         timestamp: new Date(),
-        details: { previousSuspension: citizen.ubiStatus.suspensionReason }
+        details: { previousSuspension: citizen.ubiStatus.suspensionReason },
       });
 
       await citizen.save();
@@ -494,14 +523,13 @@ class UniversalBasicIncomeService {
       return {
         success: true,
         message: 'UBI payments reinstated',
-        citizenId: citizenId
+        citizenId: citizenId,
       };
-
     } catch (error) {
       logger.error('Error reinstating UBI:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -516,15 +544,15 @@ class UniversalBasicIncomeService {
       const eligibleCitizens = await Citizen.countDocuments({
         status: 'active',
         'ubiStatus.eligible': true,
-        'ubiStatus.suspended': false
+        'ubiStatus.suspended': false,
       });
       const suspendedCitizens = await Citizen.countDocuments({
-        'ubiStatus.suspended': true
+        'ubiStatus.suspended': true,
       });
 
       const totalDisbursed = await Citizen.aggregate([
         { $match: { status: 'active' } },
-        { $group: { _id: null, total: { $sum: '$ubiStatus.totalReceived' } } }
+        { $group: { _id: null, total: { $sum: '$ubiStatus.totalReceived' } } },
       ]);
 
       const monthlyBudget = eligibleCitizens * this.MONTHLY_UBI_AMOUNT;
@@ -537,33 +565,33 @@ class UniversalBasicIncomeService {
             total: totalCitizens,
             eligible: eligibleCitizens,
             suspended: suspendedCitizens,
-            eligibilityRate: ((eligibleCitizens / totalCitizens) * 100).toFixed(2) + '%'
+            eligibilityRate:
+              ((eligibleCitizens / totalCitizens) * 100).toFixed(2) + '%',
           },
           payments: {
             totalProcessed: this.totalPaymentsProcessed,
             totalDisbursed: totalDisbursed[0]?.total || 0,
             monthlyBudget: monthlyBudget,
-            annualBudget: annualBudget
+            annualBudget: annualBudget,
           },
           amounts: {
             perCitizen: {
               monthly: this.MONTHLY_UBI_AMOUNT,
-              annual: this.ANNUAL_UBI_AMOUNT
+              annual: this.ANNUAL_UBI_AMOUNT,
             },
             total: {
               monthly: monthlyBudget,
-              annual: annualBudget
-            }
+              annual: annualBudget,
+            },
           },
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
-
     } catch (error) {
       logger.error('Error getting system statistics:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -614,7 +642,7 @@ class UniversalBasicIncomeService {
 
     return {
       valid: errors.length === 0,
-      errors: errors
+      errors: errors,
     };
   }
 
@@ -632,9 +660,9 @@ class UniversalBasicIncomeService {
       paymentSchedule: this.paymentSchedule,
       amounts: {
         monthly: this.MONTHLY_UBI_AMOUNT,
-        annual: this.ANNUAL_UBI_AMOUNT
+        annual: this.ANNUAL_UBI_AMOUNT,
       },
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     };
   }
 }

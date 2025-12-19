@@ -15,6 +15,9 @@ module.exports = {
       tsconfig: 'tsconfig.json',
     },
   },
-  testMatch: ["<rootDir>/earnings_dashboard/**/*.test.{ts,tsx,js,jsx}", "<rootDir>/**/*.test.{ts,tsx,js,jsx}"],
-  testEnvironment: "node"
+  testMatch: [
+    '<rootDir>/earnings_dashboard/**/*.test.{ts,tsx,js,jsx}',
+    '<rootDir>/**/*.test.{ts,tsx,js,jsx}',
+  ],
+  testEnvironment: 'node',
 };

@@ -23,7 +23,7 @@ export class BlockchainLedger {
       previousHash: '0',
       hash: '',
       nonce: 0,
-      merkleRoot: this.calculateMerkleRoot([])
+      merkleRoot: this.calculateMerkleRoot([]),
     };
 
     genesisBlock.hash = this.calculateHash(genesisBlock);
@@ -50,7 +50,11 @@ export class BlockchainLedger {
 
   // Mine pending transactions into a new block
   minePendingTransactions(miningRewardAddress) {
-    const rewardTx = new Transaction(null, miningRewardAddress, this.miningReward);
+    const rewardTx = new Transaction(
+      null,
+      miningRewardAddress,
+      this.miningReward
+    );
     this.pendingTransactions.push(rewardTx);
 
     const block = new Block(
@@ -73,11 +77,11 @@ export class BlockchainLedger {
     const hash = new SHA3(256);
     hash.update(
       block.index +
-      block.previousHash +
-      block.timestamp +
-      JSON.stringify(block.transactions) +
-      block.nonce +
-      block.merkleRoot
+        block.previousHash +
+        block.timestamp +
+        JSON.stringify(block.transactions) +
+        block.nonce +
+        block.merkleRoot
     );
     return hash.digest('hex');
   }
@@ -86,7 +90,7 @@ export class BlockchainLedger {
   calculateMerkleRoot(transactions) {
     if (transactions.length === 0) return '0';
 
-    const leaves = transactions.map(tx => tx.calculateHash());
+    const leaves = transactions.map((tx) => tx.calculateHash());
     const hashFunction = (data) => {
       const hash = new SHA3(256);
       hash.update(data);
@@ -113,7 +117,10 @@ export class BlockchainLedger {
       }
 
       // Verify Merkle root
-      if (currentBlock.merkleRoot !== this.calculateMerkleRoot(currentBlock.transactions)) {
+      if (
+        currentBlock.merkleRoot !==
+        this.calculateMerkleRoot(currentBlock.transactions)
+      ) {
         return false;
       }
 
@@ -138,7 +145,7 @@ export class BlockchainLedger {
             timestamp: block.timestamp,
             transaction: transaction,
             merkleRoot: block.merkleRoot,
-            verified: this.verifyTransactionInBlock(transaction, block)
+            verified: this.verifyTransactionInBlock(transaction, block),
           });
         }
       }
@@ -150,7 +157,7 @@ export class BlockchainLedger {
   // Verify a transaction exists in a specific block
   verifyTransactionInBlock(transaction, block) {
     const transactionHash = transaction.calculateHash();
-    const leaves = block.transactions.map(tx => tx.calculateHash());
+    const leaves = block.transactions.map((tx) => tx.calculateHash());
     const hashFunction = (data) => {
       const hash = new SHA3(256);
       hash.update(data);
@@ -158,17 +165,23 @@ export class BlockchainLedger {
     };
     const tree = new MerkleTree(leaves, hashFunction);
 
-    return tree.verify(Buffer.from(transactionHash, 'hex'), Buffer.from(block.merkleRoot, 'hex'));
+    return tree.verify(
+      Buffer.from(transactionHash, 'hex'),
+      Buffer.from(block.merkleRoot, 'hex')
+    );
   }
 
   // Get blockchain statistics
   getStats() {
     return {
       totalBlocks: this.chain.length,
-      totalTransactions: this.chain.reduce((sum, block) => sum + block.transactions.length, 0),
+      totalTransactions: this.chain.reduce(
+        (sum, block) => sum + block.transactions.length,
+        0
+      ),
       pendingTransactions: this.pendingTransactions.length,
       difficulty: this.difficulty,
-      isValid: this.isChainValid()
+      isValid: this.isChainValid(),
     };
   }
 }
@@ -202,11 +215,11 @@ export class Block {
     const hash = new SHA3(256);
     hash.update(
       this.index +
-      this.previousHash +
-      this.timestamp +
-      JSON.stringify(this.transactions) +
-      this.nonce +
-      this.merkleRoot
+        this.previousHash +
+        this.timestamp +
+        JSON.stringify(this.transactions) +
+        this.nonce +
+        this.merkleRoot
     );
     return hash.digest('hex');
   }
@@ -215,7 +228,7 @@ export class Block {
   calculateMerkleRoot() {
     if (this.transactions.length === 0) return '0';
 
-    const leaves = this.transactions.map(tx => tx.calculateHash());
+    const leaves = this.transactions.map((tx) => tx.calculateHash());
     const hashFunction = (data) => {
       const hash = new SHA3(256);
       hash.update(data);
@@ -248,10 +261,10 @@ export class Transaction {
     const hash = new SHA3(256);
     hash.update(
       this.fromAddress +
-      this.toAddress +
-      this.amount +
-      this.timestamp +
-      JSON.stringify(this.data)
+        this.toAddress +
+        this.amount +
+        this.timestamp +
+        JSON.stringify(this.data)
     );
     return hash.digest('hex');
   }

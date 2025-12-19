@@ -14,22 +14,28 @@ const logger = winston.createLogger({
   ),
   defaultMeta: { service: 'database-enhanced' },
   transports: [
-    new winston.transports.File({ filename: 'logs/database-error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/database.log' })
-  ]
+    new winston.transports.File({
+      filename: 'logs/database-error.log',
+      level: 'error',
+    }),
+    new winston.transports.File({ filename: 'logs/database.log' }),
+  ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 class EnhancedDatabase {
   maxRetries = Number.parseInt(process.env.DB_MAX_RETRIES) || 5;
   retryDelay = Number.parseInt(process.env.DB_RETRY_DELAY) || 1000; // Start with 1 second
   maxRetryDelay = 30000; // Max 30 seconds
-  connectionTimeout = Number.parseInt(process.env.DB_CONNECTION_TIMEOUT) || 30000;
+  connectionTimeout =
+    Number.parseInt(process.env.DB_CONNECTION_TIMEOUT) || 30000;
   isConnected = false;
   connection = null;
   retryCount = 0;
@@ -42,7 +48,7 @@ class EnhancedDatabase {
     successfulConnections: 0,
     failedConnections: 0,
     lastConnectionTime: null,
-    uptime: 0
+    uptime: 0,
   };
   healthCheckInterval = null;
   reconnectOnFailure = process.env.DB_RECONNECT_ON_FAILURE !== 'false';
@@ -64,15 +70,20 @@ class EnhancedDatabase {
         maxPoolSize: Number.parseInt(process.env.DB_MAX_POOL_SIZE) || 20,
         minPoolSize: Number.parseInt(process.env.DB_MIN_POOL_SIZE) || 5,
         maxIdleTimeMS: Number.parseInt(process.env.DB_MAX_IDLE_TIME) || 30000,
-        serverSelectionTimeoutMS: Number.parseInt(process.env.DB_SERVER_SELECTION_TIMEOUT) || 5000,
-        socketTimeoutMS: Number.parseInt(process.env.DB_SOCKET_TIMEOUT) || 45000,
+        serverSelectionTimeoutMS:
+          Number.parseInt(process.env.DB_SERVER_SELECTION_TIMEOUT) || 5000,
+        socketTimeoutMS:
+          Number.parseInt(process.env.DB_SOCKET_TIMEOUT) || 45000,
         bufferCommands: false,
         family: 4,
         readPreference: process.env.DB_READ_PREFERENCE || 'primaryPreferred',
         retryWrites: process.env.DB_RETRY_WRITES !== 'false',
         retryReads: process.env.DB_RETRY_READS !== 'false',
-        heartbeatFrequencyMS: Number.parseInt(process.env.DB_HEARTBEAT_FREQUENCY) || 10000,
-        compressors: process.env.DB_COMPRESSORS ? process.env.DB_COMPRESSORS.split(',') : ['zlib'],
+        heartbeatFrequencyMS:
+          Number.parseInt(process.env.DB_HEARTBEAT_FREQUENCY) || 10000,
+        compressors: process.env.DB_COMPRESSORS
+          ? process.env.DB_COMPRESSORS.split(',')
+          : ['zlib'],
         zlibCompressionLevel: Number.parseInt(process.env.DB_ZLIB_LEVEL) || 6,
         // Connection monitoring
         monitorCommands: process.env.DB_MONITOR_COMMANDS === 'true',
@@ -83,7 +94,7 @@ class EnhancedDatabase {
         sslKey: process.env.DB_SSL_KEY,
         // Authentication
         authSource: process.env.DB_AUTH_SOURCE || 'admin',
-        authMechanism: process.env.DB_AUTH_MECHANISM || 'SCRAM-SHA-256'
+        authMechanism: process.env.DB_AUTH_MECHANISM || 'SCRAM-SHA-256',
       };
 
       // Add replica set options if configured
@@ -103,7 +114,7 @@ class EnhancedDatabase {
 
       logger.info('Attempting database connection', {
         uri: this.maskConnectionString(mongoURI),
-        options: { ...options, pass: options.pass ? '***' : undefined }
+        options: { ...options, pass: options.pass ? '***' : undefined },
       });
 
       this.connection = await mongoose.connect(mongoURI, options);
@@ -119,7 +130,7 @@ class EnhancedDatabase {
         name: this.connection.connection.name,
         maxPoolSize: options.maxPoolSize,
         minPoolSize: options.minPoolSize,
-        readPreference: options.readPreference
+        readPreference: options.readPreference,
       });
 
       // Set up enhanced connection event listeners
@@ -137,7 +148,7 @@ class EnhancedDatabase {
       logger.error('MongoDB connection failed', {
         error: error.message,
         retryCount: this.retryCount,
-        maxRetries: this.maxRetries
+        maxRetries: this.maxRetries,
       });
 
       if (this.reconnectOnFailure && this.retryCount < this.maxRetries) {
@@ -175,11 +186,16 @@ class EnhancedDatabase {
 
   async retryConnection() {
     this.retryCount++;
-    const delay = Math.min(this.retryDelay * Math.pow(2, this.retryCount - 1), this.maxRetryDelay);
+    const delay = Math.min(
+      this.retryDelay * Math.pow(2, this.retryCount - 1),
+      this.maxRetryDelay
+    );
 
-    logger.info(`Retrying database connection in ${delay}ms (attempt ${this.retryCount}/${this.maxRetries})`);
+    logger.info(
+      `Retrying database connection in ${delay}ms (attempt ${this.retryCount}/${this.maxRetries})`
+    );
 
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
     return this.connect();
   }
 
@@ -228,14 +244,17 @@ class EnhancedDatabase {
       // Log slow queries with more detail
       setImmediate(() => {
         const duration = Date.now() - startTime;
-        if (duration > (Number.parseInt(process.env.DB_SLOW_QUERY_THRESHOLD) || 100)) {
+        if (
+          duration >
+          (Number.parseInt(process.env.DB_SLOW_QUERY_THRESHOLD) || 100)
+        ) {
           this.performanceMetrics.slowQueries++;
           logger.warn('Slow query detected', {
             collection: collectionName,
             method: methodName,
             duration,
             args: args.length > 0 ? this.sanitizeQueryArgs(args[0]) : null,
-            connectionPool: this.getConnectionPoolStats()
+            connectionPool: this.getConnectionPoolStats(),
           });
         }
 
@@ -250,7 +269,14 @@ class EnhancedDatabase {
     // Remove sensitive data from query logs
     if (typeof args === 'object' && args !== null) {
       const sanitized = { ...args };
-      const sensitiveFields = ['password', 'token', 'secret', 'key', 'ssn', 'creditCard'];
+      const sensitiveFields = [
+        'password',
+        'token',
+        'secret',
+        'key',
+        'ssn',
+        'creditCard',
+      ];
 
       for (const field of sensitiveFields) {
         if (sanitized[field]) {
@@ -264,7 +290,8 @@ class EnhancedDatabase {
   }
 
   startHealthMonitoring() {
-    const interval = Number.parseInt(process.env.DB_HEALTH_CHECK_INTERVAL) || 30000; // 30 seconds
+    const interval =
+      Number.parseInt(process.env.DB_HEALTH_CHECK_INTERVAL) || 30000; // 30 seconds
 
     this.healthCheckInterval = setInterval(async () => {
       try {
@@ -275,7 +302,8 @@ class EnhancedDatabase {
 
           // Update uptime
           if (this.performanceMetrics.lastConnectionTime) {
-            this.performanceMetrics.uptime = Date.now() - this.performanceMetrics.lastConnectionTime;
+            this.performanceMetrics.uptime =
+              Date.now() - this.performanceMetrics.lastConnectionTime;
           }
 
           // Log if latency is high
@@ -313,7 +341,7 @@ class EnhancedDatabase {
           status: 'disconnected',
           latency: null,
           retryCount: this.retryCount,
-          maxRetries: this.maxRetries
+          maxRetries: this.maxRetries,
         };
       }
 
@@ -334,13 +362,15 @@ class EnhancedDatabase {
         performance: {
           queryCount: this.performanceMetrics.queryCount,
           slowQueries: this.performanceMetrics.slowQueries,
-          averageQueryTime: Math.round(this.performanceMetrics.averageQueryTime),
+          averageQueryTime: Math.round(
+            this.performanceMetrics.averageQueryTime
+          ),
           connectionPool: poolStats,
           uptime: this.performanceMetrics.uptime,
           connectionAttempts: this.performanceMetrics.connectionAttempts,
           successfulConnections: this.performanceMetrics.successfulConnections,
-          failedConnections: this.performanceMetrics.failedConnections
-        }
+          failedConnections: this.performanceMetrics.failedConnections,
+        },
       };
     } catch (error) {
       logger.error('Database health check failed', { error: error.message });
@@ -348,7 +378,7 @@ class EnhancedDatabase {
         status: 'error',
         error: error.message,
         retryCount: this.retryCount,
-        maxRetries: this.maxRetries
+        maxRetries: this.maxRetries,
       };
     }
   }
@@ -360,15 +390,17 @@ class EnhancedDatabase {
         poolSize: stats.connections?.current || 0,
         available: stats.connections?.available || 0,
         created: stats.connections?.totalCreated || 0,
-        active: stats.connections?.active || 0
+        active: stats.connections?.active || 0,
       };
     } catch (error) {
-      logger.warn('Failed to get connection pool stats', { error: error.message });
+      logger.warn('Failed to get connection pool stats', {
+        error: error.message,
+      });
       return {
         poolSize: 0,
         available: 0,
         created: 0,
-        active: 0
+        active: 0,
       };
     }
   }
@@ -382,7 +414,7 @@ class EnhancedDatabase {
         dataSize: stats.dataSize || 0,
         storageSize: stats.storageSize || 0,
         indexes: stats.indexes || 0,
-        indexSize: stats.indexSize || 0
+        indexSize: stats.indexSize || 0,
       };
     } catch (error) {
       logger.warn('Failed to get database stats', { error: error.message });
@@ -397,35 +429,56 @@ class EnhancedDatabase {
   // Database maintenance methods
   async createIndexes(model, indexes) {
     try {
-      const collection = mongoose.connection.db.collection(model.collection.name);
+      const collection = mongoose.connection.db.collection(
+        model.collection.name
+      );
       await collection.createIndexes(indexes);
-      logger.info('Indexes created successfully', { model: model.modelName, indexes: indexes.length });
+      logger.info('Indexes created successfully', {
+        model: model.modelName,
+        indexes: indexes.length,
+      });
     } catch (error) {
-      logger.error('Failed to create indexes', { error: error.message, model: model.modelName });
+      logger.error('Failed to create indexes', {
+        error: error.message,
+        model: model.modelName,
+      });
       throw error;
     }
   }
 
   async dropIndexes(model, indexNames) {
     try {
-      const collection = mongoose.connection.db.collection(model.collection.name);
+      const collection = mongoose.connection.db.collection(
+        model.collection.name
+      );
       for (const indexName of indexNames) {
         await collection.dropIndex(indexName);
       }
-      logger.info('Indexes dropped successfully', { model: model.modelName, indexes: indexNames.length });
+      logger.info('Indexes dropped successfully', {
+        model: model.modelName,
+        indexes: indexNames.length,
+      });
     } catch (error) {
-      logger.error('Failed to drop indexes', { error: error.message, model: model.modelName });
+      logger.error('Failed to drop indexes', {
+        error: error.message,
+        model: model.modelName,
+      });
       throw error;
     }
   }
 
   async optimizeCollection(model) {
     try {
-      const collection = mongoose.connection.db.collection(model.collection.name);
+      const collection = mongoose.connection.db.collection(
+        model.collection.name
+      );
       await collection.compact();
       logger.info('Collection optimized', { model: model.modelName });
     } catch (error) {
-      logger.error('Failed to optimize collection', { error: error.message, model: model.modelName });
+      logger.error('Failed to optimize collection', {
+        error: error.message,
+        model: model.modelName,
+      });
       throw error;
     }
   }
@@ -469,7 +522,10 @@ class EnhancedDatabase {
       logger.info('Switched to database', { database: dbName });
       return this.connection;
     } catch (error) {
-      logger.error('Failed to switch database', { error: error.message, database: dbName });
+      logger.error('Failed to switch database', {
+        error: error.message,
+        database: dbName,
+      });
       throw error;
     }
   }

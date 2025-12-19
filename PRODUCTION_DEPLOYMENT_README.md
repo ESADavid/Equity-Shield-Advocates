@@ -7,12 +7,14 @@ This guide provides comprehensive instructions for deploying the Oscar Broome Re
 ## 📋 Prerequisites
 
 ### System Requirements
+
 - **Node.js**: 14.0.0 or higher (16+ recommended)
 - **Memory**: Minimum 512MB RAM, 1GB recommended
 - **Storage**: 500MB free space
 - **Network**: Stable internet connection for external API calls
 
 ### Required Credentials
+
 Before deployment, ensure you have the following credentials configured:
 
 1. **Stripe Account** (for payment processing)
@@ -35,11 +37,13 @@ Before deployment, ensure you have the following credentials configured:
 ### Method 1: Automated Production Deployment (Recommended)
 
 1. **Navigate to project directory:**
+
    ```bash
    cd OSCAR-BROOME-REVENUE
    ```
 
 2. **Run the production deployment script:**
+
    ```bash
    node production_deploy.js
    ```
@@ -58,11 +62,13 @@ Before deployment, ensure you have the following credentials configured:
 ### Method 2: Manual Deployment
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Configure environment:**
+
    ```bash
    # Copy and edit environment file
    cp .env.example .env
@@ -70,6 +76,7 @@ Before deployment, ensure you have the following credentials configured:
    ```
 
 3. **Start with PM2:**
+
    ```bash
    # Install PM2 globally (if not already installed)
    npm install -g pm2
@@ -89,18 +96,21 @@ Before deployment, ensure you have the following credentials configured:
 The production deployment includes:
 
 ### 🔒 Security Features
+
 - **Helmet.js**: Security headers and XSS protection
 - **Rate Limiting**: 100 requests per 15 minutes per IP
 - **CORS**: Configured for allowed origins
 - **Input Validation**: Comprehensive request validation
 
 ### 📈 Performance Features
+
 - **Compression**: GZIP compression for responses
 - **Clustering**: PM2 process management
 - **Logging**: Request logging to files
 - **Error Handling**: Graceful error responses
 
 ### 🛡️ Reliability Features
+
 - **Health Checks**: `/health` endpoint for monitoring
 - **Graceful Shutdown**: Proper cleanup on termination
 - **Process Monitoring**: PM2 monitoring and auto-restart
@@ -142,22 +152,24 @@ The system uses PM2 for process management. You can create a custom PM2 configur
 ```javascript
 // ecosystem.config.js
 module.exports = {
-  apps: [{
-    name: 'oscar-broome-revenue',
-    script: 'server-enhanced.js',
-    instances: 1,
-    autorestart: true,
-    watch: false,
-    max_memory_restart: '1G',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000
+  apps: [
+    {
+      name: 'oscar-broome-revenue',
+      script: 'server-enhanced.js',
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3000,
+      },
+      error_file: './logs/err.log',
+      out_file: './logs/out.log',
+      log_file: './logs/combined.log',
+      time: true,
     },
-    error_file: './logs/err.log',
-    out_file: './logs/out.log',
-    log_file: './logs/combined.log',
-    time: true
-  }]
+  ],
 };
 ```
 
@@ -166,21 +178,25 @@ module.exports = {
 Once deployed, the following endpoints are available:
 
 ### Health & Status
+
 - `GET /health` - Health check endpoint
 - `GET /api/status` - System status and configuration
 
 ### Merchant Bill Pay
+
 - `POST /api/merchant/create-payment` - Create payment intent
 - `POST /api/merchant/send-success-notification` - Send success notification
 - `POST /api/merchant/send-failure-notification` - Send failure notification
 - `POST /api/merchant/send-sms` - Send SMS notification
 
 ### Webhooks
+
 - `POST /api/webhooks/stripe` - Stripe webhook endpoint
 
 ## 📊 Monitoring & Maintenance
 
 ### PM2 Commands
+
 ```bash
 # View logs
 pm2 logs oscar-broome-revenue
@@ -199,11 +215,13 @@ pm2 status
 ```
 
 ### Log Files
+
 - `./logs/access.log` - HTTP request logs
 - `./logs/error.log` - Application error logs
 - `./logs/combined.log` - All logs combined
 
 ### Health Monitoring
+
 - Use `/health` endpoint for automated health checks
 - Monitor PM2 status for process health
 - Check log files for errors and warnings
@@ -211,12 +229,15 @@ pm2 status
 ## 🔄 Updates & Maintenance
 
 ### Updating the Application
+
 1. **Stop the current version:**
+
    ```bash
    pm2 stop oscar-broome-revenue
    ```
 
 2. **Update the code:**
+
    ```bash
    git pull origin main
    npm install
@@ -228,6 +249,7 @@ pm2 status
    ```
 
 ### Backup Strategy
+
 - **Code**: Use Git for version control
 - **Logs**: Archive log files regularly
 - **Configuration**: Backup `.env` file securely
@@ -238,6 +260,7 @@ pm2 status
 ### Common Issues
 
 1. **Port Already in Use**
+
    ```bash
    # Find process using port 3000
    netstat -tulpn | grep :3000
@@ -245,11 +268,13 @@ pm2 status
    ```
 
 2. **PM2 Not Found**
+
    ```bash
    npm install -g pm2
    ```
 
 3. **Missing Dependencies**
+
    ```bash
    rm -rf node_modules package-lock.json
    npm install
@@ -261,7 +286,9 @@ pm2 status
    - Restart the application after changes
 
 ### Debug Mode
+
 For troubleshooting, you can run in debug mode:
+
 ```bash
 NODE_ENV=development npm start
 ```
@@ -269,6 +296,7 @@ NODE_ENV=development npm start
 ## 📞 Support
 
 For production deployment support:
+
 1. Check the logs: `pm2 logs oscar-broome-revenue`
 2. Review system status: Visit `/api/status` endpoint
 3. Check health: Visit `/health` endpoint

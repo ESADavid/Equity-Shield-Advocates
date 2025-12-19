@@ -1,7 +1,16 @@
 import express from 'express';
 import tenantService from '../services/tenantService.js';
-import { authenticate, requireRole, requirePermission } from '../middleware/auth.js';
-import { resolveTenant, requireFeature, checkLimits, logTenantActivity } from '../middleware/tenant.js';
+import {
+  authenticate,
+  requireRole,
+  requirePermission,
+} from '../middleware/auth.js';
+import {
+  resolveTenant,
+  requireFeature,
+  checkLimits,
+  logTenantActivity,
+} from '../middleware/tenant.js';
 import winston from 'winston';
 
 const router = express.Router();
@@ -14,14 +23,19 @@ const logger = winston.createLogger({
   defaultMeta: { service: 'tenant-routes' },
   transports: [
     new winston.transports.File({ filename: 'logs/tenant-routes.log' }),
-    new winston.transports.File({ filename: 'logs/tenant-routes-error.log', level: 'error' })
-  ]
+    new winston.transports.File({
+      filename: 'logs/tenant-routes-error.log',
+      level: 'error',
+    }),
+  ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 // Apply tenant resolution to all routes
@@ -29,37 +43,38 @@ router.use(resolveTenant);
 router.use(logTenantActivity('tenant-api-access'));
 
 // Get current tenant information
-router.get('/current',
-  authenticate,
-  async (req, res) => {
-    try {
-      const tenant = req.tenant;
-      const usage = await tenantService.getTenantUsage(tenant.tenantId);
+router.get('/current', authenticate, async (req, res) => {
+  try {
+    const tenant = req.tenant;
+    const usage = await tenantService.getTenantUsage(tenant.tenantId);
 
-      res.json({
-        success: true,
-        tenant: {
-          tenantId: tenant.tenantId,
-          name: tenant.name,
-          domain: tenant.domain,
-          status: tenant.status,
-          settings: tenant.settings,
-          subscription: tenant.subscription,
-          usage
-        }
-      });
-    } catch (error) {
-      logger.error('Error getting current tenant', { error: error.message, tenantId: req.tenant?.tenantId });
-      res.status(500).json({
-        success: false,
-        message: 'Failed to get tenant information'
-      });
-    }
+    res.json({
+      success: true,
+      tenant: {
+        tenantId: tenant.tenantId,
+        name: tenant.name,
+        domain: tenant.domain,
+        status: tenant.status,
+        settings: tenant.settings,
+        subscription: tenant.subscription,
+        usage,
+      },
+    });
+  } catch (error) {
+    logger.error('Error getting current tenant', {
+      error: error.message,
+      tenantId: req.tenant?.tenantId,
+    });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get tenant information',
+    });
   }
-);
+});
 
 // Get tenant usage statistics
-router.get('/usage',
+router.get(
+  '/usage',
   authenticate,
   requirePermission('tenant.view'),
   async (req, res) => {
@@ -68,47 +83,55 @@ router.get('/usage',
 
       res.json({
         success: true,
-        usage
+        usage,
       });
     } catch (error) {
-      logger.error('Error getting tenant usage', { error: error.message, tenantId: req.tenant.tenantId });
+      logger.error('Error getting tenant usage', {
+        error: error.message,
+        tenantId: req.tenant.tenantId,
+      });
       res.status(500).json({
         success: false,
-        message: 'Failed to get usage statistics'
+        message: 'Failed to get usage statistics',
       });
     }
   }
 );
 
 // Check tenant limits
-router.get('/limits/:type',
+router.get(
+  '/limits/:type',
   authenticate,
   requirePermission('tenant.view'),
   async (req, res) => {
     try {
       const { type } = req.params;
-      const limits = await tenantService.checkTenantLimits(req.tenant.tenantId, type);
+      const limits = await tenantService.checkTenantLimits(
+        req.tenant.tenantId,
+        type
+      );
 
       res.json({
         success: true,
-        limits
+        limits,
       });
     } catch (error) {
       logger.error('Error checking tenant limits', {
         error: error.message,
         tenantId: req.tenant.tenantId,
-        type: req.params.type
+        type: req.params.type,
       });
       res.status(500).json({
         success: false,
-        message: 'Failed to check limits'
+        message: 'Failed to check limits',
       });
     }
   }
 );
 
 // Update tenant settings (admin only)
-router.put('/settings',
+router.put(
+  '/settings',
   authenticate,
   requireRole('admin'),
   requirePermission('tenant.update'),
@@ -119,7 +142,7 @@ router.put('/settings',
       if (!settings) {
         return res.status(400).json({
           success: false,
-          message: 'Settings data is required'
+          message: 'Settings data is required',
         });
       }
 
@@ -132,7 +155,7 @@ router.put('/settings',
       logger.info('Tenant settings updated', {
         tenantId: req.tenant.tenantId,
         updatedBy: req.user._id,
-        settingsKeys: Object.keys(settings)
+        settingsKeys: Object.keys(settings),
       });
 
       res.json({
@@ -140,25 +163,26 @@ router.put('/settings',
         message: 'Tenant settings updated successfully',
         tenant: {
           tenantId: updatedTenant.tenantId,
-          settings: updatedTenant.settings
-        }
+          settings: updatedTenant.settings,
+        },
       });
     } catch (error) {
       logger.error('Error updating tenant settings', {
         error: error.message,
         tenantId: req.tenant.tenantId,
-        userId: req.user._id
+        userId: req.user._id,
       });
       res.status(500).json({
         success: false,
-        message: 'Failed to update tenant settings'
+        message: 'Failed to update tenant settings',
       });
     }
   }
 );
 
 // Create API key for tenant
-router.post('/api-keys',
+router.post(
+  '/api-keys',
   authenticate,
   requireRole('admin'),
   requirePermission('tenant.api-keys.create'),
@@ -169,7 +193,7 @@ router.post('/api-keys',
       if (!name) {
         return res.status(400).json({
           success: false,
-          message: 'API key name is required'
+          message: 'API key name is required',
         });
       }
 
@@ -180,7 +204,7 @@ router.post('/api-keys',
         permissions: permissions || ['read'],
         createdAt: new Date(),
         lastUsed: null,
-        isActive: true
+        isActive: true,
       };
 
       tenant.apiKeys.push(apiKey);
@@ -189,7 +213,7 @@ router.post('/api-keys',
       logger.info('API key created for tenant', {
         tenantId: req.tenant.tenantId,
         keyName: name,
-        createdBy: req.user._id
+        createdBy: req.user._id,
       });
 
       res.json({
@@ -199,25 +223,26 @@ router.post('/api-keys',
           name: apiKey.name,
           permissions: apiKey.permissions,
           createdAt: apiKey.createdAt,
-          isActive: apiKey.isActive
-        }
+          isActive: apiKey.isActive,
+        },
       });
     } catch (error) {
       logger.error('Error creating API key', {
         error: error.message,
         tenantId: req.tenant.tenantId,
-        userId: req.user._id
+        userId: req.user._id,
       });
       res.status(500).json({
         success: false,
-        message: 'Failed to create API key'
+        message: 'Failed to create API key',
       });
     }
   }
 );
 
 // List API keys for tenant
-router.get('/api-keys',
+router.get(
+  '/api-keys',
   authenticate,
   requireRole('admin'),
   requirePermission('tenant.api-keys.view'),
@@ -225,34 +250,35 @@ router.get('/api-keys',
     try {
       const tenant = await tenantService.getTenantById(req.tenant.tenantId);
 
-      const apiKeys = tenant.apiKeys.map(key => ({
+      const apiKeys = tenant.apiKeys.map((key) => ({
         name: key.name,
         permissions: key.permissions,
         createdAt: key.createdAt,
         lastUsed: key.lastUsed,
-        isActive: key.isActive
+        isActive: key.isActive,
       }));
 
       res.json({
         success: true,
-        apiKeys
+        apiKeys,
       });
     } catch (error) {
       logger.error('Error listing API keys', {
         error: error.message,
         tenantId: req.tenant.tenantId,
-        userId: req.user._id
+        userId: req.user._id,
       });
       res.status(500).json({
         success: false,
-        message: 'Failed to list API keys'
+        message: 'Failed to list API keys',
       });
     }
   }
 );
 
 // Delete API key
-router.delete('/api-keys/:keyName',
+router.delete(
+  '/api-keys/:keyName',
   authenticate,
   requireRole('admin'),
   requirePermission('tenant.api-keys.delete'),
@@ -261,11 +287,13 @@ router.delete('/api-keys/:keyName',
       const { keyName } = req.params;
       const tenant = await tenantService.getTenantById(req.tenant.tenantId);
 
-      const keyIndex = tenant.apiKeys.findIndex(key => key.name === keyName && key.isActive);
+      const keyIndex = tenant.apiKeys.findIndex(
+        (key) => key.name === keyName && key.isActive
+      );
       if (keyIndex === -1) {
         return res.status(404).json({
           success: false,
-          message: 'API key not found'
+          message: 'API key not found',
         });
       }
 
@@ -275,59 +303,60 @@ router.delete('/api-keys/:keyName',
       logger.info('API key deleted', {
         tenantId: req.tenant.tenantId,
         keyName,
-        deletedBy: req.user._id
+        deletedBy: req.user._id,
       });
 
       res.json({
         success: true,
-        message: 'API key deleted successfully'
+        message: 'API key deleted successfully',
       });
     } catch (error) {
       logger.error('Error deleting API key', {
         error: error.message,
         tenantId: req.tenant.tenantId,
         keyName: req.params.keyName,
-        userId: req.user._id
+        userId: req.user._id,
       });
       res.status(500).json({
         success: false,
-        message: 'Failed to delete API key'
+        message: 'Failed to delete API key',
       });
     }
   }
 );
 
 // Check feature access
-router.get('/features/:feature',
-  authenticate,
-  async (req, res) => {
-    try {
-      const { feature } = req.params;
-      const hasAccess = await tenantService.hasFeatureAccess(req.tenant.tenantId, feature);
+router.get('/features/:feature', authenticate, async (req, res) => {
+  try {
+    const { feature } = req.params;
+    const hasAccess = await tenantService.hasFeatureAccess(
+      req.tenant.tenantId,
+      feature
+    );
 
-      res.json({
-        success: true,
-        feature,
-        hasAccess
-      });
-    } catch (error) {
-      logger.error('Error checking feature access', {
-        error: error.message,
-        tenantId: req.tenant.tenantId,
-        feature: req.params.feature
-      });
-      res.status(500).json({
-        success: false,
-        message: 'Failed to check feature access'
-      });
-    }
+    res.json({
+      success: true,
+      feature,
+      hasAccess,
+    });
+  } catch (error) {
+    logger.error('Error checking feature access', {
+      error: error.message,
+      tenantId: req.tenant.tenantId,
+      feature: req.params.feature,
+    });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to check feature access',
+    });
   }
-);
+});
 
 // Admin routes (system admin only)
 
 // Get all tenants (admin only)
-router.get('/admin/all',
+router.get(
+  '/admin/all',
   authenticate,
   requireRole('admin'),
   requirePermission('system.tenants.view'),
@@ -337,20 +366,24 @@ router.get('/admin/all',
 
       res.json({
         success: true,
-        tenants
+        tenants,
       });
     } catch (error) {
-      logger.error('Error getting all tenants', { error: error.message, userId: req.user._id });
+      logger.error('Error getting all tenants', {
+        error: error.message,
+        userId: req.user._id,
+      });
       res.status(500).json({
         success: false,
-        message: 'Failed to get tenants'
+        message: 'Failed to get tenants',
       });
     }
   }
 );
 
 // Create new tenant (admin only)
-router.post('/admin/create',
+router.post(
+  '/admin/create',
   authenticate,
   requireRole('admin'),
   requirePermission('system.tenants.create'),
@@ -359,15 +392,15 @@ router.post('/admin/create',
       const tenantData = {
         ...req.body,
         audit: {
-          createdBy: req.user._id
-        }
+          createdBy: req.user._id,
+        },
       };
 
       const tenant = await tenantService.createTenant(tenantData);
 
       logger.info('New tenant created by admin', {
         newTenantId: tenant.tenantId,
-        createdBy: req.user._id
+        createdBy: req.user._id,
       });
 
       res.status(201).json({
@@ -377,25 +410,26 @@ router.post('/admin/create',
           tenantId: tenant.tenantId,
           name: tenant.name,
           domain: tenant.domain,
-          status: tenant.status
-        }
+          status: tenant.status,
+        },
       });
     } catch (error) {
       logger.error('Error creating tenant', {
         error: error.message,
         userId: req.user._id,
-        tenantData: req.body
+        tenantData: req.body,
       });
       res.status(500).json({
         success: false,
-        message: 'Failed to create tenant'
+        message: 'Failed to create tenant',
       });
     }
   }
 );
 
 // Update tenant (admin only)
-router.put('/admin/:tenantId',
+router.put(
+  '/admin/:tenantId',
   authenticate,
   requireRole('admin'),
   requirePermission('system.tenants.update'),
@@ -404,12 +438,16 @@ router.put('/admin/:tenantId',
       const { tenantId } = req.params;
       const updateData = req.body;
 
-      const tenant = await tenantService.updateTenant(tenantId, updateData, req.user._id);
+      const tenant = await tenantService.updateTenant(
+        tenantId,
+        updateData,
+        req.user._id
+      );
 
       logger.info('Tenant updated by admin', {
         tenantId,
         updatedBy: req.user._id,
-        changes: Object.keys(updateData)
+        changes: Object.keys(updateData),
       });
 
       res.json({
@@ -418,25 +456,26 @@ router.put('/admin/:tenantId',
         tenant: {
           tenantId: tenant.tenantId,
           name: tenant.name,
-          status: tenant.status
-        }
+          status: tenant.status,
+        },
       });
     } catch (error) {
       logger.error('Error updating tenant', {
         error: error.message,
         tenantId: req.params.tenantId,
-        userId: req.user._id
+        userId: req.user._id,
       });
       res.status(500).json({
         success: false,
-        message: 'Failed to update tenant'
+        message: 'Failed to update tenant',
       });
     }
   }
 );
 
 // Suspend/reactivate tenant (admin only)
-router.put('/admin/:tenantId/status',
+router.put(
+  '/admin/:tenantId/status',
   authenticate,
   requireRole('admin'),
   requirePermission('system.tenants.manage'),
@@ -449,7 +488,7 @@ router.put('/admin/:tenantId/status',
       if (!tenant) {
         return res.status(404).json({
           success: false,
-          message: 'Tenant not found'
+          message: 'Tenant not found',
         });
       }
 
@@ -461,7 +500,7 @@ router.put('/admin/:tenantId/status',
       } else {
         return res.status(400).json({
           success: false,
-          message: 'Invalid action. Use "suspend" or "reactivate"'
+          message: 'Invalid action. Use "suspend" or "reactivate"',
         });
       }
 
@@ -469,7 +508,7 @@ router.put('/admin/:tenantId/status',
         tenantId,
         action,
         reason,
-        adminId: req.user._id
+        adminId: req.user._id,
       });
 
       res.json({
@@ -478,19 +517,19 @@ router.put('/admin/:tenantId/status',
         tenant: {
           tenantId: tenant.tenantId,
           name: tenant.name,
-          status: tenant.status
-        }
+          status: tenant.status,
+        },
       });
     } catch (error) {
       logger.error(`Error ${req.body.action}ing tenant`, {
         error: error.message,
         tenantId: req.params.tenantId,
         action: req.body.action,
-        userId: req.user._id
+        userId: req.user._id,
       });
       res.status(500).json({
         success: false,
-        message: `Failed to ${req.body.action} tenant`
+        message: `Failed to ${req.body.action} tenant`,
       });
     }
   }
@@ -498,7 +537,8 @@ router.put('/admin/:tenantId/status',
 
 // Helper function to generate API key
 function generateApiKey() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const chars =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < 32; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));

@@ -1,12 +1,13 @@
 /**
  * Script to add missing logger imports to files that were modified by replace-console-logs.js
- * 
+ *
  * Usage: node scripts/fix-logger-imports.js
  */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { info, error } from '../utils/loggerWrapper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,14 +28,14 @@ const filesToFix = [
   'setup_credentials.js',
   'setup_jpmorgan_credentials.js',
   'simple_jpmorgan_validation.js',
-  'staging_deployment.js'
+  'staging_deployment.js',
 ];
 
 const stats = {
   filesProcessed: 0,
   filesFixed: 0,
   filesSkipped: 0,
-  errors: 0
+  errors: 0,
 };
 
 /**
@@ -50,22 +51,26 @@ function getLoggerImportPath(filePath) {
  * Check if file already has logger import
  */
 function hasLoggerImport(content) {
-  return content.includes('from \'./utils/loggerWrapper.js\'') ||
-         content.includes('from \'../utils/loggerWrapper.js\'') ||
-         content.includes('from \'../../utils/loggerWrapper.js\'') ||
-         content.includes('from \'../../../utils/loggerWrapper.js\'') ||
-         content.includes('import logger from') ||
-         content.includes('import { info, error, warn, debug } from');
+  return (
+    content.includes("from './utils/loggerWrapper.js'") ||
+    content.includes("from '../utils/loggerWrapper.js'") ||
+    content.includes("from '../../utils/loggerWrapper.js'") ||
+    content.includes("from '../../../utils/loggerWrapper.js'") ||
+    content.includes('import logger from') ||
+    content.includes('import { info, error, warn, debug } from')
+  );
 }
 
 /**
  * Check if file uses logger methods
  */
 function usesLogger(content) {
-  return content.includes('logger.info(') ||
-         content.includes('logger.error(') ||
-         content.includes('logger.warn(') ||
-         content.includes('logger.debug(');
+  return (
+    content.includes('logger.info(') ||
+    content.includes('logger.error(') ||
+    content.includes('logger.warn(') ||
+    content.includes('logger.debug(')
+  );
 }
 
 /**
@@ -84,13 +89,20 @@ function addLoggerImport(content, importPath) {
 
   // Find the last import statement
   for (let i = insertIndex; i < lines.length; i++) {
-    if (lines[i].trim().startsWith('import ') || lines[i].trim().startsWith('const ') && lines[i].includes('require(')) {
+    if (
+      lines[i].trim().startsWith('import ') ||
+      (lines[i].trim().startsWith('const ') && lines[i].includes('require('))
+    ) {
       foundImports = true;
       insertIndex = i + 1;
     } else if (foundImports && lines[i].trim() === '') {
       // Found empty line after imports
       break;
-    } else if (foundImports && !lines[i].trim().startsWith('import ') && !lines[i].trim().startsWith('//')) {
+    } else if (
+      foundImports &&
+      !lines[i].trim().startsWith('import ') &&
+      !lines[i].trim().startsWith('//')
+    ) {
       // Found non-import, non-comment line
       break;
     }
@@ -115,9 +127,9 @@ function addLoggerImport(content, importPath) {
  */
 function processFile(filePath) {
   const fullPath = path.resolve(process.cwd(), filePath);
-  
+
   if (!fs.existsSync(fullPath)) {
-    console.log(`⚠️  File not found: ${filePath}`);
+    info(`⚠️  File not found: ${filePath}`);
     stats.filesSkipped++;
     return;
   }
@@ -129,14 +141,14 @@ function processFile(filePath) {
 
     // Check if file uses logger
     if (!usesLogger(content)) {
-      console.log(`⏭️  ${filePath} - No logger usage found`);
+      info(`⏭️  ${filePath} - No logger usage found`);
       stats.filesSkipped++;
       return;
     }
 
     // Check if import already exists
     if (hasLoggerImport(content)) {
-      console.log(`✅ ${filePath} - Already has logger import`);
+      info(`✅ ${filePath} - Already has logger import`);
       stats.filesSkipped++;
       return;
     }
@@ -147,11 +159,10 @@ function processFile(filePath) {
 
     // Write the file
     fs.writeFileSync(fullPath, newContent, 'utf8');
-    console.log(`✅ ${filePath} - Added logger import`);
+    info(`✅ ${filePath} - Added logger import`);
     stats.filesFixed++;
-
-  } catch (error) {
-    console.error(`❌ Error processing ${filePath}:`, error.message);
+  } catch (err) {
+    error(`❌ Error processing ${filePath}:`, err);
     stats.errors++;
   }
 }
@@ -160,9 +171,9 @@ function processFile(filePath) {
  * Main execution
  */
 function main() {
-  console.log('🔧 Logger Import Fix Script\n');
-  console.log('Adding missing logger imports to modified files...\n');
-  console.log('='.repeat(80));
+  info('🔧 Logger Import Fix Script\n');
+  info('Adding missing logger imports to modified files...\n');
+  info('='.repeat(80));
 
   const startTime = Date.now();
 
@@ -172,20 +183,20 @@ function main() {
 
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
-  console.log('\n' + '='.repeat(80));
-  console.log('\n📊 Summary:');
-  console.log(`   Files processed: ${stats.filesProcessed}`);
-  console.log(`   Files fixed: ${stats.filesFixed}`);
-  console.log(`   Files skipped: ${stats.filesSkipped}`);
-  console.log(`   Errors: ${stats.errors}`);
-  console.log(`\n⏱️  Completed in ${duration}s`);
+  info('\n' + '='.repeat(80));
+  info('\n📊 Summary:');
+  info(`   Files processed: ${stats.filesProcessed}`);
+  info(`   Files fixed: ${stats.filesFixed}`);
+  info(`   Files skipped: ${stats.filesSkipped}`);
+  info(`   Errors: ${stats.errors}`);
+  info(`\n⏱️  Completed in ${duration}s`);
 
   if (stats.filesFixed > 0) {
-    console.log('\n✅ Logger imports have been added successfully!');
-    console.log('\n📝 Next Steps:');
-    console.log('   1. Review the changes');
-    console.log('   2. Run tests to verify everything works');
-    console.log('   3. Run ESLint to check for any issues');
+    info('\n✅ Logger imports have been added successfully!');
+    info('\n📝 Next Steps:');
+    info('   1. Review the changes');
+    info('   2. Run tests to verify everything works');
+    info('   3. Run ESLint to check for any issues');
   }
 }
 

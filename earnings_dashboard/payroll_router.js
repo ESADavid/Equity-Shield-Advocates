@@ -24,7 +24,9 @@ router.get('/employees', (req, res) => {
     res.json({ success: true, data: employees });
   } catch (error) {
     logger.error('Error fetching employees:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch employees' });
+    res
+      .status(500)
+      .json({ success: false, error: 'Failed to fetch employees' });
   }
 });
 
@@ -32,7 +34,9 @@ router.get('/employees', (req, res) => {
 router.post('/employees', (req, res) => {
   const employee = req.body;
   try {
-    const existing = payrollSystem.getEmployees().find(e => e.id === employee.id);
+    const existing = payrollSystem
+      .getEmployees()
+      .find((e) => e.id === employee.id);
     if (existing) {
       payrollSystem.updateEmployee(employee);
       res.json({ success: true, message: 'Employee updated successfully' });
@@ -92,14 +96,17 @@ router.post('/process', async (req, res) => {
             syncResults.push({
               employeeId: payroll.employeeId,
               quickbooksSync: result.success ? 'success' : 'failed',
-              message: result.message
+              message: result.message,
             });
           } catch (qbError) {
-            logger.error(`QuickBooks sync failed for employee ${payroll.employeeId}:`, qbError);
+            logger.error(
+              `QuickBooks sync failed for employee ${payroll.employeeId}:`,
+              qbError
+            );
             syncResults.push({
               employeeId: payroll.employeeId,
               quickbooksSync: 'failed',
-              message: qbError.message
+              message: qbError.message,
             });
           }
         }
@@ -107,15 +114,20 @@ router.post('/process', async (req, res) => {
         res.json({
           success: true,
           data: payrolls,
-          quickbooksSync: syncResults
+          quickbooksSync: syncResults,
         });
       } catch (qbInitError) {
-        logger.error('Failed to initialize QuickBooks integration:', qbInitError);
+        logger.error(
+          'Failed to initialize QuickBooks integration:',
+          qbInitError
+        );
         res.json({
           success: true,
           data: payrolls,
           quickbooksSync: 'failed',
-          message: 'Payroll processed but QuickBooks sync failed: ' + qbInitError.message
+          message:
+            'Payroll processed but QuickBooks sync failed: ' +
+            qbInitError.message,
         });
       }
     } else {
@@ -123,7 +135,9 @@ router.post('/process', async (req, res) => {
     }
   } catch (error) {
     logger.error('Error processing payroll:', error);
-    res.status(500).json({ success: false, error: 'Failed to process payroll' });
+    res
+      .status(500)
+      .json({ success: false, error: 'Failed to process payroll' });
   }
 });
 
@@ -131,9 +145,11 @@ router.post('/process', async (req, res) => {
 router.get('/employees/:id/payroll', (req, res) => {
   const id = req.params.id;
   try {
-    const employee = payrollSystem.getEmployees().find(e => e.id === id);
+    const employee = payrollSystem.getEmployees().find((e) => e.id === id);
     if (!employee) {
-      return res.status(404).json({ success: false, error: 'Employee not found' });
+      return res
+        .status(404)
+        .json({ success: false, error: 'Employee not found' });
     }
 
     // Calculate payroll data
@@ -149,27 +165,33 @@ router.get('/employees/:id/payroll', (req, res) => {
       bonuses: employee.bonuses || 0,
       grossPay: 0,
       taxAmount: 0,
-      netPay: 0
+      netPay: 0,
     };
 
     // Calculate pay
     const regularPay = payrollData.hoursWorked * payrollData.hourlyRate;
-    const overtimePay = payrollData.overtimeHours * payrollData.hourlyRate * 1.5;
+    const overtimePay =
+      payrollData.overtimeHours * payrollData.hourlyRate * 1.5;
     payrollData.grossPay = regularPay + overtimePay + payrollData.bonuses;
     payrollData.taxAmount = payrollData.grossPay * payrollData.taxRate;
-    payrollData.netPay = payrollData.grossPay - payrollData.taxAmount - payrollData.deductions;
+    payrollData.netPay =
+      payrollData.grossPay - payrollData.taxAmount - payrollData.deductions;
 
     res.json({ success: true, data: payrollData });
   } catch (error) {
     logger.error('Error fetching employee payroll:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch employee payroll' });
+    res
+      .status(500)
+      .json({ success: false, error: 'Failed to fetch employee payroll' });
   }
 });
 
 // Welcome endpoint with request logging
 router.get('/welcome', (req, res) => {
   // Log request metadata
-  logger.info(`Request received: ${req.method} ${req.path} from ${req.ip} at ${new Date().toISOString()}`);
+  logger.info(
+    `Request received: ${req.method} ${req.path} from ${req.ip} at ${new Date().toISOString()}`
+  );
 
   res.json({
     message: 'Welcome to the Payroll API Service!',
@@ -178,19 +200,33 @@ router.get('/welcome', (req, res) => {
       method: req.method,
       path: req.path,
       ip: req.ip,
-      userAgent: req.get('User-Agent')
-    }
+      userAgent: req.get('User-Agent'),
+    },
   });
 });
 
 // Calculate payroll for specific employee
 router.post('/calculate', (req, res) => {
-  const { employeeId, hoursWorked, hourlyRate, overtimeHours, taxRate, deductions, bonuses } = req.body;
+  const {
+    employeeId,
+    hoursWorked,
+    hourlyRate,
+    overtimeHours,
+    taxRate,
+    deductions,
+    bonuses,
+  } = req.body;
 
   try {
     // Input validation
-    if (!employeeId || typeof hoursWorked !== 'number' || typeof hourlyRate !== 'number') {
-      return res.status(400).json({ success: false, error: 'Invalid input data' });
+    if (
+      !employeeId ||
+      typeof hoursWorked !== 'number' ||
+      typeof hourlyRate !== 'number'
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, error: 'Invalid input data' });
     }
 
     // Calculate payroll
@@ -211,13 +247,15 @@ router.post('/calculate', (req, res) => {
       grossPay,
       taxAmount,
       netPay,
-      calculatedAt: new Date().toISOString()
+      calculatedAt: new Date().toISOString(),
     };
 
     res.json({ success: true, data: result });
   } catch (error) {
     logger.error('Error calculating payroll:', error);
-    res.status(500).json({ success: false, error: 'Failed to calculate payroll' });
+    res
+      .status(500)
+      .json({ success: false, error: 'Failed to calculate payroll' });
   }
 });
 
@@ -239,8 +277,10 @@ router.post('/sync-quickbooks', async (req, res) => {
     for (const employee of employees) {
       try {
         // Calculate current payroll data for the employee
-        const regularPay = (employee.hoursWorked || 0) * (employee.hourlyRate || 0);
-        const overtimePay = (employee.overtimeHours || 0) * (employee.hourlyRate || 0) * 1.5;
+        const regularPay =
+          (employee.hoursWorked || 0) * (employee.hourlyRate || 0);
+        const overtimePay =
+          (employee.overtimeHours || 0) * (employee.hourlyRate || 0) * 1.5;
         const grossPay = regularPay + overtimePay + (employee.bonuses || 0);
         const taxAmount = grossPay * (employee.taxRate || 0.2);
         const netPay = grossPay - taxAmount - (employee.deductions || 0);
@@ -258,15 +298,18 @@ router.post('/sync-quickbooks', async (req, res) => {
           employeeId: employee.id,
           name: employee.name,
           quickbooksSync: result.success ? 'success' : 'failed',
-          message: result.message
+          message: result.message,
         });
       } catch (qbError) {
-        logger.error(`QuickBooks sync failed for employee ${employee.id}:`, qbError);
+        logger.error(
+          `QuickBooks sync failed for employee ${employee.id}:`,
+          qbError
+        );
         syncResults.push({
           employeeId: employee.id,
           name: employee.name,
           quickbooksSync: 'failed',
-          message: qbError.message
+          message: qbError.message,
         });
       }
     }
@@ -275,16 +318,17 @@ router.post('/sync-quickbooks', async (req, res) => {
       success: true,
       message: 'QuickBooks sync completed',
       syncResults,
-      totalSynced: syncResults.filter(r => r.quickbooksSync === 'success').length,
-      totalFailed: syncResults.filter(r => r.quickbooksSync === 'failed').length
+      totalSynced: syncResults.filter((r) => r.quickbooksSync === 'success')
+        .length,
+      totalFailed: syncResults.filter((r) => r.quickbooksSync === 'failed')
+        .length,
     });
-
   } catch (error) {
     logger.error('QuickBooks sync error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to sync with QuickBooks',
-      details: error.message
+      details: error.message,
     });
   }
 });

@@ -5,13 +5,18 @@ import axios from 'axios';
 const router = express.Router();
 
 // Import middleware
-import { securityHeaders, createRateLimit, validateInput } from '../../config/security.js';
+import {
+  securityHeaders,
+  createRateLimit,
+  validateInput,
+} from '../../config/security.js';
 import { validatePayment } from '../../middleware/validation.js';
 
 // Environment variables
 const JPMORGAN_CLIENT_ID = process.env.JPMORGAN_CLIENT_ID;
 const JPMORGAN_CLIENT_SECRET = process.env.JPMORGAN_CLIENT_SECRET;
-const JPMORGAN_BASE_URL = process.env.JPMORGAN_BASE_URL || 'https://api-mock.payments.jpmorgan.com';
+const JPMORGAN_BASE_URL =
+  process.env.JPMORGAN_BASE_URL || 'https://api-mock.payments.jpmorgan.com';
 const JPMORGAN_ORGANIZATION_ID = process.env.JPMORGAN_ORGANIZATION_ID;
 const JPMORGAN_PROJECT_ID = process.env.JPMORGAN_PROJECT_ID || 'DK2MQSR1FS7V';
 const JPMORGAN_MERCHANT_ID = process.env.JPMORGAN_MERCHANT_ID;
@@ -40,11 +45,11 @@ function generateAuthHeaders() {
   return {
     'Content-Type': 'application/json',
     'Client-Id': JPMORGAN_CLIENT_ID,
-    'Timestamp': timestamp.toString(),
-    'Nonce': nonce,
-    'Signature': signature,
+    Timestamp: timestamp.toString(),
+    Nonce: nonce,
+    Signature: signature,
     'Merchant-Id': JPMORGAN_MERCHANT_ID,
-    'Terminal-Id': JPMORGAN_TERMINAL_ID
+    'Terminal-Id': JPMORGAN_TERMINAL_ID,
   };
 }
 
@@ -56,14 +61,14 @@ router.post('/wallet-decrypt', async (req, res) => {
     if (!encryptedWalletData) {
       return res.status(400).json({
         success: false,
-        error: 'encryptedWalletData is required'
+        error: 'encryptedWalletData is required',
       });
     }
 
     const headers = generateAuthHeaders();
 
     const decryptPayload = {
-      encryptedWalletData
+      encryptedWalletData,
     };
 
     const response = await axios.post(
@@ -74,15 +79,17 @@ router.post('/wallet-decrypt', async (req, res) => {
 
     res.json({
       success: true,
-      decryptedWallet: response.data
+      decryptedWallet: response.data,
     });
-
   } catch (error) {
-    logger.error('JPMorgan wallet decryption error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan wallet decryption error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to decrypt wallet data',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -90,12 +97,13 @@ router.post('/wallet-decrypt', async (req, res) => {
 // Wallet Encryption API endpoint
 router.post('/wallet-encrypt', async (req, res) => {
   try {
-    const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } = req.body;
+    const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } =
+      req.body;
 
     if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
       return res.status(400).json({
         success: false,
-        error: 'cardNumber, expiryDate, cvv, and cardholderName are required'
+        error: 'cardNumber, expiryDate, cvv, and cardholderName are required',
       });
     }
 
@@ -106,7 +114,7 @@ router.post('/wallet-encrypt', async (req, res) => {
       expiryDate,
       cvv,
       cardholderName,
-      billingAddress: billingAddress || {}
+      billingAddress: billingAddress || {},
     };
 
     const response = await axios.post(
@@ -117,15 +125,17 @@ router.post('/wallet-encrypt', async (req, res) => {
 
     res.json({
       success: true,
-      encryptedWalletData: response.data.encryptedWalletData
+      encryptedWalletData: response.data.encryptedWalletData,
     });
-
   } catch (error) {
-    logger.error('JPMorgan wallet encryption error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan wallet encryption error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to encrypt wallet data',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -138,14 +148,14 @@ router.post('/wallet-validate', async (req, res) => {
     if (!walletData) {
       return res.status(400).json({
         success: false,
-        error: 'walletData is required'
+        error: 'walletData is required',
       });
     }
 
     const headers = generateAuthHeaders();
 
     const validatePayload = {
-      walletData: walletData
+      walletData: walletData,
     };
 
     const response = await axios.post(
@@ -158,15 +168,17 @@ router.post('/wallet-validate', async (req, res) => {
       success: true,
       isValid: response.data.isValid,
       message: response.data.message,
-      validationDetails: response.data.details
+      validationDetails: response.data.details,
     });
-
   } catch (error) {
-    logger.error('JPMorgan wallet validation error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan wallet validation error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to validate wallet data',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -174,12 +186,13 @@ router.post('/wallet-validate', async (req, res) => {
 // Wallet Tokenization API endpoint
 router.post('/wallet-tokenize', async (req, res) => {
   try {
-    const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } = req.body;
+    const { cardNumber, expiryDate, cvv, cardholderName, billingAddress } =
+      req.body;
 
     if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
       return res.status(400).json({
         success: false,
-        error: 'cardNumber, expiryDate, cvv, and cardholderName are required'
+        error: 'cardNumber, expiryDate, cvv, and cardholderName are required',
       });
     }
 
@@ -190,7 +203,7 @@ router.post('/wallet-tokenize', async (req, res) => {
       expiryDate: expiryDate,
       cvv: cvv,
       cardholderName: cardholderName,
-      billingAddress: billingAddress || {}
+      billingAddress: billingAddress || {},
     };
 
     const response = await axios.post(
@@ -203,15 +216,17 @@ router.post('/wallet-tokenize', async (req, res) => {
       success: true,
       token: response.data.token,
       tokenId: response.data.tokenId,
-      expiresAt: response.data.expiresAt
+      expiresAt: response.data.expiresAt,
     });
-
   } catch (error) {
-    logger.error('JPMorgan wallet tokenization error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan wallet tokenization error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to tokenize wallet data',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -224,14 +239,14 @@ router.post('/wallet-detokenize', async (req, res) => {
     if (!token) {
       return res.status(400).json({
         success: false,
-        error: 'token is required'
+        error: 'token is required',
       });
     }
 
     const headers = generateAuthHeaders();
 
     const detokenizePayload = {
-      token: token
+      token: token,
     };
 
     const response = await axios.post(
@@ -242,75 +257,90 @@ router.post('/wallet-detokenize', async (req, res) => {
 
     res.json({
       success: true,
-      walletData: response.data
+      walletData: response.data,
     });
-
   } catch (error) {
-    logger.error('JPMorgan wallet detokenization error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan wallet detokenization error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to detokenize wallet data',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
 
 // Create payment transaction
-router.post('/create-payment', createPaymentLimiter, validatePayment, async (req, res) => {
-  try {
-    const { amount, currency = 'USD', orderId, description, customer } = req.body;
+router.post(
+  '/create-payment',
+  createPaymentLimiter,
+  validatePayment,
+  async (req, res) => {
+    try {
+      const {
+        amount,
+        currency = 'USD',
+        orderId,
+        description,
+        customer,
+      } = req.body;
 
-    if (!amount || !orderId) {
-      return res.status(400).json({
+      if (!amount || !orderId) {
+        return res.status(400).json({
+          success: false,
+          error: 'Amount and orderId are required',
+        });
+      }
+
+      const headers = generateAuthHeaders();
+
+      const paymentData = {
+        amount: {
+          value: amount,
+          currency: currency,
+        },
+        order: {
+          id: orderId,
+          description: description || 'Payment for services',
+        },
+        customer: customer || {},
+        merchant: {
+          id: JPMORGAN_MERCHANT_ID,
+          terminalId: JPMORGAN_TERMINAL_ID,
+        },
+        paymentMethod: {
+          type: 'CARD', // Default to card, can be extended for other methods
+        },
+      };
+
+      const response = await axios.post(
+        `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments`,
+        paymentData,
+        { headers }
+      );
+
+      res.json({
+        success: true,
+        paymentId: response.data.id,
+        status: response.data.status,
+        authorizationCode: response.data.authorizationCode,
+        transactionDetails: response.data,
+      });
+    } catch (error) {
+      logger.error(
+        'JPMorgan payment creation error:',
+        error.response?.data || error.message
+      );
+      res.status(500).json({
         success: false,
-        error: 'Amount and orderId are required'
+        error: 'Failed to create payment',
+        details: error.response?.data || error.message,
       });
     }
-
-    const headers = generateAuthHeaders();
-
-    const paymentData = {
-      amount: {
-        value: amount,
-        currency: currency
-      },
-      order: {
-        id: orderId,
-        description: description || 'Payment for services'
-      },
-      customer: customer || {},
-      merchant: {
-        id: JPMORGAN_MERCHANT_ID,
-        terminalId: JPMORGAN_TERMINAL_ID
-      },
-      paymentMethod: {
-        type: 'CARD' // Default to card, can be extended for other methods
-      }
-    };
-
-    const response = await axios.post(
-      `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments`,
-      paymentData,
-      { headers }
-    );
-
-    res.json({
-      success: true,
-      paymentId: response.data.id,
-      status: response.data.status,
-      authorizationCode: response.data.authorizationCode,
-      transactionDetails: response.data
-    });
-
-  } catch (error) {
-    logger.error('JPMorgan payment creation error:', error.response?.data || error.message);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to create payment',
-      details: error.response?.data || error.message
-    });
   }
-});
+);
 
 // Get payment status
 router.get('/payment-status/:paymentId', async (req, res) => {
@@ -326,15 +356,17 @@ router.get('/payment-status/:paymentId', async (req, res) => {
 
     res.json({
       success: true,
-      paymentStatus: response.data
+      paymentStatus: response.data,
     });
-
   } catch (error) {
-    logger.error('JPMorgan payment status error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan payment status error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to get payment status',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -347,7 +379,7 @@ router.post('/refund', async (req, res) => {
     if (!paymentId || !amount) {
       return res.status(400).json({
         success: false,
-        error: 'Payment ID and amount are required for refund'
+        error: 'Payment ID and amount are required for refund',
       });
     }
 
@@ -356,9 +388,9 @@ router.post('/refund', async (req, res) => {
     const refundData = {
       amount: {
         value: amount,
-        currency: 'USD'
+        currency: 'USD',
       },
-      reason: reason || 'Customer request'
+      reason: reason || 'Customer request',
     };
 
     const response = await axios.post(
@@ -371,15 +403,17 @@ router.post('/refund', async (req, res) => {
       success: true,
       refundId: response.data.id,
       status: response.data.status,
-      refundDetails: response.data
+      refundDetails: response.data,
     });
-
   } catch (error) {
-    logger.error('JPMorgan refund error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan refund error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to process refund',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -392,17 +426,19 @@ router.post('/capture', async (req, res) => {
     if (!paymentId) {
       return res.status(400).json({
         success: false,
-        error: 'Payment ID is required'
+        error: 'Payment ID is required',
       });
     }
 
     const headers = generateAuthHeaders();
 
     const captureData = {
-      amount: amount ? {
-        value: amount,
-        currency: 'USD'
-      } : undefined
+      amount: amount
+        ? {
+            value: amount,
+            currency: 'USD',
+          }
+        : undefined,
     };
 
     const response = await axios.post(
@@ -415,15 +451,17 @@ router.post('/capture', async (req, res) => {
       success: true,
       captureId: response.data.id,
       status: response.data.status,
-      captureDetails: response.data
+      captureDetails: response.data,
     });
-
   } catch (error) {
-    logger.error('JPMorgan capture error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan capture error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to capture payment',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -436,14 +474,14 @@ router.post('/void', async (req, res) => {
     if (!paymentId) {
       return res.status(400).json({
         success: false,
-        error: 'Payment ID is required'
+        error: 'Payment ID is required',
       });
     }
 
     const headers = generateAuthHeaders();
 
     const voidData = {
-      reason: reason || 'Customer request'
+      reason: reason || 'Customer request',
     };
 
     const response = await axios.post(
@@ -456,15 +494,14 @@ router.post('/void', async (req, res) => {
       success: true,
       voidId: response.data.id,
       status: response.data.status,
-      voidDetails: response.data
+      voidDetails: response.data,
     });
-
   } catch (error) {
     logger.error('JPMorgan void error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to void payment',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -490,15 +527,17 @@ router.get('/transactions', generalLimiter, async (req, res) => {
     res.json({
       success: true,
       transactions: response.data.transactions,
-      totalCount: response.data.totalCount
+      totalCount: response.data.totalCount,
     });
-
   } catch (error) {
-    logger.error('JPMorgan transactions error:', error.response?.data || error.message);
+    logger.error(
+      'JPMorgan transactions error:',
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       error: 'Failed to fetch transactions',
-      details: error.response?.data || error.message
+      details: error.response?.data || error.message,
     });
   }
 });
@@ -532,48 +571,57 @@ const verifyWebhookSignature = (req, res, next) => {
 };
 
 // Webhook endpoint for JPMorgan Payments events
-router.post('/webhook', webhookLimiter, express.json(), verifyWebhookSignature, async (req, res) => {
-  try {
-    const event = req.body;
+router.post(
+  '/webhook',
+  webhookLimiter,
+  express.json(),
+  verifyWebhookSignature,
+  async (req, res) => {
+    try {
+      const event = req.body;
 
-    logger.info('Received JPMorgan webhook event:', event.type, event.id);
+      logger.info('Received JPMorgan webhook event:', event.type, event.id);
 
-    switch (event.type) {
-      case 'payment.authorized':
-        // Handle authorized payment
-        logger.info('Payment authorized:', event.data.paymentId);
-        break;
+      switch (event.type) {
+        case 'payment.authorized':
+          // Handle authorized payment
+          logger.info('Payment authorized:', event.data.paymentId);
+          break;
 
-      case 'payment.captured':
-        // Handle captured payment
-        logger.info('Payment captured:', event.data.paymentId);
-        break;
+        case 'payment.captured':
+          // Handle captured payment
+          logger.info('Payment captured:', event.data.paymentId);
+          break;
 
-      case 'payment.refunded':
-        // Handle refund
-        logger.info('Payment refunded:', event.data.paymentId);
-        break;
+        case 'payment.refunded':
+          // Handle refund
+          logger.info('Payment refunded:', event.data.paymentId);
+          break;
 
-      case 'payment.voided':
-        // Handle voided payment
-        logger.info('Payment voided:', event.data.paymentId);
-        break;
+        case 'payment.voided':
+          // Handle voided payment
+          logger.info('Payment voided:', event.data.paymentId);
+          break;
 
-      case 'payment.failed':
-        // Handle failed payment
-        logger.info('Payment failed:', event.data.paymentId, event.data.reason);
-        break;
+        case 'payment.failed':
+          // Handle failed payment
+          logger.info(
+            'Payment failed:',
+            event.data.paymentId,
+            event.data.reason
+          );
+          break;
 
-      default:
-        logger.info('Unhandled webhook event type:', event.type);
+        default:
+          logger.info('Unhandled webhook event type:', event.type);
+      }
+
+      res.json({ received: true });
+    } catch (error) {
+      logger.error('Webhook processing error:', error);
+      res.status(500).json({ error: 'Webhook processing failed' });
     }
-
-    res.json({ received: true });
-
-  } catch (error) {
-    logger.error('Webhook processing error:', error);
-    res.status(500).json({ error: 'Webhook processing failed' });
   }
-});
+);
 
 export default router;

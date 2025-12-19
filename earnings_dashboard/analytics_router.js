@@ -1,6 +1,10 @@
 import express from 'express';
 import { getAnalytics } from './ai_analytics.js';
-import { getTranscendenceAnalytics, initializeTranscendence, optimizeRevenueAutonomously } from './ai_transcendence.js';
+import {
+  getTranscendenceAnalytics,
+  initializeTranscendence,
+  optimizeRevenueAutonomously,
+} from './ai_transcendence.js';
 
 const router = express.Router();
 
@@ -12,7 +16,7 @@ router.get('/', (req, res) => {
     const response = {
       predictions: analytics.predictions,
       anomalies: analytics.anomalies,
-      riskAssessment: analytics.riskAssessment
+      riskAssessment: analytics.riskAssessment,
     };
     res.json(response);
   } catch (error) {
@@ -29,12 +33,14 @@ router.get('/transcendence', async (req, res) => {
     const response = {
       deepLearning: analytics.deepLearning,
       quantumOptimization: analytics.quantumOptimization,
-      autonomousDecisions: analytics.autonomousDecisions
+      autonomousDecisions: analytics.autonomousDecisions,
     };
     res.json(response);
   } catch (error) {
     logger.error('Transcendence analytics error:', error);
-    res.status(500).json({ error: 'Failed to retrieve transcendence analytics' });
+    res
+      .status(500)
+      .json({ error: 'Failed to retrieve transcendence analytics' });
   }
 });
 
@@ -45,15 +51,18 @@ router.post('/optimize', async (req, res) => {
     if (typeof currentRevenue !== 'number' || !marketConditions) {
       return res.status(400).json({ error: 'Invalid input data' });
     }
-    const result = await optimizeRevenueAutonomously(currentRevenue, marketConditions);
+    const result = await optimizeRevenueAutonomously(
+      currentRevenue,
+      marketConditions
+    );
     // Transform to match test expectations
     const response = {
       optimized: {
-        projectedRevenue: result.optimized.projectedRevenue
+        projectedRevenue: result.optimized.projectedRevenue,
       },
       decisions: {
-        actions: result.decisions.actions
-      }
+        actions: result.decisions.actions,
+      },
     };
     res.json(response);
   } catch (error) {
@@ -63,7 +72,7 @@ router.post('/optimize', async (req, res) => {
 });
 
 // Initialize transcendence engine on router load
-initializeTranscendence().catch(err => {
+initializeTranscendence().catch((err) => {
   logger.error('Failed to initialize AI transcendence engine:', err);
 });
 

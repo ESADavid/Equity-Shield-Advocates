@@ -36,7 +36,7 @@ router.post('/register-citizen', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -64,7 +64,7 @@ router.post('/process-monthly-payments', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -92,7 +92,7 @@ router.get('/citizen/:citizenId', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -123,8 +123,8 @@ router.get('/payment-history/:citizenId', async (req, res) => {
           lastPaymentDate: result.ubiStatus.lastPaymentDate,
           nextPaymentDate: result.ubiStatus.nextPaymentDate,
           monthlyAmount: result.ubiStatus.monthlyAmount,
-          annualAmount: result.ubiStatus.annualAmount
-        }
+          annualAmount: result.ubiStatus.annualAmount,
+        },
       });
     } else {
       res.status(404).json(result);
@@ -134,7 +134,7 @@ router.get('/payment-history/:citizenId', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -153,11 +153,13 @@ router.post('/suspend/:citizenId', async (req, res) => {
     if (!reason) {
       return res.status(400).json({
         success: false,
-        error: 'Suspension reason is required'
+        error: 'Suspension reason is required',
       });
     }
 
-    logger.info(`UBI suspension request for citizen ${citizenId} by user: ${userId}`);
+    logger.info(
+      `UBI suspension request for citizen ${citizenId} by user: ${userId}`
+    );
 
     const result = await ubiService.suspendUBI(citizenId, reason, userId);
 
@@ -171,7 +173,7 @@ router.post('/suspend/:citizenId', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -186,7 +188,9 @@ router.post('/reinstate/:citizenId', async (req, res) => {
     const { citizenId } = req.params;
     const userId = req.user?.id || req.headers['x-user-id'] || 'system';
 
-    logger.info(`UBI reinstatement request for citizen ${citizenId} by user: ${userId}`);
+    logger.info(
+      `UBI reinstatement request for citizen ${citizenId} by user: ${userId}`
+    );
 
     const result = await ubiService.reinstateUBI(citizenId, userId);
 
@@ -200,7 +204,7 @@ router.post('/reinstate/:citizenId', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -226,7 +230,7 @@ router.post('/verify-eligibility/:citizenId', async (req, res) => {
         ubiStatus: {
           eligible: result.ubiStatus.eligible,
           suspended: result.ubiStatus.suspended,
-          suspensionReason: result.ubiStatus.suspensionReason
+          suspensionReason: result.ubiStatus.suspensionReason,
         },
         educationCompliance: {
           status: result.educationStatus.complianceStatus,
@@ -234,9 +238,9 @@ router.post('/verify-eligibility/:citizenId', async (req, res) => {
           military: result.educationStatus.military,
           law: result.educationStatus.law,
           tech: result.educationStatus.tech,
-          agriculture: result.educationStatus.agriculture
+          agriculture: result.educationStatus.agriculture,
         },
-        verification: result.verification
+        verification: result.verification,
       });
     } else {
       res.status(404).json(result);
@@ -246,7 +250,7 @@ router.post('/verify-eligibility/:citizenId', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -272,7 +276,7 @@ router.get('/statistics', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -290,7 +294,7 @@ router.get('/health', (req, res) => {
     logger.error('Error in health route:', error);
     res.status(500).json({
       status: 'error',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -310,7 +314,7 @@ router.get('/welcome', (req, res) => {
       'Monthly payment processing',
       'Education compliance tracking',
       'Blockchain transparency',
-      'Real-time eligibility verification'
+      'Real-time eligibility verification',
     ],
     endpoints: {
       registerCitizen: 'POST /api/ubi/register-citizen',
@@ -321,10 +325,10 @@ router.get('/welcome', (req, res) => {
       reinstate: 'POST /api/ubi/reinstate/:citizenId',
       verifyEligibility: 'POST /api/ubi/verify-eligibility/:citizenId',
       statistics: 'GET /api/ubi/statistics',
-      health: 'GET /api/ubi/health'
+      health: 'GET /api/ubi/health',
     },
     version: '1.0.0',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 

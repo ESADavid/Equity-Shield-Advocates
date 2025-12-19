@@ -1,7 +1,7 @@
 /**
  * ITG (INTEGRATED TECHNOLOGY GROWTH) API ROUTES
  * King Sachem Yochanan
- * 
+ *
  * Provides endpoints for:
  * - ITG strategy calculation
  * - Kingdom metrics management
@@ -30,17 +30,17 @@ const divineWisdom = new DivineWisdom();
 router.post('/calculate-strategy', authenticate, async (req, res) => {
   try {
     const strategy = await itgService.calculateITGStrategy(req.body);
-    
+
     res.json({
       success: true,
       strategy,
-      message: '👑 ITG Strategy calculated for King Sachem Yochanan'
+      message: '👑 ITG Strategy calculated for King Sachem Yochanan',
     });
   } catch (error) {
     logger.error('ITG strategy calculation error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -53,17 +53,17 @@ router.post('/calculate-strategy', authenticate, async (req, res) => {
 router.get('/quick-assessment', authenticate, async (req, res) => {
   try {
     const assessment = await itgService.quickAssessment();
-    
+
     res.json({
       success: true,
       assessment,
-      message: '✅ Quick assessment complete'
+      message: '✅ Quick assessment complete',
     });
   } catch (error) {
     logger.error('Quick assessment error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -76,17 +76,17 @@ router.get('/quick-assessment', authenticate, async (req, res) => {
 router.post('/initialize-kingdom', authenticate, async (req, res) => {
   try {
     const result = await itgService.initializeKingdom(req.body);
-    
+
     res.json({
       success: true,
       result,
-      message: '👑 Kingdom initialized successfully'
+      message: '👑 Kingdom initialized successfully',
     });
   } catch (error) {
     logger.error('Kingdom initialization error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -99,24 +99,24 @@ router.post('/initialize-kingdom', authenticate, async (req, res) => {
 router.get('/kingdom-metrics', authenticate, async (req, res) => {
   try {
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
-    
+
     if (!metrics) {
       return res.status(404).json({
         success: false,
-        message: 'Kingdom metrics not found. Initialize kingdom first.'
+        message: 'Kingdom metrics not found. Initialize kingdom first.',
       });
     }
 
     res.json({
       success: true,
       metrics: metrics.getKingdomReport(),
-      fullMetrics: metrics
+      fullMetrics: metrics,
     });
   } catch (error) {
     logger.error('Get kingdom metrics error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -129,11 +129,11 @@ router.get('/kingdom-metrics', authenticate, async (req, res) => {
 router.put('/update-metrics', authenticate, async (req, res) => {
   try {
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
-    
+
     if (!metrics) {
       return res.status(404).json({
         success: false,
-        message: 'Kingdom metrics not found'
+        message: 'Kingdom metrics not found',
       });
     }
 
@@ -141,11 +141,11 @@ router.put('/update-metrics', authenticate, async (req, res) => {
     if (req.body.sovereignty) {
       metrics.sovereignty = { ...metrics.sovereignty, ...req.body.sovereignty };
     }
-    
+
     if (req.body.divineFavor) {
-      metrics.divineFavor.components = { 
-        ...metrics.divineFavor.components, 
-        ...req.body.divineFavor 
+      metrics.divineFavor.components = {
+        ...metrics.divineFavor.components,
+        ...req.body.divineFavor,
       };
       metrics.updateDivineFavor();
     }
@@ -173,13 +173,13 @@ router.put('/update-metrics', authenticate, async (req, res) => {
     res.json({
       success: true,
       metrics: metrics.getKingdomReport(),
-      message: '✅ Kingdom metrics updated successfully'
+      message: '✅ Kingdom metrics updated successfully',
     });
   } catch (error) {
     logger.error('Update metrics error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -192,17 +192,17 @@ router.put('/update-metrics', authenticate, async (req, res) => {
 router.post('/sacred-geometry/analyze', authenticate, async (req, res) => {
   try {
     const report = sacredGeometry.generateSacredReport(req.body);
-    
+
     res.json({
       success: true,
       report,
-      message: '✨ Sacred geometry analysis complete'
+      message: '✨ Sacred geometry analysis complete',
     });
   } catch (error) {
     logger.error('Sacred geometry analysis error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -216,18 +216,18 @@ router.post('/sacred-geometry/fibonacci', authenticate, async (req, res) => {
   try {
     const { n = 12 } = req.body;
     const sequence = sacredGeometry.fibonacciSequence(n);
-    
+
     res.json({
       success: true,
       sequence,
       length: n,
-      goldenRatio: sacredGeometry.phi
+      goldenRatio: sacredGeometry.phi,
     });
   } catch (error) {
     logger.error('Fibonacci calculation error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -237,48 +237,62 @@ router.post('/sacred-geometry/fibonacci', authenticate, async (req, res) => {
  * @desc    Calculate golden ratio growth projection
  * @access  Private
  */
-router.post('/sacred-geometry/golden-ratio-growth', authenticate, async (req, res) => {
-  try {
-    const { initialValue = 1000, periods = 12 } = req.body;
-    const projections = sacredGeometry.goldenRatioGrowth(initialValue, periods);
-    
-    res.json({
-      success: true,
-      projections,
-      goldenRatio: sacredGeometry.phi
-    });
-  } catch (error) {
-    logger.error('Golden ratio growth error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
+router.post(
+  '/sacred-geometry/golden-ratio-growth',
+  authenticate,
+  async (req, res) => {
+    try {
+      const { initialValue = 1000, periods = 12 } = req.body;
+      const projections = sacredGeometry.goldenRatioGrowth(
+        initialValue,
+        periods
+      );
+
+      res.json({
+        success: true,
+        projections,
+        goldenRatio: sacredGeometry.phi,
+      });
+    } catch (error) {
+      logger.error('Golden ratio growth error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 /**
  * @route   POST /api/itg/sacred-geometry/covenant-multiplication
  * @desc    Calculate covenant multiplication
  * @access  Private
  */
-router.post('/sacred-geometry/covenant-multiplication', authenticate, async (req, res) => {
-  try {
-    const { seedValue = 1000, covenantLevel = 3 } = req.body;
-    const result = sacredGeometry.covenantMultiplication(seedValue, covenantLevel);
-    
-    res.json({
-      success: true,
-      result,
-      message: `💰 ${result.multiplier}-fold return prophesied`
-    });
-  } catch (error) {
-    logger.error('Covenant multiplication error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
+router.post(
+  '/sacred-geometry/covenant-multiplication',
+  authenticate,
+  async (req, res) => {
+    try {
+      const { seedValue = 1000, covenantLevel = 3 } = req.body;
+      const result = sacredGeometry.covenantMultiplication(
+        seedValue,
+        covenantLevel
+      );
+
+      res.json({
+        success: true,
+        result,
+        message: `💰 ${result.multiplier}-fold return prophesied`,
+      });
+    } catch (error) {
+      logger.error('Covenant multiplication error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 /**
  * @route   POST /api/itg/divine-wisdom/evaluate
@@ -289,17 +303,17 @@ router.post('/divine-wisdom/evaluate', authenticate, async (req, res) => {
   try {
     const { decision, context } = req.body;
     const report = divineWisdom.generateWisdomReport(decision, context);
-    
+
     res.json({
       success: true,
       report,
-      message: '🙏 Divine wisdom evaluation complete'
+      message: '🙏 Divine wisdom evaluation complete',
     });
   } catch (error) {
     logger.error('Divine wisdom evaluation error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -312,17 +326,17 @@ router.post('/divine-wisdom/evaluate', authenticate, async (req, res) => {
 router.post('/divine-wisdom/multi-factor', authenticate, async (req, res) => {
   try {
     const score = divineWisdom.multiFactorWisdomScore(req.body);
-    
+
     res.json({
       success: true,
       score,
-      message: '✅ Multi-factor wisdom score calculated'
+      message: '✅ Multi-factor wisdom score calculated',
     });
   } catch (error) {
     logger.error('Multi-factor wisdom error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -332,24 +346,28 @@ router.post('/divine-wisdom/multi-factor', authenticate, async (req, res) => {
  * @desc    Recognize prophetic patterns
  * @access  Private
  */
-router.post('/divine-wisdom/prophetic-patterns', authenticate, async (req, res) => {
-  try {
-    const { events } = req.body;
-    const patterns = divineWisdom.recognizePropheticPatterns(events);
-    
-    res.json({
-      success: true,
-      patterns,
-      message: '🕊️ Prophetic patterns recognized'
-    });
-  } catch (error) {
-    logger.error('Prophetic pattern recognition error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
+router.post(
+  '/divine-wisdom/prophetic-patterns',
+  authenticate,
+  async (req, res) => {
+    try {
+      const { events } = req.body;
+      const patterns = divineWisdom.recognizePropheticPatterns(events);
+
+      res.json({
+        success: true,
+        patterns,
+        message: '🕊️ Prophetic patterns recognized',
+      });
+    } catch (error) {
+      logger.error('Prophetic pattern recognition error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 /**
  * @route   POST /api/itg/record-decision
@@ -359,11 +377,11 @@ router.post('/divine-wisdom/prophetic-patterns', authenticate, async (req, res) 
 router.post('/record-decision', authenticate, async (req, res) => {
   try {
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
-    
+
     if (!metrics) {
       return res.status(404).json({
         success: false,
-        message: 'Kingdom metrics not found'
+        message: 'Kingdom metrics not found',
       });
     }
 
@@ -371,13 +389,13 @@ router.post('/record-decision', authenticate, async (req, res) => {
 
     res.json({
       success: true,
-      message: '📝 Decision recorded successfully'
+      message: '📝 Decision recorded successfully',
     });
   } catch (error) {
     logger.error('Record decision error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -390,11 +408,11 @@ router.post('/record-decision', authenticate, async (req, res) => {
 router.get('/sovereignty-status', authenticate, async (req, res) => {
   try {
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
-    
+
     if (!metrics) {
       return res.status(404).json({
         success: false,
-        message: 'Kingdom metrics not found'
+        message: 'Kingdom metrics not found',
       });
     }
 
@@ -402,13 +420,13 @@ router.get('/sovereignty-status', authenticate, async (req, res) => {
       success: true,
       sovereignty: metrics.sovereignty,
       king: 'King Sachem Yochanan',
-      message: '👑 Sovereignty verified'
+      message: '👑 Sovereignty verified',
     });
   } catch (error) {
     logger.error('Sovereignty status error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -421,11 +439,11 @@ router.get('/sovereignty-status', authenticate, async (req, res) => {
 router.get('/divine-favor', authenticate, async (req, res) => {
   try {
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
-    
+
     if (!metrics) {
       return res.status(404).json({
         success: false,
-        message: 'Kingdom metrics not found'
+        message: 'Kingdom metrics not found',
       });
     }
 
@@ -433,13 +451,13 @@ router.get('/divine-favor', authenticate, async (req, res) => {
       success: true,
       divineFavor: metrics.divineFavor,
       king: 'King Sachem Yochanan',
-      message: '✨ Divine favor measured'
+      message: '✨ Divine favor measured',
     });
   } catch (error) {
     logger.error('Divine favor error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -452,11 +470,11 @@ router.get('/divine-favor', authenticate, async (req, res) => {
 router.get('/kingdom-expansion', authenticate, async (req, res) => {
   try {
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
-    
+
     if (!metrics) {
       return res.status(404).json({
         success: false,
-        message: 'Kingdom metrics not found'
+        message: 'Kingdom metrics not found',
       });
     }
 
@@ -464,13 +482,13 @@ router.get('/kingdom-expansion', authenticate, async (req, res) => {
       success: true,
       expansion: metrics.kingdomExpansion,
       king: 'King Sachem Yochanan',
-      message: '📈 Kingdom expansion tracked'
+      message: '📈 Kingdom expansion tracked',
     });
   } catch (error) {
     logger.error('Kingdom expansion error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -483,11 +501,11 @@ router.get('/kingdom-expansion', authenticate, async (req, res) => {
 router.get('/covenant-status', authenticate, async (req, res) => {
   try {
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
-    
+
     if (!metrics) {
       return res.status(404).json({
         success: false,
-        message: 'Kingdom metrics not found'
+        message: 'Kingdom metrics not found',
       });
     }
 
@@ -495,13 +513,13 @@ router.get('/covenant-status', authenticate, async (req, res) => {
       success: true,
       covenantFulfillment: metrics.covenantFulfillment,
       king: 'King Sachem Yochanan',
-      message: '📜 Covenant status retrieved'
+      message: '📜 Covenant status retrieved',
     });
   } catch (error) {
     logger.error('Covenant status error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -514,11 +532,11 @@ router.get('/covenant-status', authenticate, async (req, res) => {
 router.get('/dashboard-data', authenticate, async (req, res) => {
   try {
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
-    
+
     if (!metrics) {
       return res.status(404).json({
         success: false,
-        message: 'Kingdom metrics not found. Initialize kingdom first.'
+        message: 'Kingdom metrics not found. Initialize kingdom first.',
       });
     }
 
@@ -536,13 +554,13 @@ router.get('/dashboard-data', authenticate, async (req, res) => {
       spiritualMetrics: metrics.spiritualKingdom,
       financialMetrics: metrics.financialKingdom,
       impact: metrics.kingdomImpact,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     logger.error('Dashboard data error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });

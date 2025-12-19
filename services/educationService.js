@@ -2,13 +2,13 @@
  * EDUCATION SERVICE
  * Manages mandatory education programs for all citizens
  * Part of the OWLBAN GROUP Heaven on Earth Initiative
- * 
+ *
  * Four Mandatory Tracks:
  * - Military Training (6 months)
  * - Law Education (4 months)
  * - Technology Training (6 months)
  * - Agriculture Training (4 months)
- * 
+ *
  * Total Required: 20 months for UBI eligibility
  */
 
@@ -25,10 +25,10 @@ class EducationService {
       military: 6,
       law: 4,
       tech: 6,
-      agriculture: 4
+      agriculture: 4,
     };
     this.totalRequiredMonths = 20;
-    
+
     logger.info('Education Service initialized');
   }
 
@@ -40,13 +40,15 @@ class EducationService {
    */
   async createProgram(programData, userId) {
     try {
-      logger.info(`Creating ${programData.programType} program: ${programData.programInfo?.name}`);
+      logger.info(
+        `Creating ${programData.programType} program: ${programData.programInfo?.name}`
+      );
 
       // Validate program type
       if (!this.programTypes.includes(programData.programType)) {
         return {
           success: false,
-          error: `Invalid program type. Must be one of: ${this.programTypes.join(', ')}`
+          error: `Invalid program type. Must be one of: ${this.programTypes.join(', ')}`,
         };
       }
 
@@ -54,16 +56,17 @@ class EducationService {
       if (!programData.programInfo) {
         programData.programInfo = {};
       }
-      programData.programInfo.duration = this.programDurations[programData.programType];
+      programData.programInfo.duration =
+        this.programDurations[programData.programType];
 
       // Create program
       const program = new EducationProgram({
         ...programData,
         metadata: {
           ...programData.metadata,
-          createdBy: userId
+          createdBy: userId,
         },
-        status: 'active'
+        status: 'active',
       });
 
       await program.save();
@@ -78,16 +81,15 @@ class EducationService {
           name: program.programInfo.name,
           duration: program.programInfo.duration,
           capacity: program.enrollment.capacity,
-          status: program.status
+          status: program.status,
         },
-        message: 'Education program created successfully'
+        message: 'Education program created successfully',
       };
-
     } catch (error) {
       logger.error('Error creating program:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -108,7 +110,7 @@ class EducationService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
@@ -117,7 +119,7 @@ class EducationService {
       if (!program) {
         return {
           success: false,
-          error: 'Program not found'
+          error: 'Program not found',
         };
       }
 
@@ -125,7 +127,7 @@ class EducationService {
       if (program.status !== 'active') {
         return {
           success: false,
-          error: 'Program is not currently active'
+          error: 'Program is not currently active',
         };
       }
 
@@ -141,7 +143,8 @@ class EducationService {
       const programType = program.programType;
       citizen.educationStatus[programType].enrolled = true;
       citizen.educationStatus[programType].enrollmentDate = new Date();
-      citizen.educationStatus[programType].facilityId = program.facilities[0]?.facilityId;
+      citizen.educationStatus[programType].facilityId =
+        program.facilities[0]?.facilityId;
 
       // Add audit log
       citizen.auditLog.push({
@@ -151,13 +154,15 @@ class EducationService {
         details: {
           programId: programId,
           programType: programType,
-          programName: program.programInfo.name
-        }
+          programName: program.programInfo.name,
+        },
       });
 
       await citizen.save();
 
-      logger.info(`Citizen ${citizenId} enrolled successfully in ${programType} program`);
+      logger.info(
+        `Citizen ${citizenId} enrolled successfully in ${programType} program`
+      );
 
       return {
         success: true,
@@ -168,16 +173,15 @@ class EducationService {
           programType: programType,
           programName: program.programInfo.name,
           enrollmentDate: enrollmentResult.enrollmentDate,
-          duration: program.programInfo.duration
+          duration: program.programInfo.duration,
         },
-        message: 'Citizen enrolled successfully'
+        message: 'Citizen enrolled successfully',
       };
-
     } catch (error) {
       logger.error('Error enrolling citizen:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -192,19 +196,24 @@ class EducationService {
    */
   async updateProgress(citizenId, programId, progressData, userId) {
     try {
-      logger.info(`Updating progress for citizen ${citizenId} in program ${programId}`);
+      logger.info(
+        `Updating progress for citizen ${citizenId} in program ${programId}`
+      );
 
       // Get program
       const program = await EducationProgram.findOne({ programId });
       if (!program) {
         return {
           success: false,
-          error: 'Program not found'
+          error: 'Program not found',
         };
       }
 
       // Update progress in program
-      const updateResult = program.updateCitizenProgress(citizenId, progressData);
+      const updateResult = program.updateCitizenProgress(
+        citizenId,
+        progressData
+      );
       if (!updateResult.success) {
         return updateResult;
       }
@@ -215,16 +224,20 @@ class EducationService {
       const citizen = await Citizen.findOne({ citizenId });
       if (citizen) {
         const programType = program.programType;
-        
-        citizen.educationStatus[programType].progress = updateResult.citizen.progress;
-        citizen.educationStatus[programType].currentModule = updateResult.citizen.currentModule;
-        
+
+        citizen.educationStatus[programType].progress =
+          updateResult.citizen.progress;
+        citizen.educationStatus[programType].currentModule =
+          updateResult.citizen.currentModule;
+
         // Check if completed
         if (updateResult.citizen.status === 'completed') {
           citizen.educationStatus[programType].completed = true;
-          citizen.educationStatus[programType].completionDate = updateResult.citizen.completionDate;
-          citizen.educationStatus[programType].certificationId = updateResult.citizen.certificationId;
-          
+          citizen.educationStatus[programType].completionDate =
+            updateResult.citizen.completionDate;
+          citizen.educationStatus[programType].certificationId =
+            updateResult.citizen.certificationId;
+
           // Add audit log
           citizen.auditLog.push({
             action: 'EDUCATION_COMPLETED',
@@ -233,14 +246,14 @@ class EducationService {
             details: {
               programId: programId,
               programType: programType,
-              certificationId: updateResult.citizen.certificationId
-            }
+              certificationId: updateResult.citizen.certificationId,
+            },
           });
         }
 
         // Update overall education progress
         citizen.updateEducationProgress();
-        
+
         await citizen.save();
       }
 
@@ -254,16 +267,15 @@ class EducationService {
           progress: updateResult.citizen.progress,
           status: updateResult.citizen.status,
           completionDate: updateResult.citizen.completionDate,
-          certificationId: updateResult.citizen.certificationId
+          certificationId: updateResult.citizen.certificationId,
         },
-        message: 'Progress updated successfully'
+        message: 'Progress updated successfully',
       };
-
     } catch (error) {
       logger.error('Error updating progress:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -291,7 +303,7 @@ class EducationService {
 
       return {
         success: true,
-        programs: programs.map(p => ({
+        programs: programs.map((p) => ({
           programId: p.programId,
           programType: p.programType,
           name: p.programInfo.name,
@@ -301,16 +313,15 @@ class EducationService {
           completionRate: p.completionRate,
           status: p.status,
           startDate: p.schedule.startDate,
-          endDate: p.schedule.endDate
+          endDate: p.schedule.endDate,
         })),
-        count: programs.length
+        count: programs.length,
       };
-
     } catch (error) {
       logger.error('Error getting programs:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -323,21 +334,23 @@ class EducationService {
   async getCitizenProgress(citizenId) {
     try {
       const citizen = await Citizen.findOne({ citizenId });
-      
+
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
       // Get enrolled programs
       const enrolledPrograms = await EducationProgram.find({
-        'enrolledCitizens.citizenId': citizenId
+        'enrolledCitizens.citizenId': citizenId,
       });
 
-      const programDetails = enrolledPrograms.map(program => {
-        const enrollment = program.enrolledCitizens.find(ec => ec.citizenId === citizenId);
+      const programDetails = enrolledPrograms.map((program) => {
+        const enrollment = program.enrolledCitizens.find(
+          (ec) => ec.citizenId === citizenId
+        );
         return {
           programId: program.programId,
           programType: program.programType,
@@ -350,7 +363,7 @@ class EducationService {
           attendance: enrollment.attendance,
           grades: enrollment.grades,
           completionDate: enrollment.completionDate,
-          certificationId: enrollment.certificationId
+          certificationId: enrollment.certificationId,
         };
       });
 
@@ -358,7 +371,7 @@ class EducationService {
         success: true,
         citizen: {
           citizenId: citizen.citizenId,
-          fullName: citizen.fullName
+          fullName: citizen.fullName,
         },
         educationStatus: citizen.educationStatus,
         enrolledPrograms: programDetails,
@@ -371,16 +384,15 @@ class EducationService {
             military: citizen.educationStatus.military.completed,
             law: citizen.educationStatus.law.completed,
             tech: citizen.educationStatus.tech.completed,
-            agriculture: citizen.educationStatus.agriculture.completed
-          }
-        }
+            agriculture: citizen.educationStatus.agriculture.completed,
+          },
+        },
       };
-
     } catch (error) {
       logger.error('Error getting citizen progress:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -394,13 +406,15 @@ class EducationService {
    */
   async issueCertification(citizenId, programId, userId) {
     try {
-      logger.info(`Issuing certification for citizen ${citizenId} in program ${programId}`);
+      logger.info(
+        `Issuing certification for citizen ${citizenId} in program ${programId}`
+      );
 
       const program = await EducationProgram.findOne({ programId });
       if (!program) {
         return {
           success: false,
-          error: 'Program not found'
+          error: 'Program not found',
         };
       }
 
@@ -408,16 +422,18 @@ class EducationService {
       if (!citizen) {
         return {
           success: false,
-          error: 'Citizen not found'
+          error: 'Citizen not found',
         };
       }
 
       // Find enrollment
-      const enrollment = program.enrolledCitizens.find(ec => ec.citizenId === citizenId);
+      const enrollment = program.enrolledCitizens.find(
+        (ec) => ec.citizenId === citizenId
+      );
       if (!enrollment) {
         return {
           success: false,
-          error: 'Citizen not enrolled in this program'
+          error: 'Citizen not enrolled in this program',
         };
       }
 
@@ -425,7 +441,7 @@ class EducationService {
       if (enrollment.status !== 'completed') {
         return {
           success: false,
-          error: 'Citizen has not completed the program'
+          error: 'Citizen has not completed the program',
         };
       }
 
@@ -439,25 +455,25 @@ class EducationService {
             programName: program.programInfo.name,
             citizenName: citizen.fullName,
             completionDate: enrollment.completionDate,
-            issuedDate: enrollment.completionDate
+            issuedDate: enrollment.completionDate,
           },
-          message: 'Certification already issued'
+          message: 'Certification already issued',
         };
       }
 
       // Generate certification ID
       const certificationId = `CERT-${program.programType.toUpperCase()}-${citizenId}-${Date.now()}`;
       enrollment.certificationId = certificationId;
-      
+
       // Update certification count
       program.certification.issued += 1;
-      
+
       await program.save();
 
       // Update citizen
       const programType = program.programType;
       citizen.educationStatus[programType].certificationId = certificationId;
-      
+
       citizen.auditLog.push({
         action: 'CERTIFICATION_ISSUED',
         performedBy: userId,
@@ -465,8 +481,8 @@ class EducationService {
         details: {
           programId: programId,
           programType: programType,
-          certificationId: certificationId
-        }
+          certificationId: certificationId,
+        },
       });
 
       await citizen.save();
@@ -483,16 +499,15 @@ class EducationService {
           citizenName: citizen.fullName,
           completionDate: enrollment.completionDate,
           issuedDate: new Date(),
-          issuedBy: userId
+          issuedBy: userId,
         },
-        message: 'Certification issued successfully'
+        message: 'Certification issued successfully',
       };
-
     } catch (error) {
       logger.error('Error issuing certification:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -504,37 +519,39 @@ class EducationService {
   async getStatistics() {
     try {
       const totalPrograms = await EducationProgram.countDocuments();
-      const activePrograms = await EducationProgram.countDocuments({ status: 'active' });
-      
+      const activePrograms = await EducationProgram.countDocuments({
+        status: 'active',
+      });
+
       const programsByType = await EducationProgram.aggregate([
-        { $group: { _id: '$programType', count: { $sum: 1 } } }
+        { $group: { _id: '$programType', count: { $sum: 1 } } },
       ]);
 
       const totalEnrollments = await EducationProgram.aggregate([
-        { $group: { _id: null, total: { $sum: '$enrollment.enrolled' } } }
+        { $group: { _id: null, total: { $sum: '$enrollment.enrolled' } } },
       ]);
 
       const totalCompletions = await EducationProgram.aggregate([
-        { $group: { _id: null, total: { $sum: '$enrollment.completed' } } }
+        { $group: { _id: null, total: { $sum: '$enrollment.completed' } } },
       ]);
 
       const certificationsIssued = await EducationProgram.aggregate([
-        { $group: { _id: null, total: { $sum: '$certification.issued' } } }
+        { $group: { _id: null, total: { $sum: '$certification.issued' } } },
       ]);
 
       // Get citizen compliance statistics
       const totalCitizens = await Citizen.countDocuments({ status: 'active' });
       const compliantCitizens = await Citizen.countDocuments({
         status: 'active',
-        'educationStatus.complianceStatus': 'compliant'
+        'educationStatus.complianceStatus': 'compliant',
       });
       const inProgressCitizens = await Citizen.countDocuments({
         status: 'active',
-        'educationStatus.complianceStatus': 'in_progress'
+        'educationStatus.complianceStatus': 'in_progress',
       });
       const nonCompliantCitizens = await Citizen.countDocuments({
         status: 'active',
-        'educationStatus.complianceStatus': 'non_compliant'
+        'educationStatus.complianceStatus': 'non_compliant',
       });
 
       return {
@@ -546,36 +563,41 @@ class EducationService {
             byType: programsByType.reduce((acc, item) => {
               acc[item._id] = item.count;
               return acc;
-            }, {})
+            }, {}),
           },
           enrollments: {
             total: totalEnrollments[0]?.total || 0,
             completed: totalCompletions[0]?.total || 0,
-            completionRate: totalEnrollments[0]?.total > 0
-              ? ((totalCompletions[0]?.total || 0) / totalEnrollments[0].total * 100).toFixed(2) + '%'
-              : '0%'
+            completionRate:
+              totalEnrollments[0]?.total > 0
+                ? (
+                    ((totalCompletions[0]?.total || 0) /
+                      totalEnrollments[0].total) *
+                    100
+                  ).toFixed(2) + '%'
+                : '0%',
           },
           certifications: {
-            issued: certificationsIssued[0]?.total || 0
+            issued: certificationsIssued[0]?.total || 0,
           },
           citizens: {
             total: totalCitizens,
             compliant: compliantCitizens,
             inProgress: inProgressCitizens,
             nonCompliant: nonCompliantCitizens,
-            complianceRate: totalCitizens > 0
-              ? ((compliantCitizens / totalCitizens) * 100).toFixed(2) + '%'
-              : '0%'
-          }
+            complianceRate:
+              totalCitizens > 0
+                ? ((compliantCitizens / totalCitizens) * 100).toFixed(2) + '%'
+                : '0%',
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       logger.error('Error getting statistics:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -594,70 +616,74 @@ class EducationService {
           programType: 'military',
           programInfo: {
             name: 'Basic Military Training',
-            description: 'Comprehensive 6-month military training program covering combat, discipline, leadership, and strategic thinking',
+            description:
+              'Comprehensive 6-month military training program covering combat, discipline, leadership, and strategic thinking',
             level: 'beginner',
             objectives: [
               'Physical fitness and endurance',
               'Weapons handling and safety',
               'Combat tactics and strategy',
               'Leadership and teamwork',
-              'Discipline and military protocol'
-            ]
+              'Discipline and military protocol',
+            ],
           },
-          enrollment: { capacity: 10000 }
+          enrollment: { capacity: 10000 },
         },
         {
           programType: 'law',
           programInfo: {
             name: 'Legal Fundamentals',
-            description: '4-month law education program covering constitutional law, civil rights, and legal procedures',
+            description:
+              '4-month law education program covering constitutional law, civil rights, and legal procedures',
             level: 'beginner',
             objectives: [
               'Understanding constitutional law',
               'Civil rights and responsibilities',
               'Legal procedures and court systems',
               'Conflict resolution',
-              'Civic engagement'
-            ]
+              'Civic engagement',
+            ],
           },
-          enrollment: { capacity: 15000 }
+          enrollment: { capacity: 15000 },
         },
         {
           programType: 'tech',
           programInfo: {
             name: 'Technology Fundamentals',
-            description: '6-month technology training covering programming, AI, web development, and cybersecurity',
+            description:
+              '6-month technology training covering programming, AI, web development, and cybersecurity',
             level: 'beginner',
             objectives: [
               'Programming fundamentals',
               'AI and machine learning basics',
               'Web development',
               'Systems administration',
-              'Cybersecurity principles'
-            ]
+              'Cybersecurity principles',
+            ],
           },
-          enrollment: { capacity: 20000 }
+          enrollment: { capacity: 20000 },
         },
         {
           programType: 'agriculture',
           programInfo: {
             name: 'Sustainable Agriculture',
-            description: '4-month agriculture training covering sustainable farming, hydroponics, and food security',
+            description:
+              '4-month agriculture training covering sustainable farming, hydroponics, and food security',
             level: 'beginner',
             objectives: [
               'Sustainable farming practices',
               'Hydroponics and modern agriculture',
               'Crop management',
               'Food security principles',
-              'Agricultural technology'
-            ]
+              'Agricultural technology',
+            ],
           },
-          enrollment: { capacity: 12000 }
-        }
+          enrollment: { capacity: 12000 },
+        },
       ];
 
       const createdPrograms = [];
-      
+
       for (const programData of defaultPrograms) {
         const result = await this.createProgram(programData, userId);
         if (result.success) {
@@ -670,14 +696,13 @@ class EducationService {
       return {
         success: true,
         programs: createdPrograms,
-        message: `${createdPrograms.length} default programs initialized`
+        message: `${createdPrograms.length} default programs initialized`,
       };
-
     } catch (error) {
       logger.error('Error initializing default programs:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -692,7 +717,7 @@ class EducationService {
       service: 'Education Service',
       programTypes: this.programTypes,
       totalRequiredMonths: this.totalRequiredMonths,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     };
   }
 }

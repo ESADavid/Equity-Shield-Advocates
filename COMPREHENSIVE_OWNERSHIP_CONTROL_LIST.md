@@ -46,21 +46,21 @@ This document provides a comprehensive list of all assets, systems, accounts, cr
 
 - **Primary Operating Account**:
   - Account Holder: Oscar Broome
-  - Account Number: ****-****-****-1234 (Last 4 digits: 1234)
+  - Account Number: \***\*-\*\***-\*\*\*\*-1234 (Last 4 digits: 1234)
   - Routing Number: 021000021
   - Balance: $25,000,000.00
   - Purpose: Primary revenue collection and operational expenses
 
 - **Treasury Management Account**:
   - Account Holder: Oscar Broome
-  - Account Number: ****-****-****-5678 (Last 4 digits: 5678)
+  - Account Number: \***\*-\*\***-\*\*\*\*-5678 (Last 4 digits: 5678)
   - Routing Number: 021000021
   - Balance: $50,000,000.00
   - Purpose: Cash management and investment operations
 
 - **Payroll Account**:
   - Account Holder: Oscar Broome
-  - Account Number: ****-****-****-9012 (Last 4 digits: 9012)
+  - Account Number: \***\*-\*\***-\*\*\*\*-9012 (Last 4 digits: 9012)
   - Routing Number: 021000021
   - Purpose: Payroll processing and employee payments
 

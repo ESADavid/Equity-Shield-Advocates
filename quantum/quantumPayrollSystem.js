@@ -39,8 +39,8 @@ class QuantumPayrollSystem extends EventEmitter {
       socialSecurityRate: 0.062,
       medicareRate: 0.0145,
       overtimeMultiplier: 1.5,
-      minimumWage: 16.90,
-      maxHoursPerWeek: 40
+      minimumWage: 16.9,
+      maxHoursPerWeek: 40,
     };
 
     // Employee data structure
@@ -58,18 +58,18 @@ class QuantumPayrollSystem extends EventEmitter {
         ssn: '',
         filingStatus: 'single',
         dependents: 0,
-        state: 'NY'
+        state: 'NY',
       },
       benefits: {
         healthInsurance: 0,
         dentalInsurance: 0,
         retirement401k: 0,
-        hsa: 0
+        hsa: 0,
       },
       deductions: {
         preTax: 0,
-        postTax: 0
-      }
+        postTax: 0,
+      },
     };
 
     // Initialize payroll system
@@ -84,7 +84,7 @@ class QuantumPayrollSystem extends EventEmitter {
       quantumHash: this.generateQuantumHash(),
       config: this.payrollConfig,
       employeeCount: 0,
-      totalPayrollRun: 0
+      totalPayrollRun: 0,
     };
 
     this.quantumEngine.setQuantumState('payroll_system', payrollState);
@@ -92,7 +92,9 @@ class QuantumPayrollSystem extends EventEmitter {
     // Initialize sample employees (Oscar Broome and team)
     await this.initializeSampleEmployees();
 
-    this.emit('payroll-system-initialized', { systemId: payrollState.systemId });
+    this.emit('payroll-system-initialized', {
+      systemId: payrollState.systemId,
+    });
   }
 
   generateSystemId() {
@@ -102,7 +104,7 @@ class QuantumPayrollSystem extends EventEmitter {
   generateQuantumHash() {
     const data = JSON.stringify({
       timestamp: Date.now(),
-      system: 'quantum-payroll-system'
+      system: 'quantum-payroll-system',
     });
     return crypto.createHash('sha3-512').update(data).digest('hex');
   }
@@ -123,18 +125,18 @@ class QuantumPayrollSystem extends EventEmitter {
           ssn: 'XXX-XX-XXXX',
           filingStatus: 'married',
           dependents: 2,
-          state: 'NY'
+          state: 'NY',
         },
         benefits: {
           healthInsurance: 1200,
           dentalInsurance: 300,
           retirement401k: 15000,
-          hsa: 500
+          hsa: 500,
         },
         deductions: {
           preTax: 16500,
-          postTax: 2000
-        }
+          postTax: 2000,
+        },
       },
       {
         employeeId: 'EMP_JANE_SMITH',
@@ -149,18 +151,18 @@ class QuantumPayrollSystem extends EventEmitter {
           ssn: 'XXX-XX-XXXX',
           filingStatus: 'single',
           dependents: 0,
-          state: 'NY'
+          state: 'NY',
         },
         benefits: {
           healthInsurance: 1000,
           dentalInsurance: 250,
           retirement401k: 12000,
-          hsa: 400
+          hsa: 400,
         },
         deductions: {
           preTax: 12650,
-          postTax: 1500
-        }
+          postTax: 1500,
+        },
       },
       {
         employeeId: 'EMP_MIKE_JOHNSON',
@@ -175,26 +177,28 @@ class QuantumPayrollSystem extends EventEmitter {
           ssn: 'XXX-XX-XXXX',
           filingStatus: 'married',
           dependents: 1,
-          state: 'NY'
+          state: 'NY',
         },
         benefits: {
           healthInsurance: 1100,
           dentalInsurance: 275,
           retirement401k: 10000,
-          hsa: 450
+          hsa: 450,
         },
         deductions: {
           preTax: 11825,
-          postTax: 1200
-        }
-      }
+          postTax: 1200,
+        },
+      },
     ];
 
     for (const employee of employees) {
       await this.addEmployee(employee);
     }
 
-    logger.info(`✅ Initialized ${employees.length} employees in quantum payroll system`);
+    logger.info(
+      `✅ Initialized ${employees.length} employees in quantum payroll system`
+    );
   }
 
   // Employee Management
@@ -204,17 +208,20 @@ class QuantumPayrollSystem extends EventEmitter {
       ...employeeData,
       employeeId: employeeData.employeeId || this.generateEmployeeId(),
       createdAt: new Date().toISOString(),
-      quantumHash: this.generateEmployeeHash(employeeData)
+      quantumHash: this.generateEmployeeHash(employeeData),
     };
 
     // Store in quantum state
-    this.quantumEngine.setQuantumState(`employee_${employee.employeeId}`, employee);
+    this.quantumEngine.setQuantumState(
+      `employee_${employee.employeeId}`,
+      employee
+    );
     this.employees.set(employee.employeeId, employee);
 
     this.emit('employee-added', {
       employeeId: employee.employeeId,
       name: employee.name,
-      department: employee.department
+      department: employee.department,
     });
 
     return employee;
@@ -243,10 +250,13 @@ class QuantumPayrollSystem extends EventEmitter {
       ...employee,
       ...updates,
       updatedAt: new Date().toISOString(),
-      quantumHash: this.generateEmployeeHash({ ...employee, ...updates })
+      quantumHash: this.generateEmployeeHash({ ...employee, ...updates }),
     };
 
-    this.quantumEngine.setQuantumState(`employee_${employeeId}`, updatedEmployee);
+    this.quantumEngine.setQuantumState(
+      `employee_${employeeId}`,
+      updatedEmployee
+    );
     this.employees.set(employeeId, updatedEmployee);
 
     this.emit('employee-updated', { employeeId, updates });
@@ -271,14 +281,17 @@ class QuantumPayrollSystem extends EventEmitter {
           netPay: 0,
           taxes: 0,
           benefits: 0,
-          deductions: 0
+          deductions: 0,
         },
-        quantumHash: this.generateQuantumHash()
+        quantumHash: this.generateQuantumHash(),
       };
 
       // Process each employee
       for (const [employeeId, employee] of this.employees) {
-        const employeePayroll = await this.calculateEmployeePayroll(employee, period);
+        const employeePayroll = await this.calculateEmployeePayroll(
+          employee,
+          period
+        );
         payrollRun.employees.push(employeePayroll);
 
         // Update totals
@@ -294,7 +307,10 @@ class QuantumPayrollSystem extends EventEmitter {
       payrollRun.completedAt = new Date().toISOString();
 
       // Store payroll run
-      this.quantumEngine.setQuantumState(`payroll_run_${payrollRunId}`, payrollRun);
+      this.quantumEngine.setQuantumState(
+        `payroll_run_${payrollRunId}`,
+        payrollRun
+      );
       this.payrollRuns.set(payrollRunId, payrollRun);
       this.payrollHistory.set(payrollRunId, payrollRun);
 
@@ -304,13 +320,15 @@ class QuantumPayrollSystem extends EventEmitter {
       this.emit('payroll-processed', {
         runId: payrollRunId,
         employeeCount: payrollRun.employees.length,
-        totalNetPay: payrollRun.totals.netPay
+        totalNetPay: payrollRun.totals.netPay,
       });
 
       return payrollRun;
-
     } catch (error) {
-      this.emit('payroll-failed', { error: error.message, payPeriod: payPeriod });
+      this.emit('payroll-failed', {
+        error: error.message,
+        payPeriod: payPeriod,
+      });
       throw error;
     }
   }
@@ -366,7 +384,7 @@ class QuantumPayrollSystem extends EventEmitter {
       deductions,
       netPay,
       paymentMethod: 'direct_deposit',
-      quantumVerified: true
+      quantumVerified: true,
     };
 
     return employeePayroll;
@@ -374,11 +392,16 @@ class QuantumPayrollSystem extends EventEmitter {
 
   getPayPeriodsPerYear() {
     switch (this.payrollConfig.payPeriod) {
-      case 'weekly': return 52;
-      case 'bi-weekly': return 26;
-      case 'semi-monthly': return 24;
-      case 'monthly': return 12;
-      default: return 26;
+      case 'weekly':
+        return 52;
+      case 'bi-weekly':
+        return 26;
+      case 'semi-monthly':
+        return 24;
+      case 'monthly':
+        return 12;
+      default:
+        return 26;
     }
   }
 
@@ -396,29 +419,33 @@ class QuantumPayrollSystem extends EventEmitter {
       state: stateTax,
       socialSecurity,
       medicare,
-      total: totalTax
+      total: totalTax,
     };
   }
 
   calculateBenefits(employee) {
-    const totalBenefits = Object.values(employee.benefits).reduce((sum, benefit) => sum + benefit, 0);
+    const totalBenefits = Object.values(employee.benefits).reduce(
+      (sum, benefit) => sum + benefit,
+      0
+    );
 
     return {
       healthInsurance: employee.benefits.healthInsurance,
       dentalInsurance: employee.benefits.dentalInsurance,
       retirement401k: employee.benefits.retirement401k,
       hsa: employee.benefits.hsa,
-      total: totalBenefits
+      total: totalBenefits,
     };
   }
 
   calculateDeductions(employee) {
-    const totalDeductions = employee.deductions.preTax + employee.deductions.postTax;
+    const totalDeductions =
+      employee.deductions.preTax + employee.deductions.postTax;
 
     return {
       preTax: employee.deductions.preTax,
       postTax: employee.deductions.postTax,
-      total: totalDeductions
+      total: totalDeductions,
     };
   }
 
@@ -434,14 +461,19 @@ class QuantumPayrollSystem extends EventEmitter {
         to: employee.email, // Using email as account identifier
         description: `Payroll: ${employeePayroll.payPeriod} - ${employee.name}`,
         employeeId: employee.employeeId,
-        payPeriod: employeePayroll.payPeriod
+        payPeriod: employeePayroll.payPeriod,
       };
 
       try {
         await this.transactionEngine.processTransaction(transaction);
-        logger.info(`✅ Processed payroll payment for ${employee.name}: $${employeePayroll.netPay.toLocaleString()}`);
+        logger.info(
+          `✅ Processed payroll payment for ${employee.name}: $${employeePayroll.netPay.toLocaleString()}`
+        );
       } catch (error) {
-        logger.error(`❌ Failed to process payroll payment for ${employee.name}:`, error.message);
+        logger.error(
+          `❌ Failed to process payroll payment for ${employee.name}:`,
+          error.message
+        );
       }
     }
   }
@@ -449,8 +481,9 @@ class QuantumPayrollSystem extends EventEmitter {
   // Reporting and Analytics
   generatePayrollReport(payPeriod = null) {
     const period = payPeriod || this.getCurrentPayPeriod();
-    const payrollRuns = Array.from(this.payrollRuns.values())
-      .filter(run => run.payPeriod === period);
+    const payrollRuns = Array.from(this.payrollRuns.values()).filter(
+      (run) => run.payPeriod === period
+    );
 
     if (payrollRuns.length === 0) {
       return { message: `No payroll data found for period ${period}` };
@@ -464,21 +497,22 @@ class QuantumPayrollSystem extends EventEmitter {
       generatedAt: new Date().toISOString(),
       employeeCount: latestRun.employees.length,
       totals: latestRun.totals,
-      employees: latestRun.employees.map(emp => ({
+      employees: latestRun.employees.map((emp) => ({
         employeeId: emp.employeeId,
         name: emp.employeeName,
         grossPay: emp.grossPay,
         netPay: emp.netPay,
         taxes: emp.taxes.total,
-        benefits: emp.benefits.total
+        benefits: emp.benefits.total,
       })),
-      quantumVerified: true
+      quantumVerified: true,
     };
   }
 
   generateTaxReport(taxYear = this.payrollConfig.taxYear) {
-    const payrollRuns = Array.from(this.payrollHistory.values())
-      .filter(run => run.payPeriod.startsWith(taxYear.toString()));
+    const payrollRuns = Array.from(this.payrollHistory.values()).filter((run) =>
+      run.payPeriod.startsWith(taxYear.toString())
+    );
 
     const annualTotals = {
       grossPay: 0,
@@ -487,11 +521,11 @@ class QuantumPayrollSystem extends EventEmitter {
       socialSecurity: 0,
       medicare: 0,
       benefits: 0,
-      netPay: 0
+      netPay: 0,
     };
 
     // Aggregate annual data
-    payrollRuns.forEach(run => {
+    payrollRuns.forEach((run) => {
       annualTotals.grossPay += run.totals.grossPay;
       // Note: In a real system, we'd track individual tax components per run
     });
@@ -501,7 +535,7 @@ class QuantumPayrollSystem extends EventEmitter {
       generatedAt: new Date().toISOString(),
       annualTotals,
       employeeCount: this.employees.size,
-      quantumVerified: true
+      quantumVerified: true,
     };
   }
 
@@ -516,7 +550,7 @@ class QuantumPayrollSystem extends EventEmitter {
       quantumSecurity: this.quantumSecurity.verifySecurity(),
       performance: this.quantumOptimizer.getRealTimeMetrics(),
       uptime: performance.now(),
-      memory: process.memoryUsage()
+      memory: process.memoryUsage(),
     };
   }
 
@@ -540,7 +574,7 @@ class QuantumPayrollSystem extends EventEmitter {
 
     // Filter by date range
     if (startDate || endDate) {
-      payrollRuns = payrollRuns.filter(run => {
+      payrollRuns = payrollRuns.filter((run) => {
         const runDate = new Date(run.createdAt);
         const start = startDate ? new Date(startDate) : new Date(0);
         const end = endDate ? new Date(endDate) : new Date();
@@ -552,9 +586,11 @@ class QuantumPayrollSystem extends EventEmitter {
       generatedAt: new Date().toISOString(),
       period: { startDate, endDate },
       totalPayrollRuns: payrollRuns.length,
-      employeeAudit: employeeId ? this.generateEmployeeAudit(employeeId, payrollRuns) : null,
+      employeeAudit: employeeId
+        ? this.generateEmployeeAudit(employeeId, payrollRuns)
+        : null,
       systemAudit: this.generateSystemAudit(payrollRuns),
-      quantumVerified: true
+      quantumVerified: true,
     };
 
     return auditTrail;
@@ -563,8 +599,10 @@ class QuantumPayrollSystem extends EventEmitter {
   generateEmployeeAudit(employeeId, payrollRuns) {
     const employeePayrolls = [];
 
-    payrollRuns.forEach(run => {
-      const employeePayroll = run.employees.find(emp => emp.employeeId === employeeId);
+    payrollRuns.forEach((run) => {
+      const employeePayroll = run.employees.find(
+        (emp) => emp.employeeId === employeeId
+      );
       if (employeePayroll) {
         employeePayrolls.push({
           payPeriod: run.payPeriod,
@@ -572,7 +610,7 @@ class QuantumPayrollSystem extends EventEmitter {
           netPay: employeePayroll.netPay,
           taxes: employeePayroll.taxes,
           benefits: employeePayroll.benefits,
-          quantumHash: run.quantumHash
+          quantumHash: run.quantumHash,
         });
       }
     });
@@ -582,24 +620,29 @@ class QuantumPayrollSystem extends EventEmitter {
       payrollCount: employeePayrolls.length,
       totalGrossPay: employeePayrolls.reduce((sum, p) => sum + p.grossPay, 0),
       totalNetPay: employeePayrolls.reduce((sum, p) => sum + p.netPay, 0),
-      payrolls: employeePayrolls
+      payrolls: employeePayrolls,
     };
   }
 
   generateSystemAudit(payrollRuns) {
     return {
       totalPayrollRuns: payrollRuns.length,
-      totalGrossPay: payrollRuns.reduce((sum, run) => sum + run.totals.grossPay, 0),
+      totalGrossPay: payrollRuns.reduce(
+        (sum, run) => sum + run.totals.grossPay,
+        0
+      ),
       totalNetPay: payrollRuns.reduce((sum, run) => sum + run.totals.netPay, 0),
       totalTaxes: payrollRuns.reduce((sum, run) => sum + run.totals.taxes, 0),
       averagePayrollRunTime: this.calculateAveragePayrollRunTime(payrollRuns),
       complianceStatus: 'compliant',
-      lastAudit: new Date().toISOString()
+      lastAudit: new Date().toISOString(),
     };
   }
 
   calculateAveragePayrollRunTime(payrollRuns) {
-    const completedRuns = payrollRuns.filter(run => run.completedAt && run.createdAt);
+    const completedRuns = payrollRuns.filter(
+      (run) => run.completedAt && run.createdAt
+    );
 
     if (completedRuns.length === 0) return 0;
 

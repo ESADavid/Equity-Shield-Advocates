@@ -24,9 +24,9 @@ const overrideLogger = winston.createLogger({
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.simple()
-      )
-    })
-  ]
+      ),
+    }),
+  ],
 });
 
 // Standard authentication logger
@@ -43,25 +43,35 @@ const authLogger = winston.createLogger({
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.simple()
-      )
-    })
-  ]
+      ),
+    }),
+  ],
 });
 
 // Configuration with enhanced security
-const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(64).toString('hex');
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || crypto.randomBytes(64).toString('hex');
-const MFA_SECRET = process.env.MFA_SECRET || crypto.randomBytes(32).toString('hex');
-const ADMIN_OVERRIDE_CODE = process.env.ADMIN_OVERRIDE_CODE || 'OSCAR_BROOME_EMERGENCY_2024';
+const JWT_SECRET =
+  process.env.JWT_SECRET || crypto.randomBytes(64).toString('hex');
+const JWT_REFRESH_SECRET =
+  process.env.JWT_REFRESH_SECRET || crypto.randomBytes(64).toString('hex');
+const MFA_SECRET =
+  process.env.MFA_SECRET || crypto.randomBytes(32).toString('hex');
+const ADMIN_OVERRIDE_CODE =
+  process.env.ADMIN_OVERRIDE_CODE || 'OSCAR_BROOME_EMERGENCY_2024';
 
 // Enhanced security settings
-const PASSWORD_MIN_LENGTH = Number.parseInt(process.env.PASSWORD_MIN_LENGTH) || 12;
-const PASSWORD_REQUIRE_UPPERCASE = process.env.PASSWORD_REQUIRE_UPPERCASE !== 'false';
-const PASSWORD_REQUIRE_LOWERCASE = process.env.PASSWORD_REQUIRE_LOWERCASE !== 'false';
-const PASSWORD_REQUIRE_NUMBERS = process.env.PASSWORD_REQUIRE_NUMBERS !== 'false';
-const PASSWORD_REQUIRE_SPECIAL = process.env.PASSWORD_REQUIRE_SPECIAL !== 'false';
+const PASSWORD_MIN_LENGTH =
+  Number.parseInt(process.env.PASSWORD_MIN_LENGTH) || 12;
+const PASSWORD_REQUIRE_UPPERCASE =
+  process.env.PASSWORD_REQUIRE_UPPERCASE !== 'false';
+const PASSWORD_REQUIRE_LOWERCASE =
+  process.env.PASSWORD_REQUIRE_LOWERCASE !== 'false';
+const PASSWORD_REQUIRE_NUMBERS =
+  process.env.PASSWORD_REQUIRE_NUMBERS !== 'false';
+const PASSWORD_REQUIRE_SPECIAL =
+  process.env.PASSWORD_REQUIRE_SPECIAL !== 'false';
 const SESSION_TIMEOUT = Number.parseInt(process.env.SESSION_TIMEOUT) || 3600000; // 1 hour
-const MAX_SESSIONS_PER_USER = Number.parseInt(process.env.MAX_SESSIONS_PER_USER) || 5;
+const MAX_SESSIONS_PER_USER =
+  Number.parseInt(process.env.MAX_SESSIONS_PER_USER) || 5;
 
 // In-memory user store (in production, use database)
 const users = new Map();
@@ -91,7 +101,7 @@ class AuthenticationManager {
       lastLogin: null,
       loginAttempts: 0,
       locked: false,
-      permissions: ['read', 'write', 'delete', 'admin']
+      permissions: ['read', 'write', 'delete', 'admin'],
     });
 
     // Create executive user
@@ -106,7 +116,7 @@ class AuthenticationManager {
       lastLogin: null,
       loginAttempts: 0,
       locked: false,
-      permissions: ['read', 'write']
+      permissions: ['read', 'write'],
     });
 
     authLogger.info('Default users initialized');
@@ -117,7 +127,11 @@ class AuthenticationManager {
       // Check rate limiting
       if (this.isAccountLocked(email)) {
         authLogger.warn(`Login attempt for locked account: ${email}`);
-        return { success: false, message: 'Account is temporarily locked due to too many failed attempts' };
+        return {
+          success: false,
+          message:
+            'Account is temporarily locked due to too many failed attempts',
+        };
       }
 
       const user = users.get(email);
@@ -138,7 +152,11 @@ class AuthenticationManager {
       // Check MFA if enabled
       if (user.mfaEnabled) {
         if (!mfaCode) {
-          return { success: false, message: 'MFA code required', requiresMfa: true };
+          return {
+            success: false,
+            message: 'MFA code required',
+            requiresMfa: true,
+          };
         }
 
         const isValidMfa = this.verifyMfaCode(user.mfaSecret, mfaCode);
@@ -163,7 +181,7 @@ class AuthenticationManager {
         email: user.email,
         role: user.role,
         permissions: user.permissions,
-        expiresAt: Date.now() + (15 * 60 * 1000) // 15 minutes
+        expiresAt: Date.now() + 15 * 60 * 1000, // 15 minutes
       });
 
       authLogger.info(`Successful login for user: ${email}`);
@@ -174,11 +192,10 @@ class AuthenticationManager {
           id: user.id,
           email: user.email,
           role: user.role,
-          permissions: user.permissions
+          permissions: user.permissions,
         },
-        tokens
+        tokens,
       };
-
     } catch (error) {
       authLogger.error(`Authentication error for ${email}: ${error.message}`);
       throw error; // Re-throw to allow caller to handle
@@ -194,7 +211,9 @@ class AuthenticationManager {
 
       const user = users.get(targetEmail);
       if (!user) {
-        overrideLogger.warn(`Admin override for non-existent user: ${targetEmail}`);
+        overrideLogger.warn(
+          `Admin override for non-existent user: ${targetEmail}`
+        );
         return { success: false, message: 'User not found' };
       }
 
@@ -211,7 +230,7 @@ class AuthenticationManager {
           role: user.role,
           permissions: user.permissions,
           override: true,
-          emergency: true
+          emergency: true,
         },
         JWT_SECRET,
         { expiresIn: '1h' }
@@ -225,10 +244,9 @@ class AuthenticationManager {
         user: {
           id: user.id,
           email: user.email,
-          role: user.role
-        }
+          role: user.role,
+        },
       };
-
     } catch (error) {
       overrideLogger.error(`Admin override error: ${error.message}`);
       return { success: false, message: 'Override failed' };
@@ -241,7 +259,7 @@ class AuthenticationManager {
         userId: user.id,
         email: user.email,
         role: user.role,
-        permissions: user.permissions
+        permissions: user.permissions,
       },
       JWT_SECRET,
       { expiresIn: '15m' }
@@ -251,7 +269,7 @@ class AuthenticationManager {
       {
         userId: user.id,
         email: user.email,
-        type: 'refresh'
+        type: 'refresh',
       },
       JWT_REFRESH_SECRET,
       { expiresIn: '7d' }
@@ -278,7 +296,8 @@ class AuthenticationManager {
   verifyMfaCode(secret, code) {
     // Simple TOTP implementation (in production, use a proper TOTP library)
     const timeWindow = Math.floor(Date.now() / 30000); // 30-second windows
-    const expectedCode = crypto.createHmac('sha1', secret)
+    const expectedCode = crypto
+      .createHmac('sha1', secret)
       .update(timeWindow.toString())
       .digest('hex')
       .substring(0, 6);
@@ -287,7 +306,10 @@ class AuthenticationManager {
   }
 
   recordFailedAttempt(email) {
-    const attempts = loginAttempts.get(email) || { count: 0, lastAttempt: Date.now() };
+    const attempts = loginAttempts.get(email) || {
+      count: 0,
+      lastAttempt: Date.now(),
+    };
     attempts.count += 1;
     attempts.lastAttempt = Date.now();
 
@@ -350,30 +372,48 @@ class AuthenticationManager {
       role: user.role,
       permissions: user.permissions,
       lastLogin: user.lastLogin,
-      mfaEnabled: user.mfaEnabled
+      mfaEnabled: user.mfaEnabled,
     };
   }
 
   // Enhanced password validation
   validatePassword(password) {
     if (!password || password.length < PASSWORD_MIN_LENGTH) {
-      return { valid: false, message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters long` };
+      return {
+        valid: false,
+        message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters long`,
+      };
     }
 
     if (PASSWORD_REQUIRE_UPPERCASE && !/[A-Z]/.test(password)) {
-      return { valid: false, message: 'Password must contain at least one uppercase letter' };
+      return {
+        valid: false,
+        message: 'Password must contain at least one uppercase letter',
+      };
     }
 
     if (PASSWORD_REQUIRE_LOWERCASE && !/[a-z]/.test(password)) {
-      return { valid: false, message: 'Password must contain at least one lowercase letter' };
+      return {
+        valid: false,
+        message: 'Password must contain at least one lowercase letter',
+      };
     }
 
     if (PASSWORD_REQUIRE_NUMBERS && !/\d/.test(password)) {
-      return { valid: false, message: 'Password must contain at least one number' };
+      return {
+        valid: false,
+        message: 'Password must contain at least one number',
+      };
     }
 
-    if (PASSWORD_REQUIRE_SPECIAL && !/[!@#$%^&*()_+\-={}|;:,.<>?`~]/.test(password)) {
-      return { valid: false, message: 'Password must contain at least one special character' };
+    if (
+      PASSWORD_REQUIRE_SPECIAL &&
+      !/[!@#$%^&*()_+\-={}|;:,.<>?`~]/.test(password)
+    ) {
+      return {
+        valid: false,
+        message: 'Password must contain at least one special character',
+      };
     }
 
     return { valid: true, message: 'Password is valid' };
@@ -387,7 +427,7 @@ class AuthenticationManager {
         userSessions.push({
           token: token.substring(0, 10) + '...', // Partial token for security
           expiresAt: session.expiresAt,
-          createdAt: session.expiresAt - (15 * 60 * 1000) // Approximate creation time
+          createdAt: session.expiresAt - 15 * 60 * 1000, // Approximate creation time
         });
       }
     }
@@ -407,7 +447,10 @@ class AuthenticationManager {
       sessions.delete(token);
     }
     authLogger.info(`Force logout all sessions for user: ${userId}`);
-    return { success: true, message: `${tokensToDelete.length} sessions terminated` };
+    return {
+      success: true,
+      message: `${tokensToDelete.length} sessions terminated`,
+    };
   }
 
   // Enhanced token verification with session cleanup
@@ -440,8 +483,8 @@ class AuthenticationManager {
           id: user.id,
           email: user.email,
           role: user.role,
-          permissions: user.permissions
-        }
+          permissions: user.permissions,
+        },
       };
     } catch (error) {
       if (sessions.has(token)) {
@@ -455,16 +498,22 @@ class AuthenticationManager {
   // Security audit methods
   getSecurityStats() {
     const totalUsers = users.size;
-    const lockedUsers = Array.from(users.values()).filter(user => user.locked).length;
-    const activeSessions = Array.from(sessions.values()).filter(session => session.expiresAt > Date.now()).length;
-    const failedAttempts = Array.from(loginAttempts.values()).filter(attempt => attempt.count > 0).length;
+    const lockedUsers = Array.from(users.values()).filter(
+      (user) => user.locked
+    ).length;
+    const activeSessions = Array.from(sessions.values()).filter(
+      (session) => session.expiresAt > Date.now()
+    ).length;
+    const failedAttempts = Array.from(loginAttempts.values()).filter(
+      (attempt) => attempt.count > 0
+    ).length;
 
     return {
       totalUsers,
       lockedUsers,
       activeSessions,
       failedAttempts,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -494,7 +543,8 @@ const authManager = new AuthenticationManager();
 module.exports = {
   AuthenticationManager,
   authManager,
-  authenticateUser: (email, password, mfaCode) => authManager.authenticateUser(email, password, mfaCode),
+  authenticateUser: (email, password, mfaCode) =>
+    authManager.authenticateUser(email, password, mfaCode),
   adminOverride: (code, email) => authManager.adminOverride(code, email),
   verifyToken: (token) => authManager.verifyToken(token),
   verifyTokenEnhanced: (token) => authManager.verifyTokenEnhanced(token),
@@ -505,5 +555,5 @@ module.exports = {
   getActiveSessions: (userId) => authManager.getActiveSessions(userId),
   forceLogoutAll: (userId) => authManager.forceLogoutAll(userId),
   getSecurityStats: () => authManager.getSecurityStats(),
-  cleanupExpiredSessions: () => authManager.cleanupExpiredSessions()
+  cleanupExpiredSessions: () => authManager.cleanupExpiredSessions(),
 };

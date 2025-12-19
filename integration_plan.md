@@ -1,6 +1,7 @@
 # BLACKBOX AI Integration and Testing Plan
 
 ## Overview
+
 This document outlines the comprehensive integration and testing plan for the BLACKBOX AI system, focusing on backend setup, API endpoints, authentication, CORS configuration, and testing strategy. Unlike the OWLban Earnings Dashboard, BLACKBOX AI does not currently have a frontend UI or embedding requirements.
 
 ---

@@ -13,17 +13,20 @@ This guide will walk you through obtaining and configuring all the necessary cre
 ## 1. 🚀 Stripe Setup
 
 ### Step 1: Create Stripe Account
+
 1. Go to [https://stripe.com](https://stripe.com)
 2. Click "Start now" and create a free account
 3. Complete the account verification process
 
 ### Step 2: Get API Keys
+
 1. Log into your Stripe Dashboard
 2. Go to "Developers" → "API keys"
 3. Copy the **Secret key** (starts with `sk_test_` for test mode)
 4. **⚠️ IMPORTANT**: Never share or commit your secret key to version control
 
 ### Step 3: Test Mode vs Live Mode
+
 - **Test Mode**: Use `sk_test_` keys for development
 - **Live Mode**: Use `sk_live_` keys for production (requires account verification)
 
@@ -32,6 +35,7 @@ This guide will walk you through obtaining and configuring all the necessary cre
 ## 2. 📧 SMTP Email Setup
 
 ### Option A: Gmail SMTP (Recommended for Testing)
+
 1. Go to your Gmail account settings
 2. Enable 2-Factor Authentication (2FA)
 3. Generate an App Password:
@@ -41,13 +45,16 @@ This guide will walk you through obtaining and configuring all the necessary cre
    - Use this 16-character password (not your regular password)
 
 **SMTP Configuration:**
+
 - **Host**: `smtp.gmail.com`
 - **Port**: `587` (TLS) or `465` (SSL)
 - **Username**: Your Gmail address
 - **Password**: The 16-character app password
 
 ### Option B: Professional SMTP Service (Recommended for Production)
+
 Consider services like:
+
 - **SendGrid**: [https://sendgrid.com](https://sendgrid.com)
 - **Mailgun**: [https://mailgun.com](https://mailgun.com)
 - **AWS SES**: [https://aws.amazon.com/ses](https://aws.amazon.com/ses)
@@ -57,23 +64,27 @@ Consider services like:
 ## 3. 📱 Twilio SMS Setup
 
 ### Step 1: Create Twilio Account
+
 1. Go to [https://twilio.com](https://twilio.com)
 2. Click "Sign up" and create an account
 3. Verify your email and phone number
 4. Complete account setup
 
 ### Step 2: Get Twilio Credentials
+
 1. Log into your Twilio Console
 2. Go to "Account" → "API keys & tokens"
 3. Copy your **Account SID** (starts with `AC`)
 4. Copy your **Auth Token** (starts with `SK`)
 
 ### Step 3: Get a Phone Number
+
 1. In Twilio Console, go to "Phone Numbers" → "Manage"
 2. Click "Buy a number" or use a trial number
 3. Copy the phone number (starts with `+1`)
 
 ### Step 4: Verify Phone Number (Trial Account)
+
 - Trial accounts can only send SMS to verified numbers
 - Add your phone number to "Verified Caller IDs"
 
@@ -82,6 +93,7 @@ Consider services like:
 ## 4. 🔧 Environment Configuration
 
 ### Option A: .env File (Recommended)
+
 Create a `.env` file in your project root:
 
 ```bash
@@ -101,9 +113,11 @@ TWILIO_PHONE_NUMBER=+1234567890
 ```
 
 ### Option B: System Environment Variables
+
 Set these in your system environment:
 
 **Windows:**
+
 ```cmd
 set STRIPE_SECRET_KEY=sk_test_your_key_here
 set SMTP_HOST=smtp.gmail.com
@@ -116,6 +130,7 @@ set TWILIO_PHONE_NUMBER=+1234567890
 ```
 
 **Linux/Mac:**
+
 ```bash
 export STRIPE_SECRET_KEY=sk_test_your_key_here
 export SMTP_HOST=smtp.gmail.com
@@ -132,6 +147,7 @@ export TWILIO_PHONE_NUMBER=+1234567890
 ## 5. 🧪 Testing Your Setup
 
 ### Test Stripe
+
 ```bash
 # Test payment creation
 curl -X POST https://api.stripe.com/v1/payment_intents \
@@ -142,7 +158,9 @@ curl -X POST https://api.stripe.com/v1/payment_intents \
 ```
 
 ### Test Email
+
 Use a tool like **MailHog** for local email testing:
+
 ```bash
 # Install MailHog
 go install github.com/mailhog/MailHog@latest
@@ -152,6 +170,7 @@ MailHog
 ```
 
 ### Test SMS
+
 ```bash
 # Test SMS via Twilio API
 curl -X POST "https://api.twilio.com/2010-04-01/Accounts/ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/Messages.json" \
@@ -166,6 +185,7 @@ curl -X POST "https://api.twilio.com/2010-04-01/Accounts/ACxxxxxxxxxxxxxxxxxxxxx
 ## 6. 🔒 Security Best Practices
 
 ### ✅ Do's:
+
 - Use environment variables, never hardcode credentials
 - Use test keys for development
 - Rotate keys regularly
@@ -173,6 +193,7 @@ curl -X POST "https://api.twilio.com/2010-04-01/Accounts/ACxxxxxxxxxxxxxxxxxxxxx
 - Monitor API usage
 
 ### ❌ Don'ts:
+
 - Commit credentials to version control
 - Share API keys publicly
 - Use live keys in development
@@ -180,6 +201,7 @@ curl -X POST "https://api.twilio.com/2010-04-01/Accounts/ACxxxxxxxxxxxxxxxxxxxxx
 - Use weak passwords
 
 ### 🔐 Additional Security:
+
 - Enable 2FA on all accounts
 - Set up API key restrictions
 - Use IP whitelisting when possible
@@ -238,18 +260,22 @@ echo "Run 'node comprehensive_merchant_test.js' to test your setup"
 ### Common Issues:
 
 **Stripe Errors:**
+
 - "Invalid API Key": Check your secret key format
 - "Test mode": Use test keys for development
 
 **Email Errors:**
+
 - "Authentication failed": Use app password, not regular password
 - "Connection refused": Check SMTP host and port
 
 **SMS Errors:**
+
 - "Trial account": Add recipient to verified numbers
 - "Invalid number": Ensure phone number format is correct
 
 ### Getting Help:
+
 - **Stripe**: [https://stripe.com/docs](https://stripe.com/docs)
 - **Twilio**: [https://www.twilio.com/docs](https://www.twilio.com/docs)
 - **Gmail SMTP**: [https://support.google.com/mail](https://support.google.com/mail)

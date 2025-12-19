@@ -36,14 +36,18 @@ const logger = winston.createLogger({
 });
 
 // Basic auth setup (fallback for legacy endpoints)
-app.use(expressBasicAuth({
-  users: { [ADMIN_USER]: ADMIN_PASS },
-  challenge: true,
-}));
+app.use(
+  expressBasicAuth({
+    users: { [ADMIN_USER]: ADMIN_PASS },
+    challenge: true,
+  })
+);
 
 app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 app.use(express.json());
-app.use(morgan('combined', { stream: { write: (msg) => logger.info(msg.trim()) } }));
+app.use(
+  morgan('combined', { stream: { write: (msg) => logger.info(msg.trim()) } })
+);
 
 // Mount JPMorgan authentication routes
 app.use('/api/auth', jpmorganAuthRoutes);
@@ -52,8 +56,12 @@ app.use('/api/auth', jpmorganAuthRoutes);
 app.use('/api/payroll', payrollRouter);
 
 // Load aggregated revenue data path from environment or default
-const revenueDataPath = process.env.REVENUE_DATA_PATH ||
-  path.resolve(path.dirname(new URL(import.meta.url).pathname), '../owlban_repos/aggregated_revenue.json');
+const revenueDataPath =
+  process.env.REVENUE_DATA_PATH ||
+  path.resolve(
+    path.dirname(new URL(import.meta.url).pathname),
+    '../owlban_repos/aggregated_revenue.json'
+  );
 
 // Function to transform raw revenue data into earnings format
 function getEarningsData() {
@@ -66,7 +74,11 @@ function getEarningsData() {
       totalAnnualRevenue: data.totalRevenue,
       totalDailyRevenue: data.totalRevenue / 365,
       revenueStreams: data.revenueStreams || {},
-      purchases: data.purchases || { corporateHomes: 0, autoFleet: 0, autoFleetDetails: [] }
+      purchases: data.purchases || {
+        corporateHomes: 0,
+        autoFleet: 0,
+        autoFleetDetails: [],
+      },
     };
   } catch (error) {
     // As per SonarLint, handle the error by logging it before returning null
@@ -77,7 +89,10 @@ function getEarningsData() {
 
 // Serve static dashboard HTML file
 app.get('/', (_req, res) => {
-  const dashboardPath = path.resolve(path.dirname(new URL(import.meta.url).pathname), 'dashboard.html');
+  const dashboardPath = path.resolve(
+    path.dirname(new URL(import.meta.url).pathname),
+    'dashboard.html'
+  );
   if (!fs.existsSync(dashboardPath)) {
     logger.error('Dashboard HTML file not found');
     res.status(500).send('Dashboard not available');
@@ -108,7 +123,10 @@ app.get('/api/earnings/download', (_req, res) => {
     return;
   }
   res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Content-Disposition', 'attachment; filename="earnings_report.json"');
+  res.setHeader(
+    'Content-Disposition',
+    'attachment; filename="earnings_report.json"'
+  );
   res.json(data);
   // Redundant return removed
 });

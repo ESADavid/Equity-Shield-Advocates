@@ -31,12 +31,14 @@ This project follows the [Contributor Covenant Code of Conduct](https://www.cont
 
 1. Fork the repository on GitHub
 2. Clone your fork locally:
+
 ```bash
 git clone https://github.com/YOUR_USERNAME/oscar-broome-revenue.git
 cd oscar-broome-revenue
 ```
 
 3. Add the upstream repository:
+
 ```bash
 git remote add upstream https://github.com/Owlban-Group/oscar-broome-revenue.git
 ```
@@ -294,6 +296,7 @@ git commit -m "test(payroll): add integration tests"
 ```
 
 **Commit Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -364,10 +367,12 @@ Before submitting your PR, ensure:
 ### Creating a Good Issue
 
 Use our issue templates:
+
 - **Bug Report**: For reporting bugs
 - **Feature Request**: For suggesting new features
 
 Include:
+
 - Clear, descriptive title
 - Detailed description
 - Steps to reproduce (for bugs)
@@ -381,6 +386,7 @@ Include:
 **DO NOT** create public issues for security vulnerabilities.
 
 Instead:
+
 1. Email security@oscarbroome.com
 2. Or use GitHub's private security advisory feature
 3. Include detailed information about the vulnerability

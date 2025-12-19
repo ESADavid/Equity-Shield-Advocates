@@ -1,123 +1,125 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Oscar Broome - Transaction Override Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="override-dashboard.css">
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="override-dashboard.css" />
+  </head>
+  <body>
     <div class="override-dashboard">
-        <h1>Oscar Broome Transaction Override Dashboard</h1>
-        
-        <div class="override-section">
-            <h2>Create Override Request</h2>
-            <form id="override-form" class="override-form">
-                <div class="form-group">
-                    <label for="transaction-id">Transaction ID:</label>
-                    <input type="text" id="transaction-id" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="transaction-type">Transaction Type:</label>
-                    <select id="transaction-type" required>
-                        <option value="">Select Type</option>
-                        <option value="earnings">Earnings</option>
-                        <option value="purchase">Purchase</option>
-                        <option value="refund">Refund</option>
-                        <option value="adjustment">Adjustment</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="override-type">Override Type:</label>
-                    <select id="override-type" required>
-                        <option value="">Select Type</option>
-                        <option value="amount">Amount Change</option>
-                        <option value="status">Status Change</option>
-                        <option value="date">Date Change</option>
-                        <option value="delete">Delete Transaction</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="original-value">Original Value:</label>
-                    <input type="text" id="original-value" readonly>
-                </div>
-                
-                <div class="form-group">
-                    <label for="new-value">New Value:</label>
-                    <input type="text" id="new-value" required>
-                </div>
-                
-                <div class="form-group form-group-full-width">
-                    <label for="reason">Reason for Override:</label>
-                    <textarea id="reason" rows="3" required></textarea>
-                </div>
-                
-                <div class="form-group form-group-full-width">
-                    <button type="submit" class="btn btn-primary">Submit Override Request</button>
-                </div>
-            </form>
+      <h1>Oscar Broome Transaction Override Dashboard</h1>
+
+      <div class="override-section">
+        <h2>Create Override Request</h2>
+        <form id="override-form" class="override-form">
+          <div class="form-group">
+            <label for="transaction-id">Transaction ID:</label>
+            <input type="text" id="transaction-id" required />
+          </div>
+
+          <div class="form-group">
+            <label for="transaction-type">Transaction Type:</label>
+            <select id="transaction-type" required>
+              <option value="">Select Type</option>
+              <option value="earnings">Earnings</option>
+              <option value="purchase">Purchase</option>
+              <option value="refund">Refund</option>
+              <option value="adjustment">Adjustment</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="override-type">Override Type:</label>
+            <select id="override-type" required>
+              <option value="">Select Type</option>
+              <option value="amount">Amount Change</option>
+              <option value="status">Status Change</option>
+              <option value="date">Date Change</option>
+              <option value="delete">Delete Transaction</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="original-value">Original Value:</label>
+            <input type="text" id="original-value" readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="new-value">New Value:</label>
+            <input type="text" id="new-value" required />
+          </div>
+
+          <div class="form-group form-group-full-width">
+            <label for="reason">Reason for Override:</label>
+            <textarea id="reason" rows="3" required></textarea>
+          </div>
+
+          <div class="form-group form-group-full-width">
+            <button type="submit" class="btn btn-primary">
+              Submit Override Request
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="override-section">
+        <h2>Override Requests</h2>
+        <table class="override-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Transaction ID</th>
+              <th>Type</th>
+              <th>Original Value</th>
+              <th>New Value</th>
+              <th>Status</th>
+              <th>Requested By</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="override-list">
+            <!-- Override requests will be populated here -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="override-section">
+        <h2>Transaction Audit Trail</h2>
+        <div id="audit-trail" class="audit-trail">
+          Select a transaction to view audit trail...
         </div>
-        
-        <div class="override-section">
-            <h2>Override Requests</h2>
-            <table class="override-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Transaction ID</th>
-                        <th>Type</th>
-                        <th>Original Value</th>
-                        <th>New Value</th>
-                        <th>Status</th>
-                        <th>Requested By</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="override-list">
-                    <!-- Override requests will be populated here -->
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="override-section">
-            <h2>Transaction Audit Trail</h2>
-            <div id="audit-trail" class="audit-trail">
-                Select a transaction to view audit trail...
-            </div>
-        </div>
+      </div>
     </div>
 
     <script>
-        const authHeader = 'Basic ' + btoa('admin:securepassword');
-        
-        // Load override requests
-        async function loadOverrideRequests() {
-            try {
-                const response = await fetch('/api/transactions/overrides', {
-                    headers: { 'Authorization': authHeader }
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    renderOverrideRequests(data.data);
-                }
-            } catch (error) {
-                console.error('Failed to load override requests:', error);
-            }
+      const authHeader = 'Basic ' + btoa('admin:securepassword');
+
+      // Load override requests
+      async function loadOverrideRequests() {
+        try {
+          const response = await fetch('/api/transactions/overrides', {
+            headers: { Authorization: authHeader },
+          });
+          const data = await response.json();
+
+          if (data.success) {
+            renderOverrideRequests(data.data);
+          }
+        } catch (error) {
+          console.error('Failed to load override requests:', error);
         }
-        
-        // Render override requests
-        function renderOverrideRequests(overrides) {
-            const tbody = document.getElementById('override-list');
-            tbody.innerHTML = '';
-            
-            overrides.forEach(override => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
+      }
+
+      // Render override requests
+      function renderOverrideRequests(overrides) {
+        const tbody = document.getElementById('override-list');
+        tbody.innerHTML = '';
+
+        overrides.forEach((override) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
                     <td>${override.id}</td>
                     <td>${override.originalTransactionId}</td>
                     <td>${override.overrideType}</td>
@@ -131,121 +133,127 @@
                         <button class="btn btn-view" onclick="viewAuditTrail('${override.originalTransactionId}')">Audit</button>
                     </td>
                 `;
-                tbody.appendChild(tr);
-            });
-        }
-        
-        // Handle override form submission
-        document.getElementById('override-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = {
-                originalTransactionId: document.getElementById('transaction-id').value,
-                transactionType: document.getElementById('transaction-type').value,
-                overrideType: document.getElementById('override-type').value,
-                originalValue: document.getElementById('original-value').value,
-                newValue: document.getElementById('new-value').value,
-                reason: document.getElementById('reason').value
-            };
-            
-            try {
-                const response = await fetch('/api/transactions/override', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': authHeader
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    alert('Override request submitted successfully');
-                    loadOverrideRequests();
-                    e.target.reset();
-                }
-            } catch (error) {
-                alert('Failed to submit override request: ' + error.message);
-            }
+          tbody.appendChild(tr);
         });
-        
-        // Approve override
-        async function approveOverride(id) {
-            if (confirm('Are you sure you want to approve this override?')) {
-                try {
-                    const response = await fetch(`/api/transactions/${id}/override`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': authHeader
-                        },
-                        body: JSON.stringify({ status: 'approved' })
-                    });
-                    
-                    const result = await response.json();
-                    if (result.success) {
-                        alert('Override approved successfully');
-                        loadOverrideRequests();
-                    }
-                } catch (error) {
-                    alert('Failed to approve override: ' + error.message);
-                }
+      }
+
+      // Handle override form submission
+      document
+        .getElementById('override-form')
+        .addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const formData = {
+            originalTransactionId:
+              document.getElementById('transaction-id').value,
+            transactionType: document.getElementById('transaction-type').value,
+            overrideType: document.getElementById('override-type').value,
+            originalValue: document.getElementById('original-value').value,
+            newValue: document.getElementById('new-value').value,
+            reason: document.getElementById('reason').value,
+          };
+
+          try {
+            const response = await fetch('/api/transactions/override', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: authHeader,
+              },
+              body: JSON.stringify(formData),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              alert('Override request submitted successfully');
+              loadOverrideRequests();
+              e.target.reset();
             }
-        }
-        
-        // Reject override
-        async function rejectOverride(id) {
-            const reason = prompt('Please provide a reason for rejection:');
-            if (reason) {
-                try {
-                    const response = await fetch(`/api/transactions/${id}/override`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': authHeader
-                        },
-                        body: JSON.stringify({ reason })
-                    });
-                    
-                    const result = await response.json();
-                    if (result.success) {
-                        alert('Override rejected successfully');
-                        loadOverrideRequests();
-                    }
-                } catch (error) {
-                    alert('Failed to reject override: ' + error.message);
-                }
+          } catch (error) {
+            alert('Failed to submit override request: ' + error.message);
+          }
+        });
+
+      // Approve override
+      async function approveOverride(id) {
+        if (confirm('Are you sure you want to approve this override?')) {
+          try {
+            const response = await fetch(`/api/transactions/${id}/override`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: authHeader,
+              },
+              body: JSON.stringify({ status: 'approved' }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              alert('Override approved successfully');
+              loadOverrideRequests();
             }
+          } catch (error) {
+            alert('Failed to approve override: ' + error.message);
+          }
         }
-        
-        // View audit trail
-        async function viewAuditTrail(transactionId) {
-            try {
-                const response = await fetch(`/api/transactions/${transactionId}/audit`, {
-                    headers: { 'Authorization': authHeader }
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    const auditTrail = document.getElementById('audit-trail');
-                    auditTrail.innerHTML = '<h3>Transaction Audit Trail</h3>';
-                    
-                    result.data.auditTrail.forEach(entry => {
-                        const div = document.createElement('div');
-                        div.innerHTML = `
+      }
+
+      // Reject override
+      async function rejectOverride(id) {
+        const reason = prompt('Please provide a reason for rejection:');
+        if (reason) {
+          try {
+            const response = await fetch(`/api/transactions/${id}/override`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: authHeader,
+              },
+              body: JSON.stringify({ reason }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              alert('Override rejected successfully');
+              loadOverrideRequests();
+            }
+          } catch (error) {
+            alert('Failed to reject override: ' + error.message);
+          }
+        }
+      }
+
+      // View audit trail
+      async function viewAuditTrail(transactionId) {
+        try {
+          const response = await fetch(
+            `/api/transactions/${transactionId}/audit`,
+            {
+              headers: { Authorization: authHeader },
+            }
+          );
+
+          const result = await response.json();
+          if (result.success) {
+            const auditTrail = document.getElementById('audit-trail');
+            auditTrail.innerHTML = '<h3>Transaction Audit Trail</h3>';
+
+            result.data.auditTrail.forEach((entry) => {
+              const div = document.createElement('div');
+              div.innerHTML = `
                             <strong>${entry.action}</strong> by ${entry.user} at ${entry.timestamp}
                             <br>${entry.details}
                         `;
-                        auditTrail.appendChild(div);
-                    });
-                }
-            } catch (error) {
-                console.error('Failed to load audit trail:', error);
-            }
+              auditTrail.appendChild(div);
+            });
+          }
+        } catch (error) {
+          console.error('Failed to load audit trail:', error);
         }
-        
-        // Load initial data
-        loadOverrideRequests();
+      }
+
+      // Load initial data
+      loadOverrideRequests();
     </script>
-</body>
+  </body>
 </html>

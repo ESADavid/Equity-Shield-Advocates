@@ -8,7 +8,7 @@ export class QuantumSecurity {
     protocols: ['TLS-3.0', 'QUIC', 'HTTP-3', 'WebAuthn', 'FIDO2'],
     algorithms: ['CRYSTALS-Dilithium', 'FALCON', 'SPHINCS+', 'Kyber', 'NTRU'],
     zeroTrust: true,
-    blockchainAudit: true
+    blockchainAudit: true,
   };
 
   constructor() {
@@ -37,14 +37,18 @@ export class QuantumSecurity {
       protocols: ['TLS-3.0', 'QUIC', 'HTTP-3', 'WebAuthn', 'FIDO2'],
       algorithms: ['CRYSTALS-Dilithium', 'FALCON', 'SPHINCS+', 'Kyber', 'NTRU'],
       zeroTrust: true,
-      blockchainAudit: true
+      blockchainAudit: true,
     };
   }
 
   // Post-quantum encryption
   encrypt(data) {
     const iv = crypto.randomBytes(12); // 96-bit IV for GCM
-    const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(this.encryptionKey, 'hex'), iv);
+    const cipher = crypto.createCipheriv(
+      'aes-256-gcm',
+      Buffer.from(this.encryptionKey, 'hex'),
+      iv
+    );
     let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
     encrypted += cipher.final('hex');
     const authTag = cipher.getAuthTag();
@@ -53,13 +57,17 @@ export class QuantumSecurity {
       encrypted,
       authTag: authTag.toString('hex'),
       iv: iv.toString('hex'),
-      algorithm: this.algorithm
+      algorithm: this.algorithm,
     };
   }
 
   decrypt(encryptedData) {
     const iv = Buffer.from(encryptedData.iv, 'hex');
-    const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(this.encryptionKey, 'hex'), iv);
+    const decipher = crypto.createDecipheriv(
+      'aes-256-gcm',
+      Buffer.from(this.encryptionKey, 'hex'),
+      iv
+    );
     decipher.setAuthTag(Buffer.from(encryptedData.authTag, 'hex'));
 
     let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
@@ -74,7 +82,7 @@ export class QuantumSecurity {
       algorithm: 'HS512',
       expiresIn: '15m',
       issuer: 'quantum-system',
-      audience: 'quantum-users'
+      audience: 'quantum-users',
     });
   }
 
@@ -82,7 +90,7 @@ export class QuantumSecurity {
     return jwt.verify(token, this.jwtKey, {
       algorithms: ['HS512'],
       issuer: 'quantum-system',
-      audience: 'quantum-users'
+      audience: 'quantum-users',
     });
   }
 
@@ -92,11 +100,14 @@ export class QuantumSecurity {
       ip: this.verifyIPAddress(request.ip),
       userAgent: this.verifyUserAgent(request.userAgent),
       timestamp: this.verifyTimestamp(request.timestamp),
-      signature: request.data && request.signature ? this.verifyQuantumSignature(request.data, request.signature) : false,
-      blockchain: this.verifyBlockchainIntegrity(request.blockchain)
+      signature:
+        request.data && request.signature
+          ? this.verifyQuantumSignature(request.data, request.signature)
+          : false,
+      blockchain: this.verifyBlockchainIntegrity(request.blockchain),
     };
 
-    return Object.values(verification).every(v => v === true);
+    return Object.values(verification).every((v) => v === true);
   }
 
   verifyIPAddress(_ip) {
@@ -117,7 +128,10 @@ export class QuantumSecurity {
 
   generateQuantumSignature(data) {
     // Generate HMAC signature for data integrity
-    return crypto.createHmac('sha256', Buffer.from(this.encryptionKey, 'hex')).update(JSON.stringify(data)).digest('hex');
+    return crypto
+      .createHmac('sha256', Buffer.from(this.encryptionKey, 'hex'))
+      .update(JSON.stringify(data))
+      .digest('hex');
   }
 
   verifyQuantumSignature(data, signature) {
@@ -173,7 +187,7 @@ export class QuantumSecurity {
       quantumSafe: true,
       postQuantumCrypto: true,
       zeroTrust: true,
-      blockchainVerified: true
+      blockchainVerified: true,
     };
   }
 
@@ -190,8 +204,7 @@ export class QuantumSecurity {
       breaches: 0,
       quantumSafe: true,
       encryptionStrength: '256-bit',
-      zeroTrustEnabled: true
+      zeroTrustEnabled: true,
     };
   }
 }
-

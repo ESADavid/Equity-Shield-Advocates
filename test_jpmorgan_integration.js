@@ -43,7 +43,9 @@ describe('JPMorgan Payments Integration Tests', () => {
   });
 
   test('Get payment status returns response', async () => {
-    const res = await request(server).get('/api/jpmorgan-payment/payment-status/TEST123');
+    const res = await request(server).get(
+      '/api/jpmorgan-payment/payment-status/TEST123'
+    );
     expect(res.statusCode).toBe(200);
     expect(res.body.success).toBeDefined();
   });

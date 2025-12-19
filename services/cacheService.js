@@ -10,14 +10,19 @@ const logger = winston.createLogger({
   defaultMeta: { service: 'cache' },
   transports: [
     new winston.transports.File({ filename: 'logs/cache.log' }),
-    new winston.transports.File({ filename: 'logs/cache-error.log', level: 'error' })
-  ]
+    new winston.transports.File({
+      filename: 'logs/cache-error.log',
+      level: 'error',
+    }),
+  ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 class CacheService {
@@ -29,7 +34,7 @@ class CacheService {
       misses: 0,
       sets: 0,
       deletes: 0,
-      errors: 0
+      errors: 0,
     };
   }
 
@@ -48,12 +53,15 @@ class CacheService {
         commandTimeout: 3000,
         keepAlive: 30000,
         // Clustering support
-        cluster: process.env.REDIS_CLUSTER === 'true' ? {
-          enableReadyCheck: false,
-          redisOptions: {
-            password: process.env.REDIS_PASSWORD
-          }
-        } : undefined
+        cluster:
+          process.env.REDIS_CLUSTER === 'true'
+            ? {
+                enableReadyCheck: false,
+                redisOptions: {
+                  password: process.env.REDIS_PASSWORD,
+                },
+              }
+            : undefined,
       };
 
       this.client = new Redis(redisConfig);
@@ -209,12 +217,18 @@ class CacheService {
       const keys = await this.client.keys(pattern);
       if (keys.length > 0) {
         await this.client.del(keys);
-        logger.info('Cache pattern invalidated', { pattern, keysDeleted: keys.length });
+        logger.info('Cache pattern invalidated', {
+          pattern,
+          keysDeleted: keys.length,
+        });
       }
       return true;
     } catch (error) {
       this.metrics.errors++;
-      logger.error('Cache pattern invalidation error', { pattern, error: error.message });
+      logger.error('Cache pattern invalidation error', {
+        pattern,
+        error: error.message,
+      });
       return false;
     }
   }
@@ -271,7 +285,7 @@ class CacheService {
         return {
           status: 'memory_cache',
           memoryCacheSize: this.memoryCache.size,
-          metrics: this.metrics
+          metrics: this.metrics,
         };
       }
 
@@ -291,7 +305,7 @@ class CacheService {
         latency,
         dbSize,
         info: info.split('\r\n').slice(0, 10), // First 10 lines of info
-        metrics: this.metrics
+        metrics: this.metrics,
       };
     } catch (error) {
       // If Redis fails but we have memory cache, still return memory_cache
@@ -299,13 +313,13 @@ class CacheService {
         return {
           status: 'memory_cache',
           memoryCacheSize: this.memoryCache.size,
-          metrics: this.metrics
+          metrics: this.metrics,
         };
       }
       return {
         status: 'error',
         error: error.message,
-        metrics: this.metrics
+        metrics: this.metrics,
       };
     }
   }
@@ -313,12 +327,13 @@ class CacheService {
   // Performance monitoring
   getMetrics() {
     const totalRequests = this.metrics.hits + this.metrics.misses;
-    const hitRate = totalRequests > 0 ? (this.metrics.hits / totalRequests) * 100 : 0;
+    const hitRate =
+      totalRequests > 0 ? (this.metrics.hits / totalRequests) * 100 : 0;
 
     return {
       ...this.metrics,
       hitRate: Math.round(hitRate * 100) / 100,
-      totalRequests
+      totalRequests,
     };
   }
 
@@ -328,7 +343,7 @@ class CacheService {
       misses: 0,
       sets: 0,
       deletes: 0,
-      errors: 0
+      errors: 0,
     };
     logger.info('Cache metrics reset');
   }
@@ -348,9 +363,16 @@ class CacheService {
       const Transaction = (await import('../models/Transaction.js')).default;
       const recentTxCount = await Transaction.countDocuments({
         tenantId,
-        'timestamps.initiated': { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
+        'timestamps.initiated': {
+          $gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+        },
       });
-      await this.setTenantData(tenantId, 'recentTransactions', recentTxCount, 300);
+      await this.setTenantData(
+        tenantId,
+        'recentTransactions',
+        recentTxCount,
+        300
+      );
 
       logger.info('Cache warmed for tenant', { tenantId });
       return true;

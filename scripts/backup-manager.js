@@ -21,21 +21,27 @@ const logger = winston.createLogger({
   defaultMeta: { service: 'backup-manager' },
   transports: [
     new winston.transports.File({ filename: 'logs/backup-manager.log' }),
-    new winston.transports.File({ filename: 'logs/backup-manager-error.log', level: 'error' })
-  ]
+    new winston.transports.File({
+      filename: 'logs/backup-manager-error.log',
+      level: 'error',
+    }),
+  ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 class BackupManager {
   constructor(options = {}) {
     this.backupDir = options.backupDir || path.join(__dirname, '..', 'backups');
     this.retentionDays = options.retentionDays || 30;
-    this.encryptionKey = options.encryptionKey || process.env.BACKUP_ENCRYPTION_KEY;
+    this.encryptionKey =
+      options.encryptionKey || process.env.BACKUP_ENCRYPTION_KEY;
     this.maxConcurrentBackups = options.maxConcurrentBackups || 3;
     this.includeFiles = options.includeFiles !== false; // Default true
     this.includeDatabase = options.includeDatabase !== false; // Default true
@@ -64,7 +70,7 @@ class BackupManager {
         timestamp: new Date().toISOString(),
         version: process.env.npm_package_version || '1.0.0',
         environment: process.env.NODE_ENV || 'development',
-        components: []
+        components: [],
       };
 
       // Backup database
@@ -102,7 +108,7 @@ class BackupManager {
         backupId,
         archivePath,
         size: this.getFileSize(archivePath),
-        checksum
+        checksum,
       });
 
       return {
@@ -111,11 +117,13 @@ class BackupManager {
         archivePath,
         size: this.getFileSize(archivePath),
         checksum,
-        manifest: backupManifest
+        manifest: backupManifest,
       };
-
     } catch (error) {
-      logger.error('Full system backup failed', { backupId, error: error.message });
+      logger.error('Full system backup failed', {
+        backupId,
+        error: error.message,
+      });
 
       // Cleanup on failure
       try {
@@ -123,7 +131,10 @@ class BackupManager {
           fs.rmSync(backupPath, { recursive: true, force: true });
         }
       } catch (cleanupError) {
-        logger.error('Failed to cleanup failed backup', { backupId, error: cleanupError.message });
+        logger.error('Failed to cleanup failed backup', {
+          backupId,
+          error: cleanupError.message,
+        });
       }
 
       throw error;
@@ -141,7 +152,9 @@ class BackupManager {
       fs.mkdirSync(dbBackupPath, { recursive: true });
 
       // MongoDB backup using mongodump
-      const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/oscar-broome-revenue';
+      const mongoUri =
+        process.env.MONGODB_URI ||
+        'mongodb://localhost:27017/oscar-broome-revenue';
       const mongoDumpCmd = `mongodump --uri="${mongoUri}" --out="${dbBackupPath}" --gzip`;
 
       await execAsync(mongoDumpCmd);
@@ -154,11 +167,10 @@ class BackupManager {
         method: 'mongodump',
         path: 'database',
         size,
-        collections: await this.getCollectionCount()
+        collections: await this.getCollectionCount(),
       });
 
       logger.info('Database backup completed', { size });
-
     } catch (error) {
       logger.error('Database backup failed', { error: error.message });
       throw new Error(`Database backup failed: ${error.message}`);
@@ -180,24 +192,24 @@ class BackupManager {
         {
           source: path.join(__dirname, '..', 'config'),
           target: path.join(filesBackupPath, 'config'),
-          description: 'Configuration files'
+          description: 'Configuration files',
         },
         {
           source: path.join(__dirname, '..', 'data'),
           target: path.join(filesBackupPath, 'data'),
-          description: 'Application data'
+          description: 'Application data',
         },
         {
           source: path.join(__dirname, '..', 'logs'),
           target: path.join(filesBackupPath, 'logs'),
-          description: 'Application logs'
+          description: 'Application logs',
         },
         {
           source: path.join(__dirname, '..', 'public', 'uploads'),
           target: path.join(filesBackupPath, 'uploads'),
           description: 'Uploaded files',
-          optional: true // Skip if doesn't exist
-        }
+          optional: true, // Skip if doesn't exist
+        },
       ];
 
       let totalSize = 0;
@@ -216,21 +228,21 @@ class BackupManager {
             description: item.description,
             path: path.relative(backupPath, item.target),
             size,
-            source: path.relative(path.join(__dirname, '..'), item.source)
+            source: path.relative(path.join(__dirname, '..'), item.source),
           });
 
           totalSize += size;
-
         } catch (error) {
           if (!item.optional) {
             throw error;
           }
-          logger.warn(`Optional backup item skipped: ${item.description}`, { error: error.message });
+          logger.warn(`Optional backup item skipped: ${item.description}`, {
+            error: error.message,
+          });
         }
       }
 
       logger.info('Files backup completed', { totalSize });
-
     } catch (error) {
       logger.error('Files backup failed', { error: error.message });
       throw new Error(`Files backup failed: ${error.message}`);
@@ -253,7 +265,6 @@ class BackupManager {
       logger.info('Backup compression completed', { archivePath });
 
       return archivePath;
-
     } catch (error) {
       logger.error('Backup compression failed', { error: error.message });
       throw new Error(`Compression failed: ${error.message}`);
@@ -278,7 +289,6 @@ class BackupManager {
       logger.info('Backup encryption completed', { encryptedPath });
 
       return encryptedPath;
-
     } catch (error) {
       logger.error('Backup encryption failed', { error: error.message });
       throw new Error(`Encryption failed: ${error.message}`);
@@ -294,7 +304,10 @@ class BackupManager {
       hashSum.update(fileBuffer);
       return hashSum.digest('hex');
     } catch (error) {
-      logger.error('Checksum calculation failed', { filePath, error: error.message });
+      logger.error('Checksum calculation failed', {
+        filePath,
+        error: error.message,
+      });
       return null;
     }
   }
@@ -304,8 +317,10 @@ class BackupManager {
     try {
       const files = fs.readdirSync(this.backupDir);
       const backups = files
-        .filter(file => file.endsWith('.tar.gz') || file.endsWith('.tar.gz.enc'))
-        .map(file => {
+        .filter(
+          (file) => file.endsWith('.tar.gz') || file.endsWith('.tar.gz.enc')
+        )
+        .map((file) => {
           const filePath = path.join(this.backupDir, file);
           const stats = fs.statSync(filePath);
           const checksumFile = `${filePath}.sha256`;
@@ -316,7 +331,9 @@ class BackupManager {
             size: stats.size,
             created: stats.birthtime,
             encrypted: file.endsWith('.enc'),
-            checksum: fs.existsSync(checksumFile) ? fs.readFileSync(checksumFile, 'utf8').trim() : null
+            checksum: fs.existsSync(checksumFile)
+              ? fs.readFileSync(checksumFile, 'utf8').trim()
+              : null,
           };
         })
         .sort((a, b) => b.created - a.created);
@@ -349,11 +366,17 @@ class BackupManager {
       const manifestPath = path.join(extractPath, 'manifest.json');
       const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 
-      if (options.database !== false && manifest.components.some(c => c.type === 'database')) {
+      if (
+        options.database !== false &&
+        manifest.components.some((c) => c.type === 'database')
+      ) {
         await this.restoreDatabase(extractPath, manifest);
       }
 
-      if (options.files !== false && manifest.components.some(c => c.type === 'files')) {
+      if (
+        options.files !== false &&
+        manifest.components.some((c) => c.type === 'files')
+      ) {
         await this.restoreFiles(extractPath, manifest);
       }
 
@@ -367,10 +390,16 @@ class BackupManager {
 
       logger.info('Backup restoration completed successfully', { backupName });
 
-      return { success: true, backupName, restoredComponents: manifest.components };
-
+      return {
+        success: true,
+        backupName,
+        restoredComponents: manifest.components,
+      };
     } catch (error) {
-      logger.error('Backup restoration failed', { backupName, error: error.message });
+      logger.error('Backup restoration failed', {
+        backupName,
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -389,7 +418,6 @@ class BackupManager {
       logger.info('Backup decryption completed', { decryptedPath });
 
       return decryptedPath;
-
     } catch (error) {
       logger.error('Backup decryption failed', { error: error.message });
       throw new Error(`Decryption failed: ${error.message}`);
@@ -414,7 +442,6 @@ class BackupManager {
       logger.info('Backup extraction completed', { extractPath });
 
       return extractPath;
-
     } catch (error) {
       logger.error('Backup extraction failed', { error: error.message });
       throw new Error(`Extraction failed: ${error.message}`);
@@ -428,7 +455,9 @@ class BackupManager {
     logger.info('Restoring database from backup');
 
     try {
-      const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/oscar-broome-revenue';
+      const mongoUri =
+        process.env.MONGODB_URI ||
+        'mongodb://localhost:27017/oscar-broome-revenue';
 
       // Drop existing database (optional, based on restore options)
       // const dropCmd = `mongosh "${mongoUri}" --eval "db.dropDatabase()"`;
@@ -439,7 +468,6 @@ class BackupManager {
       await execAsync(restoreCmd);
 
       logger.info('Database restoration completed');
-
     } catch (error) {
       logger.error('Database restoration failed', { error: error.message });
       throw new Error(`Database restoration failed: ${error.message}`);
@@ -453,17 +481,21 @@ class BackupManager {
     logger.info('Restoring files from backup');
 
     try {
-      const fileComponents = manifest.components.filter(c => c.type === 'files');
+      const fileComponents = manifest.components.filter(
+        (c) => c.type === 'files'
+      );
 
       for (const component of fileComponents) {
-        const sourcePath = path.join(filesBackupPath, path.basename(component.path));
+        const sourcePath = path.join(
+          filesBackupPath,
+          path.basename(component.path)
+        );
         const targetPath = path.join(__dirname, '..', component.source);
 
         await this.copyDirectory(sourcePath, targetPath);
       }
 
       logger.info('Files restoration completed');
-
     } catch (error) {
       logger.error('Files restoration failed', { error: error.message });
       throw new Error(`Files restoration failed: ${error.message}`);
@@ -490,14 +522,19 @@ class BackupManager {
           }
 
           deletedCount++;
-          logger.info('Old backup deleted', { backupName: backup.name, created: backup.created });
+          logger.info('Old backup deleted', {
+            backupName: backup.name,
+            created: backup.created,
+          });
         }
       }
 
-      logger.info('Backup cleanup completed', { deletedCount, retentionDays: this.retentionDays });
+      logger.info('Backup cleanup completed', {
+        deletedCount,
+        retentionDays: this.retentionDays,
+      });
 
       return deletedCount;
-
     } catch (error) {
       logger.error('Backup cleanup failed', { error: error.message });
       throw error;
@@ -518,7 +555,7 @@ class BackupManager {
 
       if (stats.isDirectory()) {
         const items = fs.readdirSync(itemPath);
-        items.forEach(item => {
+        items.forEach((item) => {
           calculateSize(path.join(itemPath, item));
         });
       } else {
@@ -556,14 +593,16 @@ class BackupManager {
     return {
       backupDirectory: this.backupDir,
       totalBackups: backups.length,
-      latestBackup: latestBackup ? {
-        name: latestBackup.name,
-        created: latestBackup.created,
-        size: latestBackup.size,
-        encrypted: latestBackup.encrypted
-      } : null,
+      latestBackup: latestBackup
+        ? {
+            name: latestBackup.name,
+            created: latestBackup.created,
+            size: latestBackup.size,
+            encrypted: latestBackup.encrypted,
+          }
+        : null,
       retentionDays: this.retentionDays,
-      encryptionEnabled: !!this.encryptionKey
+      encryptionEnabled: !!this.encryptionKey,
     };
   }
 }
@@ -584,12 +623,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   switch (command) {
     case 'create':
-      backupManager.createFullBackup(options.name)
-        .then(result => {
+      backupManager
+        .createFullBackup(options.name)
+        .then((result) => {
           logger.info('✅ Backup created successfully:', result.backupId);
           process.exit(0);
         })
-        .catch(error => {
+        .catch((error) => {
           logger.error('❌ Backup creation failed:', error.message);
           process.exit(1);
         });
@@ -598,8 +638,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     case 'list':
       const backups = backupManager.listBackups();
       logger.info('📋 Available backups:');
-      backups.forEach(backup => {
-        logger.info(`  ${backup.name} (${new Date(backup.created).toLocaleString()}) - ${(backup.size / 1024 / 1024).toFixed(2)} MB`);
+      backups.forEach((backup) => {
+        logger.info(
+          `  ${backup.name} (${new Date(backup.created).toLocaleString()}) - ${(backup.size / 1024 / 1024).toFixed(2)} MB`
+        );
       });
       break;
 
@@ -608,24 +650,26 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         logger.error('❌ Please specify backup name with --name');
         process.exit(1);
       }
-      backupManager.restoreBackup(options.name, options)
-        .then(result => {
+      backupManager
+        .restoreBackup(options.name, options)
+        .then((result) => {
           logger.info('✅ Backup restored successfully:', result.backupName);
           process.exit(0);
         })
-        .catch(error => {
+        .catch((error) => {
           logger.error('❌ Backup restoration failed:', error.message);
           process.exit(1);
         });
       break;
 
     case 'cleanup':
-      backupManager.cleanupOldBackups()
-        .then(count => {
+      backupManager
+        .cleanupOldBackups()
+        .then((count) => {
           logger.info(`🧹 Cleaned up ${count} old backups`);
           process.exit(0);
         })
-        .catch(error => {
+        .catch((error) => {
           logger.error('❌ Cleanup failed:', error.message);
           process.exit(1);
         });
@@ -637,9 +681,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       logger.info(`  Directory: ${status.backupDirectory}`);
       logger.info(`  Total backups: ${status.totalBackups}`);
       logger.info(`  Retention: ${status.retentionDays} days`);
-      logger.info(`  Encryption: ${status.encryptionEnabled ? 'Enabled' : 'Disabled'}`);
+      logger.info(
+        `  Encryption: ${status.encryptionEnabled ? 'Enabled' : 'Disabled'}`
+      );
       if (status.latestBackup) {
-        logger.info(`  Latest backup: ${status.latestBackup.name} (${new Date(status.latestBackup.created).toLocaleString()})`);
+        logger.info(
+          `  Latest backup: ${status.latestBackup.name} (${new Date(status.latestBackup.created).toLocaleString()})`
+        );
       }
       break;
 

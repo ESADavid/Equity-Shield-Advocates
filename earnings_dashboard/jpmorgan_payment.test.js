@@ -12,9 +12,9 @@ jest.mock('axios', () => ({
     get: jest.fn(),
     interceptors: {
       request: { use: jest.fn() },
-      response: { use: jest.fn() }
-    }
-  }))
+      response: { use: jest.fn() },
+    },
+  })),
 }));
 
 const app = express();
@@ -59,8 +59,8 @@ describe('JPMorgan Payments API', () => {
       data: {
         id: 'PAY123',
         status: 'AUTHORIZED',
-        authorizationCode: 'AUTH456'
-      }
+        authorizationCode: 'AUTH456',
+      },
     });
 
     const res = await request(server)
@@ -78,11 +78,13 @@ describe('JPMorgan Payments API', () => {
         id: 'PAY123',
         status: 'CAPTURED',
         amount: 1000,
-        currency: 'USD'
-      }
+        currency: 'USD',
+      },
     });
 
-    const res = await request(server).get('/api/jpmorgan-payment/payment-status/PAY123');
+    const res = await request(server).get(
+      '/api/jpmorgan-payment/payment-status/PAY123'
+    );
     expect(res.statusCode).toBe(200);
     expect(res.body.success).toBe(true);
   });
@@ -115,8 +117,8 @@ describe('JPMorgan Payments API', () => {
     axios.get.mockResolvedValue({
       data: {
         transactions: [],
-        totalCount: 0
-      }
+        totalCount: 0,
+      },
     });
 
     const res = await request(server).get('/api/jpmorgan-payment/transactions');

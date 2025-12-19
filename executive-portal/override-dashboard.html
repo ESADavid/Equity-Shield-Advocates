@@ -1,460 +1,524 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Oscar Broome - Login Override System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
     <style>
-        .override-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+      .override-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
 
-        .override-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+      .override-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
 
-        .override-header h1 {
-            color: #d4af37;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
+      .override-header h1 {
+        color: #d4af37;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+      }
 
-        .override-header p {
-            color: #ffffff;
-            font-size: 1.1em;
-            opacity: 0.8;
-        }
+      .override-header p {
+        color: #ffffff;
+        font-size: 1.1em;
+        opacity: 0.8;
+      }
 
-        .override-tabs {
-            display: flex;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #333;
-        }
+      .override-tabs {
+        display: flex;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #333;
+      }
 
-        .override-tab {
-            flex: 1;
-            padding: 15px;
-            background: rgba(26, 26, 46, 0.5);
-            border: none;
-            color: #ffffff;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1em;
-        }
+      .override-tab {
+        flex: 1;
+        padding: 15px;
+        background: rgba(26, 26, 46, 0.5);
+        border: none;
+        color: #ffffff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1em;
+      }
 
-        .override-tab.active {
-            background: #d4af37;
-            color: #1a1a2e;
-            font-weight: bold;
-        }
+      .override-tab.active {
+        background: #d4af37;
+        color: #1a1a2e;
+        font-weight: bold;
+      }
 
-        .override-tab:hover {
-            background: rgba(212, 175, 55, 0.2);
-        }
+      .override-tab:hover {
+        background: rgba(212, 175, 55, 0.2);
+      }
 
-        .override-section {
-            display: none;
-            background: rgba(26, 26, 46, 0.8);
-            padding: 30px;
-            border-radius: 10px;
-            border: 1px solid #333;
-        }
+      .override-section {
+        display: none;
+        background: rgba(26, 26, 46, 0.8);
+        padding: 30px;
+        border-radius: 10px;
+        border: 1px solid #333;
+      }
 
-        .override-section.active {
-            display: block;
-        }
+      .override-section.active {
+        display: block;
+      }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+      .form-group {
+        margin-bottom: 20px;
+      }
 
-        .form-group label {
-            display: block;
-            color: #d4af37;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
+      .form-group label {
+        display: block;
+        color: #d4af37;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
 
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #555;
-            border-radius: 5px;
-            color: #ffffff;
-            font-size: 1em;
-        }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid #555;
+        border-radius: 5px;
+        color: #ffffff;
+        font-size: 1em;
+      }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #d4af37;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
-        }
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #d4af37;
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+      }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
+      .form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
 
-        .override-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(45deg, #d4af37, #b8860b);
-            border: none;
-            border-radius: 5px;
-            color: #1a1a2e;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+      .override-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(45deg, #d4af37, #b8860b);
+        border: none;
+        border-radius: 5px;
+        color: #1a1a2e;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
 
-        .override-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-        }
+      .override-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+      }
 
-        .override-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
+      .override-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
 
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
-        }
+      .alert {
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        display: none;
+      }
 
-        .alert-success {
-            background: rgba(40, 167, 69, 0.2);
-            border: 1px solid #28a745;
-            color: #28a745;
-        }
+      .alert-success {
+        background: rgba(40, 167, 69, 0.2);
+        border: 1px solid #28a745;
+        color: #28a745;
+      }
 
-        .alert-error {
-            background: rgba(220, 53, 69, 0.2);
-            border: 1px solid #dc3545;
-            color: #dc3545;
-        }
+      .alert-error {
+        background: rgba(220, 53, 69, 0.2);
+        border: 1px solid #dc3545;
+        color: #dc3545;
+      }
 
-        .alert-warning {
-            background: rgba(255, 193, 7, 0.2);
-            border: 1px solid #ffc107;
-            color: #ffc107;
-        }
+      .alert-warning {
+        background: rgba(255, 193, 7, 0.2);
+        border: 1px solid #ffc107;
+        color: #ffc107;
+      }
 
-        .emergency-code-section {
-            background: rgba(220, 53, 69, 0.1);
-            border: 2px solid #dc3545;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
+      .emergency-code-section {
+        background: rgba(220, 53, 69, 0.1);
+        border: 2px solid #dc3545;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
 
-        .emergency-code-section h3 {
-            color: #dc3545;
-            margin-top: 0;
-        }
+      .emergency-code-section h3 {
+        color: #dc3545;
+        margin-top: 0;
+      }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
 
-        .stat-card {
-            background: rgba(26, 26, 46, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #333;
-            text-align: center;
-        }
+      .stat-card {
+        background: rgba(26, 26, 46, 0.8);
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #333;
+        text-align: center;
+      }
 
-        .stat-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #d4af37;
-            margin-bottom: 5px;
-        }
+      .stat-value {
+        font-size: 2em;
+        font-weight: bold;
+        color: #d4af37;
+        margin-bottom: 5px;
+      }
 
-        .stat-label {
-            color: #ffffff;
-            opacity: 0.8;
-        }
+      .stat-label {
+        color: #ffffff;
+        opacity: 0.8;
+      }
 
-        .active-overrides-list {
-            margin-top: 20px;
-        }
+      .active-overrides-list {
+        margin-top: 20px;
+      }
 
-        .override-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            border-left: 4px solid #d4af37;
-        }
+      .override-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        border-left: 4px solid #d4af37;
+      }
 
-        .override-item.emergency {
-            border-left-color: #dc3545;
-        }
+      .override-item.emergency {
+        border-left-color: #dc3545;
+      }
 
-        .override-item.admin {
-            border-left-color: #28a745;
-        }
+      .override-item.admin {
+        border-left-color: #28a745;
+      }
 
-        .override-item.technical {
-            border-left-color: #17a2b8;
-        }
+      .override-item.technical {
+        border-left-color: #17a2b8;
+      }
 
-        .override-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+      .override-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-        .override-details {
-            flex: 1;
-        }
+      .override-details {
+        flex: 1;
+      }
 
-        .override-actions {
-            display: flex;
-            gap: 10px;
-        }
+      .override-actions {
+        display: flex;
+        gap: 10px;
+      }
 
-        .btn-small {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
+      .btn-small {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 0.9em;
+      }
 
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
 
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #d4af37;
-            animation: spin 1s ease-in-out infinite;
-        }
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #d4af37;
+        animation: spin 1s ease-in-out infinite;
+      }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
+      }
 
-        .hidden {
-            display: none;
-        }
+      .hidden {
+        display: none;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="override-container">
-        <div class="override-header">
-            <h1><i class="fas fa-shield-alt"></i> Oscar Broome Login Override System</h1>
-            <p>Emergency access and administrative override management</p>
+      <div class="override-header">
+        <h1>
+          <i class="fas fa-shield-alt"></i> Oscar Broome Login Override System
+        </h1>
+        <p>Emergency access and administrative override management</p>
+      </div>
+
+      <div class="alert alert-success" id="successAlert">
+        <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
+      </div>
+
+      <div class="alert alert-error" id="errorAlert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="errorMessage"></span>
+      </div>
+
+      <div class="alert alert-warning" id="warningAlert">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="warningMessage"></span>
+      </div>
+
+      <div class="override-tabs">
+        <button class="override-tab active" data-section="emergency">
+          <i class="fas fa-exclamation-triangle"></i> Emergency Override
+        </button>
+        <button class="override-tab" data-section="admin">
+          <i class="fas fa-user-shield"></i> Admin Override
+        </button>
+        <button class="override-tab" data-section="technical">
+          <i class="fas fa-tools"></i> Technical Support
+        </button>
+        <button class="override-tab" data-section="management">
+          <i class="fas fa-chart-bar"></i> Management
+        </button>
+      </div>
+
+      <!-- Emergency Override Section -->
+      <div id="emergency-section" class="override-section active">
+        <div class="emergency-code-section">
+          <h3>
+            <i class="fas fa-exclamation-triangle"></i> Emergency Override
+            Protocol
+          </h3>
+          <p>
+            This override should only be used in critical situations where
+            immediate access is required for Oscar Broome or authorized
+            executive personnel.
+          </p>
         </div>
 
-        <div class="alert alert-success" id="successAlert">
-            <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
+        <form id="emergencyForm">
+          <div class="form-group">
+            <label for="emergencyUserId">User ID / Email:</label>
+            <input
+              type="email"
+              id="emergencyUserId"
+              name="userId"
+              required
+              placeholder="oscar.broome@oscarsystem.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="emergencyReason">Reason for Override:</label>
+            <select id="emergencyReason" name="reason" required>
+              <option value="">Select reason...</option>
+              <option value="emergency_access">
+                Emergency Access Required
+              </option>
+              <option value="system_maintenance">System Maintenance</option>
+              <option value="technical_issue">Technical Issue</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="emergencyCode">Emergency Override Code:</label>
+            <input
+              type="password"
+              id="emergencyCode"
+              name="emergencyCode"
+              required
+              placeholder="Enter emergency override code"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="emergencyAuth"
+              >Additional Authentication (Optional):</label
+            >
+            <input
+              type="text"
+              id="emergencyAuth"
+              name="additionalAuth"
+              placeholder="Additional auth token or identifier"
+            />
+          </div>
+
+          <button type="submit" class="override-btn" id="emergencyBtn">
+            <span class="btn-text">Activate Emergency Override</span>
+            <span class="loading hidden"></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Admin Override Section -->
+      <div id="admin-section" class="override-section">
+        <form id="adminForm">
+          <div class="form-group">
+            <label for="adminUserId">Admin User ID:</label>
+            <input
+              type="email"
+              id="adminUserId"
+              name="adminUserId"
+              required
+              placeholder="admin@oscarsystem.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="targetUserId">Target User ID:</label>
+            <input
+              type="email"
+              id="targetUserId"
+              name="targetUserId"
+              required
+              placeholder="user@oscarsystem.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="adminReason">Reason for Override:</label>
+            <select id="adminReason" name="reason" required>
+              <option value="">Select reason...</option>
+              <option value="account_locked">Account Locked</option>
+              <option value="mfa_failure">MFA Failure</option>
+              <option value="password_reset">Password Reset</option>
+              <option value="system_maintenance">System Maintenance</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="adminJustification">Justification (Required):</label>
+            <textarea
+              id="adminJustification"
+              name="justification"
+              required
+              placeholder="Provide detailed justification for this administrative override..."
+            ></textarea>
+          </div>
+
+          <button type="submit" class="override-btn" id="adminBtn">
+            <span class="btn-text">Activate Admin Override</span>
+            <span class="loading hidden"></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Technical Support Section -->
+      <div id="technical-section" class="override-section">
+        <form id="technicalForm">
+          <div class="form-group">
+            <label for="supportUserId">Support User ID:</label>
+            <input
+              type="email"
+              id="supportUserId"
+              name="supportUserId"
+              required
+              placeholder="support@oscarsystem.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="techTargetUserId">Target User ID:</label>
+            <input
+              type="email"
+              id="techTargetUserId"
+              name="targetUserId"
+              required
+              placeholder="user@oscarsystem.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="techReason">Reason for Override:</label>
+            <select id="techReason" name="reason" required>
+              <option value="">Select reason...</option>
+              <option value="technical_issue">Technical Issue</option>
+              <option value="account_locked">Account Locked</option>
+              <option value="mfa_failure">MFA Failure</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="ticketNumber">Support Ticket Number:</label>
+            <input
+              type="text"
+              id="ticketNumber"
+              name="ticketNumber"
+              required
+              placeholder="TECH-1234"
+              pattern="^[A-Z]{2,4}-\d{4,6}$"
+            />
+          </div>
+
+          <button type="submit" class="override-btn" id="technicalBtn">
+            <span class="btn-text">Activate Technical Override</span>
+            <span class="loading hidden"></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Management Section -->
+      <div id="management-section" class="override-section">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="activeOverridesCount">0</div>
+            <div class="stat-label">Active Overrides</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="emergencyOverridesCount">0</div>
+            <div class="stat-label">Emergency Overrides</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="adminOverridesCount">0</div>
+            <div class="stat-label">Admin Overrides</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="technicalOverridesCount">0</div>
+            <div class="stat-label">Technical Overrides</div>
+          </div>
         </div>
 
-        <div class="alert alert-error" id="errorAlert">
-            <i class="fas fa-exclamation-triangle"></i> <span id="errorMessage"></span>
+        <div class="active-overrides-list">
+          <h3>Active Override Sessions</h3>
+          <div id="activeOverridesList">
+            <p>No active override sessions</p>
+          </div>
         </div>
 
-        <div class="alert alert-warning" id="warningAlert">
-            <i class="fas fa-exclamation-circle"></i> <span id="warningMessage"></span>
+        <div style="margin-top: 30px">
+          <button class="override-btn" onclick="refreshStats()">
+            <i class="fas fa-sync"></i> Refresh Statistics
+          </button>
         </div>
-
-        <div class="override-tabs">
-            <button class="override-tab active" data-section="emergency">
-                <i class="fas fa-exclamation-triangle"></i> Emergency Override
-            </button>
-            <button class="override-tab" data-section="admin">
-                <i class="fas fa-user-shield"></i> Admin Override
-            </button>
-            <button class="override-tab" data-section="technical">
-                <i class="fas fa-tools"></i> Technical Support
-            </button>
-            <button class="override-tab" data-section="management">
-                <i class="fas fa-chart-bar"></i> Management
-            </button>
-        </div>
-
-        <!-- Emergency Override Section -->
-        <div id="emergency-section" class="override-section active">
-            <div class="emergency-code-section">
-                <h3><i class="fas fa-exclamation-triangle"></i> Emergency Override Protocol</h3>
-                <p>This override should only be used in critical situations where immediate access is required for Oscar Broome or authorized executive personnel.</p>
-            </div>
-
-            <form id="emergencyForm">
-                <div class="form-group">
-                    <label for="emergencyUserId">User ID / Email:</label>
-                    <input type="email" id="emergencyUserId" name="userId" required
-                           placeholder="oscar.broome@oscarsystem.com">
-                </div>
-
-                <div class="form-group">
-                    <label for="emergencyReason">Reason for Override:</label>
-                    <select id="emergencyReason" name="reason" required>
-                        <option value="">Select reason...</option>
-                        <option value="emergency_access">Emergency Access Required</option>
-                        <option value="system_maintenance">System Maintenance</option>
-                        <option value="technical_issue">Technical Issue</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="emergencyCode">Emergency Override Code:</label>
-                    <input type="password" id="emergencyCode" name="emergencyCode" required
-                           placeholder="Enter emergency override code">
-                </div>
-
-                <div class="form-group">
-                    <label for="emergencyAuth">Additional Authentication (Optional):</label>
-                    <input type="text" id="emergencyAuth" name="additionalAuth"
-                           placeholder="Additional auth token or identifier">
-                </div>
-
-                <button type="submit" class="override-btn" id="emergencyBtn">
-                    <span class="btn-text">Activate Emergency Override</span>
-                    <span class="loading hidden"></span>
-                </button>
-            </form>
-        </div>
-
-        <!-- Admin Override Section -->
-        <div id="admin-section" class="override-section">
-            <form id="adminForm">
-                <div class="form-group">
-                    <label for="adminUserId">Admin User ID:</label>
-                    <input type="email" id="adminUserId" name="adminUserId" required
-                           placeholder="admin@oscarsystem.com">
-                </div>
-
-                <div class="form-group">
-                    <label for="targetUserId">Target User ID:</label>
-                    <input type="email" id="targetUserId" name="targetUserId" required
-                           placeholder="user@oscarsystem.com">
-                </div>
-
-                <div class="form-group">
-                    <label for="adminReason">Reason for Override:</label>
-                    <select id="adminReason" name="reason" required>
-                        <option value="">Select reason...</option>
-                        <option value="account_locked">Account Locked</option>
-                        <option value="mfa_failure">MFA Failure</option>
-                        <option value="password_reset">Password Reset</option>
-                        <option value="system_maintenance">System Maintenance</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="adminJustification">Justification (Required):</label>
-                    <textarea id="adminJustification" name="justification" required
-                              placeholder="Provide detailed justification for this administrative override..."></textarea>
-                </div>
-
-                <button type="submit" class="override-btn" id="adminBtn">
-                    <span class="btn-text">Activate Admin Override</span>
-                    <span class="loading hidden"></span>
-                </button>
-            </form>
-        </div>
-
-        <!-- Technical Support Section -->
-        <div id="technical-section" class="override-section">
-            <form id="technicalForm">
-                <div class="form-group">
-                    <label for="supportUserId">Support User ID:</label>
-                    <input type="email" id="supportUserId" name="supportUserId" required
-                           placeholder="support@oscarsystem.com">
-                </div>
-
-                <div class="form-group">
-                    <label for="techTargetUserId">Target User ID:</label>
-                    <input type="email" id="techTargetUserId" name="targetUserId" required
-                           placeholder="user@oscarsystem.com">
-                </div>
-
-                <div class="form-group">
-                    <label for="techReason">Reason for Override:</label>
-                    <select id="techReason" name="reason" required>
-                        <option value="">Select reason...</option>
-                        <option value="technical_issue">Technical Issue</option>
-                        <option value="account_locked">Account Locked</option>
-                        <option value="mfa_failure">MFA Failure</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="ticketNumber">Support Ticket Number:</label>
-                    <input type="text" id="ticketNumber" name="ticketNumber" required
-                           placeholder="TECH-1234" pattern="^[A-Z]{2,4}-\d{4,6}$">
-                </div>
-
-                <button type="submit" class="override-btn" id="technicalBtn">
-                    <span class="btn-text">Activate Technical Override</span>
-                    <span class="loading hidden"></span>
-                </button>
-            </form>
-        </div>
-
-        <!-- Management Section -->
-        <div id="management-section" class="override-section">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="activeOverridesCount">0</div>
-                    <div class="stat-label">Active Overrides</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="emergencyOverridesCount">0</div>
-                    <div class="stat-label">Emergency Overrides</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="adminOverridesCount">0</div>
-                    <div class="stat-label">Admin Overrides</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="technicalOverridesCount">0</div>
-                    <div class="stat-label">Technical Overrides</div>
-                </div>
-            </div>
-
-            <div class="active-overrides-list">
-                <h3>Active Override Sessions</h3>
-                <div id="activeOverridesList">
-                    <p>No active override sessions</p>
-                </div>
-            </div>
-
-            <div style="margin-top: 30px;">
-                <button class="override-btn" onclick="refreshStats()">
-                    <i class="fas fa-sync"></i> Refresh Statistics
-                </button>
-            </div>
-        </div>
+      </div>
     </div>
 
     <script src="override-dashboard.js"></script>
-</body>
+  </body>
 </html>

@@ -453,6 +453,6 @@ app.use('/api/education', educationRoutes);
 
 ---
 
-*"From the House of David, through the OWLBAN GROUP, we continue building Heaven on Earth."*
+_"From the House of David, through the OWLBAN GROUP, we continue building Heaven on Earth."_
 
 ## ⚡ LET'S PROCEED WITH ACTION 1: EDUCATION SERVICE ⚡

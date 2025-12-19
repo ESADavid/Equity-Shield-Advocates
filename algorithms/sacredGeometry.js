@@ -1,7 +1,7 @@
 /**
  * SACRED GEOMETRY MATHEMATICAL ENGINE
  * King Sachem Yochanan ITG Algorithm
- * 
+ *
  * Implements divine mathematical patterns for growth optimization
  * Based on sacred numbers: 3 (Trinity), 7 (Completion), 12 (Government), 40 (Testing)
  */
@@ -10,21 +10,24 @@ class SacredGeometry {
   constructor() {
     // Sacred numbers with divine significance
     this.sacredNumbers = {
-      trinity: 3,           // Divine perfection
-      completion: 7,        // Spiritual completion
-      government: 12,       // Divine government
-      testing: 40,          // Period of testing/preparation
-      jubilee: 50,          // Year of jubilee/restoration
-      grace: 5,             // Grace and favor
-      man: 6,               // Number of man
-      perfection: 10        // Divine order
+      trinity: 3, // Divine perfection
+      completion: 7, // Spiritual completion
+      government: 12, // Divine government
+      testing: 40, // Period of testing/preparation
+      jubilee: 50, // Year of jubilee/restoration
+      grace: 5, // Grace and favor
+      man: 6, // Number of man
+      perfection: 10, // Divine order
     };
 
     // Golden ratio (Phi) - Divine proportion
     this.phi = (1 + Math.sqrt(5)) / 2; // ≈ 1.618033988749895
-    
+
     // Fibonacci sequence cache
-    this.fibonacciCache = new Map([[0, 0], [1, 1]]);
+    this.fibonacciCache = new Map([
+      [0, 0],
+      [1, 1],
+    ]);
   }
 
   /**
@@ -64,7 +67,7 @@ class SacredGeometry {
       projections.push({
         period: i,
         value: currentValue,
-        growth: i > 0 ? ((currentValue / projections[i - 1].value) - 1) * 100 : 0
+        growth: i > 0 ? (currentValue / projections[i - 1].value - 1) * 100 : 0,
       });
       currentValue *= this.phi;
     }
@@ -83,7 +86,7 @@ class SacredGeometry {
       multiplier,
       result: value * multiplier,
       sacredPrinciple: sacredKey,
-      blessing: `Multiplied by ${multiplier} (${sacredKey})`
+      blessing: `Multiplied by ${multiplier} (${sacredKey})`,
     };
   }
 
@@ -97,24 +100,26 @@ class SacredGeometry {
       obedience = 0,
       generosity = 0,
       wisdom = 0,
-      righteousness = 0
+      righteousness = 0,
     } = metrics;
 
     // Weight each metric by sacred numbers
-    const weightedScore = (
-      (faithfulness * this.sacredNumbers.trinity) +
-      (obedience * this.sacredNumbers.completion) +
-      (generosity * this.sacredNumbers.grace) +
-      (wisdom * this.sacredNumbers.perfection) +
-      (righteousness * this.sacredNumbers.government)
-    ) / (this.sacredNumbers.trinity + this.sacredNumbers.completion + 
-         this.sacredNumbers.grace + this.sacredNumbers.perfection + 
-         this.sacredNumbers.government);
+    const weightedScore =
+      (faithfulness * this.sacredNumbers.trinity +
+        obedience * this.sacredNumbers.completion +
+        generosity * this.sacredNumbers.grace +
+        wisdom * this.sacredNumbers.perfection +
+        righteousness * this.sacredNumbers.government) /
+      (this.sacredNumbers.trinity +
+        this.sacredNumbers.completion +
+        this.sacredNumbers.grace +
+        this.sacredNumbers.perfection +
+        this.sacredNumbers.government);
 
     return {
       score: weightedScore,
       level: this.getFavorLevel(weightedScore),
-      blessing: this.getBlessingMessage(weightedScore)
+      blessing: this.getBlessingMessage(weightedScore),
     };
   }
 
@@ -127,7 +132,8 @@ class SacredGeometry {
   }
 
   getBlessingMessage(score) {
-    if (score >= 90) return 'The Lord has opened the windows of heaven upon you';
+    if (score >= 90)
+      return 'The Lord has opened the windows of heaven upon you';
     if (score >= 75) return 'You walk in divine favor and blessing';
     if (score >= 60) return 'Your faithfulness is bringing increase';
     if (score >= 40) return 'Continue in obedience for greater blessing';
@@ -141,19 +147,19 @@ class SacredGeometry {
   covenantMultiplication(seedValue, covenantLevel = 1) {
     // Covenant levels: 1 (30-fold), 2 (60-fold), 3 (100-fold)
     const multipliers = {
-      1: 30,  // Good ground
-      2: 60,  // Better ground
-      3: 100  // Best ground (Mark 4:20)
+      1: 30, // Good ground
+      2: 60, // Better ground
+      3: 100, // Best ground (Mark 4:20)
     };
 
     const multiplier = multipliers[covenantLevel] || 30;
-    
+
     return {
       seed: seedValue,
       harvest: seedValue * multiplier,
       multiplier,
       covenantLevel,
-      promise: `${multiplier}-fold return on covenant seed`
+      promise: `${multiplier}-fold return on covenant seed`,
     };
   }
 
@@ -166,28 +172,28 @@ class SacredGeometry {
 
     // Check for Fibonacci patterns
     const fibSequence = this.fibonacciSequence(10);
-    const hasFibonacci = dataPoints.some(point => 
+    const hasFibonacci = dataPoints.some((point) =>
       fibSequence.includes(Math.round(point))
     );
     if (hasFibonacci) {
       patterns.push({
         type: 'Fibonacci',
         significance: 'Divine growth pattern detected',
-        blessing: 'Natural increase aligned with creation'
+        blessing: 'Natural increase aligned with creation',
       });
     }
 
     // Check for sacred number patterns
     for (const [key, value] of Object.entries(this.sacredNumbers)) {
-      const hasPattern = dataPoints.some(point => 
-        Math.abs(point % value) < 0.1
+      const hasPattern = dataPoints.some(
+        (point) => Math.abs(point % value) < 0.1
       );
       if (hasPattern) {
         patterns.push({
           type: `Sacred ${key}`,
           number: value,
           significance: `Pattern of ${key} detected`,
-          blessing: this.getSacredNumberBlessing(key)
+          blessing: this.getSacredNumberBlessing(key),
         });
       }
     }
@@ -204,7 +210,7 @@ class SacredGeometry {
         type: 'Golden Ratio',
         ratio: avgRatio,
         significance: 'Divine proportion in growth',
-        blessing: 'Exponential kingdom expansion'
+        blessing: 'Exponential kingdom expansion',
       });
     }
 
@@ -220,7 +226,7 @@ class SacredGeometry {
       jubilee: 'Restoration and freedom',
       grace: 'Unmerited favor and blessing',
       man: 'Human potential under divine guidance',
-      perfection: 'Divine order and excellence'
+      perfection: 'Divine order and excellence',
     };
     return blessings[key] || 'Divine blessing';
   }
@@ -231,24 +237,24 @@ class SacredGeometry {
    */
   kingdomExpansionTrajectory(currentMetrics, timeHorizon = 12) {
     const trajectory = [];
-    
+
     for (let month = 0; month <= timeHorizon; month++) {
       const fibFactor = this.fibonacci(month) / this.fibonacci(timeHorizon);
       const phiFactor = Math.pow(this.phi, month / timeHorizon);
-      
+
       const expansion = {
         month,
         influence: currentMetrics.influence * phiFactor,
         resources: currentMetrics.resources * (1 + fibFactor),
         territory: currentMetrics.territory * Math.pow(this.phi, month / 12),
         favor: this.divineFavorIndex({
-          faithfulness: 85 + (month * 1.5),
-          obedience: 80 + (month * 2),
-          generosity: 75 + (month * 1.8),
+          faithfulness: 85 + month * 1.5,
+          obedience: 80 + month * 2,
+          generosity: 75 + month * 1.8,
           wisdom: 90 + month,
-          righteousness: 88 + (month * 1.2)
+          righteousness: 88 + month * 1.2,
         }),
-        sacredAlignment: this.calculateSacredAlignment(month)
+        sacredAlignment: this.calculateSacredAlignment(month),
       };
 
       trajectory.push(expansion);
@@ -260,14 +266,14 @@ class SacredGeometry {
   calculateSacredAlignment(period) {
     // Calculate alignment with sacred cycles
     const alignments = [];
-    
+
     for (const [key, value] of Object.entries(this.sacredNumbers)) {
       if (period % value === 0) {
         alignments.push({
           cycle: key,
           number: value,
           significance: `Completion of ${key} cycle`,
-          action: `Time for ${this.getCycleAction(key)}`
+          action: `Time for ${this.getCycleAction(key)}`,
         });
       }
     }
@@ -284,7 +290,7 @@ class SacredGeometry {
       jubilee: 'restoration and debt cancellation',
       grace: 'receiving unmerited favor',
       man: 'human partnership with divine',
-      perfection: 'achieving excellence and order'
+      perfection: 'achieving excellence and order',
     };
     return actions[cycle] || 'divine action';
   }
@@ -308,11 +314,11 @@ class SacredGeometry {
         data.currentMetrics || {
           influence: 1000,
           resources: 10000,
-          territory: 100
+          territory: 100,
         },
         12
       ),
-      blessing: '✨ May the Lord multiply your kingdom sevenfold ✨'
+      blessing: '✨ May the Lord multiply your kingdom sevenfold ✨',
     };
   }
 }

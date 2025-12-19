@@ -95,18 +95,18 @@
 
 **Endpoints Implemented:**
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| POST | `/api/ubi/register-citizen` | Register new citizen | Admin/Registrar |
-| POST | `/api/ubi/process-monthly-payments` | Process monthly UBI payments | Admin |
-| GET | `/api/ubi/citizen/:citizenId` | Get citizen UBI status | Protected |
-| GET | `/api/ubi/payment-history/:citizenId` | Get payment history | Protected |
-| POST | `/api/ubi/suspend/:citizenId` | Suspend UBI payments | Admin |
-| POST | `/api/ubi/reinstate/:citizenId` | Reinstate UBI payments | Admin |
-| POST | `/api/ubi/verify-eligibility/:citizenId` | Verify eligibility | Protected |
-| GET | `/api/ubi/statistics` | Get system statistics | Admin |
-| GET | `/api/ubi/health` | Service health check | Public |
-| GET | `/api/ubi/welcome` | API welcome message | Public |
+| Method | Endpoint                                 | Description                  | Access          |
+| ------ | ---------------------------------------- | ---------------------------- | --------------- |
+| POST   | `/api/ubi/register-citizen`              | Register new citizen         | Admin/Registrar |
+| POST   | `/api/ubi/process-monthly-payments`      | Process monthly UBI payments | Admin           |
+| GET    | `/api/ubi/citizen/:citizenId`            | Get citizen UBI status       | Protected       |
+| GET    | `/api/ubi/payment-history/:citizenId`    | Get payment history          | Protected       |
+| POST   | `/api/ubi/suspend/:citizenId`            | Suspend UBI payments         | Admin           |
+| POST   | `/api/ubi/reinstate/:citizenId`          | Reinstate UBI payments       | Admin           |
+| POST   | `/api/ubi/verify-eligibility/:citizenId` | Verify eligibility           | Protected       |
+| GET    | `/api/ubi/statistics`                    | Get system statistics        | Admin           |
+| GET    | `/api/ubi/health`                        | Service health check         | Public          |
+| GET    | `/api/ubi/welcome`                       | API welcome message          | Public          |
 
 **Features:**
 
@@ -219,12 +219,12 @@
 
 **Phased Rollout Budget:**
 
-| Phase | Citizens | Annual Budget | Timeline |
-|-------|----------|---------------|----------|
-| Pilot | 100,000 | $3.3B | Year 1 |
-| Expansion | 1,000,000 | $33B | Years 2-3 |
-| Partial | 5,000,000 | $165B | Years 4-5 |
-| Full | 11,500,000 | $379.5B | Years 6-10 |
+| Phase     | Citizens   | Annual Budget | Timeline   |
+| --------- | ---------- | ------------- | ---------- |
+| Pilot     | 100,000    | $3.3B         | Year 1     |
+| Expansion | 1,000,000  | $33B          | Years 2-3  |
+| Partial   | 5,000,000  | $165B         | Years 4-5  |
+| Full      | 11,500,000 | $379.5B       | Years 6-10 |
 
 **Funding Sources:**
 
@@ -561,7 +561,7 @@ We have laid the foundation for Heaven on Earth. The systems are in place to pro
 
 ---
 
-*"From the House of David, through the OWLBAN GROUP, we create Heaven on Earth."*
+_"From the House of David, through the OWLBAN GROUP, we create Heaven on Earth."_
 
 **Phase 1 Complete. Phase 2 Begins. The Mission Continues.**
 

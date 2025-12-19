@@ -41,7 +41,7 @@ class QuantumAIWallet extends EventEmitter {
       userEmail: this.userEmail,
       balance: this.balance,
       createdAt: new Date().toISOString(),
-      quantumHash: this.generateQuantumHash()
+      quantumHash: this.generateQuantumHash(),
     };
 
     // Store in quantum engine
@@ -50,30 +50,41 @@ class QuantumAIWallet extends EventEmitter {
     // Initialize AI prediction engine
     await this.aiEngine.initializePredictions(this.userId);
 
-    this.emit('wallet-initialized', { walletId: this.walletId, userId: this.userId });
+    this.emit('wallet-initialized', {
+      walletId: this.walletId,
+      userId: this.userId,
+    });
   }
 
   generateQuantumHash() {
     const data = JSON.stringify({
       walletId: this.walletId,
       userId: this.userId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
     return crypto.createHash('sha3-512').update(data).digest('hex');
   }
 
   // AI-Powered Instant Withdrawal
-  async instantWithdrawal(amount, destination, description = 'AI Instant Withdrawal') {
+  async instantWithdrawal(
+    amount,
+    destination,
+    description = 'AI Instant Withdrawal'
+  ) {
     try {
       // AI Risk Assessment
-      const riskAssessment = await this.aiEngine.assessWithdrawalRisk(amount, destination);
+      const riskAssessment = await this.aiEngine.assessWithdrawalRisk(
+        amount,
+        destination
+      );
 
       if (!riskAssessment.approved) {
         throw new Error(`AI Risk Assessment Failed: ${riskAssessment.reason}`);
       }
 
       // Check balance with AI prediction
-      const predictedBalance = await this.aiEngine.predictBalanceAfterWithdrawal(amount);
+      const predictedBalance =
+        await this.aiEngine.predictBalanceAfterWithdrawal(amount);
       if (predictedBalance < 0) {
         throw new Error('Insufficient funds (AI prediction)');
       }
@@ -88,11 +99,14 @@ class QuantumAIWallet extends EventEmitter {
         timestamp: new Date().toISOString(),
         status: 'processing',
         aiApproval: riskAssessment,
-        quantumHash: this.generateTransactionHash(amount, destination)
+        quantumHash: this.generateTransactionHash(amount, destination),
       };
 
       // Store transaction in quantum state
-      this.quantumEngine.setQuantumState(`transaction_${transaction.id}`, transaction);
+      this.quantumEngine.setQuantumState(
+        `transaction_${transaction.id}`,
+        transaction
+      );
 
       // Process instant payment
       const paymentResult = await this.processInstantPayment(transaction);
@@ -112,7 +126,7 @@ class QuantumAIWallet extends EventEmitter {
           transactionId: transaction.id,
           amount,
           destination,
-          balance: this.balance
+          balance: this.balance,
         });
 
         return {
@@ -120,15 +134,18 @@ class QuantumAIWallet extends EventEmitter {
           transactionId: transaction.id,
           amount,
           balance: this.balance,
-          aiInsights: riskAssessment.insights
+          aiInsights: riskAssessment.insights,
         };
       } else {
         transaction.status = 'failed';
         throw new Error(`Payment processing failed: ${paymentResult.error}`);
       }
-
     } catch (error) {
-      this.emit('withdrawal-failed', { amount, destination, error: error.message });
+      this.emit('withdrawal-failed', {
+        amount,
+        destination,
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -145,7 +162,11 @@ class QuantumAIWallet extends EventEmitter {
       const merchantAnalysis = await this.aiEngine.analyzeMerchant(merchantId);
 
       // Quantum NFC/Contactless Processing
-      const tapResult = await this.processTapPayment(amount, tapData, merchantAnalysis);
+      const tapResult = await this.processTapPayment(
+        amount,
+        tapData,
+        merchantAnalysis
+      );
 
       if (tapResult.success) {
         const transaction = {
@@ -158,14 +179,17 @@ class QuantumAIWallet extends EventEmitter {
           status: 'completed',
           tapData: tapData,
           aiAnalysis: merchantAnalysis,
-          quantumHash: this.generateTransactionHash(amount, merchantId)
+          quantumHash: this.generateTransactionHash(amount, merchantId),
         };
 
         this.balance -= amount;
         this.transactions.push(transaction);
 
         // Store in quantum state
-        this.quantumEngine.setQuantumState(`transaction_${transaction.id}`, transaction);
+        this.quantumEngine.setQuantumState(
+          `transaction_${transaction.id}`,
+          transaction
+        );
 
         // Update wallet state
         await this.updateWalletState();
@@ -177,7 +201,7 @@ class QuantumAIWallet extends EventEmitter {
           transactionId: transaction.id,
           amount,
           merchantId,
-          balance: this.balance
+          balance: this.balance,
         });
 
         return {
@@ -185,14 +209,17 @@ class QuantumAIWallet extends EventEmitter {
           transactionId: transaction.id,
           amount,
           merchant: merchantAnalysis.name,
-          balance: this.balance
+          balance: this.balance,
         };
       } else {
         throw new Error(`Tap payment failed: ${tapResult.error}`);
       }
-
     } catch (error) {
-      this.emit('tap-payment-failed', { merchantId, amount, error: error.message });
+      this.emit('tap-payment-failed', {
+        merchantId,
+        amount,
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -201,7 +228,10 @@ class QuantumAIWallet extends EventEmitter {
   async aiDeposit(amount, source, description = 'AI Smart Deposit') {
     try {
       // AI Deposit Optimization
-      const depositOptimization = await this.aiEngine.optimizeDeposit(amount, source);
+      const depositOptimization = await this.aiEngine.optimizeDeposit(
+        amount,
+        source
+      );
 
       const transaction = {
         id: this.generateTransactionId(),
@@ -212,14 +242,17 @@ class QuantumAIWallet extends EventEmitter {
         timestamp: new Date().toISOString(),
         status: 'completed',
         aiOptimization: depositOptimization,
-        quantumHash: this.generateTransactionHash(amount, source)
+        quantumHash: this.generateTransactionHash(amount, source),
       };
 
       this.balance += amount;
       this.transactions.push(transaction);
 
       // Store in quantum state
-      this.quantumEngine.setQuantumState(`transaction_${transaction.id}`, transaction);
+      this.quantumEngine.setQuantumState(
+        `transaction_${transaction.id}`,
+        transaction
+      );
 
       // Update wallet state
       await this.updateWalletState();
@@ -230,7 +263,7 @@ class QuantumAIWallet extends EventEmitter {
       this.emit('deposit-completed', {
         transactionId: transaction.id,
         amount,
-        balance: this.balance
+        balance: this.balance,
       });
 
       return {
@@ -238,9 +271,8 @@ class QuantumAIWallet extends EventEmitter {
         transactionId: transaction.id,
         amount,
         balance: this.balance,
-        aiOptimization: depositOptimization
+        aiOptimization: depositOptimization,
       };
-
     } catch (error) {
       this.emit('deposit-failed', { amount, source, error: error.message });
       throw error;
@@ -251,7 +283,9 @@ class QuantumAIWallet extends EventEmitter {
   async syncFinances() {
     try {
       // AI Financial Analysis
-      const financialAnalysis = await this.aiEngine.analyzeFinances(this.transactions);
+      const financialAnalysis = await this.aiEngine.analyzeFinances(
+        this.transactions
+      );
 
       // Sync with external accounts
       const syncResult = await this.syncExternalAccounts();
@@ -260,21 +294,22 @@ class QuantumAIWallet extends EventEmitter {
       await this.updateWalletFromSync(syncResult);
 
       // AI predictions for future
-      const predictions = await this.aiEngine.predictFinancialFuture(this.transactions);
+      const predictions = await this.aiEngine.predictFinancialFuture(
+        this.transactions
+      );
 
       this.emit('finances-synced', {
         analysis: financialAnalysis,
         predictions: predictions,
-        syncedAccounts: syncResult.accounts
+        syncedAccounts: syncResult.accounts,
       });
 
       return {
         success: true,
         financialAnalysis,
         predictions,
-        syncedData: syncResult
+        syncedData: syncResult,
       };
-
     } catch (error) {
       this.emit('sync-failed', { error: error.message });
       throw error;
@@ -295,30 +330,31 @@ class QuantumAIWallet extends EventEmitter {
     // Simulate instant payment processing with quantum security
     // In real implementation, this would integrate with payment processors
     // For demo, simulate successful processing
-    await new Promise(resolve => setTimeout(resolve, 10)); // 10ms instant processing
+    await new Promise((resolve) => setTimeout(resolve, 10)); // 10ms instant processing
 
     return {
       success: true,
       transactionId: transaction.id,
       processingTime: performance.now(),
-      quantumVerified: true
+      quantumVerified: true,
     };
   }
 
   async processTapPayment(amount, tapData, merchantAnalysis) {
     // Quantum NFC processing
-    const tapHash = crypto.createHash('sha256')
+    const tapHash = crypto
+      .createHash('sha256')
       .update(JSON.stringify({ amount, tapData, merchantAnalysis }))
       .digest('hex');
 
     // Simulate tap processing
-    await new Promise(resolve => setTimeout(resolve, 5)); // 5ms tap processing
+    await new Promise((resolve) => setTimeout(resolve, 5)); // 5ms tap processing
 
     return {
       success: true,
       tapHash,
       processingTime: performance.now(),
-      quantumVerified: true
+      quantumVerified: true,
     };
   }
 
@@ -328,13 +364,17 @@ class QuantumAIWallet extends EventEmitter {
     const accounts = [
       { type: 'checking', balance: 50000, institution: 'JPMorgan Chase' },
       { type: 'savings', balance: 100000, institution: 'JPMorgan Chase' },
-      { type: 'investment', balance: 500000, institution: 'JPMorgan Investments' }
+      {
+        type: 'investment',
+        balance: 500000,
+        institution: 'JPMorgan Investments',
+      },
     ];
 
     return {
       accounts,
       totalSynced: accounts.reduce((sum, acc) => sum + acc.balance, 0),
-      lastSync: new Date().toISOString()
+      lastSync: new Date().toISOString(),
     };
   }
 
@@ -345,7 +385,7 @@ class QuantumAIWallet extends EventEmitter {
       balance: this.balance,
       transactionCount: this.transactions.length,
       lastUpdated: new Date().toISOString(),
-      quantumHash: this.generateQuantumHash()
+      quantumHash: this.generateQuantumHash(),
     };
 
     this.quantumEngine.setQuantumState(`wallet_${this.walletId}`, walletState);
@@ -354,7 +394,7 @@ class QuantumAIWallet extends EventEmitter {
   async updateWalletFromSync(syncResult) {
     // Update balance based on synced accounts
     const totalExternalBalance = syncResult.totalSynced;
-    this.balance = Math.max(this.balance, totalExternalBalance * 1 / 10);
+    this.balance = Math.max(this.balance, (totalExternalBalance * 1) / 10);
 
     await this.updateWalletState();
   }
@@ -368,7 +408,7 @@ class QuantumAIWallet extends EventEmitter {
       transactionCount: this.transactions.length,
       quantumSecurity: this.quantumSecurity.verifySecurity(),
       aiStatus: this.aiEngine.getStatus(),
-      lastTransaction: this.transactions[this.transactions.length - 1]
+      lastTransaction: this.transactions[this.transactions.length - 1],
     };
   }
 
@@ -394,7 +434,7 @@ class QuantumAIEngine {
       spendingPatterns: [],
       incomePredictions: [],
       riskTolerance: 'medium',
-      investmentRecommendations: []
+      investmentRecommendations: [],
     });
   }
 
@@ -413,19 +453,24 @@ class QuantumAIEngine {
       amount: amountRisk,
       destination: this.analyzeDestination(destination),
       timeOfDay,
-      userHistory: this.analyzeUserHistory(amount)
+      userHistory: this.analyzeUserHistory(amount),
     };
 
     const riskScore = this.calculateRiskScore(riskFactors);
 
     // Reject transactions over $10,000 or to crypto destinations
-    const shouldReject = amount > 10000 || destination.toLowerCase().includes('crypto');
+    const shouldReject =
+      amount > 10000 || destination.toLowerCase().includes('crypto');
 
     return {
       approved: !shouldReject && riskScore < 0.7,
       riskScore,
-      reason: shouldReject ? 'Transaction exceeds risk thresholds' : (riskScore >= 0.7 ? 'High risk transaction detected' : null),
-      insights: this.generateRiskInsights(riskFactors)
+      reason: shouldReject
+        ? 'Transaction exceeds risk thresholds'
+        : riskScore >= 0.7
+          ? 'High risk transaction detected'
+          : null,
+      insights: this.generateRiskInsights(riskFactors),
     };
   }
 
@@ -437,7 +482,7 @@ class QuantumAIEngine {
       riskLevel: 'low',
       averageTransaction: 150,
       customerRating: 4.8,
-      aiConfidence: 0.95
+      aiConfidence: 0.95,
     };
   }
 
@@ -449,12 +494,12 @@ class QuantumAIEngine {
   async optimizeDeposit(amount, source) {
     return {
       recommendedAllocation: {
-        savings: amount * 3 / 10,
-        investment: amount * 4 / 10,
-        spending: amount * 3 / 10
+        savings: (amount * 3) / 10,
+        investment: (amount * 4) / 10,
+        spending: (amount * 3) / 10,
       },
       taxOptimization: 'maximize deductions',
-      aiConfidence: 0.89
+      aiConfidence: 0.89,
     };
   }
 
@@ -465,7 +510,7 @@ class QuantumAIEngine {
       netWorth: 0,
       spendingCategories: {},
       monthlyTrends: [],
-      aiInsights: []
+      aiInsights: [],
     };
 
     // Analyze transactions
@@ -488,7 +533,7 @@ class QuantumAIEngine {
       nextMonthExpenses: 35000,
       recommendedSavings: 15000,
       investmentOpportunities: ['Tech Stocks', 'Real Estate'],
-      riskAssessment: 'moderate'
+      riskAssessment: 'moderate',
     };
   }
 
@@ -496,7 +541,7 @@ class QuantumAIEngine {
     this.learningData.push({
       type: 'transaction',
       data: transaction,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -504,7 +549,7 @@ class QuantumAIEngine {
     this.learningData.push({
       type: 'tap_payment',
       data: transaction,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -512,7 +557,7 @@ class QuantumAIEngine {
     this.learningData.push({
       type: 'deposit',
       data: transaction,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -546,7 +591,7 @@ class QuantumAIEngine {
       amountRisk: factors.amount,
       destinationRisk: factors.destination,
       timingRisk: isUnusualTime ? 'unusual' : 'normal',
-      recommendations: ['Enable 2FA', 'Monitor account regularly']
+      recommendations: ['Enable 2FA', 'Monitor account regularly'],
     };
   }
 
@@ -555,7 +600,7 @@ class QuantumAIEngine {
       predictions: this.predictions.size,
       learningDataPoints: this.learningData.length,
       quantumOptimized: true,
-      aiConfidence: 0.92
+      aiConfidence: 0.92,
     };
   }
 }

@@ -9,22 +9,29 @@ const logger = winston.createLogger({
   ),
   defaultMeta: { service: 'email-config' },
   transports: [
-    new winston.transports.File({ filename: 'logs/email-error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/email.log' })
-  ]
+    new winston.transports.File({
+      filename: 'logs/email-error.log',
+      level: 'error',
+    }),
+    new winston.transports.File({ filename: 'logs/email.log' }),
+  ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 class EmailConfig {
   constructor() {
     this.provider = process.env.EMAIL_PROVIDER || 'sendgrid'; // sendgrid, ses, smtp
-    this.fromEmail = process.env.EMAIL_FROM || 'noreply@oscar-broome-revenue.com';
-    this.fromName = process.env.EMAIL_FROM_NAME || 'Oscar Broome Revenue System';
+    this.fromEmail =
+      process.env.EMAIL_FROM || 'noreply@oscar-broome-revenue.com';
+    this.fromName =
+      process.env.EMAIL_FROM_NAME || 'Oscar Broome Revenue System';
 
     // SendGrid configuration
     this.sendgridApiKey = process.env.SENDGRID_API_KEY;
@@ -44,20 +51,20 @@ class EmailConfig {
     this.templates = {
       passwordReset: {
         subject: 'Password Reset Request - Oscar Broome Revenue',
-        template: 'password-reset'
+        template: 'password-reset',
       },
       welcome: {
         subject: 'Welcome to Oscar Broome Revenue System',
-        template: 'welcome'
+        template: 'welcome',
       },
       accountLocked: {
         subject: 'Account Security Alert - Oscar Broome Revenue',
-        template: 'account-locked'
+        template: 'account-locked',
       },
       transactionAlert: {
         subject: 'Transaction Alert - Oscar Broome Revenue',
-        template: 'transaction-alert'
-      }
+        template: 'transaction-alert',
+      },
     };
 
     this.validateConfig();
@@ -67,21 +74,25 @@ class EmailConfig {
     const requiredConfigs = {
       sendgrid: ['sendgridApiKey'],
       ses: ['sesAccessKeyId', 'sesSecretAccessKey'],
-      smtp: ['smtpHost', 'smtpUser', 'smtpPass']
+      smtp: ['smtpHost', 'smtpUser', 'smtpPass'],
     };
 
     const provider = this.provider;
     if (!requiredConfigs[provider]) {
-      logger.warn(`Unknown email provider: ${provider}, falling back to sendgrid`);
+      logger.warn(
+        `Unknown email provider: ${provider}, falling back to sendgrid`
+      );
       this.provider = 'sendgrid';
       return;
     }
 
     const required = requiredConfigs[provider];
-    const missing = required.filter(key => !this[key]);
+    const missing = required.filter((key) => !this[key]);
 
     if (missing.length > 0) {
-      logger.warn(`Email configuration incomplete for ${provider}: ${missing.join(', ')} - Email features will be disabled`);
+      logger.warn(
+        `Email configuration incomplete for ${provider}: ${missing.join(', ')} - Email features will be disabled`
+      );
       this.emailEnabled = false;
     } else {
       logger.info(`Email configuration validated for provider: ${provider}`);
@@ -98,8 +109,8 @@ class EmailConfig {
           secure: false,
           auth: {
             user: 'apikey',
-            pass: this.sendgridApiKey
-          }
+            pass: this.sendgridApiKey,
+          },
         };
 
       case 'ses':
@@ -109,8 +120,8 @@ class EmailConfig {
           secure: false,
           auth: {
             user: this.sesAccessKeyId,
-            pass: this.sesSecretAccessKey
-          }
+            pass: this.sesSecretAccessKey,
+          },
         };
 
       case 'smtp':
@@ -120,8 +131,8 @@ class EmailConfig {
           secure: this.smtpSecure,
           auth: {
             user: this.smtpUser,
-            pass: this.smtpPass
-          }
+            pass: this.smtpPass,
+          },
         };
 
       default:
@@ -143,19 +154,19 @@ class EmailConfig {
     const requiredFields = {
       sendgrid: ['sendgridApiKey'],
       ses: ['sesAccessKeyId', 'sesSecretAccessKey'],
-      smtp: ['smtpHost', 'smtpUser', 'smtpPass']
+      smtp: ['smtpHost', 'smtpUser', 'smtpPass'],
     };
 
     const provider = this.provider;
     const required = requiredFields[provider] || [];
-    const configured = required.filter(key => this[key]).length;
+    const configured = required.filter((key) => this[key]).length;
 
     return {
       provider,
       configured: `${configured}/${required.length} required fields`,
       status: configured === required.length ? 'configured' : 'incomplete',
       fromEmail: this.fromEmail,
-      templates: Object.keys(this.templates).length
+      templates: Object.keys(this.templates).length,
     };
   }
 }

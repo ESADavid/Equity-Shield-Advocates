@@ -73,7 +73,7 @@ import { QuantumEmailSystem } from './owlban_revenue_repo/quantum/quantumEmailSy
 const emailSystem = new QuantumEmailSystem();
 
 // Wait for initialization
-await new Promise(resolve => setTimeout(resolve, 1000));
+await new Promise((resolve) => setTimeout(resolve, 1000));
 
 // Check system status
 const status = emailSystem.getSystemStatus();
@@ -92,8 +92,8 @@ const email = await emailSystem.sendEmail({
   category: 'general',
   metadata: {
     department: 'Finance',
-    confidential: true
-  }
+    confidential: true,
+  },
 });
 
 console.log('Email sent:', email.emailId);
@@ -108,28 +108,28 @@ const employee = {
   name: 'Oscar Broome',
   email: 'oscar.broome@jpmorgan.com',
   employeeId: 'EMP_OSCAR_BROOME',
-  bankAccount: '****1234'
+  bankAccount: '****1234',
 };
 
 const payrollData = {
   payPeriod: 'January 1-15, 2024',
   grossPay: 41666.67,
-  netPay: 28500.50,
+  netPay: 28500.5,
   paymentDate: '2024-01-20',
   paymentMethod: 'Direct Deposit',
   taxes: {
     federal: 8333.33,
     state: 2083.33,
     socialSecurity: 2583.33,
-    medicare: 604.17
+    medicare: 604.17,
   },
   benefits: {
     healthInsurance: 850,
-    retirement401k: 4166.67
+    retirement401k: 4166.67,
   },
   deductions: {
-    total: 5850
-  }
+    total: 5850,
+  },
 };
 
 const email = await emailSystem.sendPayrollNotification(employee, payrollData);
@@ -140,7 +140,7 @@ const email = await emailSystem.sendPayrollNotification(employee, payrollData);
 ```javascript
 const recipient = {
   name: 'Jane Smith',
-  email: 'jane.smith@jpmorgan.com'
+  email: 'jane.smith@jpmorgan.com',
 };
 
 const transactionData = {
@@ -151,10 +151,13 @@ const transactionData = {
   status: 'Completed',
   confirmationNumber: 'CONF_ABC123XYZ',
   details: 'International wire transfer',
-  blockchainId: 'BLOCK_0x1234567890abcdef'
+  blockchainId: 'BLOCK_0x1234567890abcdef',
 };
 
-const email = await emailSystem.sendTransactionNotification(recipient, transactionData);
+const email = await emailSystem.sendTransactionNotification(
+  recipient,
+  transactionData
+);
 ```
 
 #### Welcome Email
@@ -166,7 +169,7 @@ const newEmployee = {
   employeeId: 'EMP_SARAH_DAVIS',
   department: 'Operations',
   position: 'VP Operations',
-  startDate: '2024-02-01'
+  startDate: '2024-02-01',
 };
 
 const email = await emailSystem.sendWelcomeEmail(newEmployee);
@@ -177,7 +180,7 @@ const email = await emailSystem.sendWelcomeEmail(newEmployee);
 ```javascript
 const recipients = [
   'admin@jpmorgan-owlban.com',
-  'security@jpmorgan-owlban.com'
+  'security@jpmorgan-owlban.com',
 ];
 
 const alertData = {
@@ -185,7 +188,7 @@ const alertData = {
   severity: 'Medium',
   details: 'Quantum encryption keys rotated successfully',
   actionRequired: 'Review security logs',
-  systemStatus: 'Operational'
+  systemStatus: 'Operational',
 };
 
 const emails = await emailSystem.sendSystemAlert(recipients, alertData);
@@ -206,18 +209,22 @@ Best regards,
   `.trim(),
   category: 'custom',
   priority: 'normal',
-  encrypted: true
+  encrypted: true,
 });
 
 // Use the custom template
-const email = await emailSystem.sendTemplateEmail('custom_template', {
-  to: 'recipient@example.com',
-  from: 'sender@jpmorgan-owlban.com'
-}, {
-  name: 'John Doe',
-  variable: 'dynamic content',
-  sender: 'The Team'
-});
+const email = await emailSystem.sendTemplateEmail(
+  'custom_template',
+  {
+    to: 'recipient@example.com',
+    from: 'sender@jpmorgan-owlban.com',
+  },
+  {
+    name: 'John Doe',
+    variable: 'dynamic content',
+    sender: 'The Team',
+  }
+);
 ```
 
 ### Retrieving Emails
@@ -305,7 +312,7 @@ const email = await emailSystem.sendEmail({
   from: 'sender@example.com',
   to: 'recipient@example.com',
   subject: 'Confidential Information',
-  body: 'This will be encrypted automatically'
+  body: 'This will be encrypted automatically',
 });
 
 // Email content is encrypted before storage
@@ -449,7 +456,7 @@ The demo demonstrates:
 #### Constructor
 
 ```javascript
-new QuantumEmailSystem()
+new QuantumEmailSystem();
 ```
 
 #### Methods

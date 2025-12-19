@@ -13,11 +13,11 @@ const BASE_URL = 'http://localhost:3000';
 async function testOscarBroomeAPILogin() {
   try {
     console.log('🧪 Testing Oscar Broome API Login');
-    console.log('=' .repeat(40));
+    console.log('='.repeat(40));
 
     const loginData = {
       username: 'oscar.broome',
-      password: 'SecurePass2024!'
+      password: 'SecurePass2024!',
     };
 
     console.log('📡 Making API request to:', `${BASE_URL}/api/auth/login`);
@@ -25,8 +25,8 @@ async function testOscarBroomeAPILogin() {
 
     const response = await axios.post(`${BASE_URL}/api/auth/login`, loginData, {
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     console.log('✅ API Login successful!');
@@ -38,11 +38,13 @@ async function testOscarBroomeAPILogin() {
     console.log('   - Username:', response.data.data?.user?.username);
     console.log('   - Email:', response.data.data?.user?.email);
     console.log('   - Role:', response.data.data?.user?.role);
-    console.log('   - Token length:', response.data.data?.tokens?.accessToken?.length || 0);
+    console.log(
+      '   - Token length:',
+      response.data.data?.tokens?.accessToken?.length || 0
+    );
 
     console.log('\n🎉 Oscar Broome API login test PASSED!');
     console.log('💡 The login API is working correctly.');
-
   } catch (error) {
     console.error('❌ API Login test failed:');
     if (error.response) {

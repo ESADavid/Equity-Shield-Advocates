@@ -13,7 +13,7 @@ let server;
 const results = {
   passed: 0,
   failed: 0,
-  tests: []
+  tests: [],
 };
 
 function log(message) {
@@ -37,7 +37,10 @@ function logTest(name, status, error = null, note = null) {
 }
 
 async function runThoroughTests() {
-  fs.writeFileSync('thorough_test_results.txt', '🧪 THOROUGH JPMORGAN PAYMENTS TESTING\n');
+  fs.writeFileSync(
+    'thorough_test_results.txt',
+    '🧪 THOROUGH JPMORGAN PAYMENTS TESTING\n'
+  );
   fs.appendFileSync('thorough_test_results.txt', '='.repeat(50) + '\n\n');
 
   try {
@@ -104,7 +107,9 @@ async function runThoroughTests() {
     // Test 5: Get Payment Status (Invalid ID)
     log('\n5. Testing Payment Status Endpoint...');
     try {
-      const res = await request(server).get('/api/jpmorgan-payment/payment-status/INVALID123');
+      const res = await request(server).get(
+        '/api/jpmorgan-payment/payment-status/INVALID123'
+      );
       if (res.statusCode === 500 && !res.body.success) {
         logTest('Payment Status - Invalid ID', 'PASS');
       } else {
@@ -162,7 +167,9 @@ async function runThoroughTests() {
     // Test 9: Get Transactions
     log('\n9. Testing Get Transactions Endpoint...');
     try {
-      const res = await request(server).get('/api/jpmorgan-payment/transactions');
+      const res = await request(server).get(
+        '/api/jpmorgan-payment/transactions'
+      );
       if (res.statusCode === 500 && !res.body.success) {
         logTest('Get Transactions', 'PASS');
       } else {
@@ -194,12 +201,19 @@ async function runThoroughTests() {
         'JPMORGAN_CLIENT_ID',
         'JPMORGAN_CLIENT_SECRET',
         'JPMORGAN_MERCHANT_ID',
-        'JPMORGAN_TERMINAL_ID'
+        'JPMORGAN_TERMINAL_ID',
       ];
 
-      const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+      const missingVars = requiredEnvVars.filter(
+        (varName) => !process.env[varName]
+      );
       if (missingVars.length > 0) {
-        logTest('Environment Variables', 'PASS', null, `Missing variables: ${missingVars.join(', ')} (expected in test environment)`);
+        logTest(
+          'Environment Variables',
+          'PASS',
+          null,
+          `Missing variables: ${missingVars.join(', ')} (expected in test environment)`
+        );
       } else {
         logTest('Environment Variables', 'PASS');
       }
@@ -215,7 +229,9 @@ async function runThoroughTests() {
         .send({ orderId: 'ORDER123' });
 
       const expectedFields = ['success', 'error'];
-      const hasExpectedFields = expectedFields.every(field => field in res.body);
+      const hasExpectedFields = expectedFields.every(
+        (field) => field in res.body
+      );
 
       if (hasExpectedFields && res.body.success === false) {
         logTest('Error Response Format', 'PASS');
@@ -246,7 +262,7 @@ async function runThoroughTests() {
       const maliciousInput = {
         amount: '1000<script>alert("xss")</script>',
         orderId: 'ORDER123',
-        description: '<img src=x onerror=alert(1)>'
+        description: '<img src=x onerror=alert(1)>',
       };
 
       const res = await request(server)
@@ -275,7 +291,7 @@ async function runThoroughTests() {
       }
 
       const responses = await Promise.all(promises);
-      const allHandled = responses.every(res => res.statusCode === 400);
+      const allHandled = responses.every((res) => res.statusCode === 400);
 
       if (allHandled) {
         logTest('Rate Limiting Simulation', 'PASS');
@@ -295,7 +311,7 @@ async function runThoroughTests() {
         .send({
           amount: 1000,
           orderId: 'ORDER123',
-          description: largeDescription
+          description: largeDescription,
         });
 
       if (res.statusCode === 400) {
@@ -310,14 +326,16 @@ async function runThoroughTests() {
     // Test 17: Concurrent Requests
     log('\n17. Testing Concurrent Requests...');
     try {
-      const concurrentRequests = Array(20).fill().map((_, i) =>
-        request(server)
-          .post('/api/jpmorgan-payment/create-payment')
-          .send({ orderId: `CONCURRENT_ORDER_${i}` })
-      );
+      const concurrentRequests = Array(20)
+        .fill()
+        .map((_, i) =>
+          request(server)
+            .post('/api/jpmorgan-payment/create-payment')
+            .send({ orderId: `CONCURRENT_ORDER_${i}` })
+        );
 
       const responses = await Promise.all(concurrentRequests);
-      const allValid = responses.every(res => res.statusCode === 400);
+      const allValid = responses.every((res) => res.statusCode === 400);
 
       if (allValid) {
         logTest('Concurrent Requests', 'PASS');
@@ -351,7 +369,7 @@ async function runThoroughTests() {
       const sqlInjectionInput = {
         amount: 1000,
         orderId: "'; DROP TABLE users; --",
-        description: 'Test payment'
+        description: 'Test payment',
       };
 
       const res = await request(server)
@@ -395,24 +413,29 @@ async function runThoroughTests() {
     log(`Total Tests: ${results.passed + results.failed}`);
     log(`✅ Passed: ${results.passed}`);
     log(`❌ Failed: ${results.failed}`);
-    log(`Success Rate: ${((results.passed / (results.passed + results.failed)) * 100).toFixed(1)}%`);
+    log(
+      `Success Rate: ${((results.passed / (results.passed + results.failed)) * 100).toFixed(1)}%`
+    );
 
     if (results.failed > 0) {
       log('\n❌ FAILED TESTS:');
-      results.tests.filter(test => test.status === 'FAIL').forEach(test => {
-        log(`   - ${test.name}: ${test.error}`);
-      });
+      results.tests
+        .filter((test) => test.status === 'FAIL')
+        .forEach((test) => {
+          log(`   - ${test.name}: ${test.error}`);
+        });
     }
 
     log('\n✅ PASSED TESTS:');
-    results.tests.filter(test => test.status === 'PASS').forEach(test => {
-      log(`   - ${test.name}${test.note ? ` (${test.note})` : ''}`);
-    });
+    results.tests
+      .filter((test) => test.status === 'PASS')
+      .forEach((test) => {
+        log(`   - ${test.name}${test.note ? ` (${test.note})` : ''}`);
+      });
 
     log('\n🏁 Thorough testing completed!');
 
     return results;
-
   } catch (error) {
     log(`❌ Test suite failed: ${error.message}`);
     throw error;

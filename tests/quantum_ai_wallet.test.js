@@ -10,7 +10,7 @@ describe('Quantum AI Wallet', () => {
 
   it('should encrypt and decrypt messages correctly', () => {
     const wallet = quantumAIWallet.createWallet();
-    const message = "Hello Quantum";
+    const message = 'Hello Quantum';
     const encrypted = quantumAIWallet.encrypt(wallet.publicKey, message);
     expect(encrypted).to.not.equal(message);
     const decrypted = quantumAIWallet.decrypt(wallet.privateKey, encrypted);

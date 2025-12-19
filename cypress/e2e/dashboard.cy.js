@@ -3,8 +3,8 @@ describe('OWLban Earnings Dashboard', () => {
     cy.visit('/', {
       auth: {
         username: 'admin',
-        password: 'securepassword'
-      }
+        password: 'securepassword',
+      },
     });
     cy.contains('OWLban Earnings Dashboard');
     cy.get('#earnings').should('not.be.empty');
@@ -20,8 +20,8 @@ describe('OWLban Earnings Dashboard', () => {
     cy.visit('/', {
       auth: {
         username: 'admin',
-        password: 'securepassword'
-      }
+        password: 'securepassword',
+      },
     });
     cy.contains('Failed to load earnings data');
   });

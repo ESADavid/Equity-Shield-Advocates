@@ -1,7 +1,7 @@
 /**
  * Centralized Error Handler Middleware
  * Provides consistent error handling and logging across the application
- * 
+ *
  * @module middleware/errorHandler
  */
 
@@ -40,15 +40,15 @@ function classifyError(statusCode) {
 function formatErrorResponse(err, isDevelopment) {
   const statusCode = err.statusCode || 500;
   const errorType = classifyError(statusCode);
-  
+
   const response = {
     success: false,
     error: {
       type: errorType,
       message: err.message || 'An unexpected error occurred',
       statusCode,
-      timestamp: err.timestamp || new Date().toISOString()
-    }
+      timestamp: err.timestamp || new Date().toISOString(),
+    },
   };
 
   // Add additional details in development
@@ -81,7 +81,7 @@ function logErrorWithContext(err, req) {
     userAgent: req.get('user-agent'),
     userId: req.user?.id || req.user?.userId || 'anonymous',
     requestId: req.id || req.headers['x-request-id'],
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   // Add stack trace in development
@@ -107,7 +107,8 @@ function logErrorWithContext(err, req) {
 export function errorHandler(err, req, res, next) {
   // Set default status code if not set
   err.statusCode = err.statusCode || 500;
-  err.isOperational = err.isOperational !== undefined ? err.isOperational : false;
+  err.isOperational =
+    err.isOperational !== undefined ? err.isOperational : false;
 
   // Log error with context
   logErrorWithContext(err, req);
@@ -155,7 +156,7 @@ export function asyncHandler(fn) {
  * @returns {AppError} Formatted validation error
  */
 export function validationError(errors) {
-  const message = errors.map(err => err.message || err.msg).join(', ');
+  const message = errors.map((err) => err.message || err.msg).join(', ');
   const error = new AppError(`Validation Error: ${message}`, 400, true);
   error.details = errors;
   return error;
@@ -186,7 +187,7 @@ export function databaseError(err) {
   error.details = {
     originalError: err.message,
     code: err.code,
-    name: err.name
+    name: err.name,
   };
   return error;
 }
@@ -215,7 +216,10 @@ export function authorizationError(message = 'Access denied') {
  * @param {Object} details - Error details
  * @returns {AppError} Formatted payment error
  */
-export function paymentError(message = 'Payment processing failed', details = {}) {
+export function paymentError(
+  message = 'Payment processing failed',
+  details = {}
+) {
   const error = new AppError(message, 402, true);
   error.details = details;
   return error;
@@ -248,9 +252,9 @@ export function unhandledRejectionHandler() {
     logError('Unhandled Promise Rejection', {
       reason: reason instanceof Error ? reason.message : reason,
       stack: reason instanceof Error ? reason.stack : undefined,
-      promise: promise.toString()
+      promise: promise.toString(),
     });
-    
+
     // In production, you might want to gracefully shutdown
     if (process.env.NODE_ENV === 'production') {
       // Perform cleanup and exit
@@ -268,9 +272,9 @@ export function uncaughtExceptionHandler() {
     logError('Uncaught Exception', {
       message: error.message,
       stack: error.stack,
-      name: error.name
+      name: error.name,
     });
-    
+
     // Exit process after logging
     process.exit(1);
   });

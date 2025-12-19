@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       logger.info('Fetching earnings from backend...');
       const response = await fetch('/api/earnings', {
-        headers: { 'Authorization': authHeader },
-        credentials: 'include'
+        headers: { Authorization: authHeader },
+        credentials: 'include',
       });
       logger.info('Fetch response status:', response.status);
       if (!response.ok) {
@@ -75,11 +75,11 @@ document.addEventListener('DOMContentLoaded', () => {
     cars = [
       { model: 'Tesla Model S', price: 79999 },
       { model: 'BMW X5', price: 60999 },
-      { model: 'Audi Q7', price: 54999 }
+      { model: 'Audi Q7', price: 54999 },
     ];
     // Remove cars already purchased by VIN or model if VIN not available
-    const purchasedModels = new Set(purchasedCars.map(car => car.model));
-    cars = cars.filter(car => !purchasedModels.has(car.model));
+    const purchasedModels = new Set(purchasedCars.map((car) => car.model));
+    cars = cars.filter((car) => !purchasedModels.has(car.model));
     renderCarList();
   }
 
@@ -110,14 +110,14 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': authHeader
+              Authorization: authHeader,
             },
             body: JSON.stringify({
               cost: car.price,
               model: car.model,
               vin,
-              dealership
-            })
+              dealership,
+            }),
           });
           const result = await response.json();
           if (response.ok) {
@@ -131,9 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
               purchaseDate: new Date().toISOString(),
               deliveryStatus: 'pending',
               deliveryDate: null,
-              deliveryAddress: null
+              deliveryAddress: null,
             });
-            cars = cars.filter(c => c.model !== car.model);
+            cars = cars.filter((c) => c.model !== car.model);
             renderBalance();
             renderCarList();
             renderPurchasedCars();

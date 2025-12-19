@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate }) {
+function PrivateBankingControls({
+  controlStatus: _controlStatus,
+  onStatusUpdate,
+}) {
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,7 +13,7 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
     toAccount: '',
     amount: '',
     currency: 'USD',
-    description: ''
+    description: '',
   });
 
   useEffect(() => {
@@ -21,7 +24,7 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
     try {
       const response = await fetch('/jpmorgan/control/banking/accounts', {
         headers: {
-          'Authorization': 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+          Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
         },
       });
       if (response.ok) {
@@ -41,7 +44,7 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+          Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
         },
         body: JSON.stringify({ action, accountId, ...params }),
       });
@@ -60,7 +63,11 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
   };
 
   const handleTransfer = async () => {
-    if (!transferData.fromAccount || !transferData.toAccount || !transferData.amount) {
+    if (
+      !transferData.fromAccount ||
+      !transferData.toAccount ||
+      !transferData.amount
+    ) {
       alert('Please fill in all transfer details');
       return;
     }
@@ -72,7 +79,7 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
       toAccount: '',
       amount: '',
       currency: 'USD',
-      description: ''
+      description: '',
     });
   };
 
@@ -91,10 +98,7 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
           >
             New Transfer
           </button>
-          <button
-            className="refresh-btn"
-            onClick={fetchAccounts}
-          >
+          <button className="refresh-btn" onClick={fetchAccounts}>
             Refresh Accounts
           </button>
         </div>
@@ -108,13 +112,15 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
           </div>
           <div className="stat">
             <span className="value">
-              {accounts.reduce((sum, acc) => sum + (acc.balance || 0), 0).toLocaleString()}
+              {accounts
+                .reduce((sum, acc) => sum + (acc.balance || 0), 0)
+                .toLocaleString()}
             </span>
             <span className="label">Total Balance (USD)</span>
           </div>
           <div className="stat">
             <span className="value">
-              {accounts.filter(acc => acc.status === 'active').length}
+              {accounts.filter((acc) => acc.status === 'active').length}
             </span>
             <span className="label">Active Accounts</span>
           </div>
@@ -122,11 +128,13 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
       </div>
 
       <div className="accounts-grid">
-        {accounts.map(account => (
+        {accounts.map((account) => (
           <div key={account.id} className="account-card">
             <div className="account-header">
               <h3>{account.name}</h3>
-              <span className={`status ${account.status}`}>{account.status}</span>
+              <span className={`status ${account.status}`}>
+                {account.status}
+              </span>
             </div>
 
             <div className="account-details">
@@ -147,13 +155,16 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
               <div className="detail-row">
                 <span className="label">Available:</span>
                 <span className="value">
-                  {account.currency} {account.availableBalance?.toLocaleString()}
+                  {account.currency}{' '}
+                  {account.availableBalance?.toLocaleString()}
                 </span>
               </div>
               <div className="detail-row">
                 <span className="label">Last Transaction:</span>
                 <span className="value">
-                  {account.lastTransaction ? new Date(account.lastTransaction).toLocaleString() : 'None'}
+                  {account.lastTransaction
+                    ? new Date(account.lastTransaction).toLocaleString()
+                    : 'None'}
                 </span>
               </div>
             </div>
@@ -161,7 +172,9 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
             <div className="account-actions">
               <button
                 className="action-btn"
-                onClick={() => executeBankingAction('view-transactions', account.id)}
+                onClick={() =>
+                  executeBankingAction('view-transactions', account.id)
+                }
               >
                 View Transactions
               </button>
@@ -192,10 +205,12 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
                   <input
                     type="checkbox"
                     checked={account.settings?.autoTransfer || false}
-                    onChange={(e) => executeBankingAction('update-setting', account.id, {
-                      setting: 'autoTransfer',
-                      value: e.target.checked
-                    })}
+                    onChange={(e) =>
+                      executeBankingAction('update-setting', account.id, {
+                        setting: 'autoTransfer',
+                        value: e.target.checked,
+                      })
+                    }
                   />
                   Auto Transfer
                 </label>
@@ -203,10 +218,12 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
                   <input
                     type="checkbox"
                     checked={account.settings?.alerts || false}
-                    onChange={(e) => executeBankingAction('update-setting', account.id, {
-                      setting: 'alerts',
-                      value: e.target.checked
-                    })}
+                    onChange={(e) =>
+                      executeBankingAction('update-setting', account.id, {
+                        setting: 'alerts',
+                        value: e.target.checked,
+                      })
+                    }
                   />
                   Transaction Alerts
                 </label>
@@ -214,10 +231,12 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
                   <input
                     type="checkbox"
                     checked={account.settings?.onlineBanking || false}
-                    onChange={(e) => executeBankingAction('update-setting', account.id, {
-                      setting: 'onlineBanking',
-                      value: e.target.checked
-                    })}
+                    onChange={(e) =>
+                      executeBankingAction('update-setting', account.id, {
+                        setting: 'onlineBanking',
+                        value: e.target.checked,
+                      })
+                    }
                   />
                   Online Banking
                 </label>
@@ -249,12 +268,18 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
                 <label>From Account:</label>
                 <select
                   value={transferData.fromAccount}
-                  onChange={(e) => setTransferData({...transferData, fromAccount: e.target.value})}
+                  onChange={(e) =>
+                    setTransferData({
+                      ...transferData,
+                      fromAccount: e.target.value,
+                    })
+                  }
                 >
                   <option value="">Select account</option>
-                  {accounts.map(acc => (
+                  {accounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
-                      {acc.name} - {acc.currency} {acc.availableBalance?.toLocaleString()}
+                      {acc.name} - {acc.currency}{' '}
+                      {acc.availableBalance?.toLocaleString()}
                     </option>
                   ))}
                 </select>
@@ -264,12 +289,18 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
                 <label>To Account:</label>
                 <select
                   value={transferData.toAccount}
-                  onChange={(e) => setTransferData({...transferData, toAccount: e.target.value})}
+                  onChange={(e) =>
+                    setTransferData({
+                      ...transferData,
+                      toAccount: e.target.value,
+                    })
+                  }
                 >
                   <option value="">Select account</option>
-                  {accounts.map(acc => (
+                  {accounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
-                      {acc.name} - {acc.currency} {acc.availableBalance?.toLocaleString()}
+                      {acc.name} - {acc.currency}{' '}
+                      {acc.availableBalance?.toLocaleString()}
                     </option>
                   ))}
                 </select>
@@ -280,7 +311,9 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
                 <input
                   type="number"
                   value={transferData.amount}
-                  onChange={(e) => setTransferData({...transferData, amount: e.target.value})}
+                  onChange={(e) =>
+                    setTransferData({ ...transferData, amount: e.target.value })
+                  }
                   placeholder="Enter amount"
                 />
               </div>
@@ -289,7 +322,12 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
                 <label>Currency:</label>
                 <select
                   value={transferData.currency}
-                  onChange={(e) => setTransferData({...transferData, currency: e.target.value})}
+                  onChange={(e) =>
+                    setTransferData({
+                      ...transferData,
+                      currency: e.target.value,
+                    })
+                  }
                 >
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -302,14 +340,22 @@ function PrivateBankingControls({ controlStatus: _controlStatus, onStatusUpdate 
                 <label>Description:</label>
                 <textarea
                   value={transferData.description}
-                  onChange={(e) => setTransferData({...transferData, description: e.target.value})}
+                  onChange={(e) =>
+                    setTransferData({
+                      ...transferData,
+                      description: e.target.value,
+                    })
+                  }
                   placeholder="Transfer description"
                 />
               </div>
             </div>
 
             <div className="modal-actions">
-              <button className="cancel-btn" onClick={() => setShowTransferModal(false)}>
+              <button
+                className="cancel-btn"
+                onClick={() => setShowTransferModal(false)}
+              >
                 Cancel
               </button>
               <button className="confirm-btn" onClick={handleTransfer}>

@@ -16,18 +16,14 @@ const CONFIG = {
     'SMTP_PASS',
     'TWILIO_ACCOUNT_SID',
     'TWILIO_AUTH_TOKEN',
-    'TWILIO_PHONE_NUMBER'
+    'TWILIO_PHONE_NUMBER',
   ],
-  optionalEnvVars: [
-    'NODE_ENV',
-    'PORT',
-    'SMTP_PORT'
-  ],
+  optionalEnvVars: ['NODE_ENV', 'PORT', 'SMTP_PORT'],
   productionDefaults: {
     NODE_ENV: 'production',
     PORT: '3000',
-    SMTP_PORT: '587'
-  }
+    SMTP_PORT: '587',
+  },
 };
 
 class ProductionDeployer {
@@ -38,13 +34,14 @@ class ProductionDeployer {
 
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    const prefix = {
-      info: 'ℹ️ ',
-      success: '✅ ',
-      warning: '⚠️ ',
-      error: '❌ ',
-      step: '🔧 '
-    }[type] || '📝 ';
+    const prefix =
+      {
+        info: 'ℹ️ ',
+        success: '✅ ',
+        warning: '⚠️ ',
+        error: '❌ ',
+        step: '🔧 ',
+      }[type] || '📝 ';
 
     logger.info(`[${timestamp}] ${prefix}${message}`);
   }
@@ -61,7 +58,6 @@ class ProductionDeployer {
       await this.startProductionServer();
 
       this.log('Production deployment completed successfully!', 'success');
-
     } catch (error) {
       this.log(`Deployment failed: ${error.message}`, 'error');
       this.errors.push(error.message);
@@ -76,18 +72,29 @@ class ProductionDeployer {
     const nodeVersion = process.version;
     this.log(`Node.js version: ${nodeVersion}`);
 
-    if (!nodeVersion.startsWith('v14.') && !nodeVersion.startsWith('v16.') && !nodeVersion.startsWith('v18.') && !nodeVersion.startsWith('v20.')) {
-      throw new Error(`Unsupported Node.js version: ${nodeVersion}. Please use Node.js 14, 16, 18, or 20.`);
+    if (
+      !nodeVersion.startsWith('v14.') &&
+      !nodeVersion.startsWith('v16.') &&
+      !nodeVersion.startsWith('v18.') &&
+      !nodeVersion.startsWith('v20.')
+    ) {
+      throw new Error(
+        `Unsupported Node.js version: ${nodeVersion}. Please use Node.js 14, 16, 18, or 20.`
+      );
     }
 
     // Check if we're in the right directory
     if (!fs.existsSync('package.json')) {
-      throw new Error('package.json not found. Please run this script from the project root directory.');
+      throw new Error(
+        'package.json not found. Please run this script from the project root directory.'
+      );
     }
 
     // Check if merchant_bill_pay.js exists
     if (!fs.existsSync('earnings_dashboard/merchant_bill_pay.js')) {
-      throw new Error('merchant_bill_pay.js not found. Please ensure the merchant bill pay system is properly installed.');
+      throw new Error(
+        'merchant_bill_pay.js not found. Please ensure the merchant bill pay system is properly installed.'
+      );
     }
 
     this.log('System environment check passed', 'success');
@@ -105,16 +112,23 @@ class ProductionDeployer {
 
       // Validate critical dependencies
       const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-      const requiredDeps = ['express', 'stripe', 'nodemailer', 'twilio', 'dotenv'];
+      const requiredDeps = [
+        'express',
+        'stripe',
+        'nodemailer',
+        'twilio',
+        'dotenv',
+      ];
 
       for (const dep of requiredDeps) {
         if (!packageJson.dependencies[dep]) {
-          throw new Error(`Required dependency '${dep}' not found in package.json`);
+          throw new Error(
+            `Required dependency '${dep}' not found in package.json`
+          );
         }
       }
 
       this.log('Dependencies validation passed', 'success');
-
     } catch (error) {
       throw new Error(`Dependency validation failed: ${error.message}`);
     }
@@ -136,14 +150,17 @@ class ProductionDeployer {
       });
 
       // Add placeholders for required variables
-      CONFIG.requiredEnvVars.forEach(varName => {
+      CONFIG.requiredEnvVars.forEach((varName) => {
         if (!CONFIG.productionDefaults[varName]) {
           envContent += `# ${varName}=your_${varName.toLowerCase()}_here\n`;
         }
       });
 
       fs.writeFileSync('.env', envContent);
-      this.log('.env file created. Please configure your credentials.', 'warning');
+      this.log(
+        '.env file created. Please configure your credentials.',
+        'warning'
+      );
     }
 
     // Create logs directory
@@ -165,27 +182,36 @@ class ProductionDeployer {
     const missingOptional = [];
 
     // Check required environment variables
-    CONFIG.requiredEnvVars.forEach(varName => {
+    CONFIG.requiredEnvVars.forEach((varName) => {
       if (!process.env[varName] || process.env[varName].startsWith('your_')) {
         missingRequired.push(varName);
       }
     });
 
     // Check optional environment variables
-    CONFIG.optionalEnvVars.forEach(varName => {
+    CONFIG.optionalEnvVars.forEach((varName) => {
       if (!process.env[varName]) {
         missingOptional.push(varName);
       }
     });
 
     if (missingRequired.length > 0) {
-      this.log(`Missing required environment variables: ${missingRequired.join(', ')}`, 'error');
+      this.log(
+        `Missing required environment variables: ${missingRequired.join(', ')}`,
+        'error'
+      );
       this.log('Please configure these variables in your .env file', 'warning');
-      this.log('You can use the setup_credentials.js script to configure them interactively', 'info');
+      this.log(
+        'You can use the setup_credentials.js script to configure them interactively',
+        'info'
+      );
     }
 
     if (missingOptional.length > 0) {
-      this.log(`Missing optional environment variables (using defaults): ${missingOptional.join(', ')}`, 'warning');
+      this.log(
+        `Missing optional environment variables (using defaults): ${missingOptional.join(', ')}`,
+        'warning'
+      );
     }
 
     if (missingRequired.length === 0) {
@@ -211,18 +237,20 @@ class ProductionDeployer {
         'sendMerchantPaymentFailureNotification',
         'sendSMSNotification',
         'getMerchantEmail',
-        'getMerchantPhone'
+        'getMerchantPhone',
       ];
 
       const missingFunctions = [];
-      requiredFunctions.forEach(funcName => {
+      requiredFunctions.forEach((funcName) => {
         if (typeof merchantBillPay[funcName] !== 'function') {
           missingFunctions.push(funcName);
         }
       });
 
       if (missingFunctions.length > 0) {
-        throw new Error(`Missing required functions: ${missingFunctions.join(', ')}`);
+        throw new Error(
+          `Missing required functions: ${missingFunctions.join(', ')}`
+        );
       }
 
       this.log('All required functions are available', 'success');
@@ -234,7 +262,6 @@ class ProductionDeployer {
       } else {
         this.log('Merchant data not found - using mock data', 'warning');
       }
-
     } catch (error) {
       throw new Error(`Pre-flight check failed: ${error.message}`);
     }
@@ -275,14 +302,17 @@ class ProductionDeployer {
 
           // Use PM2 for production
           execSync('pm2 stop oscar-broome-revenue || true', { stdio: 'pipe' });
-          execSync('pm2 delete oscar-broome-revenue || true', { stdio: 'pipe' });
-          execSync('pm2 start server-enhanced.js --name oscar-broome-revenue', { stdio: 'inherit' });
+          execSync('pm2 delete oscar-broome-revenue || true', {
+            stdio: 'pipe',
+          });
+          execSync('pm2 start server-enhanced.js --name oscar-broome-revenue', {
+            stdio: 'inherit',
+          });
           execSync('pm2 save', { stdio: 'pipe' });
 
           this.log('Server started with PM2 process manager', 'success');
           this.log('Use "pm2 logs oscar-broome-revenue" to view logs', 'info');
           this.log('Use "pm2 monit" to monitor the application', 'info');
-
         } catch (pm2Error) {
           this.log('PM2 not available, starting server directly...', 'warning');
 
@@ -290,7 +320,7 @@ class ProductionDeployer {
           const { spawn } = require('child_process');
           const serverProcess = spawn('node', ['server-enhanced.js'], {
             detached: true,
-            stdio: 'ignore'
+            stdio: 'ignore',
           });
 
           serverProcess.unref();
@@ -300,10 +330,12 @@ class ProductionDeployer {
 
         // Wait a moment for server to start
         setTimeout(() => {
-          this.log(`🚀 Server should be running at http://localhost:${port}`, 'success');
+          this.log(
+            `🚀 Server should be running at http://localhost:${port}`,
+            'success'
+          );
           resolve();
         }, 2000);
-
       });
     });
   }
@@ -314,12 +346,12 @@ class ProductionDeployer {
 
     if (this.errors.length > 0) {
       logger.info('\n❌ ERRORS:');
-      this.errors.forEach(error => logger.info(`   - ${error}`));
+      this.errors.forEach((error) => logger.info(`   - ${error}`));
     }
 
     if (this.warnings.length > 0) {
       logger.info('\n⚠️  WARNINGS:');
-      this.warnings.forEach(warning => logger.info(`   - ${warning}`));
+      this.warnings.forEach((warning) => logger.info(`   - ${warning}`));
     }
 
     logger.info('\n✅ COMPLETED STEPS:');
@@ -347,11 +379,14 @@ class ProductionDeployer {
 // Run the deployment
 const deployer = new ProductionDeployer();
 
-deployer.run().then(() => {
-  deployer.showSummary();
-}).catch((error) => {
-  logger.error('\n💥 DEPLOYMENT FAILED');
-  logger.error('==================');
-  logger.error(error.message);
-  process.exit(1);
-});
+deployer
+  .run()
+  .then(() => {
+    deployer.showSummary();
+  })
+  .catch((error) => {
+    logger.error('\n💥 DEPLOYMENT FAILED');
+    logger.error('==================');
+    logger.error(error.message);
+    process.exit(1);
+  });

@@ -42,8 +42,8 @@ app.get('/', (req, res) => {
     'fetchEarnings();',
     '</script>',
     '</body>',
-    '</html>'
-  ].join("");
+    '</html>',
+  ].join('');
   res.send(html);
 });
 

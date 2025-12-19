@@ -1,7 +1,7 @@
 /**
  * Logger Wrapper Utility
  * Provides convenient logging methods with environment-aware configuration
- * 
+ *
  * @module utils/loggerWrapper
  */
 
@@ -27,7 +27,7 @@ class LoggerWrapper {
     this.logger.info(message, {
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
-      ...meta
+      ...meta,
     });
   }
 
@@ -37,16 +37,19 @@ class LoggerWrapper {
    * @param {Error|Object} error - Error object or metadata
    */
   error(message, error = {}) {
-    const errorMeta = error instanceof Error ? {
-      message: error.message,
-      stack: this.isProduction ? undefined : error.stack,
-      name: error.name
-    } : error;
+    const errorMeta =
+      error instanceof Error
+        ? {
+            message: error.message,
+            stack: this.isProduction ? undefined : error.stack,
+            name: error.name,
+          }
+        : error;
 
     this.logger.error(message, {
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
-      ...errorMeta
+      ...errorMeta,
     });
   }
 
@@ -59,7 +62,7 @@ class LoggerWrapper {
     this.logger.warn(message, {
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
-      ...meta
+      ...meta,
     });
   }
 
@@ -73,7 +76,7 @@ class LoggerWrapper {
       this.logger.debug(message, {
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV,
-        ...meta
+        ...meta,
       });
     }
   }
@@ -90,7 +93,7 @@ class LoggerWrapper {
       path: req.path,
       ip: req.ip,
       userAgent: req.get('user-agent'),
-      ...meta
+      ...meta,
     });
   }
 
@@ -107,7 +110,7 @@ class LoggerWrapper {
       url: req.url,
       statusCode: res.statusCode,
       duration: `${duration}ms`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -121,7 +124,7 @@ class LoggerWrapper {
     this.debug('Database Operation', {
       operation,
       collection,
-      ...meta
+      ...meta,
     });
   }
 
@@ -135,7 +138,7 @@ class LoggerWrapper {
     this.info('Authentication Event', {
       event,
       userId,
-      ...meta
+      ...meta,
     });
   }
 
@@ -149,7 +152,7 @@ class LoggerWrapper {
     this.info('Payment Transaction', {
       transactionId,
       status,
-      ...meta
+      ...meta,
     });
   }
 
@@ -160,11 +163,12 @@ class LoggerWrapper {
    * @param {Object} meta - Additional metadata
    */
   logSecurity(event, severity, meta = {}) {
-    const level = severity === 'critical' || severity === 'high' ? 'error' : 'warn';
+    const level =
+      severity === 'critical' || severity === 'high' ? 'error' : 'warn';
     this.logger[level]('Security Event', {
       event,
       severity,
-      ...meta
+      ...meta,
     });
   }
 
@@ -180,7 +184,7 @@ class LoggerWrapper {
       metric,
       value,
       unit,
-      ...meta
+      ...meta,
     });
   }
 
@@ -192,7 +196,7 @@ class LoggerWrapper {
   logBusinessEvent(event, data = {}) {
     this.info('Business Event', {
       event,
-      ...data
+      ...data,
     });
   }
 
@@ -205,9 +209,11 @@ class LoggerWrapper {
     const self = this;
     return {
       info: (message, meta = {}) => self.info(message, { ...context, ...meta }),
-      error: (message, error = {}) => self.error(message, { ...context, ...error }),
+      error: (message, error = {}) =>
+        self.error(message, { ...context, ...error }),
       warn: (message, meta = {}) => self.warn(message, { ...context, ...meta }),
-      debug: (message, meta = {}) => self.debug(message, { ...context, ...meta })
+      debug: (message, meta = {}) =>
+        self.debug(message, { ...context, ...meta }),
     };
   }
 }
@@ -221,13 +227,20 @@ export const error = (message, err) => loggerWrapper.error(message, err);
 export const warn = (message, meta) => loggerWrapper.warn(message, meta);
 export const debug = (message, meta) => loggerWrapper.debug(message, meta);
 export const logRequest = (req, meta) => loggerWrapper.logRequest(req, meta);
-export const logResponse = (req, res, duration) => loggerWrapper.logResponse(req, res, duration);
-export const logDatabase = (operation, collection, meta) => loggerWrapper.logDatabase(operation, collection, meta);
-export const logAuth = (event, userId, meta) => loggerWrapper.logAuth(event, userId, meta);
-export const logPayment = (transactionId, status, meta) => loggerWrapper.logPayment(transactionId, status, meta);
-export const logSecurity = (event, severity, meta) => loggerWrapper.logSecurity(event, severity, meta);
-export const logPerformance = (metric, value, unit, meta) => loggerWrapper.logPerformance(metric, value, unit, meta);
-export const logBusinessEvent = (event, data) => loggerWrapper.logBusinessEvent(event, data);
+export const logResponse = (req, res, duration) =>
+  loggerWrapper.logResponse(req, res, duration);
+export const logDatabase = (operation, collection, meta) =>
+  loggerWrapper.logDatabase(operation, collection, meta);
+export const logAuth = (event, userId, meta) =>
+  loggerWrapper.logAuth(event, userId, meta);
+export const logPayment = (transactionId, status, meta) =>
+  loggerWrapper.logPayment(transactionId, status, meta);
+export const logSecurity = (event, severity, meta) =>
+  loggerWrapper.logSecurity(event, severity, meta);
+export const logPerformance = (metric, value, unit, meta) =>
+  loggerWrapper.logPerformance(metric, value, unit, meta);
+export const logBusinessEvent = (event, data) =>
+  loggerWrapper.logBusinessEvent(event, data);
 export const child = (context) => loggerWrapper.child(context);
 
 // Export default instance

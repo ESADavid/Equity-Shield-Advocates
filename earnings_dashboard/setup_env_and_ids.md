@@ -36,11 +36,7 @@ Update the `fetch_and_sync_payroll.ts` script with the actual employee IDs you w
 Example:
 
 ```typescript
-const employeeIds = [
-  "employee-id-1",
-  "employee-id-2",
-  "employee-id-3",
-];
+const employeeIds = ['employee-id-1', 'employee-id-2', 'employee-id-3'];
 ```
 
 Replace the placeholder IDs with your actual employee IDs.

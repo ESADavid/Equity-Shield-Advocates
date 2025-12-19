@@ -12,19 +12,19 @@ import {
   PayrollSummary,
   EmployeeInput,
   PayrollApiResponse,
-  PayrollSyncResult
+  PayrollSyncResult,
 } from './types/payroll.js';
 
 import {
   validateEmployeeInput,
-  sanitizeEmployeeInput
+  sanitizeEmployeeInput,
 } from './utils/payrollValidation.js';
 
 import {
   calculatePayrollForEmployee,
   calculateSalariedPayroll,
   calculatePayrollSummary,
-  isSalariedEmployee
+  isSalariedEmployee,
 } from './utils/payrollCalculator.js';
 
 // Use module directory for data directory - works in both Node.js and Jest
@@ -54,7 +54,7 @@ export class PayrollSystem {
       if (fs.existsSync(EMPLOYEES_FILE)) {
         const data = fs.readFileSync(EMPLOYEES_FILE, 'utf-8');
         const employeesArray: Employee[] = JSON.parse(data);
-        this.employees = new Map(employeesArray.map(emp => [emp.id, emp]));
+        this.employees = new Map(employeesArray.map((emp) => [emp.id, emp]));
       }
     } catch (error) {
       console.error('Failed to load employees:', error);
@@ -65,7 +65,11 @@ export class PayrollSystem {
   private saveEmployees(): void {
     try {
       const employeesArray = Array.from(this.employees.values());
-      fs.writeFileSync(EMPLOYEES_FILE, JSON.stringify(employeesArray, null, 2), 'utf-8');
+      fs.writeFileSync(
+        EMPLOYEES_FILE,
+        JSON.stringify(employeesArray, null, 2),
+        'utf-8'
+      );
     } catch (error) {
       console.error('Failed to save employees:', error);
       throw new Error('Failed to save employee data');
@@ -86,7 +90,11 @@ export class PayrollSystem {
 
   private savePayrollRecords(): void {
     try {
-      fs.writeFileSync(PAYROLL_RECORDS_FILE, JSON.stringify(this.payrollRecords, null, 2), 'utf-8');
+      fs.writeFileSync(
+        PAYROLL_RECORDS_FILE,
+        JSON.stringify(this.payrollRecords, null, 2),
+        'utf-8'
+      );
     } catch (error) {
       console.error('Failed to save payroll records:', error);
       throw new Error('Failed to save payroll records');
@@ -104,7 +112,7 @@ export class PayrollSystem {
         return {
           success: false,
           errors: validationErrors,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -119,7 +127,7 @@ export class PayrollSystem {
         return {
           success: false,
           error: `Employee with ID ${employeeId} already exists`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -132,14 +140,30 @@ export class PayrollSystem {
         bonuses: sanitizedInput.bonuses,
         hireDate: new Date().toISOString(),
         isActive: true,
-        ...(sanitizedInput.position !== undefined && { position: sanitizedInput.position }),
-        ...(sanitizedInput.department !== undefined && { department: sanitizedInput.department }),
-        ...(sanitizedInput.hourlyRate !== undefined && { hourlyRate: sanitizedInput.hourlyRate }),
-        ...(sanitizedInput.hoursWorked !== undefined && { hoursWorked: sanitizedInput.hoursWorked }),
-        ...(sanitizedInput.overtimeHours !== undefined && { overtimeHours: sanitizedInput.overtimeHours }),
-        ...(sanitizedInput.salary !== undefined && { salary: sanitizedInput.salary }),
-        ...(sanitizedInput.accountNumber !== undefined && { accountNumber: sanitizedInput.accountNumber }),
-        ...(sanitizedInput.routingNumber !== undefined && { routingNumber: sanitizedInput.routingNumber })
+        ...(sanitizedInput.position !== undefined && {
+          position: sanitizedInput.position,
+        }),
+        ...(sanitizedInput.department !== undefined && {
+          department: sanitizedInput.department,
+        }),
+        ...(sanitizedInput.hourlyRate !== undefined && {
+          hourlyRate: sanitizedInput.hourlyRate,
+        }),
+        ...(sanitizedInput.hoursWorked !== undefined && {
+          hoursWorked: sanitizedInput.hoursWorked,
+        }),
+        ...(sanitizedInput.overtimeHours !== undefined && {
+          overtimeHours: sanitizedInput.overtimeHours,
+        }),
+        ...(sanitizedInput.salary !== undefined && {
+          salary: sanitizedInput.salary,
+        }),
+        ...(sanitizedInput.accountNumber !== undefined && {
+          accountNumber: sanitizedInput.accountNumber,
+        }),
+        ...(sanitizedInput.routingNumber !== undefined && {
+          routingNumber: sanitizedInput.routingNumber,
+        }),
       };
 
       // Add to collection
@@ -149,13 +173,14 @@ export class PayrollSystem {
       return {
         success: true,
         data: employee,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -163,14 +188,17 @@ export class PayrollSystem {
   /**
    * Updates an existing employee
    */
-  updateEmployee(employeeId: string, updates: Partial<EmployeeInput>): PayrollApiResponse<Employee> {
+  updateEmployee(
+    employeeId: string,
+    updates: Partial<EmployeeInput>
+  ): PayrollApiResponse<Employee> {
     try {
       const existingEmployee = this.employees.get(employeeId);
       if (!existingEmployee) {
         return {
           success: false,
           error: `Employee with ID ${employeeId} not found`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -181,14 +209,47 @@ export class PayrollSystem {
         taxRate: updates.taxRate ?? existingEmployee.taxRate,
         deductions: updates.deductions ?? existingEmployee.deductions,
         bonuses: updates.bonuses ?? existingEmployee.bonuses,
-        ...(updates.position !== undefined || existingEmployee.position !== undefined ? { position: updates.position ?? existingEmployee.position } : {}),
-        ...(updates.department !== undefined || existingEmployee.department !== undefined ? { department: updates.department ?? existingEmployee.department } : {}),
-        ...(updates.hourlyRate !== undefined || existingEmployee.hourlyRate !== undefined ? { hourlyRate: updates.hourlyRate ?? existingEmployee.hourlyRate } : {}),
-        ...(updates.hoursWorked !== undefined || existingEmployee.hoursWorked !== undefined ? { hoursWorked: updates.hoursWorked ?? existingEmployee.hoursWorked } : {}),
-        ...(updates.overtimeHours !== undefined || existingEmployee.overtimeHours !== undefined ? { overtimeHours: updates.overtimeHours ?? existingEmployee.overtimeHours } : {}),
-        ...(updates.salary !== undefined || existingEmployee.salary !== undefined ? { salary: updates.salary ?? existingEmployee.salary } : {}),
-        ...(updates.accountNumber !== undefined || existingEmployee.accountNumber !== undefined ? { accountNumber: updates.accountNumber ?? existingEmployee.accountNumber } : {}),
-        ...(updates.routingNumber !== undefined || existingEmployee.routingNumber !== undefined ? { routingNumber: updates.routingNumber ?? existingEmployee.routingNumber } : {})
+        ...(updates.position !== undefined ||
+        existingEmployee.position !== undefined
+          ? { position: updates.position ?? existingEmployee.position }
+          : {}),
+        ...(updates.department !== undefined ||
+        existingEmployee.department !== undefined
+          ? { department: updates.department ?? existingEmployee.department }
+          : {}),
+        ...(updates.hourlyRate !== undefined ||
+        existingEmployee.hourlyRate !== undefined
+          ? { hourlyRate: updates.hourlyRate ?? existingEmployee.hourlyRate }
+          : {}),
+        ...(updates.hoursWorked !== undefined ||
+        existingEmployee.hoursWorked !== undefined
+          ? { hoursWorked: updates.hoursWorked ?? existingEmployee.hoursWorked }
+          : {}),
+        ...(updates.overtimeHours !== undefined ||
+        existingEmployee.overtimeHours !== undefined
+          ? {
+              overtimeHours:
+                updates.overtimeHours ?? existingEmployee.overtimeHours,
+            }
+          : {}),
+        ...(updates.salary !== undefined ||
+        existingEmployee.salary !== undefined
+          ? { salary: updates.salary ?? existingEmployee.salary }
+          : {}),
+        ...(updates.accountNumber !== undefined ||
+        existingEmployee.accountNumber !== undefined
+          ? {
+              accountNumber:
+                updates.accountNumber ?? existingEmployee.accountNumber,
+            }
+          : {}),
+        ...(updates.routingNumber !== undefined ||
+        existingEmployee.routingNumber !== undefined
+          ? {
+              routingNumber:
+                updates.routingNumber ?? existingEmployee.routingNumber,
+            }
+          : {}),
       };
 
       // Validate updates
@@ -197,7 +258,7 @@ export class PayrollSystem {
         return {
           success: false,
           errors: validationErrors,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -206,7 +267,7 @@ export class PayrollSystem {
       const updatedEmployee: Employee = {
         ...existingEmployee,
         ...sanitizedUpdates,
-        id: employeeId // Ensure ID doesn't change
+        id: employeeId, // Ensure ID doesn't change
       };
 
       this.employees.set(employeeId, updatedEmployee);
@@ -215,13 +276,14 @@ export class PayrollSystem {
       return {
         success: true,
         data: updatedEmployee,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -235,7 +297,7 @@ export class PayrollSystem {
         return {
           success: false,
           error: `Employee with ID ${employeeId} not found`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
@@ -245,13 +307,14 @@ export class PayrollSystem {
       return {
         success: true,
         data: true,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -265,13 +328,14 @@ export class PayrollSystem {
       return {
         success: true,
         data: employees,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -286,20 +350,21 @@ export class PayrollSystem {
         return {
           success: false,
           error: `Employee with ID ${employeeId} not found`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
 
       return {
         success: true,
         data: employee,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -327,7 +392,7 @@ export class PayrollSystem {
           id: this.generatePayrollRecordId(),
           payDate: payPeriod,
           status: 'processed',
-          paymentMethod: employee.accountNumber ? 'direct_deposit' : 'check'
+          paymentMethod: employee.accountNumber ? 'direct_deposit' : 'check',
         };
 
         records.push(record);
@@ -340,13 +405,14 @@ export class PayrollSystem {
       return {
         success: true,
         data: records,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -354,28 +420,32 @@ export class PayrollSystem {
   /**
    * Gets payroll records with optional filtering
    */
-  getPayrollRecords(employeeId?: string, payPeriod?: string): PayrollApiResponse<PayrollRecord[]> {
+  getPayrollRecords(
+    employeeId?: string,
+    payPeriod?: string
+  ): PayrollApiResponse<PayrollRecord[]> {
     try {
       let records = this.payrollRecords;
 
       if (employeeId) {
-        records = records.filter(r => r.employeeId === employeeId);
+        records = records.filter((r) => r.employeeId === employeeId);
       }
 
       if (payPeriod) {
-        records = records.filter(r => r.payPeriod === payPeriod);
+        records = records.filter((r) => r.payPeriod === payPeriod);
       }
 
       return {
         success: true,
         data: records,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -386,20 +456,23 @@ export class PayrollSystem {
   getPayrollSummary(payPeriod?: string): PayrollApiResponse<PayrollSummary> {
     try {
       const targetPeriod = payPeriod || new Date().toISOString().split('T')[0];
-      const employees = Array.from(this.employees.values()).filter(e => e.isActive);
+      const employees = Array.from(this.employees.values()).filter(
+        (e) => e.isActive
+      );
 
       const summary = calculatePayrollSummary(employees, targetPeriod);
 
       return {
         success: true,
         data: summary,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -416,9 +489,9 @@ export class PayrollSystem {
         syncedEmployees: this.employees.size,
         newRecords: 0,
         errors: [],
-        duration: 0
+        duration: 0,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 

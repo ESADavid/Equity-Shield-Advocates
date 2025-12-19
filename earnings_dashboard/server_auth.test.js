@@ -34,8 +34,9 @@ describe('Authentication and Access Control Tests', () => {
   });
 
   test('Allows masterLoginOverride with query param', async () => {
-    const res = await request(app)
-      .get('/api/earnings?overrideUser=Oscar Broome');
+    const res = await request(app).get(
+      '/api/earnings?overrideUser=Oscar Broome'
+    );
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('totalAnnualRevenue');
   });

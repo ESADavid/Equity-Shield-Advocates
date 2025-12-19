@@ -104,9 +104,11 @@ function validateRoutingNumber(routingNumber) {
 
   // ABA checksum validation
   const digits = routingNumber.split('').map(Number);
-  const checksum = (3 * (digits[0] + digits[3] + digits[6]) +
-                   7 * (digits[1] + digits[4] + digits[7]) +
-                   1 * (digits[2] + digits[5] + digits[8])) % 10;
+  const checksum =
+    (3 * (digits[0] + digits[3] + digits[6]) +
+      7 * (digits[1] + digits[4] + digits[7]) +
+      1 * (digits[2] + digits[5] + digits[8])) %
+    10;
 
   if (checksum !== 0) {
     return { valid: false, reason: 'Invalid ABA routing number checksum' };
@@ -150,22 +152,17 @@ async function addRoutingNumber(accountId, routingNumber, bankName) {
     bankName,
     status: 'active',
     createdAt: new Date().toISOString(),
-    createdBy: 'system'
+    createdBy: 'system',
   };
 
   await saveRoutingNumber(routingData);
 
   // Log to blockchain
-  await blockchainService.recordTransaction(
-    'system',
-    accountId,
-    0,
-    {
-      type: 'routing_number_added',
-      routingNumber: routingNumber,
-      bankName: bankName
-    }
-  );
+  await blockchainService.recordTransaction('system', accountId, 0, {
+    type: 'routing_number_added',
+    routingNumber: routingNumber,
+    bankName: bankName,
+  });
 
   return routingData;
 }
@@ -261,17 +258,12 @@ async function addRoutingNumber(accountId, routingNumber, bankName) {
 
 ```javascript
 // Record wallet operation in blockchain
-await blockchainService.recordTransaction(
-  fromAddress,
-  toAddress,
-  amount,
-  {
-    type: 'wallet_operation',
-    operation: 'encryption|tokenization|decryption',
-    walletId: walletId,
-    timestamp: Date.now()
-  }
-);
+await blockchainService.recordTransaction(fromAddress, toAddress, amount, {
+  type: 'wallet_operation',
+  operation: 'encryption|tokenization|decryption',
+  walletId: walletId,
+  timestamp: Date.now(),
+});
 ```
 
 #### Transaction Verification

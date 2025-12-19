@@ -13,15 +13,20 @@ export class BlockchainService {
       ),
       transports: [
         new winston.transports.File({ filename: 'blockchain-audit.log' }),
-        new winston.transports.Console()
-      ]
+        new winston.transports.Console(),
+      ],
     });
   }
 
   // Record a transaction in the blockchain
   async recordTransaction(fromAddress, toAddress, amount, transactionData) {
     try {
-      const transaction = new Transaction(fromAddress, toAddress, amount, transactionData);
+      const transaction = new Transaction(
+        fromAddress,
+        toAddress,
+        amount,
+        transactionData
+      );
 
       // Sign transaction (simplified for demo)
       transaction.signTransaction(fromAddress);
@@ -35,17 +40,19 @@ export class BlockchainService {
       this.logger.info('Transaction recorded in blockchain', {
         transactionId: transaction.id,
         blockIndex: this.blockchain.getLatestBlock().index,
-        hash: this.blockchain.getLatestBlock().hash
+        hash: this.blockchain.getLatestBlock().hash,
       });
 
       return {
         success: true,
         transactionId: transaction.id,
         blockHash: this.blockchain.getLatestBlock().hash,
-        blockIndex: this.blockchain.getLatestBlock().index
+        blockIndex: this.blockchain.getLatestBlock().index,
       };
     } catch (error) {
-      this.logger.error('Failed to record transaction in blockchain', { error: error.message });
+      this.logger.error('Failed to record transaction in blockchain', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -56,36 +63,42 @@ export class BlockchainService {
       const auditTrail = this.blockchain.getAuditTrail(transactionId);
 
       if (auditTrail.length === 0) {
-        return { success: false, message: 'Transaction not found in blockchain' };
+        return {
+          success: false,
+          message: 'Transaction not found in blockchain',
+        };
       }
 
       return {
         success: true,
         transactionId,
         auditTrail,
-        verificationStatus: this.verifyAuditTrail(auditTrail)
+        verificationStatus: this.verifyAuditTrail(auditTrail),
       };
     } catch (error) {
-      this.logger.error('Failed to retrieve audit trail', { transactionId, error: error.message });
+      this.logger.error('Failed to retrieve audit trail', {
+        transactionId,
+        error: error.message,
+      });
       throw error;
     }
   }
 
   // Verify the integrity of an audit trail
   verifyAuditTrail(auditTrail) {
-    const verificationResults = auditTrail.map(entry => ({
+    const verificationResults = auditTrail.map((entry) => ({
       blockIndex: entry.blockIndex,
       verified: entry.verified,
       blockHash: entry.blockHash,
-      timestamp: entry.timestamp
+      timestamp: entry.timestamp,
     }));
 
-    const allVerified = verificationResults.every(result => result.verified);
+    const allVerified = verificationResults.every((result) => result.verified);
 
     return {
       overallVerified: allVerified && this.blockchain.isChainValid(),
       blockVerifications: verificationResults,
-      chainIntegrity: this.blockchain.isChainValid()
+      chainIntegrity: this.blockchain.isChainValid(),
     };
   }
 
@@ -104,11 +117,13 @@ export class BlockchainService {
           totalTransactions: stats.totalTransactions,
           pendingTransactions: stats.pendingTransactions,
           difficulty: stats.difficulty,
-          chainValid: stats.isValid
-        }
+          chainValid: stats.isValid,
+        },
       };
     } catch (error) {
-      this.logger.error('Failed to get blockchain stats', { error: error.message });
+      this.logger.error('Failed to get blockchain stats', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -124,10 +139,12 @@ export class BlockchainService {
         success: true,
         chainValid: isValid,
         totalBlocks: this.blockchain.chain.length,
-        lastVerification: Date.now()
+        lastVerification: Date.now(),
       };
     } catch (error) {
-      this.logger.error('Blockchain integrity verification failed', { error: error.message });
+      this.logger.error('Blockchain integrity verification failed', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -140,12 +157,15 @@ export class BlockchainService {
         eventType,
         eventData,
         userId,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       return await this.recordTransaction('system', userId, 0, transactionData);
     } catch (error) {
-      this.logger.error('Failed to record system event', { eventType, error: error.message });
+      this.logger.error('Failed to record system event', {
+        eventType,
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -159,15 +179,20 @@ export class BlockchainService {
         overrideData,
         userId,
         timestamp: Date.now(),
-        reason: overrideData.reason || 'Administrative override'
+        reason: overrideData.reason || 'Administrative override',
       };
 
-      return await this.recordTransaction(originalTransaction.fromAddress, 'override-system', 0, transactionData);
+      return await this.recordTransaction(
+        originalTransaction.fromAddress,
+        'override-system',
+        0,
+        transactionData
+      );
     } catch (error) {
       this.logger.error('Failed to record transaction override', {
         transactionId: originalTransaction.id,
         userId,
-        error: error.message
+        error: error.message,
       });
       throw error;
     }
@@ -182,12 +207,15 @@ export class BlockchainService {
         systemEvents: [],
         transactionOverrides: [],
         userActivities: [],
-        timeRange
+        timeRange,
       };
 
       // Analyze all blocks in the chain
       for (const block of this.blockchain.chain) {
-        if (block.timestamp >= timeRange.start && block.timestamp <= timeRange.end) {
+        if (
+          block.timestamp >= timeRange.start &&
+          block.timestamp <= timeRange.end
+        ) {
           report.totalTransactions += block.transactions.length;
 
           for (const transaction of block.transactions) {
@@ -197,7 +225,7 @@ export class BlockchainService {
                 timestamp: transaction.timestamp,
                 eventType: transaction.data.eventType,
                 userId: transaction.data.userId,
-                eventData: transaction.data.eventData
+                eventData: transaction.data.eventData,
               });
             } else if (transaction.data.type === 'transaction_override') {
               report.transactionOverrides.push({
@@ -205,7 +233,7 @@ export class BlockchainService {
                 timestamp: transaction.timestamp,
                 userId: transaction.data.userId,
                 reason: transaction.data.reason,
-                originalTransaction: transaction.data.originalTransaction
+                originalTransaction: transaction.data.originalTransaction,
               });
             } else if (transaction.fromAddress && transaction.toAddress) {
               report.userActivities.push({
@@ -214,7 +242,7 @@ export class BlockchainService {
                 fromAddress: transaction.fromAddress,
                 toAddress: transaction.toAddress,
                 amount: transaction.amount,
-                transactionData: transaction.data
+                transactionData: transaction.data,
               });
             }
           }
@@ -224,10 +252,12 @@ export class BlockchainService {
       return {
         success: true,
         report,
-        generatedAt: Date.now()
+        generatedAt: Date.now(),
       };
     } catch (error) {
-      this.logger.error('Failed to generate audit report', { error: error.message });
+      this.logger.error('Failed to generate audit report', {
+        error: error.message,
+      });
       throw error;
     }
   }

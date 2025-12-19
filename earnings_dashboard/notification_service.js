@@ -12,15 +12,19 @@ class NotificationService {
 
   initServices() {
     // Initialize email transporter
-    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+    if (
+      process.env.SMTP_HOST &&
+      process.env.SMTP_USER &&
+      process.env.SMTP_PASS
+    ) {
       this.transporter = nodemailer.createTransporter({
         host: process.env.SMTP_HOST,
         port: process.env.SMTP_PORT || 587,
         secure: false,
         auth: {
           user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS
-        }
+          pass: process.env.SMTP_PASS,
+        },
       });
       logger.info('✅ Email notification service initialized');
     } else {
@@ -28,8 +32,15 @@ class NotificationService {
     }
 
     // Initialize Twilio client
-    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
-      this.twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+    if (
+      process.env.TWILIO_ACCOUNT_SID &&
+      process.env.TWILIO_AUTH_TOKEN &&
+      process.env.TWILIO_PHONE_NUMBER
+    ) {
+      this.twilioClient = twilio(
+        process.env.TWILIO_ACCOUNT_SID,
+        process.env.TWILIO_AUTH_TOKEN
+      );
       logger.info('✅ SMS notification service initialized');
     } else {
       logger.info('⚠️ SMS service not configured');
@@ -56,7 +67,7 @@ class NotificationService {
         from: process.env.SMTP_USER,
         to,
         subject,
-        html: message
+        html: message,
       });
       logger.info(`📧 Email sent to ${to}`);
       return true;
@@ -77,7 +88,7 @@ class NotificationService {
       await this.twilioClient.messages.create({
         body: message,
         from: process.env.TWILIO_PHONE_NUMBER,
-        to
+        to,
       });
       logger.info(`📱 SMS sent to ${to}`);
       return true;
@@ -94,7 +105,7 @@ class NotificationService {
     const results = {
       websocket: false,
       email: false,
-      sms: false
+      sms: false,
     };
 
     // Send WebSocket notification
@@ -102,7 +113,7 @@ class NotificationService {
       this.sendWebSocketNotification('notification', {
         subject,
         message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
       results.websocket = true;
     }
@@ -135,7 +146,7 @@ class NotificationService {
     return await this.sendNotification({
       subject,
       message,
-      websocket: true
+      websocket: true,
     });
   }
 
@@ -153,7 +164,7 @@ class NotificationService {
     return await this.sendNotification({
       subject,
       message,
-      websocket: true
+      websocket: true,
     });
   }
 
@@ -172,7 +183,7 @@ class NotificationService {
     return await this.sendNotification({
       subject,
       message,
-      websocket: true
+      websocket: true,
     });
   }
 }

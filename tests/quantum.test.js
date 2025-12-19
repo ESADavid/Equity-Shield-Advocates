@@ -10,7 +10,7 @@ describe('Quantum Control Center', () => {
 
   it('should initialize quantum control center system', async () => {
     // Wait for initialization to complete
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     const status = controlCenter.getControlCenterStatus();
     expect(status).to.have.property('centerId');

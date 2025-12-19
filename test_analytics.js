@@ -1,5 +1,8 @@
 import { getAnalytics } from './earnings_dashboard/ai_analytics.js';
-import { getTranscendenceAnalytics, optimizeRevenueAutonomously } from './earnings_dashboard/ai_transcendence.js';
+import {
+  getTranscendenceAnalytics,
+  optimizeRevenueAutonomously,
+} from './earnings_dashboard/ai_transcendence.js';
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   console.log('Testing AI Analytics...');
@@ -13,7 +16,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   console.log('\nTesting AI Transcendence...');
   try {
     const transcendence = getTranscendenceAnalytics();
-    console.log('Transcendence result:', JSON.stringify(transcendence, null, 2));
+    console.log(
+      'Transcendence result:',
+      JSON.stringify(transcendence, null, 2)
+    );
   } catch (error) {
     console.error('Transcendence error:', error);
   }
@@ -24,7 +30,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       growth: 0.08,
       volatility: 0.15,
       competition: 0.2,
-      regulation: 0.1
+      regulation: 0.1,
     });
     console.log('Optimization result:', JSON.stringify(result, null, 2));
   } catch (error) {

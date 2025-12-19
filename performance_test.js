@@ -13,8 +13,8 @@ const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/performance-test.log' })
-  ]
+    new winston.transports.File({ filename: 'logs/performance-test.log' }),
+  ],
 });
 
 class PerformanceTest {
@@ -27,7 +27,7 @@ class PerformanceTest {
       apiResponseTimes: {},
       concurrentLoad: {},
       memoryUsage: {},
-      overall: {}
+      overall: {},
     };
   }
 
@@ -55,7 +55,6 @@ class PerformanceTest {
 
       // Generate report
       this.generateReport();
-
     } catch (error) {
       logger.error('Performance test failed:', error);
       throw error;
@@ -75,14 +74,14 @@ class PerformanceTest {
         status: response.status,
         responseTime,
         data: response.data,
-        success: response.status === 200
+        success: response.status === 200,
       };
 
       logger.info(`Health check completed in ${responseTime.toFixed(2)}ms`);
     } catch (error) {
       this.results.healthCheck = {
         success: false,
-        error: error.message
+        error: error.message,
       };
       logger.error('Health check failed:', error.message);
     }
@@ -99,10 +98,13 @@ class PerformanceTest {
         connectionStatus: dbHealth.status,
         latency: dbHealth.latency,
         collections: dbHealth.collections,
-        performance: dbHealth.performance
+        performance: dbHealth.performance,
       };
 
-      logger.info('Database performance test completed', this.results.databasePerformance);
+      logger.info(
+        'Database performance test completed',
+        this.results.databasePerformance
+      );
     } catch (error) {
       logger.error('Database performance test failed:', error.message);
     }
@@ -118,10 +120,13 @@ class PerformanceTest {
       this.results.cachePerformance = {
         status: cacheHealth.status,
         latency: cacheHealth.latency || 0,
-        metrics: cacheHealth.metrics
+        metrics: cacheHealth.metrics,
       };
 
-      logger.info('Cache performance test completed', this.results.cachePerformance);
+      logger.info(
+        'Cache performance test completed',
+        this.results.cachePerformance
+      );
     } catch (error) {
       logger.error('Cache performance test failed:', error.message);
     }
@@ -133,7 +138,7 @@ class PerformanceTest {
     const endpoints = [
       { path: '/api/status', name: 'API Status' },
       { path: '/metrics', name: 'Performance Metrics' },
-      { path: '/health', name: 'Health Check' }
+      { path: '/health', name: 'Health Check' },
     ];
 
     const results = {};
@@ -148,14 +153,14 @@ class PerformanceTest {
         results[endpoint.name] = {
           responseTime,
           status: response.status,
-          success: true
+          success: true,
         };
 
         logger.info(`${endpoint.name}: ${responseTime.toFixed(2)}ms`);
       } catch (error) {
         results[endpoint.name] = {
           success: false,
-          error: error.message
+          error: error.message,
         };
         logger.error(`${endpoint.name} failed:`, error.message);
       }
@@ -174,9 +179,10 @@ class PerformanceTest {
     // Create concurrent requests
     for (let i = 0; i < numberOfRequests; i++) {
       promises.push(
-        axios.get(`${this.baseURL}/health`)
-          .then(response => ({ success: true, status: response.status }))
-          .catch(error => ({ success: false, error: error.message }))
+        axios
+          .get(`${this.baseURL}/health`)
+          .then((response) => ({ success: true, status: response.status }))
+          .catch((error) => ({ success: false, error: error.message }))
       );
     }
 
@@ -185,8 +191,8 @@ class PerformanceTest {
       const endTime = performance.now();
       const totalTime = endTime - startTime;
 
-      const successful = results.filter(r => r.success).length;
-      const failed = results.filter(r => !r.success).length;
+      const successful = results.filter((r) => r.success).length;
+      const failed = results.filter((r) => !r.success).length;
 
       this.results.concurrentLoad = {
         totalRequests: numberOfRequests,
@@ -195,10 +201,12 @@ class PerformanceTest {
         totalTime,
         averageResponseTime: totalTime / numberOfRequests,
         requestsPerSecond: (numberOfRequests / totalTime) * 1000,
-        successRate: (successful / numberOfRequests) * 100
+        successRate: (successful / numberOfRequests) * 100,
       };
 
-      logger.info(`Concurrent load test: ${successful}/${numberOfRequests} successful (${this.results.concurrentLoad.requestsPerSecond.toFixed(2)} req/sec)`);
+      logger.info(
+        `Concurrent load test: ${successful}/${numberOfRequests} successful (${this.results.concurrentLoad.requestsPerSecond.toFixed(2)} req/sec)`
+      );
     } catch (error) {
       logger.error('Concurrent load test failed:', error.message);
     }
@@ -216,7 +224,7 @@ class PerformanceTest {
         heapTotal: memoryData.usage.heapTotal,
         heapUsed: memoryData.usage.heapUsed,
         external: memoryData.usage.external,
-        uptime: memoryData.uptime
+        uptime: memoryData.uptime,
       };
 
       logger.info('Memory usage test completed', this.results.memoryUsage);
@@ -233,9 +241,9 @@ class PerformanceTest {
       summary: {
         overallHealth: this.calculateOverallHealth(),
         performanceScore: this.calculatePerformanceScore(),
-        recommendations: this.generateRecommendations()
+        recommendations: this.generateRecommendations(),
       },
-      results: this.results
+      results: this.results,
     };
 
     // Log detailed report
@@ -248,16 +256,24 @@ class PerformanceTest {
     console.log('\n📈 Key Metrics:');
 
     if (this.results.healthCheck.success) {
-      console.log(`✅ Health Check: ${this.results.healthCheck.responseTime?.toFixed(2)}ms`);
+      console.log(
+        `✅ Health Check: ${this.results.healthCheck.responseTime?.toFixed(2)}ms`
+      );
     }
 
     if (this.results.concurrentLoad.requestsPerSecond) {
-      console.log(`🚀 Concurrent Load: ${this.results.concurrentLoad.requestsPerSecond.toFixed(2)} req/sec`);
-      console.log(`📊 Success Rate: ${this.results.concurrentLoad.successRate.toFixed(2)}%`);
+      console.log(
+        `🚀 Concurrent Load: ${this.results.concurrentLoad.requestsPerSecond.toFixed(2)} req/sec`
+      );
+      console.log(
+        `📊 Success Rate: ${this.results.concurrentLoad.successRate.toFixed(2)}%`
+      );
     }
 
     if (this.results.databasePerformance.latency) {
-      console.log(`💾 Database Latency: ${this.results.databasePerformance.latency}ms`);
+      console.log(
+        `💾 Database Latency: ${this.results.databasePerformance.latency}ms`
+      );
     }
 
     if (this.results.cachePerformance.metrics) {
@@ -266,14 +282,19 @@ class PerformanceTest {
     }
 
     console.log('\n💡 Recommendations:');
-    report.summary.recommendations.forEach(rec => console.log(`• ${rec}`));
+    report.summary.recommendations.forEach((rec) => console.log(`• ${rec}`));
 
     console.log('\n' + '='.repeat(80));
 
     // Save detailed report to file
-    fs.writeFileSync('performance-report.json', JSON.stringify(report, null, 2));
+    fs.writeFileSync(
+      'performance-report.json',
+      JSON.stringify(report, null, 2)
+    );
 
-    logger.info('Performance test report generated and saved to performance-report.json');
+    logger.info(
+      'Performance test report generated and saved to performance-report.json'
+    );
   }
 
   calculateOverallHealth() {
@@ -281,7 +302,7 @@ class PerformanceTest {
       this.results.healthCheck.success,
       this.results.databasePerformance.connectionStatus === 'connected',
       this.results.cachePerformance.status !== 'error',
-      this.results.concurrentLoad.successRate >= 95
+      this.results.concurrentLoad.successRate >= 95,
     ];
 
     const passed = checks.filter(Boolean).length;
@@ -307,7 +328,8 @@ class PerformanceTest {
     if (this.results.cachePerformance.status === 'error') score -= 15;
 
     // Deduct points for database issues
-    if (this.results.databasePerformance.connectionStatus !== 'connected') score -= 25;
+    if (this.results.databasePerformance.connectionStatus !== 'connected')
+      score -= 25;
 
     return Math.max(0, score);
   }
@@ -336,7 +358,9 @@ class PerformanceTest {
     }
 
     if (recommendations.length === 0) {
-      recommendations.push('System performance is excellent! Continue monitoring.');
+      recommendations.push(
+        'System performance is excellent! Continue monitoring.'
+      );
     }
 
     return recommendations;
@@ -346,7 +370,8 @@ class PerformanceTest {
 // Run performance tests if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   const test = new PerformanceTest();
-  test.runAllTests()
+  test
+    .runAllTests()
     .then(() => {
       logger.info('✅ Performance tests completed successfully');
       process.exit(0);

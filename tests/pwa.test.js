@@ -12,7 +12,7 @@ describe('Progressive Web App (PWA) Tests', () => {
   beforeAll(async () => {
     browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
   });
 
@@ -51,15 +51,17 @@ describe('Progressive Web App (PWA) Tests', () => {
 
       // Check if assets are cached
       const cacheContents = await page.evaluate(() => {
-        return caches.open('ai-bank-static-v1.0.0').then(cache => {
-          return cache.keys().then(keys => {
-            return keys.map(request => request.url);
+        return caches.open('ai-bank-static-v1.0.0').then((cache) => {
+          return cache.keys().then((keys) => {
+            return keys.map((request) => request.url);
           });
         });
       });
 
       expect(cacheContents.length).toBeGreaterThan(0);
-      expect(cacheContents.some(url => url.includes('manifest.json'))).toBe(true);
+      expect(cacheContents.some((url) => url.includes('manifest.json'))).toBe(
+        true
+      );
     });
   });
 
@@ -73,7 +75,7 @@ describe('Progressive Web App (PWA) Tests', () => {
       // Try to navigate to a page
       await page.goto('http://localhost:3000/offline.html');
 
-      const content = await page.$eval('body', el => el.textContent);
+      const content = await page.$eval('body', (el) => el.textContent);
       expect(content).toContain('offline');
     });
 
@@ -88,9 +90,10 @@ describe('Progressive Web App (PWA) Tests', () => {
 
       // Check if cached API data is available
       const cachedData = await page.evaluate(() => {
-        return caches.open('ai-bank-dynamic-v1.0.0').then(cache => {
-          return cache.keys().then(keys => {
-            return keys.filter(request => request.url.includes('/api/')).length;
+        return caches.open('ai-bank-dynamic-v1.0.0').then((cache) => {
+          return cache.keys().then((keys) => {
+            return keys.filter((request) => request.url.includes('/api/'))
+              .length;
           });
         });
       });
@@ -116,7 +119,7 @@ describe('Progressive Web App (PWA) Tests', () => {
         navigator.serviceWorker.controller.postMessage({
           type: 'PUSH_RECEIVED',
           title: 'Test Notification',
-          body: 'This is a test push notification'
+          body: 'This is a test push notification',
         });
 
         // Timeout after 2 seconds
@@ -134,7 +137,10 @@ describe('Progressive Web App (PWA) Tests', () => {
       await page.goto('http://localhost:3000');
 
       const syncRegistered = await page.evaluate(async () => {
-        if ('serviceWorker' in navigator && 'sync' in globalThis.ServiceWorkerRegistration.prototype) {
+        if (
+          'serviceWorker' in navigator &&
+          'sync' in globalThis.ServiceWorkerRegistration.prototype
+        ) {
           const registration = await navigator.serviceWorker.ready;
           await registration.sync.register('background-transaction-sync');
           return true;

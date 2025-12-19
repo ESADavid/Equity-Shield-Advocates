@@ -6,7 +6,10 @@ const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default;
 const fs = require('fs');
 const path = require('path');
 
-const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+const revenueDataPath = path.resolve(
+  __dirname,
+  '../owlban_repos/sample_repo/revenue.json'
+);
 
 // GET /api/payroll/employees - fetch employee payroll data from synced revenue data
 router.get('/employees', (req, res) => {
@@ -28,7 +31,9 @@ router.post('/sync', async (req, res) => {
     res.json({ success: true, message: 'Payroll data sync completed' });
   } catch (error) {
     logger.error('Payroll data sync failed:', error);
-    res.status(500).json({ success: false, message: 'Payroll data sync failed' });
+    res
+      .status(500)
+      .json({ success: false, message: 'Payroll data sync failed' });
   }
 });
 

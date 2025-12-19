@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -9,31 +9,34 @@ const PORT = process.env.PORT || 4000;
 
 const isTestEnv = process.env.NODE_ENV === 'test';
 
-app.use(basicAuth({
-  users: { 'admin': 'securepassword' },
-  challenge: true,
-  unauthorizedResponse: (req) => {
-    return req.auth
-      ? 'Credentials rejected'
-      : 'No credentials provided'
-  },
-  authorizeAsync: false,
-  // Skip auth if in test environment
-  authorizer: (username, password) => {
-    if (isTestEnv) {
-      return true;
-    }
-    const userMatches = basicAuth.safeCompare(username, 'admin');
-    const passwordMatches = basicAuth.safeCompare(password, 'securepassword');
-    return userMatches && passwordMatches;
-  }
-}));
+app.use(
+  basicAuth({
+    users: { admin: 'securepassword' },
+    challenge: true,
+    unauthorizedResponse: (req) => {
+      return req.auth ? 'Credentials rejected' : 'No credentials provided';
+    },
+    authorizeAsync: false,
+    // Skip auth if in test environment
+    authorizer: (username, password) => {
+      if (isTestEnv) {
+        return true;
+      }
+      const userMatches = basicAuth.safeCompare(username, 'admin');
+      const passwordMatches = basicAuth.safeCompare(password, 'securepassword');
+      return userMatches && passwordMatches;
+    },
+  })
+);
 
 app.use(cors());
 app.use(express.json());
 
 // Use the existing revenue.json file path
-const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+const revenueDataPath = path.resolve(
+  __dirname,
+  '../owlban_repos/sample_repo/revenue.json'
+);
 
 function readRevenueData() {
   if (!fs.existsSync(revenueDataPath)) {
@@ -45,7 +48,7 @@ function readRevenueData() {
     data.purchases = {
       corporateHomes: 0,
       autoFleet: 0,
-      autoFleetDetails: []
+      autoFleetDetails: [],
     };
   }
   return data;
@@ -65,7 +68,7 @@ function getEarningsData() {
     totalAnnualRevenue: data.totalRevenue,
     totalDailyRevenue: data.totalRevenue / 365,
     revenueStreams: data.revenueStreams || {},
-    purchases: data.purchases
+    purchases: data.purchases,
   };
 }
 
@@ -87,12 +90,18 @@ app.post('/api/purchase/home', (req, res) => {
     return res.status(400).json({ error: 'Invalid cost value' });
   }
   if (data.totalRevenue < cost) {
-    return res.status(400).json({ error: 'Insufficient revenue to make this purchase' });
+    return res
+      .status(400)
+      .json({ error: 'Insufficient revenue to make this purchase' });
   }
   data.totalRevenue -= cost;
   data.purchases.corporateHomes += cost;
   writeRevenueData(data);
-  res.json({ message: 'Corporate home purchased successfully', remainingRevenue: data.totalRevenue, purchases: data.purchases });
+  res.json({
+    message: 'Corporate home purchased successfully',
+    remainingRevenue: data.totalRevenue,
+    purchases: data.purchases,
+  });
 });
 
 app.post('/api/purchase/auto', (req, res) => {
@@ -105,10 +114,14 @@ app.post('/api/purchase/auto', (req, res) => {
     return res.status(400).json({ error: 'Invalid cost value' });
   }
   if (!model || !vin || !dealership) {
-    return res.status(400).json({ error: 'Missing required car details: model, vin, dealership' });
+    return res
+      .status(400)
+      .json({ error: 'Missing required car details: model, vin, dealership' });
   }
   if (data.totalRevenue < cost) {
-    return res.status(400).json({ error: 'Insufficient revenue to make this purchase' });
+    return res
+      .status(400)
+      .json({ error: 'Insufficient revenue to make this purchase' });
   }
   data.totalRevenue -= cost;
   data.purchases.autoFleet += cost;
@@ -124,11 +137,26 @@ app.post('/api/purchase/auto', (req, res) => {
     vin,
     dealership,
     cost,
-    purchaseDate
+    purchaseDate,
   };
-  data.purchases.autoFleetDetails.push({ model, vin, dealership, cost, purchaseDate, deliveryStatus: 'pending', deliveryDate: null, deliveryAddress: null, receipt });
+  data.purchases.autoFleetDetails.push({
+    model,
+    vin,
+    dealership,
+    cost,
+    purchaseDate,
+    deliveryStatus: 'pending',
+    deliveryDate: null,
+    deliveryAddress: null,
+    receipt,
+  });
   writeRevenueData(data);
-  res.json({ message: 'Auto fleet purchased successfully', remainingRevenue: data.totalRevenue, purchases: data.purchases, receipt });
+  res.json({
+    message: 'Auto fleet purchased successfully',
+    remainingRevenue: data.totalRevenue,
+    purchases: data.purchases,
+    receipt,
+  });
 });
 
 // New endpoint to mark a car as delivered
@@ -141,7 +169,7 @@ app.post('/api/delivery/mark-delivered', (req, res) => {
   if (!vin) {
     return res.status(400).json({ error: 'Missing VIN for delivery update' });
   }
-  const car = data.purchases.autoFleetDetails.find(c => c.vin === vin);
+  const car = data.purchases.autoFleetDetails.find((c) => c.vin === vin);
   if (!car) {
     return res.status(404).json({ error: 'Car with specified VIN not found' });
   }
@@ -166,7 +194,10 @@ app.get('/api/earnings/download', (req, res) => {
   if (!earnings) {
     return res.status(404).json({ error: 'Earnings data not found' });
   }
-  res.setHeader('Content-Disposition', 'attachment; filename="earnings_report.json"');
+  res.setHeader(
+    'Content-Disposition',
+    'attachment; filename="earnings_report.json"'
+  );
   res.json(earnings);
 });
 
@@ -179,8 +210,13 @@ app.get('/api/report/fleet-payroll', (req, res) => {
   const fleetDetails = data.purchases.autoFleetDetails || [];
   const payrollData = data.payroll || [];
   const totalFleetCost = data.purchases.autoFleet || 0;
-  const totalPayrollAmount = payrollData.reduce((sum, entry) => sum + (entry.amount || 0), 0);
-  const deliveredCars = fleetDetails.filter(car => car.deliveryStatus === 'delivered').length;
+  const totalPayrollAmount = payrollData.reduce(
+    (sum, entry) => sum + (entry.amount || 0),
+    0
+  );
+  const deliveredCars = fleetDetails.filter(
+    (car) => car.deliveryStatus === 'delivered'
+  ).length;
   const pendingCars = fleetDetails.length - deliveredCars;
 
   res.json({
@@ -189,7 +225,7 @@ app.get('/api/report/fleet-payroll', (req, res) => {
     deliveredCars,
     pendingCars,
     fleetDetails,
-    payrollData
+    payrollData,
   });
 });
 
@@ -198,7 +234,9 @@ app.post('/api/sync/all', async (req, res) => {
   try {
     const syncJobs = await import('./sync_jobs.js');
     await syncJobs.syncAllData();
-    res.status(200).json({ message: 'Data synchronization completed successfully' });
+    res
+      .status(200)
+      .json({ message: 'Data synchronization completed successfully' });
   } catch (error) {
     logger.error('Error during data synchronization:', error);
     res.status(500).json({ error: 'Data synchronization failed' });
@@ -428,8 +466,8 @@ app.get('/', (req, res) => {
     '    document.getElementById("payBillBtn").addEventListener("click", payBill);',
     '  </script>',
     '</body>',
-    '</html>'
-  ].join("");
+    '</html>',
+  ].join('');
   res.send(html);
 });
 

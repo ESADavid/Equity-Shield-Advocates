@@ -1,5 +1,7 @@
 const { expect } = require('chai');
-const { QuantumPayrollSystem } = require('../owlban_revenue_repo/quantum/quantumPayrollSystem');
+const {
+  QuantumPayrollSystem,
+} = require('../owlban_revenue_repo/quantum/quantumPayrollSystem');
 
 describe('Quantum Payroll System', () => {
   let payrollSystem;
@@ -15,7 +17,7 @@ describe('Quantum Payroll System', () => {
       salary: 60000,
       hourlyRate: 30,
       benefits: { health: 500, dental: 200 },
-      deductions: { preTax: 1000, postTax: 500 }
+      deductions: { preTax: 1000, postTax: 500 },
     };
     const result = await payrollSystem.addEmployee(employeeData);
     expect(result).to.have.property('employeeId', 'emp001');
@@ -29,10 +31,13 @@ describe('Quantum Payroll System', () => {
       salary: 72000,
       hourlyRate: 35,
       benefits: { health: 600, dental: 250 },
-      deductions: { preTax: 1200, postTax: 600 }
+      deductions: { preTax: 1200, postTax: 600 },
     };
     await payrollSystem.addEmployee(employeeData);
-    const payroll = await payrollSystem.calculateEmployeePayroll(employeeData, null);
+    const payroll = await payrollSystem.calculateEmployeePayroll(
+      employeeData,
+      null
+    );
     expect(payroll).to.have.property('employeeId', 'emp002');
     // eslint-disable-next-line no-unused-expressions
     expect(payroll).to.have.property('grossPay').that.is.a('number');

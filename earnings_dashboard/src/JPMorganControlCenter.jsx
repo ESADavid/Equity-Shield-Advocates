@@ -30,7 +30,7 @@ function JPMorganControlCenter() {
     try {
       const response = await fetch('/jpmorgan/control/status', {
         headers: {
-          'Authorization': 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+          Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
         },
       });
       if (response.ok) {
@@ -45,12 +45,28 @@ function JPMorganControlCenter() {
   };
 
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: '📊', component: ControlDashboard },
-    { id: 'banking', label: 'Banking', icon: '🏦', component: PrivateBankingControls },
-    { id: 'websites', label: 'Websites', icon: '🌐', component: WebsiteManagement },
+    {
+      id: 'dashboard',
+      label: 'Dashboard',
+      icon: '📊',
+      component: ControlDashboard,
+    },
+    {
+      id: 'banking',
+      label: 'Banking',
+      icon: '🏦',
+      component: PrivateBankingControls,
+    },
+    {
+      id: 'websites',
+      label: 'Websites',
+      icon: '🌐',
+      component: WebsiteManagement,
+    },
   ];
 
-  const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component || ControlDashboard;
+  const ActiveComponent =
+    tabs.find((tab) => tab.id === activeTab)?.component || ControlDashboard;
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
@@ -86,14 +102,19 @@ function JPMorganControlCenter() {
           )}
         </div>
         <div className="status-indicator">
-          <span className={`status ${controlStatus?.overallStatus || 'unknown'}`}>
-            {isMobile ? '●' : 'Status:'} {controlStatus?.overallStatus || 'Unknown'}
+          <span
+            className={`status ${controlStatus?.overallStatus || 'unknown'}`}
+          >
+            {isMobile ? '●' : 'Status:'}{' '}
+            {controlStatus?.overallStatus || 'Unknown'}
           </span>
         </div>
       </header>
 
-      <nav className={`control-navigation ${isMobile ? 'mobile' : ''} ${showMobileMenu ? 'open' : ''}`}>
-        {tabs.map(tab => (
+      <nav
+        className={`control-navigation ${isMobile ? 'mobile' : ''} ${showMobileMenu ? 'open' : ''}`}
+      >
+        {tabs.map((tab) => (
           <button
             key={tab.id}
             className={`nav-tab ${activeTab === tab.id ? 'active' : ''} ${isMobile ? 'mobile' : ''}`}

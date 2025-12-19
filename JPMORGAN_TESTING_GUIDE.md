@@ -1,10 +1,13 @@
 # JPMorgan Payment Integration Testing Guide
 
 ## Overview
+
 This guide provides comprehensive testing instructions for the JPMorgan Payments API integration in `jpmorgan_payment.js`.
 
 ## Prerequisites
+
 1. Set up environment variables:
+
    ```bash
    JPMORGAN_BASE_URL=https://api.payments.jpmorgan.com
    JPMORGAN_ORGANIZATION_ID=D3R56WRGSR3R
@@ -23,11 +26,13 @@ This guide provides comprehensive testing instructions for the JPMorgan Payments
 ## Testing Endpoints
 
 ### 1. Health Check
+
 ```bash
 curl -X GET http://localhost:3000/jpmorgan/health
 ```
 
 ### 2. Create Payment
+
 ```bash
 curl -X POST http://localhost:3000/jpmorgan/create-payment \
   -H "Content-Type: application/json" \
@@ -44,11 +49,13 @@ curl -X POST http://localhost:3000/jpmorgan/create-payment \
 ```
 
 ### 3. Get Payment Status
+
 ```bash
 curl -X GET http://localhost:3000/jpmorgan/payment-status/PAYMENT_ID_HERE
 ```
 
 ### 4. Refund Payment
+
 ```bash
 curl -X POST http://localhost:3000/jpmorgan/refund \
   -H "Content-Type: application/json" \
@@ -60,6 +67,7 @@ curl -X POST http://localhost:3000/jpmorgan/refund \
 ```
 
 ### 5. Capture Authorized Payment
+
 ```bash
 curl -X POST http://localhost:3000/jpmorgan/capture \
   -H "Content-Type: application/json" \
@@ -70,6 +78,7 @@ curl -X POST http://localhost:3000/jpmorgan/capture \
 ```
 
 ### 6. Void Payment
+
 ```bash
 curl -X POST http://localhost:3000/jpmorgan/void \
   -H "Content-Type: application/json" \
@@ -80,11 +89,13 @@ curl -X POST http://localhost:3000/jpmorgan/void \
 ```
 
 ### 7. Get Transaction History
+
 ```bash
 curl -X GET "http://localhost:3000/jpmorgan/transactions?startDate=2024-01-01&endDate=2024-12-31&limit=10"
 ```
 
 ### 8. Wallet Decryption
+
 ```bash
 curl -X POST http://localhost:3000/jpmorgan/wallet-decrypt \
   -H "Content-Type: application/json" \
@@ -96,36 +107,43 @@ curl -X POST http://localhost:3000/jpmorgan/wallet-decrypt \
 ## Treasury Management Endpoints
 
 ### 1. Cash Positions
+
 ```bash
 curl -X GET "http://localhost:3000/jpmorgan/treasury/cash-positions?currency=USD"
 ```
 
 ### 2. Foreign Exchange Rates
+
 ```bash
 curl -X GET "http://localhost:3000/jpmorgan/treasury/fx-rates?baseCurrency=USD&quoteCurrency=EUR"
 ```
 
 ### 3. Liquidity Forecast
+
 ```bash
 curl -X GET "http://localhost:3000/jpmorgan/treasury/liquidity-forecast?days=30&currency=USD"
 ```
 
 ### 4. Risk Exposure
+
 ```bash
 curl -X GET "http://localhost:3000/jpmorgan/treasury/risk-exposure?currency=USD"
 ```
 
 ### 5. Portfolio Performance
+
 ```bash
 curl -X GET "http://localhost:3000/jpmorgan/treasury/portfolio-performance?period=1M&currency=USD"
 ```
 
 ### 6. Cash Flow Analytics
+
 ```bash
 curl -X GET "http://localhost:3000/jpmorgan/treasury/cash-flow-analytics?granularity=daily&currency=USD"
 ```
 
 ### 7. Treasury Health Check
+
 ```bash
 curl -X GET http://localhost:3000/jpmorgan/treasury/health
 ```
@@ -133,6 +151,7 @@ curl -X GET http://localhost:3000/jpmorgan/treasury/health
 ## QuickBooks Integration Testing
 
 ### Sync Payments with QuickBooks
+
 ```bash
 curl -X POST http://localhost:3000/jpmorgan/sync-quickbooks
 ```
@@ -140,6 +159,7 @@ curl -X POST http://localhost:3000/jpmorgan/sync-quickbooks
 ## Webhook Testing
 
 ### Simulate Webhook Event
+
 ```bash
 curl -X POST http://localhost:3000/jpmorgan/webhook \
   -H "Content-Type: application/json" \
@@ -175,7 +195,6 @@ async function testEndpoints() {
     console.log('Testing treasury health...');
     const treasuryHealth = await axios.get(`${BASE_URL}/treasury/health`);
     console.log('Treasury health:', treasuryHealth.data);
-
   } catch (error) {
     console.error('Test failed:', error.response?.data || error.message);
   }
@@ -187,6 +206,7 @@ testEndpoints();
 ## Error Handling Tests
 
 ### Test Invalid Payment Creation
+
 ```bash
 curl -X POST http://localhost:3000/jpmorgan/create-payment \
   -H "Content-Type: application/json" \
@@ -196,6 +216,7 @@ curl -X POST http://localhost:3000/jpmorgan/create-payment \
 Expected response: 400 Bad Request with error message
 
 ### Test Non-existent Payment Status
+
 ```bash
 curl -X GET http://localhost:3000/jpmorgan/payment-status/INVALID_ID
 ```
@@ -255,6 +276,7 @@ scenarios:
 ### Debug Mode
 
 Enable debug logging by setting:
+
 ```bash
 DEBUG=jpmorgan:* npm start
 ```

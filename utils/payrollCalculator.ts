@@ -7,7 +7,7 @@ import {
   Employee,
   PayrollCalculation,
   PayrollCalculationInput,
-  PAYROLL_CONSTANTS
+  PAYROLL_CONSTANTS,
 } from '../types/payroll.js';
 
 /**
@@ -24,13 +24,15 @@ export function calculatePayrollForEmployee(
   const taxRate = overrides?.taxRate ?? employee.taxRate;
   const deductions = overrides?.deductions ?? employee.deductions;
   const bonuses = overrides?.bonuses ?? employee.bonuses;
-  const payPeriod = overrides?.payPeriod ?? new Date().toISOString().split('T')[0];
+  const payPeriod =
+    overrides?.payPeriod ?? new Date().toISOString().split('T')[0];
 
   // Calculate regular pay
   const regularPay = hoursWorked * hourlyRate;
 
   // Calculate overtime pay (1.5x regular rate)
-  const overtimePay = overtimeHours * hourlyRate * PAYROLL_CONSTANTS.OVERTIME_MULTIPLIER;
+  const overtimePay =
+    overtimeHours * hourlyRate * PAYROLL_CONSTANTS.OVERTIME_MULTIPLIER;
 
   // Calculate gross pay
   const grossPay = regularPay + overtimePay + bonuses;
@@ -51,7 +53,7 @@ export function calculatePayrollForEmployee(
     bonuses,
     netPay: Math.round(netPay * 100) / 100,
     payPeriod,
-    calculatedAt: new Date().toISOString()
+    calculatedAt: new Date().toISOString(),
   };
 }
 
@@ -80,7 +82,7 @@ export function calculateSalariedPayroll(
     bonuses: employee.bonuses,
     netPay: Math.round(netPay * 100) / 100,
     payPeriod,
-    calculatedAt: new Date().toISOString()
+    calculatedAt: new Date().toISOString(),
   };
 }
 
@@ -98,7 +100,7 @@ export function calculatePayrollSummary(
   employees: Employee[],
   payPeriod: string = new Date().toISOString().split('T')[0]
 ) {
-  const calculations = employees.map(employee => {
+  const calculations = employees.map((employee) => {
     if (isSalariedEmployee(employee)) {
       return calculateSalariedPayroll(employee, payPeriod);
     } else {
@@ -113,7 +115,7 @@ export function calculatePayrollSummary(
       totalNetPay: acc.totalNetPay + calc.netPay,
       totalTaxes: acc.totalTaxes + calc.taxAmount,
       totalDeductions: acc.totalDeductions + calc.deductions,
-      totalBonuses: acc.totalBonuses + calc.bonuses
+      totalBonuses: acc.totalBonuses + calc.bonuses,
     }),
     {
       totalEmployees: 0,
@@ -121,7 +123,7 @@ export function calculatePayrollSummary(
       totalNetPay: 0,
       totalTaxes: 0,
       totalDeductions: 0,
-      totalBonuses: 0
+      totalBonuses: 0,
     }
   );
 
@@ -129,18 +131,23 @@ export function calculatePayrollSummary(
     ...summary,
     payPeriod,
     generatedAt: new Date().toISOString(),
-    calculations
+    calculations,
   };
 }
 
 /**
  * Validates that calculated payroll makes mathematical sense
  */
-export function validatePayrollCalculation(calculation: PayrollCalculation): boolean {
-  const expectedGrossPay = calculation.regularPay + calculation.overtimePay + calculation.bonuses;
-  const expectedNetPay = calculation.grossPay - calculation.taxAmount - calculation.deductions;
+export function validatePayrollCalculation(
+  calculation: PayrollCalculation
+): boolean {
+  const expectedGrossPay =
+    calculation.regularPay + calculation.overtimePay + calculation.bonuses;
+  const expectedNetPay =
+    calculation.grossPay - calculation.taxAmount - calculation.deductions;
 
-  const grossPayMatch = Math.abs(calculation.grossPay - expectedGrossPay) < 0.01;
+  const grossPayMatch =
+    Math.abs(calculation.grossPay - expectedGrossPay) < 0.01;
   const netPayMatch = Math.abs(calculation.netPay - expectedNetPay) < 0.01;
 
   return grossPayMatch && netPayMatch;

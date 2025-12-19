@@ -7,18 +7,21 @@ The Oscar Broome Login Override System provides emergency access and administrat
 ## Features
 
 ### 🔐 Emergency Override
+
 - **Purpose**: Immediate access for Oscar Broome and authorized executive personnel
 - **Use Case**: Critical system access when normal authentication fails
 - **Duration**: 15 minutes (configurable)
 - **Requirements**: Valid emergency override code
 
 ### 👑 Administrative Override
+
 - **Purpose**: Administrative bypass for user account issues
 - **Use Case**: Account locked, MFA failure, password reset issues
 - **Requirements**: Admin credentials + detailed justification
 - **Audit Trail**: Full logging of all admin actions
 
 ### 🔧 Technical Support Override
+
 - **Purpose**: Support team access for technical issues
 - **Use Case**: MFA problems, account access issues
 - **Requirements**: Support credentials + valid ticket number
@@ -38,6 +41,7 @@ The Oscar Broome Login Override System provides emergency access and administrat
 ## API Endpoints
 
 ### Emergency Override
+
 ```http
 POST /api/override/emergency
 Content-Type: application/json
@@ -51,6 +55,7 @@ Content-Type: application/json
 ```
 
 ### Administrative Override
+
 ```http
 POST /api/override/admin
 Content-Type: application/json
@@ -65,6 +70,7 @@ Authorization: Bearer <admin_token>
 ```
 
 ### Technical Support Override
+
 ```http
 POST /api/override/technical
 Content-Type: application/json
@@ -78,6 +84,7 @@ Content-Type: application/json
 ```
 
 ### Override Validation
+
 ```http
 POST /api/override/validate/{overrideId}
 Content-Type: application/json
@@ -88,6 +95,7 @@ Content-Type: application/json
 ```
 
 ### Override Management
+
 ```http
 GET /api/override/active/{userId}     # Get active overrides
 GET /api/override/stats               # System statistics
@@ -125,18 +133,21 @@ NOTIFICATION_EMAILS=security@oscarsystem.com,admin@oscarsystem.com
 ## Security Features
 
 ### 🔒 Authentication & Authorization
+
 - **Multi-level Access**: Emergency, Admin, Technical roles
 - **Code Validation**: Emergency override codes
 - **Token-based**: JWT tokens for admin operations
 - **Role-based**: Different permissions per user type
 
 ### 📊 Audit & Logging
+
 - **Comprehensive Logging**: All override actions logged
 - **Winston Integration**: Structured logging with timestamps
 - **Security Alerts**: Automatic notifications for suspicious activity
 - **Attempt Tracking**: Failed attempt monitoring
 
 ### 🛡️ Rate Limiting & Validation
+
 - **Attempt Limits**: Maximum 3 failed attempts per user
 - **Time Windows**: 15-minute override sessions
 - **Input Validation**: Strict validation of all inputs
@@ -200,18 +211,21 @@ node test_login_override.js
 ## Monitoring & Maintenance
 
 ### Log Files
+
 - `logs/login_override.log` - Override actions
 - `logs/login_override_api.log` - API requests
 - `override.log` - General override logging
 - `error.log` - Error logging
 
 ### Key Metrics
+
 - Active override count
 - Override success/failure rates
 - Attempt frequency
 - Session duration statistics
 
 ### Maintenance Tasks
+
 - **Log Rotation**: Regular log file cleanup
 - **Session Cleanup**: Remove expired overrides
 - **Security Review**: Regular code validation
@@ -220,12 +234,14 @@ node test_login_override.js
 ## Emergency Procedures
 
 ### System Unavailable
+
 1. Use emergency override code
 2. Contact system administrator
 3. Document incident details
 4. Review access logs
 
 ### Security Breach
+
 1. Immediately revoke all active overrides
 2. Change emergency codes
 3. Review audit logs
@@ -236,16 +252,19 @@ node test_login_override.js
 ### Common Issues
 
 **Override Code Rejected**
+
 - Verify emergency code is correct
 - Check attempt limits (max 3 attempts)
 - Ensure proper user permissions
 
 **Admin Override Failed**
+
 - Verify admin token is valid
 - Check justification length (min 10 characters)
 - Confirm admin permissions
 
 **Technical Override Failed**
+
 - Validate ticket number format (ABCD-1234)
 - Check support user permissions
 - Verify ticket exists in system
@@ -253,6 +272,7 @@ node test_login_override.js
 ### Debug Mode
 
 Enable debug logging by setting:
+
 ```bash
 DEBUG=login-override:*
 ```
@@ -260,17 +280,20 @@ DEBUG=login-override:*
 ## Compliance & Legal
 
 ### Audit Requirements
+
 - All override actions are logged
 - Justification required for admin overrides
 - Session tracking with timestamps
 - User identification and authorization
 
 ### Data Retention
+
 - Override logs retained for 2 years
 - Session data cleaned up after expiration
 - Audit trails maintained for compliance
 
 ### Privacy Considerations
+
 - Minimal personal data collection
 - Secure log storage
 - Access restricted to authorized personnel
@@ -278,11 +301,13 @@ DEBUG=login-override:*
 ## Support & Contact
 
 ### Technical Support
+
 - **Email**: support@oscarsystem.com
 - **Emergency**: Call system administrator
 - **Documentation**: This README file
 
 ### Security Team
+
 - **Email**: security@oscarsystem.com
 - **Incident Response**: 24/7 availability
 - **Code Reviews**: Regular security assessments

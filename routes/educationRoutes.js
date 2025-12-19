@@ -36,7 +36,7 @@ router.post('/create-program', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -54,13 +54,19 @@ router.post('/enroll-citizen', async (req, res) => {
     if (!citizenId || !programId) {
       return res.status(400).json({
         success: false,
-        error: 'citizenId and programId are required'
+        error: 'citizenId and programId are required',
       });
     }
 
-    logger.info(`Enrollment request: citizen ${citizenId} to program ${programId}`);
+    logger.info(
+      `Enrollment request: citizen ${citizenId} to program ${programId}`
+    );
 
-    const result = await educationService.enrollCitizen(citizenId, programId, userId);
+    const result = await educationService.enrollCitizen(
+      citizenId,
+      programId,
+      userId
+    );
 
     if (result.success) {
       res.status(200).json(result);
@@ -72,7 +78,7 @@ router.post('/enroll-citizen', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -90,13 +96,20 @@ router.post('/update-progress', async (req, res) => {
     if (!citizenId || !programId || !progressData) {
       return res.status(400).json({
         success: false,
-        error: 'citizenId, programId, and progressData are required'
+        error: 'citizenId, programId, and progressData are required',
       });
     }
 
-    logger.info(`Progress update request for citizen ${citizenId} in program ${programId}`);
+    logger.info(
+      `Progress update request for citizen ${citizenId} in program ${programId}`
+    );
 
-    const result = await educationService.updateProgress(citizenId, programId, progressData, userId);
+    const result = await educationService.updateProgress(
+      citizenId,
+      programId,
+      progressData,
+      userId
+    );
 
     if (result.success) {
       res.status(200).json(result);
@@ -108,7 +121,7 @@ router.post('/update-progress', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -123,7 +136,7 @@ router.get('/programs', async (req, res) => {
     const filters = {
       programType: req.query.programType,
       status: req.query.status,
-      limit: parseInt(req.query.limit) || 100
+      limit: parseInt(req.query.limit) || 100,
     };
 
     logger.info('Programs list request');
@@ -140,7 +153,7 @@ router.get('/programs', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -168,7 +181,7 @@ router.get('/citizen/:citizenId/progress', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -186,13 +199,19 @@ router.post('/issue-certification', async (req, res) => {
     if (!citizenId || !programId) {
       return res.status(400).json({
         success: false,
-        error: 'citizenId and programId are required'
+        error: 'citizenId and programId are required',
       });
     }
 
-    logger.info(`Certification request for citizen ${citizenId} in program ${programId}`);
+    logger.info(
+      `Certification request for citizen ${citizenId} in program ${programId}`
+    );
 
-    const result = await educationService.issueCertification(citizenId, programId, userId);
+    const result = await educationService.issueCertification(
+      citizenId,
+      programId,
+      userId
+    );
 
     if (result.success) {
       res.status(200).json(result);
@@ -204,7 +223,7 @@ router.post('/issue-certification', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -230,7 +249,7 @@ router.get('/statistics', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -258,7 +277,7 @@ router.post('/initialize-defaults', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -276,7 +295,7 @@ router.get('/health', (req, res) => {
     logger.error('Error in health route:', error);
     res.status(500).json({
       status: 'error',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -290,20 +309,21 @@ router.get('/welcome', (req, res) => {
   res.status(200).json({
     message: 'Welcome to the Education System API',
     description: 'OWLBAN GROUP - Heaven on Earth Initiative',
-    mission: 'Mandatory education in Military, Law, Technology, and Agriculture',
+    mission:
+      'Mandatory education in Military, Law, Technology, and Agriculture',
     features: [
       'Program creation and management',
       'Citizen enrollment',
       'Progress tracking',
       'Certification issuance',
       'AI-powered personalized learning',
-      'Compliance monitoring'
+      'Compliance monitoring',
     ],
     mandatoryTracks: {
       military: '6 months - Basic combat, discipline, leadership',
       law: '4 months - Constitutional law, civil rights, legal procedures',
       tech: '6 months - Programming, AI, web development, cybersecurity',
-      agriculture: '4 months - Sustainable farming, hydroponics, food security'
+      agriculture: '4 months - Sustainable farming, hydroponics, food security',
     },
     totalRequired: '20 months for UBI eligibility',
     endpoints: {
@@ -315,10 +335,10 @@ router.get('/welcome', (req, res) => {
       issueCertification: 'POST /api/education/issue-certification',
       statistics: 'GET /api/education/statistics',
       initializeDefaults: 'POST /api/education/initialize-defaults',
-      health: 'GET /api/education/health'
+      health: 'GET /api/education/health',
     },
     version: '1.0.0',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 

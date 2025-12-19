@@ -1,7 +1,7 @@
 /**
  * DIVINE WISDOM DECISION MATRIX
  * King Sachem Yochanan ITG Algorithm
- * 
+ *
  * Implements prophetic pattern recognition and kingdom principles
  * for strategic decision-making aligned with divine wisdom
  */
@@ -19,7 +19,7 @@ class DivineWisdom {
       humility: 'Humble yourself and be exalted',
       patience: 'Wait on the Lord',
       justice: 'Do justly, love mercy, walk humbly',
-      love: 'Love covers a multitude of sins'
+      love: 'Love covers a multitude of sins',
     };
 
     // Prophetic indicators
@@ -28,7 +28,7 @@ class DivineWisdom {
       signs: ['confirmation', 'open_door', 'closed_door', 'fleece'],
       witnesses: ['two_or_three', 'multiple_confirmations'],
       peace: ['shalom', 'rest', 'assurance'],
-      fruit: ['good_fruit', 'lasting_fruit', 'abundant_fruit']
+      fruit: ['good_fruit', 'lasting_fruit', 'abundant_fruit'],
     };
 
     // Wisdom levels
@@ -39,7 +39,7 @@ class DivineWisdom {
       4: 'Prophetic Wisdom',
       5: 'Kingdom Authority',
       6: 'Divine Strategy',
-      7: 'Perfect Wisdom (Complete in Christ)'
+      7: 'Perfect Wisdom (Complete in Christ)',
     };
   }
 
@@ -57,28 +57,34 @@ class DivineWisdom {
       propheticInsight: '',
       kingdomAlignment: '',
       warnings: [],
-      blessings: []
+      blessings: [],
     };
 
     // Evaluate against each kingdom principle
-    for (const [principle, description] of Object.entries(this.kingdomPrinciples)) {
+    for (const [principle, description] of Object.entries(
+      this.kingdomPrinciples
+    )) {
       const score = this.evaluatePrinciple(decision, principle, context);
       evaluation.scores[principle] = {
         score,
         description,
-        alignment: this.getAlignmentLevel(score)
+        alignment: this.getAlignmentLevel(score),
       };
     }
 
     // Calculate overall score
-    const scores = Object.values(evaluation.scores).map(s => s.score);
+    const scores = Object.values(evaluation.scores).map((s) => s.score);
     evaluation.overallScore = scores.reduce((a, b) => a + b, 0) / scores.length;
 
     // Generate recommendation
-    evaluation.recommendation = this.generateRecommendation(evaluation.overallScore);
+    evaluation.recommendation = this.generateRecommendation(
+      evaluation.overallScore
+    );
     evaluation.propheticInsight = this.getPropheticInsight(decision, context);
-    evaluation.kingdomAlignment = this.assessKingdomAlignment(evaluation.overallScore);
-    
+    evaluation.kingdomAlignment = this.assessKingdomAlignment(
+      evaluation.overallScore
+    );
+
     // Identify warnings and blessings
     evaluation.warnings = this.identifyWarnings(evaluation.scores);
     evaluation.blessings = this.identifyBlessings(evaluation.scores);
@@ -92,10 +98,10 @@ class DivineWisdom {
   evaluatePrinciple(decision, principle, context) {
     // Simulate principle evaluation based on decision attributes
     const baseScore = 70; // Default good alignment
-    
+
     // Adjust based on context
     let adjustment = 0;
-    
+
     if (context.hasOwnProperty(principle)) {
       adjustment = context[principle] * 30; // Scale context input
     } else {
@@ -142,7 +148,9 @@ class DivineWisdom {
 
     // Check for confirmations
     if (context.confirmations >= 2) {
-      insights.push('✨ Multiple confirmations received - proceed with confidence');
+      insights.push(
+        '✨ Multiple confirmations received - proceed with confidence'
+      );
     }
 
     // Check for peace
@@ -152,7 +160,9 @@ class DivineWisdom {
 
     // Check for open doors
     if (context.openDoors > 0) {
-      insights.push(`🚪 ${context.openDoors} open door(s) of opportunity detected`);
+      insights.push(
+        `🚪 ${context.openDoors} open door(s) of opportunity detected`
+      );
     }
 
     // Check for fruit
@@ -189,7 +199,7 @@ class DivineWisdom {
           principle,
           score: data.score,
           warning: `Low alignment with ${principle} - ${data.description}`,
-          action: this.getWarningAction(principle)
+          action: this.getWarningAction(principle),
         });
       }
     }
@@ -208,7 +218,7 @@ class DivineWisdom {
       humility: 'Humble yourself before proceeding',
       patience: 'Wait for clearer timing and direction',
       justice: 'Ensure justice and fairness in all dealings',
-      love: 'Let love be the primary motivation'
+      love: 'Let love be the primary motivation',
     };
     return actions[principle] || 'Seek divine guidance';
   }
@@ -222,7 +232,7 @@ class DivineWisdom {
           principle,
           score: data.score,
           blessing: `Excellent alignment with ${principle}`,
-          promise: this.getBlessingPromise(principle)
+          promise: this.getBlessingPromise(principle),
         });
       }
     }
@@ -232,16 +242,18 @@ class DivineWisdom {
 
   getBlessingPromise(principle) {
     const promises = {
-      faith: 'Without faith it is impossible to please God - your faith will be rewarded',
+      faith:
+        'Without faith it is impossible to please God - your faith will be rewarded',
       obedience: 'If you obey, you will eat the good of the land',
       stewardship: 'Faithful in little, ruler over much - promotion is coming',
-      generosity: 'Give and it shall be given - pressed down, shaken together, running over',
+      generosity:
+        'Give and it shall be given - pressed down, shaken together, running over',
       wisdom: 'Wisdom brings riches, honor, and long life',
       integrity: 'The integrity of the upright guides them',
       humility: 'Humble yourself and you will be exalted',
       patience: 'Those who wait on the Lord shall renew their strength',
       justice: 'Blessed are those who hunger for righteousness',
-      love: 'Love never fails - it covers a multitude of sins'
+      love: 'Love never fails - it covers a multitude of sins',
     };
     return promises[principle] || 'The Lord will bless your obedience';
   }
@@ -265,15 +277,15 @@ class DivineWisdom {
       financial: this.evaluateFinancialFactor(factors.financial || {}),
       relational: this.evaluateRelationalFactor(factors.relational || {}),
       timing: this.evaluateTimingFactor(factors.timing || {}),
-      impact: this.evaluateImpactFactor(factors.impact || {})
+      impact: this.evaluateImpactFactor(factors.impact || {}),
     };
 
     const weights = {
-      spiritual: 0.35,  // Highest weight - seek first the Kingdom
-      financial: 0.20,
-      relational: 0.20,
+      spiritual: 0.35, // Highest weight - seek first the Kingdom
+      financial: 0.2,
+      relational: 0.2,
       timing: 0.15,
-      impact: 0.10
+      impact: 0.1,
     };
 
     let weightedScore = 0;
@@ -286,22 +298,37 @@ class DivineWisdom {
       factorScores: scores,
       weights,
       recommendation: this.generateRecommendation(weightedScore),
-      wisdomLevel: this.determineWisdomLevel(weightedScore)
+      wisdomLevel: this.determineWisdomLevel(weightedScore),
     };
   }
 
   evaluateSpiritualFactor(spiritual) {
-    const { prayer = 50, peace = 50, confirmation = 50, alignment = 50 } = spiritual;
+    const {
+      prayer = 50,
+      peace = 50,
+      confirmation = 50,
+      alignment = 50,
+    } = spiritual;
     return (prayer + peace + confirmation + alignment) / 4;
   }
 
   evaluateFinancialFactor(financial) {
-    const { stewardship = 50, provision = 50, sustainability = 50, generosity = 50 } = financial;
+    const {
+      stewardship = 50,
+      provision = 50,
+      sustainability = 50,
+      generosity = 50,
+    } = financial;
     return (stewardship + provision + sustainability + generosity) / 4;
   }
 
   evaluateRelationalFactor(relational) {
-    const { unity = 50, counsel = 50, accountability = 50, impact = 50 } = relational;
+    const {
+      unity = 50,
+      counsel = 50,
+      accountability = 50,
+      impact = 50,
+    } = relational;
     return (unity + counsel + accountability + impact) / 4;
   }
 
@@ -322,9 +349,9 @@ class DivineWisdom {
     const patterns = [];
 
     // Look for repeated themes
-    const themes = events.map(e => e.theme).filter(Boolean);
+    const themes = events.map((e) => e.theme).filter(Boolean);
     const themeCount = {};
-    themes.forEach(theme => {
+    themes.forEach((theme) => {
       themeCount[theme] = (themeCount[theme] || 0) + 1;
     });
 
@@ -335,29 +362,31 @@ class DivineWisdom {
           theme,
           occurrences: count,
           significance: 'God is emphasizing this message',
-          action: 'Pay close attention and respond in obedience'
+          action: 'Pay close attention and respond in obedience',
         });
       }
     }
 
     // Look for timing patterns
-    const dates = events.map(e => new Date(e.date)).filter(d => !isNaN(d));
+    const dates = events.map((e) => new Date(e.date)).filter((d) => !isNaN(d));
     if (dates.length >= 2) {
       const intervals = [];
       for (let i = 1; i < dates.length; i++) {
-        const days = Math.floor((dates[i] - dates[i-1]) / (1000 * 60 * 60 * 24));
+        const days = Math.floor(
+          (dates[i] - dates[i - 1]) / (1000 * 60 * 60 * 24)
+        );
         intervals.push(days);
       }
 
       // Check for sacred number intervals
       const sacredNumbers = [3, 7, 12, 40, 50];
-      intervals.forEach(interval => {
+      intervals.forEach((interval) => {
         if (sacredNumbers.includes(interval)) {
           patterns.push({
             type: 'Sacred Timing',
             interval,
             significance: `${interval}-day pattern detected`,
-            action: 'This is a divine appointment - respond accordingly'
+            action: 'This is a divine appointment - respond accordingly',
           });
         }
       });
@@ -386,7 +415,7 @@ class DivineWisdom {
       ),
       prayerPoints: this.generatePrayerPoints(evaluation),
       scripture: this.getRelevantScripture(evaluation.overallScore),
-      blessing: '🙏 May the wisdom of God guide your every step 🙏'
+      blessing: '🙏 May the wisdom of God guide your every step 🙏',
     };
   }
 
@@ -397,13 +426,14 @@ class DivineWisdom {
       return {
         action: 'PROCEED WITH FAITH',
         confidence: 'HIGH',
-        message: 'All indicators show strong divine alignment. Move forward boldly in faith.',
+        message:
+          'All indicators show strong divine alignment. Move forward boldly in faith.',
         nextSteps: [
           'Commit the decision to the Lord in prayer',
           'Proceed with confidence and expectation',
           'Document the journey for testimony',
-          'Give thanks for divine guidance'
-        ]
+          'Give thanks for divine guidance',
+        ],
       };
     }
 
@@ -411,13 +441,14 @@ class DivineWisdom {
       return {
         action: 'PROCEED WITH WISDOM',
         confidence: 'GOOD',
-        message: 'Good alignment detected. Proceed with prayer and wise counsel.',
+        message:
+          'Good alignment detected. Proceed with prayer and wise counsel.',
         nextSteps: [
           'Seek additional confirmation through prayer',
           'Consult with trusted advisors',
           'Proceed step by step with discernment',
-          'Monitor for continued peace and confirmation'
-        ]
+          'Monitor for continued peace and confirmation',
+        ],
       };
     }
 
@@ -425,26 +456,28 @@ class DivineWisdom {
       return {
         action: 'WAIT AND PRAY',
         confidence: 'MODERATE',
-        message: 'Mixed signals detected. Wait for greater clarity before proceeding.',
+        message:
+          'Mixed signals detected. Wait for greater clarity before proceeding.',
         nextSteps: [
           'Spend extended time in prayer and fasting',
           'Seek prophetic counsel',
           'Wait for clearer confirmation',
-          'Address any areas of low alignment'
-        ]
+          'Address any areas of low alignment',
+        ],
       };
     }
 
     return {
       action: 'DO NOT PROCEED',
       confidence: 'LOW',
-      message: 'Insufficient alignment with kingdom principles. Wait for better timing or reconsider.',
+      message:
+        'Insufficient alignment with kingdom principles. Wait for better timing or reconsider.',
       nextSteps: [
         'Return to prayer and seeking God',
         'Address warnings and concerns',
         'Consider alternative approaches',
-        'Wait for divine timing and clarity'
-      ]
+        'Wait for divine timing and clarity',
+      ],
     };
   }
 
@@ -452,11 +485,11 @@ class DivineWisdom {
     const points = [
       'Lord, grant wisdom and discernment for this decision',
       'Reveal Your perfect will and timing',
-      'Provide clear confirmation and peace'
+      'Provide clear confirmation and peace',
     ];
 
     // Add specific prayer points based on warnings
-    evaluation.warnings.forEach(warning => {
+    evaluation.warnings.forEach((warning) => {
       points.push(`Strengthen alignment with ${warning.principle}`);
     });
 
@@ -469,18 +502,18 @@ class DivineWisdom {
     if (score >= 85) {
       return {
         reference: 'Proverbs 3:5-6',
-        text: 'Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.'
+        text: 'Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.',
       };
     }
     if (score >= 70) {
       return {
         reference: 'James 1:5',
-        text: 'If any of you lacks wisdom, you should ask God, who gives generously to all without finding fault, and it will be given to you.'
+        text: 'If any of you lacks wisdom, you should ask God, who gives generously to all without finding fault, and it will be given to you.',
       };
     }
     return {
       reference: 'Proverbs 19:21',
-      text: 'Many are the plans in a person\'s heart, but it is the LORD\'s purpose that prevails.'
+      text: "Many are the plans in a person's heart, but it is the LORD's purpose that prevails.",
     };
   }
 }

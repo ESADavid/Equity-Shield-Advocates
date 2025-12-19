@@ -16,12 +16,12 @@ This document provides a comprehensive breakdown of all assets under management 
 
 ### Asset Class Allocation
 
-| Asset Class | Allocation | Value | Performance YTD | Annualized Return | Volatility |
-|-------------|------------|-------|-----------------|-------------------|------------|
-| Equities | 60% | $1,482,000,000,000.00 | +14.2% | +16.8% | 15.2% |
-| Fixed Income | 20% | $494,000,000,000.00 | +8.9% | +12.1% | 8.7% |
-| Real Estate | 15% | $370,500,000,000.00 | +11.3% | +14.5% | 12.1% |
-| Alternative Investments | 5% | $123,500,000,000.00 | +18.7% | +21.2% | 18.9% |
+| Asset Class             | Allocation | Value                 | Performance YTD | Annualized Return | Volatility |
+| ----------------------- | ---------- | --------------------- | --------------- | ----------------- | ---------- |
+| Equities                | 60%        | $1,482,000,000,000.00 | +14.2%          | +16.8%            | 15.2%      |
+| Fixed Income            | 20%        | $494,000,000,000.00   | +8.9%           | +12.1%            | 8.7%       |
+| Real Estate             | 15%        | $370,500,000,000.00   | +11.3%          | +14.5%            | 12.1%      |
+| Alternative Investments | 5%         | $123,500,000,000.00   | +18.7%          | +21.2%            | 18.9%      |
 
 ## 1. Equities Portfolio ($1,482,000,000,000.00)
 

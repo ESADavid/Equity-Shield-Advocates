@@ -2,10 +2,9 @@ import { transpose, multiply, inv } from 'mathjs';
 
 // Enhanced historical data: last 24 months revenue with seasonal patterns
 const historicalData = [
-  1000000, 1050000, 1100000, 1080000, 1150000, 1200000,
-  1180000, 1250000, 1300000, 1280000, 1350000, 1400000,
-  1420000, 1380000, 1450000, 1500000, 1480000, 1550000,
-  1600000, 1580000, 1650000, 1700000, 1680000, 1750000
+  1000000, 1050000, 1100000, 1080000, 1150000, 1200000, 1180000, 1250000,
+  1300000, 1280000, 1350000, 1400000, 1420000, 1380000, 1450000, 1500000,
+  1480000, 1550000, 1600000, 1580000, 1650000, 1700000, 1680000, 1750000,
 ];
 
 // Risk factors and market conditions
@@ -13,7 +12,7 @@ const riskFactors = {
   marketVolatility: 0.15,
   economicIndicators: 0.12,
   competitivePressure: 0.08,
-  regulatoryChanges: 0.05
+  regulatoryChanges: 0.05,
 };
 
 class AdvancedAnalytics {
@@ -28,7 +27,7 @@ class AdvancedAnalytics {
     if (this.models.linear) return this.models.linear;
 
     const X = historicalData.map((_, i) => [1, i]);
-    const Y = historicalData.map(v => [v]);
+    const Y = historicalData.map((v) => [v]);
 
     const XT = transpose(X);
     const XTX = multiply(XT, X);
@@ -38,7 +37,7 @@ class AdvancedAnalytics {
     this.models.linear = {
       intercept: beta[0][0],
       slope: beta[1][0],
-      r2: this.calculateR2(X, Y, beta)
+      r2: this.calculateR2(X, Y, beta),
     };
 
     return this.models.linear;
@@ -52,18 +51,23 @@ class AdvancedAnalytics {
     const seasonalComponents = [];
 
     for (let i = 0; i < seasonalPeriod; i++) {
-      const seasonalData = historicalData.filter((_, idx) => idx % seasonalPeriod === i);
+      const seasonalData = historicalData.filter(
+        (_, idx) => idx % seasonalPeriod === i
+      );
       const avg = seasonalData.reduce((a, b) => a + b, 0) / seasonalData.length;
       seasonalComponents.push(avg);
     }
 
-    const overallMean = historicalData.reduce((a, b) => a + b, 0) / historicalData.length;
-    const seasonalIndices = seasonalComponents.map(comp => comp / overallMean);
+    const overallMean =
+      historicalData.reduce((a, b) => a + b, 0) / historicalData.length;
+    const seasonalIndices = seasonalComponents.map(
+      (comp) => comp / overallMean
+    );
 
     this.models.seasonal = {
       period: seasonalPeriod,
       indices: seasonalIndices,
-      mean: overallMean
+      mean: overallMean,
     };
 
     return this.models.seasonal;
@@ -75,18 +79,20 @@ class AdvancedAnalytics {
       statistical: this.statisticalAnomalyDetection(data),
       trend: this.trendAnomalyDetection(data),
       seasonal: this.seasonalAnomalyDetection(data),
-      overall: false
+      overall: false,
     };
 
     // Combine anomaly detection methods
-    anomalies.overall = anomalies.statistical || anomalies.trend || anomalies.seasonal;
+    anomalies.overall =
+      anomalies.statistical || anomalies.trend || anomalies.seasonal;
 
     return anomalies;
   }
 
   statisticalAnomalyDetection(data) {
     const mean = data.reduce((a, b) => a + b) / data.length;
-    const variance = data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / data.length;
+    const variance =
+      data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / data.length;
     const stdDev = Math.sqrt(variance);
 
     const currentValue = data[data.length - 1];
@@ -97,7 +103,9 @@ class AdvancedAnalytics {
 
   trendAnomalyDetection(data) {
     const recent = data.slice(-3);
-    const trend = recent.map((val, idx) => val - (idx > 0 ? recent[idx - 1] : 0)).slice(1);
+    const trend = recent
+      .map((val, idx) => val - (idx > 0 ? recent[idx - 1] : 0))
+      .slice(1);
 
     const avgTrend = trend.reduce((a, b) => a + b, 0) / trend.length;
     const currentTrend = recent[recent.length - 1] - recent[recent.length - 2];
@@ -109,7 +117,8 @@ class AdvancedAnalytics {
     if (!this.models.seasonal) this.trainSeasonalModel();
 
     const currentMonth = (data.length - 1) % 12;
-    const expectedValue = this.models.seasonal.mean * this.models.seasonal.indices[currentMonth];
+    const expectedValue =
+      this.models.seasonal.mean * this.models.seasonal.indices[currentMonth];
     const actualValue = data[data.length - 1];
 
     const deviation = Math.abs(actualValue - expectedValue) / expectedValue;
@@ -122,7 +131,7 @@ class AdvancedAnalytics {
       linear: this.predictLinear(horizon),
       seasonal: this.predictSeasonal(horizon),
       ensemble: this.predictEnsemble(horizon),
-      confidence: this.calculateConfidenceIntervals(horizon)
+      confidence: this.calculateConfidenceIntervals(horizon),
     };
 
     return predictions;
@@ -134,7 +143,8 @@ class AdvancedAnalytics {
     const predictions = [];
     for (let i = 1; i <= months; i++) {
       const monthIndex = historicalData.length + i - 1;
-      const prediction = this.models.linear.intercept + this.models.linear.slope * monthIndex;
+      const prediction =
+        this.models.linear.intercept + this.models.linear.slope * monthIndex;
       predictions.push(Math.round(prediction));
     }
 
@@ -182,7 +192,7 @@ class AdvancedAnalytics {
       intervals.push({
         lower: Math.round(basePrediction - uncertainty),
         upper: Math.round(basePrediction + uncertainty),
-        confidence: 0.90
+        confidence: 0.9,
       });
     }
 
@@ -193,25 +203,30 @@ class AdvancedAnalytics {
   assessRisks() {
     this.calculateVolatility();
 
-    const riskScore = Object.values(riskFactors).reduce((a, b) => a + b, 0) * this.calculateVolatility();
+    const riskScore =
+      Object.values(riskFactors).reduce((a, b) => a + b, 0) *
+      this.calculateVolatility();
 
     return {
       overallRisk: riskScore,
       factors: riskFactors,
       volatility: this.calculateVolatility(),
-      recommendations: this.generateRiskRecommendations(riskScore)
+      recommendations: this.generateRiskRecommendations(riskScore),
     };
   }
 
   calculateVolatility() {
     const returns = [];
     for (let i = 1; i < historicalData.length; i++) {
-      const return_pct = (historicalData[i] - historicalData[i - 1]) / historicalData[i - 1];
+      const return_pct =
+        (historicalData[i] - historicalData[i - 1]) / historicalData[i - 1];
       returns.push(return_pct);
     }
 
     const meanReturn = returns.reduce((a, b) => a + b, 0) / returns.length;
-    const variance = returns.reduce((a, b) => a + Math.pow(b - meanReturn, 2), 0) / returns.length;
+    const variance =
+      returns.reduce((a, b) => a + Math.pow(b - meanReturn, 2), 0) /
+      returns.length;
 
     return Math.sqrt(variance);
   }
@@ -220,13 +235,17 @@ class AdvancedAnalytics {
     const recommendations = [];
 
     if (riskScore > 0.3) {
-      recommendations.push("High risk detected - Consider diversifying revenue streams");
-      recommendations.push("Implement additional hedging strategies");
+      recommendations.push(
+        'High risk detected - Consider diversifying revenue streams'
+      );
+      recommendations.push('Implement additional hedging strategies');
     } else if (riskScore > 0.2) {
-      recommendations.push("Moderate risk - Monitor market conditions closely");
-      recommendations.push("Review contingency plans");
+      recommendations.push('Moderate risk - Monitor market conditions closely');
+      recommendations.push('Review contingency plans');
     } else {
-      recommendations.push("Risk levels acceptable - Continue current strategies");
+      recommendations.push(
+        'Risk levels acceptable - Continue current strategies'
+      );
     }
 
     return recommendations;
@@ -243,15 +262,18 @@ class AdvancedAnalytics {
       alerts.push({
         type: 'warning',
         message: 'Revenue anomaly detected - investigate recent transactions',
-        severity: 'high'
+        severity: 'high',
       });
     }
 
-    if (predictions.ensemble[0] < historicalData[historicalData.length - 1] * 0.95) {
+    if (
+      predictions.ensemble[0] <
+      historicalData[historicalData.length - 1] * 0.95
+    ) {
       alerts.push({
         type: 'caution',
         message: 'Predicted revenue decline - review business strategies',
-        severity: 'medium'
+        severity: 'medium',
       });
     }
 
@@ -259,7 +281,7 @@ class AdvancedAnalytics {
       alerts.push({
         type: 'risk',
         message: 'Elevated risk levels - consider risk mitigation measures',
-        severity: 'high'
+        severity: 'high',
       });
     }
 
@@ -268,12 +290,15 @@ class AdvancedAnalytics {
 
   calculateR2(X, Y, beta) {
     const yMean = Y.reduce((a, b) => a + b[0], 0) / Y.length;
-    const yPredicted = X.map(row => beta[0][0] + beta[1][0] * row[1]);
+    const yPredicted = X.map((row) => beta[0][0] + beta[1][0] * row[1]);
 
-    const ssRes = Y.reduce((sum, y, i) => sum + Math.pow(y[0] - yPredicted[i], 2), 0);
+    const ssRes = Y.reduce(
+      (sum, y, i) => sum + Math.pow(y[0] - yPredicted[i], 2),
+      0
+    );
     const ssTot = Y.reduce((sum, y) => sum + Math.pow(y[0] - yMean, 2), 0);
 
-    return 1 - (ssRes / ssTot);
+    return 1 - ssRes / ssTot;
   }
 }
 
@@ -291,7 +316,10 @@ export function predictNextMonth() {
 }
 
 export function detectAnomaly(currentRevenue) {
-  const anomalies = analyticsEngine.detectAnomalies([...historicalData.slice(0, -1), currentRevenue]);
+  const anomalies = analyticsEngine.detectAnomalies([
+    ...historicalData.slice(0, -1),
+    currentRevenue,
+  ]);
   return anomalies.overall;
 }
 
@@ -308,24 +336,24 @@ export function getAnalytics() {
       nextMonth: predictions.ensemble[0],
       threeMonth: predictions.ensemble.slice(0, 3),
       sixMonth: predictions.ensemble,
-      confidenceIntervals: predictions.confidence
+      confidenceIntervals: predictions.confidence,
     },
     anomalies: {
       detected: anomalies.overall,
-      details: anomalies
+      details: anomalies,
     },
     riskAssessment: risks,
     alerts: alerts,
     historicalData,
     models: {
       linear: analyticsEngine.models.linear,
-      seasonal: analyticsEngine.models.seasonal
+      seasonal: analyticsEngine.models.seasonal,
     },
     metadata: {
       lastUpdated: new Date().toISOString(),
       dataPoints: historicalData.length,
-      predictionHorizon: 6
-    }
+      predictionHorizon: 6,
+    },
   };
 }
 

@@ -21,23 +21,28 @@ const logger = winston.createLogger({
   ),
   defaultMeta: { service: 'create-oscar-broome-login' },
   transports: [
-    new winston.transports.File({ filename: 'logs/create_oscar_broome_login.log' }),
+    new winston.transports.File({
+      filename: 'logs/create_oscar_broome_login.log',
+    }),
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.simple()
-      )
-    })
-  ]
+      ),
+    }),
+  ],
 });
 
 async function createOscarBroomeLogin() {
   try {
     console.log('🚀 Creating login for Oscar Broome at JPMorgan.com');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
 
     // Connect to database
-    const dbUri = process.env.MONGODB_URI || process.env.DATABASE_URL || 'mongodb://localhost:27017/oscar-broome-revenue';
+    const dbUri =
+      process.env.MONGODB_URI ||
+      process.env.DATABASE_URL ||
+      'mongodb://localhost:27017/oscar-broome-revenue';
     await mongoose.connect(dbUri);
     console.log('✅ Connected to database');
 
@@ -57,7 +62,7 @@ async function createOscarBroomeLogin() {
       password: 'SecurePass2024!', // Strong password
       firstName: 'Oscar',
       lastName: 'Broome',
-      role: 'admin' // Admin role for JPMorgan access
+      role: 'admin', // Admin role for JPMorgan access
     };
 
     console.log('👤 Registering user:', userData.email);
@@ -65,7 +70,7 @@ async function createOscarBroomeLogin() {
     // Check if user already exists
     const existingUser = await mongoose.model('User').findOne({
       tenantId: userData.tenantId,
-      $or: [{ email: userData.email }, { username: userData.username }]
+      $or: [{ email: userData.email }, { username: userData.username }],
     });
 
     if (existingUser) {
@@ -96,15 +101,21 @@ async function createOscarBroomeLogin() {
     console.log('   - Role:', userData.role);
 
     console.log('\n🔑 JWT Tokens generated:');
-    console.log('   - Access Token:', result.tokens.accessToken.substring(0, 50) + '...');
-    console.log('   - Refresh Token:', result.tokens.refreshToken.substring(0, 50) + '...');
+    console.log(
+      '   - Access Token:',
+      result.tokens.accessToken.substring(0, 50) + '...'
+    );
+    console.log(
+      '   - Refresh Token:',
+      result.tokens.refreshToken.substring(0, 50) + '...'
+    );
     console.log('   - Expires In:', result.tokens.expiresIn);
 
     // Log success
     logger.info('Oscar Broome login created successfully', {
       userId: result.user._id,
       email: userData.email,
-      tenantId: userData.tenantId
+      tenantId: userData.tenantId,
     });
 
     console.log('\n🎉 Login creation completed successfully!');
@@ -112,10 +123,12 @@ async function createOscarBroomeLogin() {
     console.log('   1. Use the credentials above to login');
     console.log('   2. Change the password after first login');
     console.log('   3. Configure additional security settings if needed');
-
   } catch (error) {
     console.error('❌ Failed to create Oscar Broome login:', error.message);
-    logger.error('Login creation failed', { error: error.message, stack: error.stack });
+    logger.error('Login creation failed', {
+      error: error.message,
+      stack: error.stack,
+    });
     process.exit(1);
   } finally {
     await mongoose.disconnect();
@@ -124,7 +137,7 @@ async function createOscarBroomeLogin() {
 }
 
 // Run the script
-createOscarBroomeLogin().catch(error => {
+createOscarBroomeLogin().catch((error) => {
   console.error('Script execution failed:', error);
   process.exit(1);
 });

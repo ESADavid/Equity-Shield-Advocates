@@ -20,19 +20,22 @@ const securityLogger = winston.createLogger({
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.simple()
-      )
-    })
-  ]
+      ),
+    }),
+  ],
 });
 
 // Security configuration
 const SECURITY_CONFIG = {
   // Rate limiting
-  RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
+  RATE_LIMIT_WINDOW_MS:
+    parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
   RATE_LIMIT_MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
 
   // CORS settings
-  CORS_ORIGINS: (process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:8080').split(','),
+  CORS_ORIGINS: (
+    process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:8080'
+  ).split(','),
   CORS_METHODS: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   CORS_HEADERS: ['Content-Type', 'Authorization', 'X-Requested-With'],
 
@@ -65,7 +68,7 @@ const SECURITY_CONFIG = {
   FRAME_OPTIONS: 'DENY',
 
   // Referrer policy
-  REFERRER_POLICY: 'strict-origin-when-cross-origin'
+  REFERRER_POLICY: 'strict-origin-when-cross-origin',
 };
 
 // Rate limiting store
@@ -74,14 +77,15 @@ const rateLimitStore = new Map();
 // Input validation patterns
 const VALIDATION_PATTERNS = {
   EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/,
+  PASSWORD:
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/,
   USERNAME: /^[a-zA-Z0-9_-]{3,20}$/,
   PHONE: /^\+?[\d\s\-()]{10,}$/,
   ZIPCODE: /^\d{5}(-\d{4})?$/,
   CREDIT_CARD: /^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/,
   AMOUNT: /^\d+(\.\d{1,2})?$/,
   ALPHA_ONLY: /^[a-zA-Z\s]+$/,
-  ALPHA_NUMERIC: /^[a-zA-Z0-9\s]+$/
+  ALPHA_NUMERIC: /^[a-zA-Z0-9\s]+$/,
 };
 
 class SecurityMiddleware {
@@ -105,14 +109,22 @@ class SecurityMiddleware {
     }
 
     // Get or create request count for this key
-    const requestData = this.requestCounts.get(key) || { count: 0, timestamp: now };
+    const requestData = this.requestCounts.get(key) || {
+      count: 0,
+      timestamp: now,
+    };
 
     if (requestData.count >= SECURITY_CONFIG.RATE_LIMIT_MAX_REQUESTS) {
-      securityLogger.warn(`Rate limit exceeded for IP: ${clientIP}, path: ${req.path}`);
+      securityLogger.warn(
+        `Rate limit exceeded for IP: ${clientIP}, path: ${req.path}`
+      );
       return res.status(429).json({
         error: 'Too many requests',
         message: 'Rate limit exceeded. Please try again later.',
-        retryAfter: Math.ceil((requestData.timestamp + SECURITY_CONFIG.RATE_LIMIT_WINDOW_MS - now) / 1000)
+        retryAfter: Math.ceil(
+          (requestData.timestamp + SECURITY_CONFIG.RATE_LIMIT_WINDOW_MS - now) /
+            1000
+        ),
       });
     }
 
@@ -123,8 +135,13 @@ class SecurityMiddleware {
     // Add rate limit headers
     res.set({
       'X-RateLimit-Limit': SECURITY_CONFIG.RATE_LIMIT_MAX_REQUESTS,
-      'X-RateLimit-Remaining': Math.max(0, SECURITY_CONFIG.RATE_LIMIT_MAX_REQUESTS - requestData.count),
-      'X-RateLimit-Reset': new Date(requestData.timestamp + SECURITY_CONFIG.RATE_LIMIT_WINDOW_MS).toISOString()
+      'X-RateLimit-Remaining': Math.max(
+        0,
+        SECURITY_CONFIG.RATE_LIMIT_MAX_REQUESTS - requestData.count
+      ),
+      'X-RateLimit-Reset': new Date(
+        requestData.timestamp + SECURITY_CONFIG.RATE_LIMIT_WINDOW_MS
+      ).toISOString(),
     });
 
     next();
@@ -156,12 +173,12 @@ class SecurityMiddleware {
       'Strict-Transport-Security': `max-age=${SECURITY_CONFIG.HSTS_MAX_AGE}${SECURITY_CONFIG.HSTS_INCLUDE_SUBDOMAINS ? '; includeSubDomains' : ''}${SECURITY_CONFIG.HSTS_PRELOAD ? '; preload' : ''}`,
 
       // Remove server information
-      'Server': 'Oscar Broome Revenue System',
+      Server: 'Oscar Broome Revenue System',
 
       // Cache control for sensitive content
       'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
+      Pragma: 'no-cache',
+      Expires: '0',
     });
 
     next();
@@ -172,13 +189,17 @@ class SecurityMiddleware {
     const origin = req.headers.origin;
 
     // Check if origin is allowed
-    if (SECURITY_CONFIG.CORS_ORIGINS.includes('*') || SECURITY_CONFIG.CORS_ORIGINS.includes(origin)) {
+    if (
+      SECURITY_CONFIG.CORS_ORIGINS.includes('*') ||
+      SECURITY_CONFIG.CORS_ORIGINS.includes(origin)
+    ) {
       res.set({
-        'Access-Control-Allow-Origin': origin || SECURITY_CONFIG.CORS_ORIGINS[0],
+        'Access-Control-Allow-Origin':
+          origin || SECURITY_CONFIG.CORS_ORIGINS[0],
         'Access-Control-Allow-Methods': SECURITY_CONFIG.CORS_METHODS.join(', '),
         'Access-Control-Allow-Headers': SECURITY_CONFIG.CORS_HEADERS.join(', '),
         'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Max-Age': '86400' // 24 hours
+        'Access-Control-Max-Age': '86400', // 24 hours
       });
     }
 
@@ -197,27 +218,38 @@ class SecurityMiddleware {
       // Check request size
       const contentLength = parseInt(req.headers['content-length'] || '0');
       if (contentLength > SECURITY_CONFIG.MAX_BODY_LENGTH) {
-        securityLogger.warn(`Request too large: ${contentLength} bytes from ${this.getClientIP(req)}`);
+        securityLogger.warn(
+          `Request too large: ${contentLength} bytes from ${this.getClientIP(req)}`
+        );
         return res.status(413).json({ error: 'Request entity too large' });
       }
 
       // Check URL length
       if (req.url.length > SECURITY_CONFIG.MAX_URL_LENGTH) {
-        securityLogger.warn(`URL too long: ${req.url.length} chars from ${this.getClientIP(req)}`);
+        securityLogger.warn(
+          `URL too long: ${req.url.length} chars from ${this.getClientIP(req)}`
+        );
         return res.status(414).json({ error: 'URI too long' });
       }
 
       // Validate query parameters
       if (req.query) {
         for (const [key, value] of Object.entries(req.query)) {
-          if (typeof value === 'string' && value.length > SECURITY_CONFIG.MAX_QUERY_LENGTH) {
-            securityLogger.warn(`Query parameter too long: ${key} from ${this.getClientIP(req)}`);
+          if (
+            typeof value === 'string' &&
+            value.length > SECURITY_CONFIG.MAX_QUERY_LENGTH
+          ) {
+            securityLogger.warn(
+              `Query parameter too long: ${key} from ${this.getClientIP(req)}`
+            );
             return res.status(400).json({ error: 'Query parameter too long' });
           }
 
           // Check for suspicious patterns
           if (this.containsSuspiciousPatterns(value)) {
-            securityLogger.warn(`Suspicious query parameter: ${key} from ${this.getClientIP(req)}`);
+            securityLogger.warn(
+              `Suspicious query parameter: ${key} from ${this.getClientIP(req)}`
+            );
             this.recordSuspiciousActivity(req);
             return res.status(400).json({ error: 'Invalid input detected' });
           }
@@ -228,10 +260,12 @@ class SecurityMiddleware {
       if (req.body && typeof req.body === 'object') {
         const validationResult = this.validateRequestBody(req.body);
         if (!validationResult.valid) {
-          securityLogger.warn(`Invalid request body from ${this.getClientIP(req)}: ${validationResult.errors.join(', ')}`);
+          securityLogger.warn(
+            `Invalid request body from ${this.getClientIP(req)}: ${validationResult.errors.join(', ')}`
+          );
           return res.status(400).json({
             error: 'Invalid input',
-            details: validationResult.errors
+            details: validationResult.errors,
           });
         }
       }
@@ -271,11 +305,13 @@ class SecurityMiddleware {
 
   // Helper methods
   getClientIP(req) {
-    return req.ip ||
-           req.connection.remoteAddress ||
-           req.socket.remoteAddress ||
-           (req.connection.socket ? req.connection.socket.remoteAddress : null) ||
-           'unknown';
+    return (
+      req.ip ||
+      req.connection.remoteAddress ||
+      req.socket.remoteAddress ||
+      (req.connection.socket ? req.connection.socket.remoteAddress : null) ||
+      'unknown'
+    );
   }
 
   buildCSP() {
@@ -288,7 +324,7 @@ class SecurityMiddleware {
       "connect-src 'self'",
       "object-src 'none'",
       "base-uri 'self'",
-      "form-action 'self'"
+      "form-action 'self'",
     ].join('; ');
   }
 
@@ -303,10 +339,10 @@ class SecurityMiddleware {
       /drop\s+table/i,
       /\bor\b\s+\d+\s*=\s*\d+|\band\b\s+\d+\s*=\s*\d+/i,
       /--/g,
-      /\/\*.*\*\//g
+      /\/\*.*\*\//g,
     ];
 
-    return suspiciousPatterns.some(pattern => pattern.test(value));
+    return suspiciousPatterns.some((pattern) => pattern.test(value));
   }
 
   validateRequestBody(body) {
@@ -319,11 +355,16 @@ class SecurityMiddleware {
 
     // Password validation
     if (body.password && !VALIDATION_PATTERNS.PASSWORD.test(body.password)) {
-      errors.push('Password must be at least 12 characters with uppercase, lowercase, number, and special character');
+      errors.push(
+        'Password must be at least 12 characters with uppercase, lowercase, number, and special character'
+      );
     }
 
     // Amount validation
-    if (body.amount && !VALIDATION_PATTERNS.AMOUNT.test(body.amount.toString())) {
+    if (
+      body.amount &&
+      !VALIDATION_PATTERNS.AMOUNT.test(body.amount.toString())
+    ) {
       errors.push('Invalid amount format');
     }
 
@@ -334,7 +375,7 @@ class SecurityMiddleware {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -353,7 +394,7 @@ class SecurityMiddleware {
     if (obj === null || typeof obj !== 'object') return obj;
 
     if (Array.isArray(obj)) {
-      return obj.map(item => this.sanitizeObject(item));
+      return obj.map((item) => this.sanitizeObject(item));
     }
 
     const sanitized = {};
@@ -375,7 +416,7 @@ class SecurityMiddleware {
     const activity = this.suspiciousActivities.get(clientIP) || {
       count: 0,
       lastActivity: new Date(),
-      activities: []
+      activities: [],
     };
 
     activity.count++;
@@ -384,7 +425,7 @@ class SecurityMiddleware {
       timestamp: new Date(),
       path: req.path,
       method: req.method,
-      userAgent: req.headers['user-agent']
+      userAgent: req.headers['user-agent'],
     });
 
     // Keep only last 10 activities
@@ -402,7 +443,10 @@ class SecurityMiddleware {
     return {
       activeRateLimits: this.requestCounts.size,
       suspiciousActivities: this.suspiciousActivities.size,
-      totalRequests: Array.from(this.requestCounts.values()).reduce((sum, data) => sum + data.count, 0)
+      totalRequests: Array.from(this.requestCounts.values()).reduce(
+        (sum, data) => sum + data.count,
+        0
+      ),
     };
   }
 }
@@ -414,9 +458,12 @@ module.exports = {
   SecurityMiddleware,
   securityMiddleware,
   rateLimit: (req, res, next) => securityMiddleware.rateLimit(req, res, next),
-  securityHeaders: (req, res, next) => securityMiddleware.securityHeaders(req, res, next),
+  securityHeaders: (req, res, next) =>
+    securityMiddleware.securityHeaders(req, res, next),
   cors: (req, res, next) => securityMiddleware.cors(req, res, next),
-  validateInput: (req, res, next) => securityMiddleware.validateInput(req, res, next),
-  sanitizeInput: (req, res, next) => securityMiddleware.sanitizeInput(req, res, next),
-  getSecurityMetrics: () => securityMiddleware.getSecurityMetrics()
+  validateInput: (req, res, next) =>
+    securityMiddleware.validateInput(req, res, next),
+  sanitizeInput: (req, res, next) =>
+    securityMiddleware.sanitizeInput(req, res, next),
+  getSecurityMetrics: () => securityMiddleware.getSecurityMetrics(),
 };

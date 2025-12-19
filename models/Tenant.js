@@ -1,139 +1,146 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-const tenantSchema = new mongoose.Schema({
-  tenantId: {
-    type: String,
-    required: true,
-    unique: true,
-    index: true
-  },
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  domain: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true
-  },
-  description: {
-    type: String,
-    trim: true
-  },
-  status: {
-    type: String,
-    enum: ['active', 'suspended', 'inactive'],
-    default: 'active'
-  },
-  settings: {
-    timezone: {
-      type: String,
-      default: 'UTC'
-    },
-    currency: {
-      type: String,
-      default: 'USD'
-    },
-    features: {
-      payroll: { type: Boolean, default: true },
-      merchant: { type: Boolean, default: true },
-      jpmorgan: { type: Boolean, default: true },
-      analytics: { type: Boolean, default: true },
-      blockchain: { type: Boolean, default: true }
-    },
-    limits: {
-      maxUsers: { type: Number, default: 100 },
-      maxTransactions: { type: Number, default: 10000 },
-      storageLimit: { type: Number, default: 1073741824 } // 1GB in bytes
-    }
-  },
-  contact: {
-    email: {
+const tenantSchema = new mongoose.Schema(
+  {
+    tenantId: {
       type: String,
       required: true,
-      lowercase: true,
-      trim: true
-    },
-    phone: {
-      type: String,
-      trim: true
-    },
-    address: {
-      street: String,
-      city: String,
-      state: String,
-      zipCode: String,
-      country: String
-    }
-  },
-  subscription: {
-    plan: {
-      type: String,
-      enum: ['starter', 'professional', 'enterprise'],
-      default: 'professional'
-    },
-    status: {
-      type: String,
-      enum: ['trial', 'active', 'expired', 'cancelled'],
-      default: 'trial'
-    },
-    startDate: {
-      type: Date,
-      default: Date.now
-    },
-    endDate: {
-      type: Date
-    },
-    autoRenew: {
-      type: Boolean,
-      default: true
-    }
-  },
-  apiKeys: [{
-    key: {
-      type: String,
-      required: true
+      unique: true,
+      index: true,
     },
     name: {
       type: String,
-      required: true
+      required: true,
+      trim: true,
     },
-    permissions: [{
+    domain: {
       type: String,
-      enum: ['read', 'write', 'admin']
-    }],
-    createdAt: {
-      type: Date,
-      default: Date.now
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
-    lastUsed: Date,
-    isActive: {
-      type: Boolean,
-      default: true
-    }
-  }],
-  audit: {
-    createdBy: {
+    description: {
       type: String,
-      required: true
+      trim: true,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now
+    status: {
+      type: String,
+      enum: ['active', 'suspended', 'inactive'],
+      default: 'active',
     },
-    updatedBy: String,
-    updatedAt: Date,
-    lastActivity: Date
+    settings: {
+      timezone: {
+        type: String,
+        default: 'UTC',
+      },
+      currency: {
+        type: String,
+        default: 'USD',
+      },
+      features: {
+        payroll: { type: Boolean, default: true },
+        merchant: { type: Boolean, default: true },
+        jpmorgan: { type: Boolean, default: true },
+        analytics: { type: Boolean, default: true },
+        blockchain: { type: Boolean, default: true },
+      },
+      limits: {
+        maxUsers: { type: Number, default: 100 },
+        maxTransactions: { type: Number, default: 10000 },
+        storageLimit: { type: Number, default: 1073741824 }, // 1GB in bytes
+      },
+    },
+    contact: {
+      email: {
+        type: String,
+        required: true,
+        lowercase: true,
+        trim: true,
+      },
+      phone: {
+        type: String,
+        trim: true,
+      },
+      address: {
+        street: String,
+        city: String,
+        state: String,
+        zipCode: String,
+        country: String,
+      },
+    },
+    subscription: {
+      plan: {
+        type: String,
+        enum: ['starter', 'professional', 'enterprise'],
+        default: 'professional',
+      },
+      status: {
+        type: String,
+        enum: ['trial', 'active', 'expired', 'cancelled'],
+        default: 'trial',
+      },
+      startDate: {
+        type: Date,
+        default: Date.now,
+      },
+      endDate: {
+        type: Date,
+      },
+      autoRenew: {
+        type: Boolean,
+        default: true,
+      },
+    },
+    apiKeys: [
+      {
+        key: {
+          type: String,
+          required: true,
+        },
+        name: {
+          type: String,
+          required: true,
+        },
+        permissions: [
+          {
+            type: String,
+            enum: ['read', 'write', 'admin'],
+          },
+        ],
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+        lastUsed: Date,
+        isActive: {
+          type: Boolean,
+          default: true,
+        },
+      },
+    ],
+    audit: {
+      createdBy: {
+        type: String,
+        required: true,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+      updatedBy: String,
+      updatedAt: Date,
+      lastActivity: Date,
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
-}, {
-  timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
-});
+);
 
 // Indexes for performance
 tenantSchema.index({ domain: 1 });
@@ -142,31 +149,34 @@ tenantSchema.index({ 'subscription.status': 1 });
 tenantSchema.index({ 'subscription.endDate': 1 });
 
 // Virtual for subscription status
-tenantSchema.virtual('isSubscriptionActive').get(function() {
-  return this.subscription.status === 'active' ||
-         (this.subscription.status === 'trial' && this.subscription.endDate > new Date());
+tenantSchema.virtual('isSubscriptionActive').get(function () {
+  return (
+    this.subscription.status === 'active' ||
+    (this.subscription.status === 'trial' &&
+      this.subscription.endDate > new Date())
+  );
 });
 
 // Virtual for usage statistics
-tenantSchema.virtual('usageStats').get(async function() {
+tenantSchema.virtual('usageStats').get(async function () {
   const User = mongoose.model('User');
   const Transaction = mongoose.model('Transaction');
 
   const [userCount, transactionCount] = await Promise.all([
     User.countDocuments({ tenantId: this.tenantId }),
-    Transaction.countDocuments({ tenantId: this.tenantId })
+    Transaction.countDocuments({ tenantId: this.tenantId }),
   ]);
 
   return {
     users: userCount,
     transactions: transactionCount,
     userLimit: this.settings.limits.maxUsers,
-    transactionLimit: this.settings.limits.maxTransactions
+    transactionLimit: this.settings.limits.maxTransactions,
   };
 });
 
 // Pre-save middleware to hash API keys
-tenantSchema.pre('save', async function(next) {
+tenantSchema.pre('save', async function (next) {
   if (this.isModified('apiKeys')) {
     for (const apiKey of this.apiKeys) {
       if (apiKey.key && !apiKey.key.startsWith('$2a$')) {
@@ -182,10 +192,14 @@ tenantSchema.methods = {
   // Verify API key
   async verifyApiKey(key) {
     for (const apiKey of this.apiKeys) {
-      if (apiKey.isActive && await bcrypt.compare(key, apiKey.key)) {
+      if (apiKey.isActive && (await bcrypt.compare(key, apiKey.key))) {
         apiKey.lastUsed = new Date();
         await this.save();
-        return { valid: true, permissions: apiKey.permissions, name: apiKey.name };
+        return {
+          valid: true,
+          permissions: apiKey.permissions,
+          name: apiKey.name,
+        };
       }
     }
     return { valid: false };
@@ -206,7 +220,7 @@ tenantSchema.methods = {
       current,
       limit,
       remaining: Math.max(0, limit - current),
-      exceeded: current >= limit
+      exceeded: current >= limit,
     };
   },
 
@@ -217,14 +231,14 @@ tenantSchema.methods = {
 
     const [userCount, transactionCount] = await Promise.all([
       User.countDocuments({ tenantId: this.tenantId }),
-      Transaction.countDocuments({ tenantId: this.tenantId })
+      Transaction.countDocuments({ tenantId: this.tenantId }),
     ]);
 
     return {
       users: userCount,
       transactions: transactionCount,
       userLimit: this.settings.limits.maxUsers,
-      transactionLimit: this.settings.limits.maxTransactions
+      transactionLimit: this.settings.limits.maxTransactions,
     };
   },
 
@@ -242,7 +256,7 @@ tenantSchema.methods = {
     this.audit.updatedAt = new Date();
     this.audit.updatedBy = 'system';
     return this.save();
-  }
+  },
 };
 
 // Static methods
@@ -256,7 +270,7 @@ tenantSchema.statics = {
   findExpiredSubscriptions() {
     return this.find({
       'subscription.status': { $in: ['trial', 'active'] },
-      'subscription.endDate': { $lt: new Date() }
+      'subscription.endDate': { $lt: new Date() },
     });
   },
 
@@ -268,7 +282,7 @@ tenantSchema.statics = {
       domain: 'oscarbroome.com',
       description: 'Default tenant for Oscar Broome Revenue system',
       contact: {
-        email: 'admin@oscarbroome.com'
+        email: 'admin@oscarbroome.com',
       },
       settings: {
         features: {
@@ -276,20 +290,19 @@ tenantSchema.statics = {
           merchant: true,
           jpmorgan: true,
           analytics: true,
-          blockchain: true
-        }
+          blockchain: true,
+        },
       },
       audit: {
-        createdBy: 'system'
-      }
+        createdBy: 'system',
+      },
     };
 
-    return this.findOneAndUpdate(
-      { tenantId: 'default' },
-      defaultTenant,
-      { upsert: true, new: true }
-    );
-  }
+    return this.findOneAndUpdate({ tenantId: 'default' }, defaultTenant, {
+      upsert: true,
+      new: true,
+    });
+  },
 };
 
 const Tenant = mongoose.model('Tenant', tenantSchema);

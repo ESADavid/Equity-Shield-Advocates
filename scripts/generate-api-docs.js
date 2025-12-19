@@ -18,41 +18,41 @@ const options = {
       version: '2.0.0',
       contact: {
         name: 'OSCAR BROOME Development Team',
-        email: 'support@oscarbroome.com'
-      }
+        email: 'support@oscarbroome.com',
+      },
     },
     servers: [
       {
         url: 'http://localhost:3000',
-        description: 'Development server'
+        description: 'Development server',
       },
       {
         url: 'https://api.oscarbroome.com',
-        description: 'Production server'
-      }
+        description: 'Production server',
+      },
     ],
     security: [
       {
-        bearerAuth: []
-      }
+        bearerAuth: [],
+      },
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
-          bearerFormat: 'JWT'
-        }
-      }
-    }
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
   apis: [
     './routes/*.js',
     './models/*.js',
     './services/*.js',
     './controllers/*.js',
-    './server-enhanced.js'
-  ]
+    './server-enhanced.js',
+  ],
 };
 
 const specs = swaggerJsdoc(options);
@@ -121,21 +121,22 @@ const postmanCollection = {
   info: {
     name: 'OSCAR BROOME REVENUE API',
     description: 'Comprehensive financial management platform API',
-    schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json'
+    schema:
+      'https://schema.getpostman.com/json/collection/v2.1.0/collection.json',
   },
   item: [],
   variable: [
     {
       key: 'baseUrl',
       value: 'http://localhost:3000',
-      type: 'string'
+      type: 'string',
     },
     {
       key: 'token',
       value: '',
-      type: 'string'
-    }
-  ]
+      type: 'string',
+    },
+  ],
 };
 
 // Add authentication endpoints
@@ -149,22 +150,26 @@ postmanCollection.item.push({
         header: [
           {
             key: 'Content-Type',
-            value: 'application/json'
-          }
+            value: 'application/json',
+          },
         ],
         body: {
           mode: 'raw',
-          raw: JSON.stringify({
-            username: '{{username}}',
-            password: '{{password}}'
-          }, null, 2)
+          raw: JSON.stringify(
+            {
+              username: '{{username}}',
+              password: '{{password}}',
+            },
+            null,
+            2
+          ),
         },
         url: {
           raw: '{{baseUrl}}/api/auth/login',
           host: ['{{baseUrl}}'],
-          path: ['api', 'auth', 'login']
-        }
-      }
+          path: ['api', 'auth', 'login'],
+        },
+      },
     },
     {
       name: 'Get Profile',
@@ -173,17 +178,17 @@ postmanCollection.item.push({
         header: [
           {
             key: 'Authorization',
-            value: 'Bearer {{token}}'
-          }
+            value: 'Bearer {{token}}',
+          },
         ],
         url: {
           raw: '{{baseUrl}}/api/auth/profile',
           host: ['{{baseUrl}}'],
-          path: ['api', 'auth', 'profile']
-        }
-      }
-    }
-  ]
+          path: ['api', 'auth', 'profile'],
+        },
+      },
+    },
+  ],
 });
 
 // Add system endpoints
@@ -198,9 +203,9 @@ postmanCollection.item.push({
         url: {
           raw: '{{baseUrl}}/health',
           host: ['{{baseUrl}}'],
-          path: ['health']
-        }
-      }
+          path: ['health'],
+        },
+      },
     },
     {
       name: 'API Status',
@@ -210,14 +215,19 @@ postmanCollection.item.push({
         url: {
           raw: '{{baseUrl}}/api/status',
           host: ['{{baseUrl}}'],
-          path: ['api', 'status']
-        }
-      }
-    }
-  ]
+          path: ['api', 'status'],
+        },
+      },
+    },
+  ],
 });
 
-const postmanPath = path.join(__dirname, '..', 'docs', 'postman-collection.json');
+const postmanPath = path.join(
+  __dirname,
+  '..',
+  'docs',
+  'postman-collection.json'
+);
 fs.writeFileSync(postmanPath, JSON.stringify(postmanCollection, null, 2));
 
 logger.info(`✅ Postman collection generated: ${postmanPath}`);

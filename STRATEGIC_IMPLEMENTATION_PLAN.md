@@ -627,4 +627,4 @@ This strategic implementation plan provides a comprehensive framework for:
 
 ---
 
-*"From the House of David, we build prosperity for all."*
+_"From the House of David, we build prosperity for all."_

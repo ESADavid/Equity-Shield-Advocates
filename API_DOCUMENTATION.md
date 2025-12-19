@@ -11,16 +11,19 @@ All API endpoints require authentication using quantum-secure JWT tokens or basi
 ### Authentication Methods
 
 #### JWT Token Authentication
+
 ```javascript
 Authorization: Bearer <jwt_token>
 ```
 
 #### Basic Authentication
+
 ```javascript
 Authorization: Basic <base64_encoded_credentials>
 ```
 
 ### Token Generation
+
 ```javascript
 POST /auth/login
 Content-Type: application/json
@@ -33,6 +36,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```javascript
 {
   "success": true,
@@ -49,6 +53,7 @@ Response:
 ## 📡 JPMorgan Control Center APIs
 
 ### Base URL
+
 ```
 https://api.oscar-broome.com/jpmorgan/control
 ```
@@ -56,12 +61,14 @@ https://api.oscar-broome.com/jpmorgan/control
 ### 1. System Status
 
 #### Get System Status
+
 ```http
 GET /jpmorgan/control/status
 Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```javascript
 {
   "status": "operational",
@@ -88,16 +95,19 @@ Authorization: Bearer <token>
 ### 2. System Metrics
 
 #### Get Performance Metrics
+
 ```http
 GET /jpmorgan/control/metrics
 Authorization: Bearer <token>
 ```
 
 **Query Parameters:**
+
 - `period` (optional): `1h`, `24h`, `7d`, `30d` (default: `24h`)
 - `metrics` (optional): comma-separated list of metrics
 
 **Response:**
+
 ```javascript
 {
   "period": "24h",
@@ -130,12 +140,14 @@ Authorization: Bearer <token>
 ### 3. Activity Log
 
 #### Get Recent Activities
+
 ```http
 GET /jpmorgan/control/activities
 Authorization: Bearer <token>
 ```
 
 **Query Parameters:**
+
 - `limit` (optional): Number of activities to return (default: 50, max: 500)
 - `offset` (optional): Pagination offset (default: 0)
 - `filter` (optional): Filter by action type, user, or status
@@ -143,6 +155,7 @@ Authorization: Bearer <token>
 - `end_date` (optional): ISO 8601 end date
 
 **Response:**
+
 ```javascript
 {
   "total": 1250,
@@ -169,6 +182,7 @@ Authorization: Bearer <token>
 ### 4. Execute Control Actions
 
 #### Execute System Action
+
 ```http
 POST /jpmorgan/control/execute
 Authorization: Bearer <token>
@@ -176,6 +190,7 @@ Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```javascript
 {
   "action": "emergency_stop",
@@ -188,6 +203,7 @@ Content-Type: application/json
 ```
 
 **Available Actions:**
+
 - `emergency_stop`: Halt all operations
 - `system_reset`: Restart all services
 - `backup_initiate`: Trigger data backup
@@ -195,6 +211,7 @@ Content-Type: application/json
 - `maintenance_mode`: Enable/disable maintenance mode
 
 **Response:**
+
 ```javascript
 {
   "success": true,
@@ -208,6 +225,7 @@ Content-Type: application/json
 ## 🌐 Website Management APIs
 
 ### Base URL
+
 ```
 https://api.oscar-broome.com/jpmorgan/control/websites
 ```
@@ -215,12 +233,14 @@ https://api.oscar-broome.com/jpmorgan/control/websites
 ### 1. Get Website List
 
 #### List Managed Websites
+
 ```http
 GET /jpmorgan/control/websites
 Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```javascript
 {
   "websites": [
@@ -241,6 +261,7 @@ Authorization: Bearer <token>
 ### 2. Website Actions
 
 #### Execute Website Action
+
 ```http
 POST /jpmorgan/control/website-action
 Authorization: Bearer <token>
@@ -248,6 +269,7 @@ Content-Type: application/json
 ```
 
 **Login Control:**
+
 ```javascript
 {
   "action": "login_control",
@@ -261,6 +283,7 @@ Content-Type: application/json
 ```
 
 **Configuration Update:**
+
 ```javascript
 {
   "action": "config_update",
@@ -275,6 +298,7 @@ Content-Type: application/json
 ```
 
 **Content Management:**
+
 ```javascript
 {
   "action": "content_modify",
@@ -288,6 +312,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```javascript
 {
   "success": true,
@@ -301,6 +326,7 @@ Content-Type: application/json
 ## 🏦 Banking Operations APIs
 
 ### Base URL
+
 ```
 https://api.oscar-broome.com/jpmorgan/control/banking
 ```
@@ -308,12 +334,14 @@ https://api.oscar-broome.com/jpmorgan/control/banking
 ### 1. Account Management
 
 #### Get Banking Accounts
+
 ```http
 GET /jpmorgan/control/banking/accounts
 Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```javascript
 {
   "accounts": [
@@ -334,6 +362,7 @@ Authorization: Bearer <token>
 ### 2. Banking Actions
 
 #### Fund Transfer
+
 ```http
 POST /jpmorgan/control/banking-action
 Authorization: Bearer <token>
@@ -355,6 +384,7 @@ Content-Type: application/json
 ```
 
 #### Process Payment
+
 ```javascript
 {
   "action": "process_payment",
@@ -371,6 +401,7 @@ Content-Type: application/json
 ```
 
 #### Account Maintenance
+
 ```javascript
 {
   "action": "account_maintenance",
@@ -384,6 +415,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```javascript
 {
   "success": true,
@@ -401,6 +433,7 @@ Content-Type: application/json
 ## 📊 Earnings & Analytics APIs
 
 ### Base URL
+
 ```
 https://api.oscar-broome.com/api
 ```
@@ -408,18 +441,21 @@ https://api.oscar-broome.com/api
 ### 1. Earnings Data
 
 #### Get Earnings Data
+
 ```http
 GET /api/earnings
 Authorization: Bearer <token>
 ```
 
 **Query Parameters:**
+
 - `period` (optional): `daily`, `weekly`, `monthly`, `yearly`
 - `start_date` (optional): ISO 8601 date
 - `end_date` (optional): ISO 8601 date
 - `stream` (optional): Filter by revenue stream
 
 **Response:**
+
 ```javascript
 {
   "period": "monthly",
@@ -448,18 +484,21 @@ Authorization: Bearer <token>
 ### 2. Analytics Data
 
 #### Get Revenue Analytics
+
 ```http
 GET /api/analytics/revenue
 Authorization: Bearer <token>
 ```
 
 #### Get AI Predictions
+
 ```http
 GET /api/analytics/predictions
 Authorization: Bearer <token>
 ```
 
 #### Get Notifications
+
 ```http
 GET /api/notifications
 Authorization: Bearer <token>
@@ -468,6 +507,7 @@ Authorization: Bearer <token>
 ## 💰 Payroll System APIs
 
 ### Base URL
+
 ```
 https://api.oscar-broome.com/api/payroll
 ```
@@ -475,6 +515,7 @@ https://api.oscar-broome.com/api/payroll
 ### 1. Employee Management
 
 #### Get Employees
+
 ```http
 GET /api/payroll/employees
 Authorization: Bearer <token>
@@ -483,6 +524,7 @@ Authorization: Bearer <token>
 ### 2. Payroll Processing
 
 #### Process Payroll
+
 ```http
 POST /api/payroll/process
 Authorization: Bearer <token>
@@ -501,6 +543,7 @@ Content-Type: application/json
 ### 3. Payroll Reports
 
 #### Get Payroll Reports
+
 ```http
 GET /api/payroll/reports
 Authorization: Bearer <token>
@@ -509,6 +552,7 @@ Authorization: Bearer <token>
 ## 🛒 Merchant Processing APIs
 
 ### Base URL
+
 ```
 https://api.oscar-broome.com/api/merchant
 ```
@@ -516,6 +560,7 @@ https://api.oscar-broome.com/api/merchant
 ### 1. Payment Processing
 
 #### Process Payment
+
 ```http
 POST /api/merchant/payment
 Authorization: Bearer <token>
@@ -538,6 +583,7 @@ Content-Type: application/json
 ### 2. Transaction History
 
 #### Get Transactions
+
 ```http
 GET /api/merchant/transactions
 Authorization: Bearer <token>
@@ -546,6 +592,7 @@ Authorization: Bearer <token>
 ### 3. Bill Payments
 
 #### Process Bill Payment
+
 ```http
 POST /api/merchant/bill-pay
 Authorization: Bearer <token>
@@ -555,6 +602,7 @@ Content-Type: application/json
 ## 📋 Error Handling
 
 ### Standard Error Response
+
 ```javascript
 {
   "success": false,
@@ -569,6 +617,7 @@ Content-Type: application/json
 ```
 
 ### Common Error Codes
+
 - `AUTHENTICATION_FAILED`: Invalid credentials or token
 - `AUTHORIZATION_FAILED`: Insufficient permissions
 - `VALIDATION_ERROR`: Invalid request parameters
@@ -580,6 +629,7 @@ Content-Type: application/json
 ## 🔒 Security Features
 
 ### Request Signing
+
 All critical operations require quantum signature verification:
 
 ```javascript
@@ -592,12 +642,15 @@ All critical operations require quantum signature verification:
 ```
 
 ### Rate Limiting
+
 - Standard endpoints: 1000 requests/hour
 - Control endpoints: 100 requests/hour
 - Emergency endpoints: Unlimited (authenticated only)
 
 ### Audit Logging
+
 All API calls are logged with:
+
 - Request/response details
 - User identification
 - Timestamp and signature
@@ -606,6 +659,7 @@ All API calls are logged with:
 ## 🧪 Testing
 
 ### Test Environment
+
 ```bash
 # Run API tests
 npm run test:api
@@ -618,7 +672,9 @@ npm run test:security
 ```
 
 ### Mock Data
+
 Use mock mode for testing:
+
 ```javascript
 process.env.MOCK_MODE = 'true';
 ```
@@ -626,12 +682,14 @@ process.env.MOCK_MODE = 'true';
 ## 📞 Support
 
 ### API Support
+
 - **Documentation**: This document
 - **Status Page**: `https://status.oscar-broome.com`
 - **Support Ticket**: Create issue in repository
 - **Emergency**: Call security hotline
 
 ### Version Information
+
 - **Current Version**: 1.0.0
 - **Last Updated**: January 15, 2024
 - **Supported Until**: December 31, 2024

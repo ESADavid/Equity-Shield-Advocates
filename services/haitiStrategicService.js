@@ -17,7 +17,7 @@ class HaitiStrategicService {
     this.militaryAssets = new Map();
     this.mineralResources = new Map();
     this.strategicPartners = new Map();
-    
+
     // Initialize Haiti strategic portfolio
     this.initializeHaitiPortfolio();
   }
@@ -42,7 +42,8 @@ class HaitiStrategicService {
       status: 'target',
       riskRating: 'CCC',
       collateral: 'Mineral Resources + Infrastructure Rights',
-      strategicValue: 'Caribbean Strategic Position + $20B Mineral Resources + House of David Heritage',
+      strategicValue:
+        'Caribbean Strategic Position + $20B Mineral Resources + House of David Heritage',
       expectedYield: 0.12, // 12%
       paymentSchedule: 'semi-annual',
       covenants: [
@@ -50,30 +51,30 @@ class HaitiStrategicService {
         'Mineral extraction rights',
         'Military base establishment',
         'AI center development rights',
-        'House of David flag recognition'
+        'House of David flag recognition',
       ],
       acquisitionStrategy: {
         phase1: 'Multilateral debt purchase (IMF, World Bank)',
         phase2: 'Secondary market acquisition',
         phase3: 'Bilateral government negotiations',
-        phase4: 'Debt-for-equity swaps'
-      }
+        phase4: 'Debt-for-equity swaps',
+      },
     };
 
     this.haitiDebt.set(haitiSovereignDebt.id, haitiSovereignDebt);
 
     // Initialize infrastructure projects
     this.initializeInfrastructureProjects();
-    
+
     // Initialize AI centers
     this.initializeAICenters();
-    
+
     // Initialize military assets
     this.initializeMilitaryAssets();
-    
+
     // Initialize mineral resources
     this.initializeMineralResources();
-    
+
     // Initialize strategic partners
     this.initializeStrategicPartners();
 
@@ -98,9 +99,9 @@ class HaitiStrategicService {
           'Earthquake-resistant design',
           'Water harvesting systems',
           'IoT integration',
-          'AI management systems'
+          'AI management systems',
         ],
-        status: 'planned'
+        status: 'planned',
       },
       {
         id: 'symatic-housing-phase2',
@@ -115,9 +116,9 @@ class HaitiStrategicService {
           'Renewable energy grid',
           'Advanced telecommunications',
           'Community centers',
-          'Schools and hospitals'
+          'Schools and hospitals',
         ],
-        status: 'planned'
+        status: 'planned',
       },
       {
         id: 'symatic-housing-phase3',
@@ -132,9 +133,9 @@ class HaitiStrategicService {
           'Complete infrastructure backbone',
           'Sustainable development',
           'Economic zones',
-          'Tourism infrastructure'
+          'Tourism infrastructure',
         ],
-        status: 'planned'
+        status: 'planned',
       },
       {
         id: 'utilities-infrastructure',
@@ -148,9 +149,9 @@ class HaitiStrategicService {
           'Sewage systems',
           'Electrical grid modernization',
           'Renewable energy farms',
-          'Telecommunications network'
+          'Telecommunications network',
         ],
-        status: 'planned'
+        status: 'planned',
       },
       {
         id: 'transportation-network',
@@ -164,17 +165,17 @@ class HaitiStrategicService {
           'Port modernization',
           'Airport expansion',
           'Rail network',
-          'Urban transit systems'
+          'Urban transit systems',
         ],
-        status: 'planned'
-      }
+        status: 'planned',
+      },
     ];
 
     for (const project of projects) {
       this.infrastructureProjects.set(project.id, {
         ...project,
         createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       });
     }
   }
@@ -194,12 +195,12 @@ class HaitiStrategicService {
           nvidia_h100: 5000,
           nvidia_blackwell: 5000,
           amd_mi300: 2000,
-          totalGPUs: 12000
+          totalGPUs: 12000,
         },
         power: {
           consumption: 50, // MW
           source: 'Solar + Wind + Backup',
-          renewable: true
+          renewable: true,
         },
         budget: 500000000,
         timeline: '24 months',
@@ -211,9 +212,9 @@ class HaitiStrategicService {
           'Healthcare AI',
           'Agricultural optimization',
           'Financial services',
-          'Governance systems'
+          'Governance systems',
         ],
-        status: 'planned'
+        status: 'planned',
       },
       {
         id: 'ai-center-cap-haitien',
@@ -224,16 +225,16 @@ class HaitiStrategicService {
         computing: {
           nvidia_h100: 1000,
           nvidia_blackwell: 1000,
-          totalGPUs: 2000
+          totalGPUs: 2000,
         },
         power: {
           consumption: 10,
           source: 'Solar + Wind',
-          renewable: true
+          renewable: true,
         },
         budget: 100000000,
         timeline: '18 months',
-        status: 'planned'
+        status: 'planned',
       },
       {
         id: 'ai-center-gonaives',
@@ -244,16 +245,16 @@ class HaitiStrategicService {
         computing: {
           nvidia_h100: 1000,
           nvidia_blackwell: 1000,
-          totalGPUs: 2000
+          totalGPUs: 2000,
         },
         power: {
           consumption: 10,
           source: 'Solar + Wind',
-          renewable: true
+          renewable: true,
         },
         budget: 100000000,
         timeline: '18 months',
-        status: 'planned'
+        status: 'planned',
       },
       {
         id: 'ai-center-les-cayes',
@@ -264,16 +265,16 @@ class HaitiStrategicService {
         computing: {
           nvidia_h100: 1000,
           nvidia_blackwell: 1000,
-          totalGPUs: 2000
+          totalGPUs: 2000,
         },
         power: {
           consumption: 10,
           source: 'Solar + Wind',
-          renewable: true
+          renewable: true,
         },
         budget: 100000000,
         timeline: '18 months',
-        status: 'planned'
+        status: 'planned',
       },
       {
         id: 'ai-center-jacmel',
@@ -284,24 +285,24 @@ class HaitiStrategicService {
         computing: {
           nvidia_h100: 1000,
           nvidia_blackwell: 1000,
-          totalGPUs: 2000
+          totalGPUs: 2000,
         },
         power: {
           consumption: 10,
           source: 'Solar + Wind',
-          renewable: true
+          renewable: true,
         },
         budget: 100000000,
         timeline: '18 months',
-        status: 'planned'
-      }
+        status: 'planned',
+      },
     ];
 
     for (const center of centers) {
       this.aiCenters.set(center.id, {
         ...center,
         createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       });
     }
   }
@@ -318,19 +319,19 @@ class HaitiStrategicService {
           frigates: { count: 4, cost: 500000000 },
           corvettes: { count: 8, cost: 800000000 },
           patrol_boats: { count: 20, cost: 400000000 },
-          support_ships: { count: 10, cost: 300000000 }
+          support_ships: { count: 10, cost: 300000000 },
         },
         personnel: 5000,
         bases: [
           'Port-au-Prince Naval Base',
           'Cap-Haïtien Naval Station',
-          'Jacmel Coastal Defense'
+          'Jacmel Coastal Defense',
         ],
         budget: {
           initial: 2000000000,
-          annual: 200000000
+          annual: 200000000,
         },
-        status: 'planned'
+        status: 'planned',
       },
       army: {
         id: 'haiti-army',
@@ -340,14 +341,14 @@ class HaitiStrategicService {
           armored_vehicles: { count: 200, cost: 400000000 },
           artillery: { count: 100, cost: 300000000 },
           air_defense: { count: 50, cost: 500000000 },
-          communications: { cost: 300000000 }
+          communications: { cost: 300000000 },
         },
         bases: 10,
         budget: {
           initial: 1500000000,
-          annual: 150000000
+          annual: 150000000,
         },
-        status: 'planned'
+        status: 'planned',
       },
       airForce: {
         id: 'haiti-air-force',
@@ -356,15 +357,15 @@ class HaitiStrategicService {
           fighters: { count: 12, cost: 1200000000 },
           transport: { count: 20, cost: 800000000 },
           helicopters: { count: 40, cost: 600000000 },
-          drones: { count: 100, cost: 400000000 }
+          drones: { count: 100, cost: 400000000 },
         },
         personnel: 3000,
         bases: 3,
         budget: {
           initial: 3000000000,
-          annual: 300000000
+          annual: 300000000,
         },
-        status: 'planned'
+        status: 'planned',
       },
       burkinaFasoJointForce: {
         id: 'haiti-burkina-joint-force',
@@ -373,27 +374,27 @@ class HaitiStrategicService {
           sharedCommand: true,
           jointTraining: true,
           intelligenceSharing: true,
-          mutualDefense: true
+          mutualDefense: true,
         },
         capabilities: [
           'Rapid deployment force: 5,000 troops',
           'Peacekeeping operations',
           'Counter-terrorism',
           'Maritime security',
-          'Cyber defense'
+          'Cyber defense',
         ],
         budget: {
-          annual: 1000000000
+          annual: 1000000000,
         },
-        status: 'planned'
-      }
+        status: 'planned',
+      },
     };
 
     for (const [key, asset] of Object.entries(assets)) {
       this.militaryAssets.set(key, {
         ...asset,
         createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       });
     }
   }
@@ -411,7 +412,7 @@ class HaitiStrategicService {
         locations: ['Northern Haiti', 'Central Plateau'],
         developmentPhase: 'survey',
         extractionTimeline: '5-10 years',
-        annualRevenueProjection: 2000000000
+        annualRevenueProjection: 2000000000,
       },
       {
         id: 'haiti-copper-deposits',
@@ -421,7 +422,7 @@ class HaitiStrategicService {
         locations: ['Northern regions'],
         developmentPhase: 'survey',
         extractionTimeline: '5-10 years',
-        annualRevenueProjection: 500000000
+        annualRevenueProjection: 500000000,
       },
       {
         id: 'haiti-silver-deposits',
@@ -431,7 +432,7 @@ class HaitiStrategicService {
         locations: ['Northern Haiti'],
         developmentPhase: 'survey',
         extractionTimeline: '5-10 years',
-        annualRevenueProjection: 300000000
+        annualRevenueProjection: 300000000,
       },
       {
         id: 'haiti-bauxite-deposits',
@@ -441,7 +442,7 @@ class HaitiStrategicService {
         locations: ['Southern regions'],
         developmentPhase: 'survey',
         extractionTimeline: '3-7 years',
-        annualRevenueProjection: 200000000
+        annualRevenueProjection: 200000000,
       },
       {
         id: 'haiti-rare-earth-elements',
@@ -451,8 +452,8 @@ class HaitiStrategicService {
         locations: ['Various regions'],
         developmentPhase: 'survey',
         extractionTimeline: '7-12 years',
-        annualRevenueProjection: 1000000000
-      }
+        annualRevenueProjection: 1000000000,
+      },
     ];
 
     for (const resource of resources) {
@@ -460,7 +461,7 @@ class HaitiStrategicService {
         ...resource,
         status: 'identified',
         createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       });
     }
   }
@@ -479,9 +480,9 @@ class HaitiStrategicService {
           'Mutual defense pact',
           'Joint training programs',
           'Intelligence sharing',
-          'Equipment standardization'
+          'Equipment standardization',
         ],
-        status: 'active'
+        status: 'active',
       },
       {
         id: 'nvidia-partnership',
@@ -492,9 +493,9 @@ class HaitiStrategicService {
           'GPU supply for AI centers',
           'Technical support',
           'Training programs',
-          'Research collaboration'
+          'Research collaboration',
         ],
-        status: 'planned'
+        status: 'planned',
       },
       {
         id: 'mining-consortium',
@@ -505,17 +506,17 @@ class HaitiStrategicService {
           'Joint venture agreements',
           'Technology transfer',
           'Revenue sharing',
-          'Environmental compliance'
+          'Environmental compliance',
         ],
-        status: 'planned'
-      }
+        status: 'planned',
+      },
     ];
 
     for (const partner of partners) {
       this.strategicPartners.set(partner.id, {
         ...partner,
         createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       });
     }
   }
@@ -529,30 +530,35 @@ class HaitiStrategicService {
    */
   async acquireHaitiDebt(acquisitionData, userId, tenantId) {
     const haitiDebt = this.haitiDebt.get('haiti-sovereign-debt-2024');
-    
+
     const debtAcquisition = {
       entity: haitiDebt.entity,
       entityType: haitiDebt.entityType,
       country: haitiDebt.country,
       debtType: haitiDebt.debtType,
       faceValue: haitiDebt.faceValue,
-      acquisitionPrice: acquisitionData.acquisitionPrice || haitiDebt.targetAcquisitionPrice,
+      acquisitionPrice:
+        acquisitionData.acquisitionPrice || haitiDebt.targetAcquisitionPrice,
       currency: haitiDebt.currency,
       maturityDate: haitiDebt.maturityDate,
       interestRate: haitiDebt.interestRate,
       riskRating: haitiDebt.riskRating,
-      strategicValue: haitiDebt.strategicValue
+      strategicValue: haitiDebt.strategicValue,
     };
 
-    const result = await this.debtService.acquireDebt(debtAcquisition, userId, tenantId);
-    
+    const result = await this.debtService.acquireDebt(
+      debtAcquisition,
+      userId,
+      tenantId
+    );
+
     // Update Haiti debt status
     haitiDebt.status = 'acquired';
     haitiDebt.actualAcquisitionPrice = debtAcquisition.acquisitionPrice;
     haitiDebt.acquisitionDate = new Date().toISOString();
     haitiDebt.acquiredBy = userId;
     haitiDebt.tenantId = tenantId;
-    
+
     return {
       success: true,
       debt: result.debt,
@@ -561,15 +567,15 @@ class HaitiStrategicService {
         mineralRights: true,
         militaryBaseRights: true,
         aiCenterRights: true,
-        houseDavidRecognition: true
+        houseDavidRecognition: true,
       },
       nextSteps: [
         'Begin infrastructure development',
         'Initiate AI center construction',
         'Establish military presence',
         'Commence mineral surveys',
-        'Engage local partnerships'
-      ]
+        'Engage local partnerships',
+      ],
     };
   }
 
@@ -585,7 +591,7 @@ class HaitiStrategicService {
       military: Array.from(this.militaryAssets.values()),
       minerals: Array.from(this.mineralResources.values()),
       partners: Array.from(this.strategicPartners.values()),
-      summary: this.getPortfolioSummary()
+      summary: this.getPortfolioSummary(),
     };
   }
 
@@ -594,17 +600,17 @@ class HaitiStrategicService {
    * @returns {Object} Financial summary
    */
   getPortfolioSummary() {
-    const totalInvestment = 
+    const totalInvestment =
       1200000000 + // Debt acquisition
       7500000000 + // Infrastructure
       3850000000 + // AI centers
       6500000000 + // Military
-      1000000000;  // Mineral development
-    
+      1000000000; // Mineral development
+
     const projectedRevenue = {
       year1_5: 150000000,
       year6_10: 3280000000,
-      year11_20: 9460000000
+      year11_20: 9460000000,
     };
 
     return {
@@ -614,19 +620,20 @@ class HaitiStrategicService {
         infrastructure: this.formatCurrency(7500000000),
         aiCenters: this.formatCurrency(3850000000),
         military: this.formatCurrency(6500000000),
-        mineralDevelopment: this.formatCurrency(1000000000)
+        mineralDevelopment: this.formatCurrency(1000000000),
       },
       projectedRevenue: {
         year1_5: this.formatCurrency(projectedRevenue.year1_5),
         year6_10: this.formatCurrency(projectedRevenue.year6_10),
-        year11_20: this.formatCurrency(projectedRevenue.year11_20)
+        year11_20: this.formatCurrency(projectedRevenue.year11_20),
       },
       roi: {
         tenYear: '72%',
         twentyYear: '450%',
-        irr: '18.5%'
+        irr: '18.5%',
       },
-      strategicValue: 'Immeasurable - Caribbean Hub + Resource Access + Military Presence + AI Leadership'
+      strategicValue:
+        'Immeasurable - Caribbean Hub + Resource Access + Military Presence + AI Leadership',
     };
   }
 
@@ -638,9 +645,10 @@ class HaitiStrategicService {
    * @returns {Object} Update result
    */
   updateProjectStatus(projectId, status, updateData = {}) {
-    const project = this.infrastructureProjects.get(projectId) ||
-                  this.aiCenters.get(projectId) ||
-                  this.militaryAssets.get(projectId);
+    const project =
+      this.infrastructureProjects.get(projectId) ||
+      this.aiCenters.get(projectId) ||
+      this.militaryAssets.get(projectId);
 
     if (!project) {
       return { success: false, error: 'Project not found' };
@@ -648,15 +656,16 @@ class HaitiStrategicService {
 
     project.status = status;
     project.lastUpdated = new Date().toISOString();
-    
+
     if (updateData.progress) project.progress = updateData.progress;
     if (updateData.notes) project.notes = updateData.notes;
-    if (updateData.completionDate) project.completionDate = updateData.completionDate;
+    if (updateData.completionDate)
+      project.completionDate = updateData.completionDate;
 
     return {
       success: true,
       project,
-      message: `Project ${projectId} updated to ${status}`
+      message: `Project ${projectId} updated to ${status}`,
     };
   }
 
@@ -671,46 +680,52 @@ class HaitiStrategicService {
           nvidia_h100: 5000,
           nvidia_blackwell: 5000,
           amd_mi300: 2000,
-          totalCost: this.formatCurrency(1200000000)
+          totalCost: this.formatCurrency(1200000000),
         },
         cpus: {
           amd_epyc: 10000,
           intel_xeon: 5000,
-          totalCost: this.formatCurrency(300000000)
+          totalCost: this.formatCurrency(300000000),
         },
         memory: {
           ram: '5 Petabytes',
-          cost: this.formatCurrency(500000000)
+          cost: this.formatCurrency(500000000),
         },
         storage: {
           nvme: '200 Petabytes',
           hdd: '1 Exabyte',
-          cost: this.formatCurrency(400000000)
+          cost: this.formatCurrency(400000000),
         },
         networking: {
           switches: 10000,
           routers: 1000,
           fiber: '10,000 km',
-          cost: this.formatCurrency(200000000)
+          cost: this.formatCurrency(200000000),
         },
-        totalHardwareCost: this.formatCurrency(2600000000)
+        totalHardwareCost: this.formatCurrency(2600000000),
       },
       software: {
         aiFrameworks: this.formatCurrency(100000000),
         operatingSystems: this.formatCurrency(50000000),
         security: this.formatCurrency(75000000),
         development: this.formatCurrency(25000000),
-        totalSoftwareCost: this.formatCurrency(250000000)
+        totalSoftwareCost: this.formatCurrency(250000000),
       },
       personnel: {
         aiEngineers: { count: 500, annualCost: this.formatCurrency(75000000) },
-        dataScientists: { count: 300, annualCost: this.formatCurrency(36000000) },
-        infrastructureEngineers: { count: 200, annualCost: this.formatCurrency(20000000) },
+        dataScientists: {
+          count: 300,
+          annualCost: this.formatCurrency(36000000),
+        },
+        infrastructureEngineers: {
+          count: 200,
+          annualCost: this.formatCurrency(20000000),
+        },
         supportStaff: { count: 500, annualCost: this.formatCurrency(25000000) },
-        totalPersonnelCost: this.formatCurrency(156000000)
+        totalPersonnelCost: this.formatCurrency(156000000),
       },
       totalAnnualOperatingCost: this.formatCurrency(156000000),
-      totalInitialInvestment: this.formatCurrency(2850000000)
+      totalInitialInvestment: this.formatCurrency(2850000000),
     };
   }
 
@@ -725,7 +740,7 @@ class HaitiStrategicService {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(value);
   }
 
@@ -742,7 +757,7 @@ class HaitiStrategicService {
       militaryAssets: this.militaryAssets.size,
       mineralResources: this.mineralResources.size,
       strategicPartners: this.strategicPartners.size,
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
     };
   }
 
@@ -758,7 +773,7 @@ class HaitiStrategicService {
       healthStatus: this.getHealthStatus(),
       exportTimestamp: new Date().toISOString(),
       classification: 'Strategic Planning - Confidential',
-      owner: 'House of David / Oscar Broome Revenue'
+      owner: 'House of David / Oscar Broome Revenue',
     };
   }
 }

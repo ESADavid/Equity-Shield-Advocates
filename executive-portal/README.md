@@ -71,7 +71,7 @@ The portal uses the following configuration (set in docker-compose.yml):
 
 ```yaml
 ports:
-  - "8080:8080"  # Host:Container port mapping
+  - '8080:8080' # Host:Container port mapping
 ```
 
 ### Nginx Configuration

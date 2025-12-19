@@ -11,7 +11,7 @@ import { registerUser } from './auth/login_override.js';
 async function createOscarBroomeLogin() {
   try {
     logger.info('🚀 Creating login for Oscar Broome at JPMorgan.com');
-    logger.info('=' .repeat(60));
+    logger.info('='.repeat(60));
 
     const username = 'oscar.broome';
     const email = 'oscar.broome@jpmorgan.com';
@@ -36,12 +36,13 @@ async function createOscarBroomeLogin() {
 
       logger.info('\n🎉 Login creation completed successfully!');
       logger.info('💡 This uses the JSON-based login override system');
-      logger.info('💡 For full MongoDB integration, install MongoDB and use the full script');
+      logger.info(
+        '💡 For full MongoDB integration, install MongoDB and use the full script'
+      );
     } else {
       logger.info('❌ Registration failed');
       process.exit(1);
     }
-
   } catch (error) {
     logger.error('❌ Failed to create login:', error.message);
     process.exit(1);

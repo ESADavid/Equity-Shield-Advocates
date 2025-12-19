@@ -15,9 +15,24 @@ const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'securepassword';
 
 // static file serving
-app.use('/executive-portal', express.static(path.resolve(__dirname, '../owlban_revenue_repo/executive-portal')));
-app.use('/earnings_dashboard', express.static(path.resolve(__dirname, '../owlban_revenue_repo/earnings_dashboard')));
-app.use('/cypress/fixtures', express.static(path.resolve(__dirname, '../owlban_revenue_repo/cypress/fixtures')));
+app.use(
+  '/executive-portal',
+  express.static(
+    path.resolve(__dirname, '../owlban_revenue_repo/executive-portal')
+  )
+);
+app.use(
+  '/earnings_dashboard',
+  express.static(
+    path.resolve(__dirname, '../owlban_revenue_repo/earnings_dashboard')
+  )
+);
+app.use(
+  '/cypress/fixtures',
+  express.static(
+    path.resolve(__dirname, '../owlban_revenue_repo/cypress/fixtures')
+  )
+);
 
 // Setup Winston logger
 const logger = winston.createLogger({
@@ -47,7 +62,11 @@ app.use(
 
 app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 app.use(express.json());
-app.use(morgan('combined', { stream: { write: (msg: string) => logger.info(msg.trim()) } }));
+app.use(
+  morgan('combined', {
+    stream: { write: (msg: string) => logger.info(msg.trim()) },
+  })
+);
 
 // Mount JPMorgan authentication routes
 app.use('/api/auth', jpmorganAuthRoutes);
@@ -68,7 +87,11 @@ function getEarningsData(): any {
       totalAnnualRevenue: data.totalRevenue,
       totalDailyRevenue: data.totalRevenue / 365,
       revenueStreams: data.revenueStreams || {},
-      purchases: data.purchases || { corporateHomes: 0, autoFleet: 0, autoFleetDetails: [] }
+      purchases: data.purchases || {
+        corporateHomes: 0,
+        autoFleet: 0,
+        autoFleetDetails: [],
+      },
     };
   } catch (error) {
     // Handle or log error appropriately
@@ -77,26 +100,38 @@ function getEarningsData(): any {
 }
 
 // Serve explicit login.html and dashboard.html
-app.get('/executive-portal/login.html', (_req: Request, res: Response): void => {
-  const loginPath = path.resolve(__dirname, '../owlban_revenue_repo/executive-portal/login.html');
-  if (!existsSync(loginPath)) {
-    logger.error('Login HTML file not found');
-    res.status(500).send('Login page not available');
-    return;
+app.get(
+  '/executive-portal/login.html',
+  (_req: Request, res: Response): void => {
+    const loginPath = path.resolve(
+      __dirname,
+      '../owlban_revenue_repo/executive-portal/login.html'
+    );
+    if (!existsSync(loginPath)) {
+      logger.error('Login HTML file not found');
+      res.status(500).send('Login page not available');
+      return;
+    }
+    res.sendFile(loginPath);
   }
-  res.sendFile(loginPath);
-});
+);
 
 // Serve explicit dashboard.html
-app.get('/executive-portal/dashboard.html', (_req: Request, res: Response): void => {
-  const dashboardPath = path.resolve(__dirname, '../owlban_revenue_repo/earnings_dashboard/dashboard.html');
-  if (!existsSync(dashboardPath)) {
-    logger.error('Dashboard HTML file not found');
-    res.status(500).send('Dashboard page not available');
-    return;
+app.get(
+  '/executive-portal/dashboard.html',
+  (_req: Request, res: Response): void => {
+    const dashboardPath = path.resolve(
+      __dirname,
+      '../owlban_revenue_repo/earnings_dashboard/dashboard.html'
+    );
+    if (!existsSync(dashboardPath)) {
+      logger.error('Dashboard HTML file not found');
+      res.status(500).send('Dashboard page not available');
+      return;
+    }
+    res.sendFile(dashboardPath);
   }
-  res.sendFile(dashboardPath);
-});
+);
 
 // Serve static dashboard HTML file
 app.get('/', (_req: Request, res: Response): void => {
@@ -129,7 +164,10 @@ app.get('/api/earnings/download', (_req: Request, res: Response): void => {
     return;
   }
   res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Content-Disposition', 'attachment; filename="earnings_report.json"');
+  res.setHeader(
+    'Content-Disposition',
+    'attachment; filename="earnings_report.json"'
+  );
   res.json(data);
 });
 
@@ -139,9 +177,12 @@ app.post('/api/sync/all', (_req: Request, res: Response): void => {
 });
 
 // POST endpoint to mark a vehicle as delivered
-app.post('/api/delivery/mark-delivered', (_req: Request, res: Response): void => {
-  res.json({ message: 'Car marked as delivered' });
-});
+app.post(
+  '/api/delivery/mark-delivered',
+  (_req: Request, res: Response): void => {
+    res.json({ message: 'Car marked as delivered' });
+  }
+);
 
 // 404 handler
 app.use((_req: Request, res: Response, _next: NextFunction): void => {
@@ -149,10 +190,12 @@ app.use((_req: Request, res: Response, _next: NextFunction): void => {
 });
 
 // Global error handler
-app.use((_err: any, _req: Request, res: Response, _next: NextFunction): void => {
-  logger.error('Unhandled error: ' + _err.stack);
-  res.status(500).json({ error: 'Internal Server Error' });
-});
+app.use(
+  (_err: any, _req: Request, res: Response, _next: NextFunction): void => {
+    logger.error('Unhandled error: ' + _err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+);
 
 const server = app.listen(PORT, () => {
   logger.info(`Earnings dashboard running at http://localhost:${PORT}`);

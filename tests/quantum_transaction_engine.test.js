@@ -7,7 +7,7 @@ describe('Quantum Transaction Engine', () => {
     const engine = new QuantumTransactionEngine();
     const transactions = [
       { type: 'payment', amount: 100, from: 'A', to: 'B' },
-      { type: 'transfer', amount: 200, from: 'B', to: 'C' }
+      { type: 'transfer', amount: 200, from: 'B', to: 'C' },
     ];
     const results = [];
     for (const tx of transactions) {

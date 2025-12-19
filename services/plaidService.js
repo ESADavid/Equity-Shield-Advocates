@@ -21,7 +21,9 @@ if (PLAID_CLIENT_ID && PLAID_SECRET) {
 
   plaidClient = new PlaidApi(configuration);
 } else {
-  logger.warn('⚠️  PLAID_CLIENT_ID and/or PLAID_SECRET not found. Plaid functionality will be disabled for testing.');
+  logger.warn(
+    '⚠️  PLAID_CLIENT_ID and/or PLAID_SECRET not found. Plaid functionality will be disabled for testing.'
+  );
 }
 
 // Plaid service functions
@@ -171,14 +173,14 @@ export const plaidService = {
     try {
       // Get account details
       const accounts = await this.getAccounts(accessToken);
-      const account = accounts.find(acc => acc.account_id === accountId);
+      const account = accounts.find((acc) => acc.account_id === accountId);
 
       if (!account) {
         throw new Error('Account not found');
       }
 
       // Check if account has sufficient balance for verification amounts
-      const verificationResults = amounts.map(amount => ({
+      const verificationResults = amounts.map((amount) => ({
         amount,
         sufficient: account.balances.available >= amount,
         available_balance: account.balances.available,
@@ -243,7 +245,10 @@ export const plaidService = {
 
     switch (event.webhook_type) {
       case 'TRANSACTIONS':
-        if (event.webhook_code === 'INITIAL_UPDATE' || event.webhook_code === 'HISTORICAL_UPDATE') {
+        if (
+          event.webhook_code === 'INITIAL_UPDATE' ||
+          event.webhook_code === 'HISTORICAL_UPDATE'
+        ) {
           // Handle transaction updates
           await this.processTransactionUpdate(event);
         }
@@ -270,17 +275,25 @@ export const plaidService = {
       const accessToken = await this.getAccessTokenForItem(event.item_id);
       if (!accessToken) return;
 
-      const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split('T')[0];
       const endDate = new Date().toISOString().split('T')[0];
 
-      const transactions = await this.getTransactions(accessToken, startDate, endDate);
+      const transactions = await this.getTransactions(
+        accessToken,
+        startDate,
+        endDate
+      );
 
       // Process and store transactions
       for (const transaction of transactions) {
         await this.storeTransaction(transaction);
       }
 
-      logger.info(`Processed ${transactions.length} transactions for item ${event.item_id}`);
+      logger.info(
+        `Processed ${transactions.length} transactions for item ${event.item_id}`
+      );
     } catch (error) {
       logger.error('Error processing transaction update:', error);
     }

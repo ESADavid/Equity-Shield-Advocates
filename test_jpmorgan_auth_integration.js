@@ -15,13 +15,13 @@ const TEST_USERS = {
   admin: {
     email: 'admin@jpmorgan.oscarbroomerevenue.com',
     password: 'OscarBroome2024!',
-    role: 'admin'
+    role: 'admin',
   },
   executive: {
     email: 'executive@jpmorgan.oscarbroomerevenue.com',
     password: 'Executive2024!',
-    role: 'executive'
-  }
+    role: 'executive',
+  },
 };
 
 const ADMIN_OVERRIDE_CODE = 'OSCAR_BROOME_EMERGENCY_2024';
@@ -30,7 +30,7 @@ class JPMorganAuthIntegrationTest {
   constructor() {
     this.client = axios.create({
       baseURL: BASE_URL,
-      timeout: 10000
+      timeout: 10000,
     });
     this.tokens = {};
   }
@@ -44,7 +44,7 @@ class JPMorganAuthIntegrationTest {
       console.log('\n1. Testing Admin Login...');
       const adminLogin = await this.client.post('/api/auth/login', {
         email: TEST_USERS.admin.email,
-        password: TEST_USERS.admin.password
+        password: TEST_USERS.admin.password,
       });
 
       expect(adminLogin.data.success).to.be.true;
@@ -59,7 +59,7 @@ class JPMorganAuthIntegrationTest {
       console.log('\n2. Testing Executive Login...');
       const execLogin = await this.client.post('/api/auth/login', {
         email: TEST_USERS.executive.email,
-        password: TEST_USERS.executive.password
+        password: TEST_USERS.executive.password,
       });
 
       expect(execLogin.data.success).to.be.true;
@@ -74,7 +74,7 @@ class JPMorganAuthIntegrationTest {
       try {
         await this.client.post('/api/auth/login', {
           email: 'invalid@jpmorgan.oscarbroomerevenue.com',
-          password: 'wrongpassword'
+          password: 'wrongpassword',
         });
         throw new Error('Should have failed');
       } catch (error) {
@@ -85,7 +85,7 @@ class JPMorganAuthIntegrationTest {
       // Test 4: Token verification
       console.log('\n4. Testing Token Verification...');
       const verifyResponse = await this.client.get('/api/auth/verify', {
-        headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` }
+        headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` },
       });
 
       expect(verifyResponse.data.authenticated).to.be.true; // eslint-disable-line no-unused-expressions
@@ -95,11 +95,13 @@ class JPMorganAuthIntegrationTest {
       // Test 5: Get user profile
       console.log('\n5. Testing User Profile Retrieval...');
       const profileResponse = await this.client.get('/api/auth/profile', {
-        headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` }
+        headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` },
       });
 
       expect(profileResponse.data.success).to.be.true;
-      expect(profileResponse.data.profile.email).to.equal(TEST_USERS.admin.email);
+      expect(profileResponse.data.profile.email).to.equal(
+        TEST_USERS.admin.email
+      );
       console.log('✓ User profile retrieval successful');
 
       return true;
@@ -116,12 +118,16 @@ class JPMorganAuthIntegrationTest {
     try {
       // Test 1: Create payment intent with authentication
       console.log('\n1. Testing Authenticated Payment Intent Creation...');
-      const paymentResponse = await this.client.post('/api/payments/create-payment-intent', {
-        amount: 50000, // $500.00
-        currency: 'usd'
-      }, {
-        headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` }
-      });
+      const paymentResponse = await this.client.post(
+        '/api/payments/create-payment-intent',
+        {
+          amount: 50000, // $500.00
+          currency: 'usd',
+        },
+        {
+          headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` },
+        }
+      );
 
       expect(paymentResponse.data).to.have.property('clientSecret');
       expect(paymentResponse.data).to.have.property('paymentIntentId');
@@ -133,7 +139,7 @@ class JPMorganAuthIntegrationTest {
       try {
         await this.client.post('/api/payments/create-payment-intent', {
           amount: 10000,
-          currency: 'usd'
+          currency: 'usd',
         });
         throw new Error('Should have failed');
       } catch (error) {
@@ -144,16 +150,24 @@ class JPMorganAuthIntegrationTest {
       // Test 3: Payment with insufficient permissions
       console.log('\n3. Testing Payment with Insufficient Permissions...');
       try {
-        await this.client.post('/api/payments/create-payment-intent', {
-          amount: 10000,
-          currency: 'usd'
-        }, {
-          headers: { Authorization: `Bearer ${this.tokens.executive.accessToken}` }
-        });
+        await this.client.post(
+          '/api/payments/create-payment-intent',
+          {
+            amount: 10000,
+            currency: 'usd',
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${this.tokens.executive.accessToken}`,
+            },
+          }
+        );
         throw new Error('Should have failed');
       } catch (error) {
         expect(error.response.status).to.equal(403);
-        console.log('✓ Payment with insufficient permissions properly rejected');
+        console.log(
+          '✓ Payment with insufficient permissions properly rejected'
+        );
       }
 
       return true;
@@ -170,12 +184,16 @@ class JPMorganAuthIntegrationTest {
     try {
       // Test 1: Admin override with correct code
       console.log('\n1. Testing Admin Override with Correct Code...');
-      const overrideResponse = await this.client.post('/api/auth/admin-override', {
-        overrideCode: ADMIN_OVERRIDE_CODE,
-        targetEmail: TEST_USERS.executive.email
-      }, {
-        headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` }
-      });
+      const overrideResponse = await this.client.post(
+        '/api/auth/admin-override',
+        {
+          overrideCode: ADMIN_OVERRIDE_CODE,
+          targetEmail: TEST_USERS.executive.email,
+        },
+        {
+          headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` },
+        }
+      );
 
       expect(overrideResponse.data.success).to.be.true;
       expect(overrideResponse.data).to.have.property('emergencyToken');
@@ -184,12 +202,18 @@ class JPMorganAuthIntegrationTest {
       // Test 2: Admin override with wrong code
       console.log('\n2. Testing Admin Override with Wrong Code...');
       try {
-        await this.client.post('/api/auth/admin-override', {
-          overrideCode: 'WRONG_CODE',
-          targetEmail: TEST_USERS.executive.email
-        }, {
-          headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` }
-        });
+        await this.client.post(
+          '/api/auth/admin-override',
+          {
+            overrideCode: 'WRONG_CODE',
+            targetEmail: TEST_USERS.executive.email,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${this.tokens.admin.accessToken}`,
+            },
+          }
+        );
         throw new Error('Should have failed');
       } catch (error) {
         expect(error.response.status).to.equal(400);
@@ -199,12 +223,18 @@ class JPMorganAuthIntegrationTest {
       // Test 3: Admin override by non-admin user
       console.log('\n3. Testing Admin Override by Non-Admin User...');
       try {
-        await this.client.post('/api/auth/admin-override', {
-          overrideCode: ADMIN_OVERRIDE_CODE,
-          targetEmail: TEST_USERS.admin.email
-        }, {
-          headers: { Authorization: `Bearer ${this.tokens.executive.accessToken}` }
-        });
+        await this.client.post(
+          '/api/auth/admin-override',
+          {
+            overrideCode: ADMIN_OVERRIDE_CODE,
+            targetEmail: TEST_USERS.admin.email,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${this.tokens.executive.accessToken}`,
+            },
+          }
+        );
         throw new Error('Should have failed');
       } catch (error) {
         expect(error.response.status).to.equal(403);
@@ -225,9 +255,12 @@ class JPMorganAuthIntegrationTest {
     try {
       // Test 1: Refresh valid token
       console.log('\n1. Testing Token Refresh...');
-      const refreshResponse = await this.client.post('/api/auth/refresh-token', {
-        refreshToken: this.tokens.admin.refreshToken
-      });
+      const refreshResponse = await this.client.post(
+        '/api/auth/refresh-token',
+        {
+          refreshToken: this.tokens.admin.refreshToken,
+        }
+      );
 
       expect(refreshResponse.data.success).to.be.true;
       expect(refreshResponse.data.tokens).to.have.property('accessToken');
@@ -241,7 +274,7 @@ class JPMorganAuthIntegrationTest {
       console.log('\n2. Testing Invalid Token Refresh...');
       try {
         await this.client.post('/api/auth/refresh-token', {
-          refreshToken: 'invalid_refresh_token'
+          refreshToken: 'invalid_refresh_token',
         });
         throw new Error('Should have failed');
       } catch (error) {
@@ -263,9 +296,13 @@ class JPMorganAuthIntegrationTest {
     try {
       // Test 1: Logout with valid token
       console.log('\n1. Testing Logout...');
-      const logoutResponse = await this.client.post('/api/auth/logout', {}, {
-        headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` }
-      });
+      const logoutResponse = await this.client.post(
+        '/api/auth/logout',
+        {},
+        {
+          headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` },
+        }
+      );
 
       expect(logoutResponse.data.success).to.be.true;
       console.log('✓ Logout successful');
@@ -274,7 +311,7 @@ class JPMorganAuthIntegrationTest {
       console.log('\n2. Testing Token Invalidation After Logout...');
       try {
         await this.client.get('/api/auth/verify', {
-          headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` }
+          headers: { Authorization: `Bearer ${this.tokens.admin.accessToken}` },
         });
         throw new Error('Should have failed');
       } catch (error) {
@@ -304,11 +341,13 @@ class JPMorganAuthIntegrationTest {
       console.log('\n2. Testing Status With Valid Token...');
       const loginResponse = await this.client.post('/api/auth/login', {
         email: TEST_USERS.admin.email,
-        password: TEST_USERS.admin.password
+        password: TEST_USERS.admin.password,
       });
 
       const statusWithToken = await this.client.get('/api/auth/status', {
-        headers: { Authorization: `Bearer ${loginResponse.data.tokens.accessToken}` }
+        headers: {
+          Authorization: `Bearer ${loginResponse.data.tokens.accessToken}`,
+        },
       });
 
       expect(statusWithToken.data.authenticated).to.be.true;
@@ -332,16 +371,20 @@ class JPMorganAuthIntegrationTest {
       adminOverride: await this.testAdminOverride(),
       tokenRefresh: await this.testTokenRefresh(),
       logout: await this.testLogout(),
-      authStatus: await this.testAuthStatus()
+      authStatus: await this.testAuthStatus(),
     };
 
     console.log('\n=== Test Results Summary ===');
     for (const [test, passed] of Object.entries(results)) {
-      console.log(`${passed ? '✅' : '❌'} ${test}: ${passed ? 'PASSED' : 'FAILED'}`);
+      console.log(
+        `${passed ? '✅' : '❌'} ${test}: ${passed ? 'PASSED' : 'FAILED'}`
+      );
     }
 
     const allPassed = Object.values(results).every(Boolean);
-    console.log(`\n${allPassed ? '🎉' : '💥'} Overall Result: ${allPassed ? 'ALL TESTS PASSED' : 'SOME TESTS FAILED'}`);
+    console.log(
+      `\n${allPassed ? '🎉' : '💥'} Overall Result: ${allPassed ? 'ALL TESTS PASSED' : 'SOME TESTS FAILED'}`
+    );
 
     return allPassed;
   }

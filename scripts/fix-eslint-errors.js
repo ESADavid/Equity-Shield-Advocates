@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { info, error } from '../utils/loggerWrapper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,7 +10,7 @@ const __dirname = path.dirname(__filename);
 const mergeConflictFiles = [
   'earnings_dashboard/jpmorgan_payment.js',
   'earnings_dashboard/merchant_bill_pay.js',
-  'services/assetManagementService.js'
+  'services/assetManagementService.js',
 ];
 
 // Files that need logger imports (sampling - we'll add more as we go)
@@ -26,22 +27,22 @@ const loggerImportFiles = [
   'routes/auth.js',
   'routes/itgRoutes.js',
   'routes/plaidRoutes.js',
-  'routes/transactionOverrideRoutes.js'
+  'routes/transactionOverrideRoutes.js',
 ];
 
 function resolveMergeConflicts(filePath) {
   try {
     const fullPath = path.join(process.cwd(), filePath);
     if (!fs.existsSync(fullPath)) {
-      console.log(`⚠️  File not found: ${filePath}`);
+      info(`⚠️  File not found: ${filePath}`);
       return false;
     }
 
     let content = fs.readFileSync(fullPath, 'utf-8');
-    
+
     // Check if file has merge conflicts
     if (!content.includes('<<<<<<< HEAD')) {
-      console.log(`✓ No merge conflicts in: ${filePath}`);
+      info(`✓ No merge conflicts in: ${filePath}`);
       return true;
     }
 
@@ -53,10 +54,10 @@ function resolveMergeConflicts(filePath) {
     );
 
     fs.writeFileSync(fullPath, content, 'utf-8');
-    console.log(`✓ Resolved merge conflicts in: ${filePath}`);
+    info(`✓ Resolved merge conflicts in: ${filePath}`);
     return true;
-  } catch (error) {
-    console.error(`✗ Error resolving conflicts in ${filePath}:`, error.message);
+  } catch (err) {
+    error(`✗ Error resolving conflicts in ${filePath}:`, err);
     return false;
   }
 }
@@ -65,28 +66,28 @@ function addLoggerImport(filePath) {
   try {
     const fullPath = path.join(process.cwd(), filePath);
     if (!fs.existsSync(fullPath)) {
-      console.log(`⚠️  File not found: ${filePath}`);
+      info(`⚠️  File not found: ${filePath}`);
       return false;
     }
 
     let content = fs.readFileSync(fullPath, 'utf-8');
-    
+
     // Check if logger is already imported
     if (content.includes('import') && content.includes('logger')) {
-      console.log(`✓ Logger already imported in: ${filePath}`);
+      info(`✓ Logger already imported in: ${filePath}`);
       return true;
     }
 
     // Check if file uses logger
     if (!content.includes('logger.')) {
-      console.log(`ℹ️  File doesn't use logger: ${filePath}`);
+      info(`ℹ️  File doesn't use logger: ${filePath}`);
       return true;
     }
 
     // Add logger import at the top after other imports
     const lines = content.split('\n');
     let insertIndex = 0;
-    
+
     // Find the last import statement
     for (let i = 0; i < lines.length; i++) {
       if (lines[i].trim().startsWith('import ')) {
@@ -96,47 +97,55 @@ function addLoggerImport(filePath) {
 
     // Determine the correct path to logger based on file location
     const fileDir = path.dirname(filePath);
-    const loggerPath = path.relative(fileDir, 'config/logger.js').replace(/\\/g, '/');
-    const importPath = loggerPath.startsWith('.') ? loggerPath : `./${loggerPath}`;
+    const loggerPath = path
+      .relative(fileDir, 'config/logger.js')
+      .replace(/\\/g, '/');
+    const importPath = loggerPath.startsWith('.')
+      ? loggerPath
+      : `./${loggerPath}`;
 
     // Insert logger import
     const loggerImport = `import logger from '${importPath}';`;
     lines.splice(insertIndex, 0, loggerImport);
-    
+
     content = lines.join('\n');
     fs.writeFileSync(fullPath, content, 'utf-8');
-    console.log(`✓ Added logger import to: ${filePath}`);
+    info(`✓ Added logger import to: ${filePath}`);
     return true;
-  } catch (error) {
-    console.error(`✗ Error adding logger import to ${filePath}:`, error.message);
+  } catch (err) {
+    error(`✗ Error adding logger import to ${filePath}:`, err);
     return false;
   }
 }
 
-console.log('🔧 Starting ESLint Error Fixes...\n');
+info('🔧 Starting ESLint Error Fixes...\n');
 
-console.log('📝 Phase 1: Resolving Merge Conflicts');
-console.log('=====================================');
+info('📝 Phase 1: Resolving Merge Conflicts');
+info('=====================================');
 let conflictsResolved = 0;
 for (const file of mergeConflictFiles) {
   if (resolveMergeConflicts(file)) {
     conflictsResolved++;
   }
 }
-console.log(`\n✓ Resolved ${conflictsResolved}/${mergeConflictFiles.length} merge conflicts\n`);
+info(
+  `\n✓ Resolved ${conflictsResolved}/${mergeConflictFiles.length} merge conflicts\n`
+);
 
-console.log('📝 Phase 2: Adding Logger Imports');
-console.log('==================================');
+info('📝 Phase 2: Adding Logger Imports');
+info('==================================');
 let importsAdded = 0;
 for (const file of loggerImportFiles) {
   if (addLoggerImport(file)) {
     importsAdded++;
   }
 }
-console.log(`\n✓ Processed ${importsAdded}/${loggerImportFiles.length} files for logger imports\n`);
+info(
+  `\n✓ Processed ${importsAdded}/${loggerImportFiles.length} files for logger imports\n`
+);
 
-console.log('✅ ESLint error fixes completed!');
-console.log('\nNext steps:');
-console.log('1. Run: npm run lint');
-console.log('2. Review remaining errors');
-console.log('3. Fix any remaining issues manually');
+info('✅ ESLint error fixes completed!');
+info('\nNext steps:');
+info('1. Run: npm run lint');
+info('2. Review remaining errors');
+info('3. Fix any remaining issues manually');

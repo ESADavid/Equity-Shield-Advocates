@@ -2,7 +2,7 @@
  * PRIVATE MILITARY SERVICE
  * Manages private military contractors (PMCs) and operations
  * Part of the OWLBAN GROUP Heaven on Earth Initiative
- * 
+ *
  * Integrated PMCs:
  * - Academi (formerly Blackwater)
  * - G4S Secure Solutions
@@ -24,10 +24,10 @@ class PrivateMilitaryService {
     this.personnel = new Map();
     this.equipment = new Map();
     this.missions = new Map();
-    
+
     // Initialize PMC contractors
     this.initializePMCContractors();
-    
+
     logger.info('Private Military Service initialized');
   }
 
@@ -47,34 +47,34 @@ class PrivateMilitaryService {
           'Training',
           'Logistics support',
           'Risk management',
-          'Intelligence services'
+          'Intelligence services',
         ],
         capabilities: {
           personnel: 20000,
           globalPresence: true,
           maritimeSecurity: true,
           airSupport: true,
-          cyberSecurity: true
+          cyberSecurity: true,
         },
         contract: {
           status: 'active',
           startDate: new Date().toISOString(),
           duration: 60, // months
           value: 500000000, // $500M
-          renewalOption: true
+          renewalOption: true,
         },
         deployments: {
           haiti: {
             personnel: 500,
             role: 'Security and training',
-            locations: ['Port-au-Prince', 'Cap-Haïtien']
-          }
+            locations: ['Port-au-Prince', 'Cap-Haïtien'],
+          },
         },
         performance: {
           rating: 4.5,
           missionsCompleted: 0,
-          incidentRate: 0.02
-        }
+          incidentRate: 0.02,
+        },
       },
       {
         id: 'pmc-g4s',
@@ -86,34 +86,34 @@ class PrivateMilitaryService {
           'Risk consulting',
           'Cash solutions',
           'Technology solutions',
-          'Facility management'
+          'Facility management',
         ],
         capabilities: {
           personnel: 50000,
           globalPresence: true,
           technologyIntegration: true,
           intelligenceServices: true,
-          crisisManagement: true
+          crisisManagement: true,
         },
         contract: {
           status: 'active',
           startDate: new Date().toISOString(),
           duration: 48, // months
           value: 400000000, // $400M
-          renewalOption: true
+          renewalOption: true,
         },
         deployments: {
           haiti: {
             personnel: 800,
             role: 'Infrastructure security',
-            locations: ['Port-au-Prince', 'Gonaïves', 'Les Cayes']
-          }
+            locations: ['Port-au-Prince', 'Gonaïves', 'Les Cayes'],
+          },
         },
         performance: {
           rating: 4.7,
           missionsCompleted: 0,
-          incidentRate: 0.01
-        }
+          incidentRate: 0.01,
+        },
       },
       {
         id: 'pmc-dyncorp',
@@ -125,34 +125,34 @@ class PrivateMilitaryService {
           'Law enforcement training',
           'Logistics',
           'Intelligence support',
-          'Contingency operations'
+          'Contingency operations',
         ],
         capabilities: {
           personnel: 15000,
           aviationFleet: true,
           trainingPrograms: true,
           logisticsSupport: true,
-          technicalServices: true
+          technicalServices: true,
         },
         contract: {
           status: 'active',
           startDate: new Date().toISOString(),
           duration: 36, // months
           value: 350000000, // $350M
-          renewalOption: true
+          renewalOption: true,
         },
         deployments: {
           haiti: {
             personnel: 400,
             role: 'Aviation and logistics',
-            locations: ['Port-au-Prince Airport', 'Cap-Haïtien']
-          }
+            locations: ['Port-au-Prince Airport', 'Cap-Haïtien'],
+          },
         },
         performance: {
           rating: 4.3,
           missionsCompleted: 0,
-          incidentRate: 0.03
-        }
+          incidentRate: 0.03,
+        },
       },
       {
         id: 'pmc-triple-canopy',
@@ -164,34 +164,34 @@ class PrivateMilitaryService {
           'Risk management',
           'Training',
           'Intelligence',
-          'Crisis response'
+          'Crisis response',
         ],
         capabilities: {
           personnel: 8000,
           rapidDeployment: true,
           specialOperations: true,
           maritimeSecurity: true,
-          counterTerrorism: true
+          counterTerrorism: true,
         },
         contract: {
           status: 'active',
           startDate: new Date().toISOString(),
           duration: 48, // months
           value: 300000000, // $300M
-          renewalOption: true
+          renewalOption: true,
         },
         deployments: {
           haiti: {
             personnel: 300,
             role: 'Special operations and training',
-            locations: ['Port-au-Prince', 'Jacmel']
-          }
+            locations: ['Port-au-Prince', 'Jacmel'],
+          },
         },
         performance: {
           rating: 4.6,
           missionsCompleted: 0,
-          incidentRate: 0.015
-        }
+          incidentRate: 0.015,
+        },
       },
       {
         id: 'pmc-aegis',
@@ -203,42 +203,42 @@ class PrivateMilitaryService {
           'Security services',
           'Training',
           'Intelligence',
-          'Maritime security'
+          'Maritime security',
         ],
         capabilities: {
           personnel: 12000,
           maritimeExpertise: true,
           intelligenceServices: true,
           trainingPrograms: true,
-          globalOperations: true
+          globalOperations: true,
         },
         contract: {
           status: 'active',
           startDate: new Date().toISOString(),
           duration: 42, // months
           value: 320000000, // $320M
-          renewalOption: true
+          renewalOption: true,
         },
         deployments: {
           haiti: {
             personnel: 350,
             role: 'Maritime and coastal security',
-            locations: ['Port-au-Prince Port', 'Cap-Haïtien Port', 'Jacmel']
-          }
+            locations: ['Port-au-Prince Port', 'Cap-Haïtien Port', 'Jacmel'],
+          },
         },
         performance: {
           rating: 4.4,
           missionsCompleted: 0,
-          incidentRate: 0.02
-        }
-      }
+          incidentRate: 0.02,
+        },
+      },
     ];
 
     for (const contractor of contractors) {
       this.pmcContractors.set(contractor.id, {
         ...contractor,
         createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       });
     }
 
@@ -255,18 +255,22 @@ class PrivateMilitaryService {
       let contractors = Array.from(this.pmcContractors.values());
 
       if (filters.status) {
-        contractors = contractors.filter(c => c.contract.status === filters.status);
+        contractors = contractors.filter(
+          (c) => c.contract.status === filters.status
+        );
       }
 
       if (filters.specialization) {
-        contractors = contractors.filter(c => 
-          c.specializations.some(s => s.toLowerCase().includes(filters.specialization.toLowerCase()))
+        contractors = contractors.filter((c) =>
+          c.specializations.some((s) =>
+            s.toLowerCase().includes(filters.specialization.toLowerCase())
+          )
         );
       }
 
       return {
         success: true,
-        contractors: contractors.map(c => ({
+        contractors: contractors.map((c) => ({
           id: c.id,
           name: c.name,
           type: c.type,
@@ -276,17 +280,23 @@ class PrivateMilitaryService {
           contractValue: c.contract.value,
           contractStatus: c.contract.status,
           haitiDeployment: c.deployments.haiti,
-          performance: c.performance
+          performance: c.performance,
         })),
         count: contractors.length,
-        totalPersonnel: contractors.reduce((sum, c) => sum + (c.deployments.haiti?.personnel || 0), 0),
-        totalContractValue: contractors.reduce((sum, c) => sum + c.contract.value, 0)
+        totalPersonnel: contractors.reduce(
+          (sum, c) => sum + (c.deployments.haiti?.personnel || 0),
+          0
+        ),
+        totalContractValue: contractors.reduce(
+          (sum, c) => sum + c.contract.value,
+          0
+        ),
       };
     } catch (error) {
       logger.error('Error getting PMC contractors:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -301,23 +311,23 @@ class PrivateMilitaryService {
   deployPersonnel(pmcId, deploymentData, userId) {
     try {
       const contractor = this.pmcContractors.get(pmcId);
-      
+
       if (!contractor) {
         return {
           success: false,
-          error: 'PMC contractor not found'
+          error: 'PMC contractor not found',
         };
       }
 
       if (contractor.contract.status !== 'active') {
         return {
           success: false,
-          error: 'Contract is not active'
+          error: 'Contract is not active',
         };
       }
 
       const deploymentId = `DEP-${pmcId}-${Date.now()}`;
-      
+
       const deployment = {
         id: deploymentId,
         pmcId: pmcId,
@@ -331,24 +341,25 @@ class PrivateMilitaryService {
         status: 'active',
         equipment: deploymentData.equipment || [],
         authorizedBy: userId,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
       this.activeDeployments.set(deploymentId, deployment);
 
-      logger.info(`Deployed ${deploymentData.personnel} personnel from ${contractor.name} to ${deploymentData.location}`);
+      logger.info(
+        `Deployed ${deploymentData.personnel} personnel from ${contractor.name} to ${deploymentData.location}`
+      );
 
       return {
         success: true,
         deployment: deployment,
-        message: 'Personnel deployed successfully'
+        message: 'Personnel deployed successfully',
       };
-
     } catch (error) {
       logger.error('Error deploying personnel:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -380,7 +391,7 @@ class PrivateMilitaryService {
         budget: missionData.budget || 0,
         createdBy: userId,
         createdAt: new Date().toISOString(),
-        updates: []
+        updates: [],
       };
 
       this.missions.set(missionId, mission);
@@ -390,14 +401,13 @@ class PrivateMilitaryService {
       return {
         success: true,
         mission: mission,
-        message: 'Mission created successfully'
+        message: 'Mission created successfully',
       };
-
     } catch (error) {
       logger.error('Error creating mission:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -417,7 +427,7 @@ class PrivateMilitaryService {
       if (!mission) {
         return {
           success: false,
-          error: 'Mission not found'
+          error: 'Mission not found',
         };
       }
 
@@ -430,14 +440,14 @@ class PrivateMilitaryService {
         status: status,
         updatedBy: userId,
         notes: updateData.notes || '',
-        data: updateData
+        data: updateData,
       });
 
       if (status === 'completed') {
         mission.completionDate = new Date().toISOString();
-        
+
         // Update PMC performance metrics
-        mission.assignedPMCs.forEach(pmcId => {
+        mission.assignedPMCs.forEach((pmcId) => {
           const contractor = this.pmcContractors.get(pmcId);
           if (contractor) {
             contractor.performance.missionsCompleted += 1;
@@ -450,14 +460,13 @@ class PrivateMilitaryService {
       return {
         success: true,
         mission: mission,
-        message: `Mission status updated to ${status}`
+        message: `Mission status updated to ${status}`,
       };
-
     } catch (error) {
       logger.error('Error updating mission status:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -474,16 +483,22 @@ class PrivateMilitaryService {
 
       // Get PMC contractors
       const pmcContractors = Array.from(this.pmcContractors.values());
-      
+
       // Calculate total force
-      const totalPMCPersonnel = pmcContractors.reduce((sum, pmc) => 
-        sum + (pmc.deployments.haiti?.personnel || 0), 0
+      const totalPMCPersonnel = pmcContractors.reduce(
+        (sum, pmc) => sum + (pmc.deployments.haiti?.personnel || 0),
+        0
       );
 
-      const haitiNavyPersonnel = haitiMilitary.find(m => m.id === 'haiti-navy')?.personnel || 0;
-      const haitiArmyPersonnel = haitiMilitary.find(m => m.id === 'haiti-army')?.personnel || 0;
-      const haitiAirForcePersonnel = haitiMilitary.find(m => m.id === 'haiti-air-force')?.personnel || 0;
-      const burkinaJointForce = haitiMilitary.find(m => m.id === 'haiti-burkina-joint-force');
+      const haitiNavyPersonnel =
+        haitiMilitary.find((m) => m.id === 'haiti-navy')?.personnel || 0;
+      const haitiArmyPersonnel =
+        haitiMilitary.find((m) => m.id === 'haiti-army')?.personnel || 0;
+      const haitiAirForcePersonnel =
+        haitiMilitary.find((m) => m.id === 'haiti-air-force')?.personnel || 0;
+      const burkinaJointForce = haitiMilitary.find(
+        (m) => m.id === 'haiti-burkina-joint-force'
+      );
 
       const totalForce = {
         haitiNavy: haitiNavyPersonnel,
@@ -491,7 +506,12 @@ class PrivateMilitaryService {
         haitiAirForce: haitiAirForcePersonnel,
         pmcContractors: totalPMCPersonnel,
         burkinaFasoJoint: 5000, // From joint force agreement
-        total: haitiNavyPersonnel + haitiArmyPersonnel + haitiAirForcePersonnel + totalPMCPersonnel + 5000
+        total:
+          haitiNavyPersonnel +
+          haitiArmyPersonnel +
+          haitiAirForcePersonnel +
+          totalPMCPersonnel +
+          5000,
       };
 
       return {
@@ -510,22 +530,25 @@ class PrivateMilitaryService {
             'Cyber defense',
             'Training and capacity building',
             'Intelligence operations',
-            'Crisis response'
+            'Crisis response',
           ],
           integration: {
-            sharedCommand: burkinaJointForce?.integration.sharedCommand || false,
-            jointTraining: burkinaJointForce?.integration.jointTraining || false,
-            intelligenceSharing: burkinaJointForce?.integration.intelligenceSharing || false,
-            mutualDefense: burkinaJointForce?.integration.mutualDefense || false
-          }
-        }
+            sharedCommand:
+              burkinaJointForce?.integration.sharedCommand || false,
+            jointTraining:
+              burkinaJointForce?.integration.jointTraining || false,
+            intelligenceSharing:
+              burkinaJointForce?.integration.intelligenceSharing || false,
+            mutualDefense:
+              burkinaJointForce?.integration.mutualDefense || false,
+          },
+        },
       };
-
     } catch (error) {
       logger.error('Error getting joint force status:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -542,17 +565,19 @@ class PrivateMilitaryService {
       if (!contractor) {
         return {
           success: false,
-          error: 'PMC contractor not found'
+          error: 'PMC contractor not found',
         };
       }
 
       // Get active deployments for this PMC
-      const deployments = Array.from(this.activeDeployments.values())
-        .filter(d => d.pmcId === pmcId);
+      const deployments = Array.from(this.activeDeployments.values()).filter(
+        (d) => d.pmcId === pmcId
+      );
 
       // Get missions assigned to this PMC
-      const missions = Array.from(this.missions.values())
-        .filter(m => m.assignedPMCs.includes(pmcId));
+      const missions = Array.from(this.missions.values()).filter((m) =>
+        m.assignedPMCs.includes(pmcId)
+      );
 
       return {
         success: true,
@@ -562,17 +587,20 @@ class PrivateMilitaryService {
         summary: {
           totalDeployments: deployments.length,
           totalMissions: missions.length,
-          activeMissions: missions.filter(m => m.status === 'active').length,
-          completedMissions: missions.filter(m => m.status === 'completed').length,
-          personnelDeployed: deployments.reduce((sum, d) => sum + d.personnel, 0)
-        }
+          activeMissions: missions.filter((m) => m.status === 'active').length,
+          completedMissions: missions.filter((m) => m.status === 'completed')
+            .length,
+          personnelDeployed: deployments.reduce(
+            (sum, d) => sum + d.personnel,
+            0
+          ),
+        },
       };
-
     } catch (error) {
       logger.error('Error getting PMC details:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -587,15 +615,15 @@ class PrivateMilitaryService {
       let missions = Array.from(this.missions.values());
 
       if (filters.status) {
-        missions = missions.filter(m => m.status === filters.status);
+        missions = missions.filter((m) => m.status === filters.status);
       }
 
       if (filters.type) {
-        missions = missions.filter(m => m.type === filters.type);
+        missions = missions.filter((m) => m.type === filters.type);
       }
 
       if (filters.priority) {
-        missions = missions.filter(m => m.priority === filters.priority);
+        missions = missions.filter((m) => m.priority === filters.priority);
       }
 
       return {
@@ -603,18 +631,17 @@ class PrivateMilitaryService {
         missions: missions,
         count: missions.length,
         summary: {
-          planned: missions.filter(m => m.status === 'planned').length,
-          active: missions.filter(m => m.status === 'active').length,
-          completed: missions.filter(m => m.status === 'completed').length,
-          cancelled: missions.filter(m => m.status === 'cancelled').length
-        }
+          planned: missions.filter((m) => m.status === 'planned').length,
+          active: missions.filter((m) => m.status === 'active').length,
+          completed: missions.filter((m) => m.status === 'completed').length,
+          cancelled: missions.filter((m) => m.status === 'cancelled').length,
+        },
       };
-
     } catch (error) {
       logger.error('Error getting active missions:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -634,39 +661,61 @@ class PrivateMilitaryService {
         statistics: {
           contractors: {
             total: contractors.length,
-            active: contractors.filter(c => c.contract.status === 'active').length,
-            totalContractValue: contractors.reduce((sum, c) => sum + c.contract.value, 0)
+            active: contractors.filter((c) => c.contract.status === 'active')
+              .length,
+            totalContractValue: contractors.reduce(
+              (sum, c) => sum + c.contract.value,
+              0
+            ),
           },
           personnel: {
-            totalAvailable: contractors.reduce((sum, c) => sum + c.capabilities.personnel, 0),
-            deployed: contractors.reduce((sum, c) => sum + (c.deployments.haiti?.personnel || 0), 0),
-            deploymentRate: 0 // Will be calculated
+            totalAvailable: contractors.reduce(
+              (sum, c) => sum + c.capabilities.personnel,
+              0
+            ),
+            deployed: contractors.reduce(
+              (sum, c) => sum + (c.deployments.haiti?.personnel || 0),
+              0
+            ),
+            deploymentRate: 0, // Will be calculated
           },
           deployments: {
             active: deployments.length,
-            locations: [...new Set(deployments.map(d => d.location))].length
+            locations: [...new Set(deployments.map((d) => d.location))].length,
           },
           missions: {
             total: missions.length,
-            active: missions.filter(m => m.status === 'active').length,
-            completed: missions.filter(m => m.status === 'completed').length,
-            successRate: missions.length > 0 
-              ? ((missions.filter(m => m.status === 'completed').length / missions.length) * 100).toFixed(2) + '%'
-              : '0%'
+            active: missions.filter((m) => m.status === 'active').length,
+            completed: missions.filter((m) => m.status === 'completed').length,
+            successRate:
+              missions.length > 0
+                ? (
+                    (missions.filter((m) => m.status === 'completed').length /
+                      missions.length) *
+                    100
+                  ).toFixed(2) + '%'
+                : '0%',
           },
           performance: {
-            averageRating: (contractors.reduce((sum, c) => sum + c.performance.rating, 0) / contractors.length).toFixed(2),
-            averageIncidentRate: (contractors.reduce((sum, c) => sum + c.performance.incidentRate, 0) / contractors.length).toFixed(4)
-          }
+            averageRating: (
+              contractors.reduce((sum, c) => sum + c.performance.rating, 0) /
+              contractors.length
+            ).toFixed(2),
+            averageIncidentRate: (
+              contractors.reduce(
+                (sum, c) => sum + c.performance.incidentRate,
+                0
+              ) / contractors.length
+            ).toFixed(4),
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       logger.error('Error getting statistics:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -682,7 +731,7 @@ class PrivateMilitaryService {
       pmcContractors: this.pmcContractors.size,
       activeDeployments: this.activeDeployments.size,
       activeMissions: this.missions.size,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     };
   }
 
@@ -698,7 +747,7 @@ class PrivateMilitaryService {
       healthStatus: this.getHealthStatus(),
       exportTimestamp: new Date().toISOString(),
       classification: 'Strategic Military - Confidential',
-      owner: 'OWLBAN GROUP / House of David'
+      owner: 'OWLBAN GROUP / House of David',
     };
   }
 }

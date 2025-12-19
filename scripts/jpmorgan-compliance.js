@@ -56,13 +56,18 @@ class JPMorganComplianceChecker {
       /social.*security|ssn/i,
       /bank.*account/i,
       /routing.*number/i,
-      /api.*key.*jpmorgan/i
+      /api.*key.*jpmorgan/i,
     ];
 
     const excludeDirs = ['node_modules', '.git', 'logs', 'dist', 'coverage'];
     const excludeFiles = ['package-lock.json', '.env*', 'secrets.json'];
 
-    this.scanFilesForPatterns(rootDir, sensitivePatterns, excludeDirs, excludeFiles);
+    this.scanFilesForPatterns(
+      rootDir,
+      sensitivePatterns,
+      excludeDirs,
+      excludeFiles
+    );
 
     if (this.issues.length === 0) {
       this.addPassed('No sensitive data exposure detected');
@@ -73,8 +78,9 @@ class JPMorganComplianceChecker {
   checkEncryptionStandards() {
     this.log('Checking encryption standards...');
 
-    const jpmorganFiles = this.findFiles(rootDir, (file) =>
-      file.includes('jpmorgan') || file.includes('payment')
+    const jpmorganFiles = this.findFiles(
+      rootDir,
+      (file) => file.includes('jpmorgan') || file.includes('payment')
     );
 
     let hasEncryption = false;
@@ -109,8 +115,9 @@ class JPMorganComplianceChecker {
   checkPCIDSSCompliance() {
     this.log('Checking PCI DSS compliance...');
 
-    const jpmorganFiles = this.findFiles(rootDir, (file) =>
-      file.includes('jpmorgan') || file.includes('payment')
+    const jpmorganFiles = this.findFiles(
+      rootDir,
+      (file) => file.includes('jpmorgan') || file.includes('payment')
     );
 
     let hasPCIMarkers = false;
@@ -118,8 +125,12 @@ class JPMorganComplianceChecker {
     for (const file of jpmorganFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
-      if (content.includes('PCI') || content.includes('DSS') ||
-          content.includes('payment card') || content.includes('card data')) {
+      if (
+        content.includes('PCI') ||
+        content.includes('DSS') ||
+        content.includes('payment card') ||
+        content.includes('card data')
+      ) {
         hasPCIMarkers = true;
         break;
       }
@@ -136,8 +147,9 @@ class JPMorganComplianceChecker {
   checkLoggingSanitization() {
     this.log('Checking logging sanitization...');
 
-    const logFiles = this.findFiles(rootDir, (file) =>
-      file.includes('log') || file.includes('logger')
+    const logFiles = this.findFiles(
+      rootDir,
+      (file) => file.includes('log') || file.includes('logger')
     );
 
     let hasSanitization = false;
@@ -145,8 +157,12 @@ class JPMorganComplianceChecker {
     for (const file of logFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
-      if (content.includes('sanitize') || content.includes('mask') ||
-          content.includes('redact') || content.includes('filter')) {
+      if (
+        content.includes('sanitize') ||
+        content.includes('mask') ||
+        content.includes('redact') ||
+        content.includes('filter')
+      ) {
         hasSanitization = true;
         break;
       }
@@ -163,8 +179,12 @@ class JPMorganComplianceChecker {
   checkRateLimiting() {
     this.log('Checking rate limiting implementation...');
 
-    const serverFiles = this.findFiles(rootDir, (file) =>
-      file.includes('server') || file.includes('app') || file.includes('route')
+    const serverFiles = this.findFiles(
+      rootDir,
+      (file) =>
+        file.includes('server') ||
+        file.includes('app') ||
+        file.includes('route')
     );
 
     let hasRateLimiting = false;
@@ -172,8 +192,11 @@ class JPMorganComplianceChecker {
     for (const file of serverFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
-      if (content.includes('rate-limit') || content.includes('express-rate-limit') ||
-          content.includes('limiter')) {
+      if (
+        content.includes('rate-limit') ||
+        content.includes('express-rate-limit') ||
+        content.includes('limiter')
+      ) {
         hasRateLimiting = true;
         break;
       }
@@ -190,8 +213,9 @@ class JPMorganComplianceChecker {
   checkHTTPSEnforcement() {
     this.log('Checking HTTPS enforcement...');
 
-    const serverFiles = this.findFiles(rootDir, (file) =>
-      file.includes('server') || file.includes('app')
+    const serverFiles = this.findFiles(
+      rootDir,
+      (file) => file.includes('server') || file.includes('app')
     );
 
     let hasHTTPS = false;
@@ -199,8 +223,12 @@ class JPMorganComplianceChecker {
     for (const file of serverFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
-      if (content.includes('https') || content.includes('ssl') ||
-          content.includes('tls') || content.includes('forceSSL')) {
+      if (
+        content.includes('https') ||
+        content.includes('ssl') ||
+        content.includes('tls') ||
+        content.includes('forceSSL')
+      ) {
         hasHTTPS = true;
         break;
       }
@@ -217,8 +245,9 @@ class JPMorganComplianceChecker {
   checkAuditLogging() {
     this.log('Checking audit logging...');
 
-    const auditFiles = this.findFiles(rootDir, (file) =>
-      file.includes('audit') || file.includes('log')
+    const auditFiles = this.findFiles(
+      rootDir,
+      (file) => file.includes('audit') || file.includes('log')
     );
 
     let hasAuditLogging = false;
@@ -226,8 +255,11 @@ class JPMorganComplianceChecker {
     for (const file of auditFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
-      if (content.includes('audit') || content.includes('transaction.*log') ||
-          content.includes('payment.*log')) {
+      if (
+        content.includes('audit') ||
+        content.includes('transaction.*log') ||
+        content.includes('payment.*log')
+      ) {
         hasAuditLogging = true;
         break;
       }
@@ -250,10 +282,15 @@ class JPMorganComplianceChecker {
 
       if (stat.isDirectory()) {
         if (!excludeDirs.includes(file)) {
-          this.scanFilesForPatterns(filePath, patterns, excludeDirs, excludeFiles);
+          this.scanFilesForPatterns(
+            filePath,
+            patterns,
+            excludeDirs,
+            excludeFiles
+          );
         }
       } else {
-        if (!excludeFiles.some(pattern => file.match(pattern))) {
+        if (!excludeFiles.some((pattern) => file.match(pattern))) {
           try {
             const content = fs.readFileSync(filePath, 'utf8');
             const lines = content.split('\n');
@@ -291,7 +328,10 @@ class JPMorganComplianceChecker {
 
         if (stat.isFile() && filterFn(itemPath)) {
           files.push(itemPath);
-        } else if (stat.isDirectory() && !['node_modules', '.git'].includes(item)) {
+        } else if (
+          stat.isDirectory() &&
+          !['node_modules', '.git'].includes(item)
+        ) {
           traverse(itemPath);
         }
       }
@@ -309,11 +349,11 @@ class JPMorganComplianceChecker {
         totalIssues: this.issues.length,
         totalWarnings: this.warnings.length,
         totalPassed: this.passed.length,
-        compliance: this.issues.length === 0 ? 'PASSED' : 'FAILED'
+        compliance: this.issues.length === 0 ? 'PASSED' : 'FAILED',
       },
       issues: this.issues,
       warnings: this.warnings,
-      passed: this.passed
+      passed: this.passed,
     };
 
     return report;
@@ -322,7 +362,11 @@ class JPMorganComplianceChecker {
   // Save report to file
   saveReport() {
     const report = this.generateReport();
-    const reportPath = path.join(rootDir, 'logs', 'jpmorgan-compliance-report.json');
+    const reportPath = path.join(
+      rootDir,
+      'logs',
+      'jpmorgan-compliance-report.json'
+    );
 
     // Ensure logs directory exists
     const logsDir = path.dirname(reportPath);
@@ -379,7 +423,7 @@ class JPMorganComplianceChecker {
 // Run compliance checks if this script is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   const checker = new JPMorganComplianceChecker();
-  checker.runComplianceChecks().catch(error => {
+  checker.runComplianceChecks().catch((error) => {
     logger.error('Compliance check failed:', error);
     process.exit(1);
   });

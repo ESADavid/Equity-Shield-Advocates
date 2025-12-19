@@ -10,13 +10,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
-  "keywords": [
-    "revenue",
-    "transaction",
-    "override",
-    "audit",
-    "oscar-broome"
-  ],
+  "keywords": ["revenue", "transaction", "override", "audit", "oscar-broome"],
   "author": "Oscar Broome Revenue Team",
   "license": "MIT",
   "dependencies": {

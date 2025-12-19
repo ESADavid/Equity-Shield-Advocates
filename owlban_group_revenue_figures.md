@@ -4,11 +4,11 @@
 
 - **Owlban Group Revenue:**
   - Amount: $1.2 Quadrillion
-  - Notes: __________
+  - Notes: ****\_\_****
 
 - **Blackbox AI Revenue:**
   - Amount: $1.8 Quadrillion
-  - Notes: __________
+  - Notes: ****\_\_****
 
 ## Routing Numbers
 
@@ -28,4 +28,4 @@
 
 ## Additional Notes
 
-- ______________________________________________________
+- ***
