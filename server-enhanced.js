@@ -192,6 +192,50 @@ try {
   process.exit(1);
 }
 
+// Import Partner routes - PHASE 2
+let partnerRouter;
+try {
+  const partnerModule = await import('./routes/partnerRoutes.js');
+  partnerRouter = partnerModule.default || partnerModule;
+  logger.info('✅ Partner coordination system loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load Partner system:', error.message);
+  process.exit(1);
+}
+
+// Import Citizen Portal routes - PHASE 2
+let citizenPortalRouter;
+try {
+  const citizenModule = await import('./routes/citizenPortalRoutes.js');
+  citizenPortalRouter = citizenModule.default || citizenModule;
+  logger.info('✅ Citizen portal system loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load Citizen portal:', error.message);
+  process.exit(1);
+}
+
+// Import UBI Payment routes - PHASE 2
+let ubiPaymentRouter;
+try {
+  const ubiPaymentModule = await import('./routes/ubiPaymentRoutes.js');
+  ubiPaymentRouter = ubiPaymentModule.default || ubiPaymentModule;
+  logger.info('✅ UBI payment system loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load UBI payment system:', error.message);
+  process.exit(1);
+}
+
+// Import Notification routes - PHASE 2
+let notificationRoutesPhase2;
+try {
+  const notifModule = await import('./routes/notificationRoutes.js');
+  notificationRoutesPhase2 = notifModule.default || notifModule;
+  logger.info('✅ Multi-channel notification routes loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load notification routes:', error.message);
+  process.exit(1);
+}
+
 // Import ITG (Integrated Technology Growth) routes - KING SACHEM YOCHANAN
 let itgRouter;
 try {
@@ -492,6 +536,34 @@ if (itgRouter) {
   logger.info('✅ ITG routes mounted at /api/itg');
   logger.info('   👑 King Sachem Yochanan ITG Algorithm active');
   logger.info('   ✨ Sacred Geometry + Divine Wisdom + Quantum Enhancement');
+}
+
+// Partner API Routes - PHASE 2
+if (partnerRouter) {
+  app.use('/api/partners', partnerRouter);
+  logger.info('✅ Partner routes mounted at /api/partners');
+  logger.info('   🤝 Partner coordination & PMC integration active');
+}
+
+// Citizen Portal API Routes - PHASE 2
+if (citizenPortalRouter) {
+  app.use('/api/citizen-portal', citizenPortalRouter);
+  logger.info('✅ Citizen portal routes mounted at /api/citizen-portal');
+  logger.info('   👥 Citizen registration & services active');
+}
+
+// UBI Payment API Routes - PHASE 2
+if (ubiPaymentRouter) {
+  app.use('/api/ubi-payments', ubiPaymentRouter);
+  logger.info('✅ UBI payment routes mounted at /api/ubi-payments');
+  logger.info('   💵 UBI payment processing active');
+}
+
+// Multi-Channel Notification API Routes - PHASE 2
+if (notificationRoutesPhase2) {
+  app.use('/api/notifications-v2', notificationRoutesPhase2);
+  logger.info('✅ Multi-channel notification routes mounted at /api/notifications-v2');
+  logger.info('   📧 Email, SMS, Push, In-App notifications active');
 }
 
 // Webhook endpoint for Stripe

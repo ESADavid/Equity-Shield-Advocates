@@ -383,3 +383,10 @@
 {"level":"warn","message":"Email configuration incomplete for sendgrid: sendgridApiKey - Email features will be disabled","service":"email-config","timestamp":"2025-11-17T19:18:39.523Z"}
 {"level":"warn","message":"Email configuration incomplete for sendgrid: sendgridApiKey - Email features will be disabled","service":"email-config","timestamp":"2025-11-17T19:19:39.216Z"}
 {"level":"warn","message":"Email configuration incomplete for sendgrid: sendgridApiKey - Email features will be disabled","service":"email-config","timestamp":"2025-11-17T21:23:44.326Z"}
+{"level":"warn","message":"Email configuration incomplete for sendgrid: sendgridApiKey - Email features will be disabled","service":"email-config","timestamp":"2025-12-19T21:14:40.899Z"}
+{"level":"warn","message":"Email configuration incomplete for sendgrid: sendgridApiKey - Email features will be disabled","service":"email-config","timestamp":"2025-12-19T21:29:30.546Z"}
+{"level":"warn","message":"Email configuration incomplete for sendgrid: sendgridApiKey - Email features will be disabled","service":"email-config","timestamp":"2025-12-19T21:31:23.686Z"}
+{"level":"warn","message":"Email configuration incomplete for sendgrid: sendgridApiKey - Email features will be disabled","service":"email-config","timestamp":"2025-12-19T21:34:10.409Z"}
+{"level":"warn","message":"Email configuration incomplete for sendgrid: sendgridApiKey - Email features will be disabled","service":"email-config","timestamp":"2025-12-19T21:36:39.930Z"}
+{"level":"warn","message":"Email configuration incomplete for sendgrid: sendgridApiKey - Email features will be disabled","service":"email-config","timestamp":"2025-12-19T21:38:36.854Z"}
+{"level":"warn","message":"Email configuration incomplete for sendgrid: sendgridApiKey - Email features will be disabled","service":"email-config","timestamp":"2025-12-19T21:40:55.007Z"}

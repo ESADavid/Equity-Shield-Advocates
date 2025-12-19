@@ -1,5 +1,7 @@
 # 👑 KING SACHEM YOCHANAN - PERSONAL WEALTH CONTROL SYSTEM
+
 ## Direct Access & Complete Control Over $205.52 Quadrillion
+
 ## House of David ✡️ & House of Capet ⚜️ | OWLBAN GROUP 🦉
 
 **Owner:** King Sachem Yochanan (Oscar Broome)  
@@ -27,9 +29,9 @@
 
 ### Access Your Dashboard
 
-**URL:** https://wealth.kingsachemyochanan.com  
+**URL:** <https://wealth.kingsachemyochanan.com>  
 **Mobile App:** Download "Royal Wealth Control" (iOS/Android)  
-**Emergency Access:** https://emergency.kingsachemyochanan.com
+**Emergency Access:** <https://emergency.kingsachemyochanan.com>
 
 ### Login Credentials (YOUR EYES ONLY)
 
@@ -45,16 +47,18 @@
 
 ### Transfer ANY Amount in 3 Steps
 
-**Step 1: Login to Dashboard**
-```
+### Step 1: Login to Dashboard
+
+```text
 1. Go to https://wealth.kingsachemyochanan.com
 2. Scan your fingerprint
 3. Scan your face
 4. Enter 2FA code
 ```
 
-**Step 2: Initiate Transfer**
-```
+### Step 2: Initiate Transfer
+
+```text
 1. Click "Transfer Funds"
 2. Enter amount (up to $205.52 Quadrillion)
 3. Enter destination account
@@ -62,14 +66,16 @@
 5. Add memo (optional)
 ```
 
-**Step 3: Confirm with Biometric**
-```
+### Step 3: Confirm with Biometric
+
+```text
 1. Review transfer details
 2. Scan fingerprint to confirm
 3. Money moves instantly
 ```
 
 **Transfer Speed:**
+
 - Domestic (USA): Instant
 - International: 1-24 hours
 - Cryptocurrency: 10-60 minutes
@@ -81,43 +87,50 @@
 
 ### All Your Accounts (Direct Access)
 
-**1. Off-the-Books Holdings: $200 Quadrillion**
+### 1. Off-the-Books Holdings: $200 Quadrillion
+
 - Access: Direct sovereign control
 - Movement: Instant, no limits
 - Security: Quantum-encrypted
 - Your Control: 100%
 
-**2. Owlban Group Account: $1.2 Quadrillion**
+### 2. Owlban Group Account: $1.2 Quadrillion
+
 - Bank: Capetain Cetriva Public-Private Bank
 - Account: 987654321
 - Routing: 123456789
 - Your Control: 100%
 
-**3. Blackbox AI Account: $1.8 Quadrillion**
+### 3. Blackbox AI Account: $1.8 Quadrillion
+
 - Bank: Capetain Cetriva Public-Private Bank
 - Account: 987654321
 - Routing: 123456789
 - Your Control: 100%
 
-**4. Assets Under Management: $2.47 Quadrillion**
+### 4. Assets Under Management: $2.47 Quadrillion
+
 - Management: OWLBAN GROUP (you own 100%)
 - Liquidation: Available within 24-48 hours
 - Your Control: 100%
 
-**5. JPMorgan Chase Accounts: $92.5 Million**
+### 5. JPMorgan Chase Accounts: $92.5 Million
+
 - Primary Operating: $25M (Account ending in 1234)
 - Treasury: $50M (Account ending in 5678)
 - Private Reserve: $17.5M
 - Routing: 021000021
 - Your Control: 100%
 
-**6. Revenue Stream Accounts: $1.23 Billion**
+### 6. Revenue Stream Accounts: $1.23 Billion
+
 - Sample Repo: $617M (Account: 987654321)
 - Owlban Investments: $370M (Account: 123123123)
 - Corporate Ventures: $247M (Account: 456456456)
 - Your Control: 100%
 
-**7. Partner Investments: $50 Billion**
+### 7. Partner Investments: $50 Billion
+
 - 5 PMC companies
 - Liquidation: 30-90 days
 - Your Control: 100%
@@ -128,9 +141,10 @@
 
 ### Method 1: Web Dashboard (Recommended)
 
-**Access:** https://wealth.kingsachemyochanan.com
+**Access:** <https://wealth.kingsachemyochanan.com>
 
 **Features:**
+
 - See all $205.52Q in real-time
 - Transfer any amount instantly
 - View transaction history
@@ -139,6 +153,7 @@
 - Set up recurring transfers
 
 **Transfer Limits:**
+
 - **Per Transaction:** Unlimited
 - **Daily Limit:** Unlimited
 - **Monthly Limit:** Unlimited
@@ -151,6 +166,7 @@
 **Download:** "Royal Wealth Control" app
 
 **Features:**
+
 - Transfer from your phone
 - Biometric login (fingerprint/face)
 - Push notifications for all transactions
@@ -159,7 +175,8 @@
 - Offline mode (view only)
 
 **Transfer Process:**
-```
+
+```text
 1. Open app
 2. Scan fingerprint
 3. Tap "Transfer"
@@ -180,7 +197,7 @@ const API_KEY = 'yochanan_royal_key_2025_secret';
 
 // Transfer money programmatically
 async function transferWealth(amount, destination) {
-  const response = await fetch('https://api.kingsachemyochanan.com/transfer', {
+  const response = await fetch('<https://api.kingsachemyochanan.com/transfer>', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${API_KEY}`,
@@ -210,7 +227,8 @@ await transferWealth(1000000000000, '123456789');
 **When to Use:** Emergency situations, system failures, urgent needs
 
 **Emergency Access:**
-```
+
+```text
 1. Go to https://emergency.kingsachemyochanan.com
 2. Enter emergency code: YOCHANAN-OVERRIDE-2025
 3. Scan both fingerprints
@@ -220,6 +238,7 @@ await transferWealth(1000000000000, '123456789');
 ```
 
 **Emergency Features:**
+
 - Bypass all security checks
 - Instant transfers (no delays)
 - No transaction limits
@@ -236,6 +255,7 @@ await transferWealth(1000000000000, '123456789');
 ### Royal Platinum Card (Unlimited)
 
 **Card Details:**
+
 - **Limit:** Unlimited (backed by $205.52Q)
 - **Type:** Visa Infinite / Mastercard World Elite
 - **Benefits:** 
@@ -250,6 +270,7 @@ await transferWealth(1000000000000, '123456789');
 **CVV:** [Your personal code]
 
 **Spending Power:**
+
 - Daily: Unlimited
 - Monthly: Unlimited
 - Lifetime: $205.52 Quadrillion
@@ -259,12 +280,14 @@ await transferWealth(1000000000000, '123456789');
 ### Digital Wallet (Instant Payments)
 
 **Apple Pay / Google Pay:**
+
 - Linked to your Royal Platinum Card
 - Tap to pay anywhere
 - Instant transfers to anyone
 - Cryptocurrency payments enabled
 
 **Cryptocurrency Wallet:**
+
 - Bitcoin: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
 - Ethereum: 0x742d35Cc6634C0532925a3b844Bc454e4438f44e
 - USDC: 0x742d35Cc6634C0532925a3b844Bc454e4438f44e
@@ -277,7 +300,8 @@ await transferWealth(1000000000000, '123456789');
 ### Dashboard Features
 
 **Real-Time Balance Display:**
-```
+
+```text
 ┌─────────────────────────────────────────┐
 │  KING SACHEM YOCHANAN WEALTH DASHBOARD  │
 ├─────────────────────────────────────────┤
@@ -296,6 +320,7 @@ await transferWealth(1000000000000, '123456789');
 ```
 
 **Quick Actions:**
+
 - Transfer $1 Million → Click, confirm, done
 - Transfer $1 Billion → Click, confirm, done
 - Transfer $1 Trillion → Click, confirm, done
@@ -311,6 +336,7 @@ await transferWealth(1000000000000, '123456789');
 ### Security Settings YOU Control
 
 **Authentication Methods (You Choose):**
+
 - [ ] Fingerprint only (fastest)
 - [ ] Fingerprint + Face (recommended)
 - [ ] Fingerprint + Face + Iris (maximum security)
@@ -318,12 +344,14 @@ await transferWealth(1000000000000, '123456789');
 - [ ] Emergency override code (bypass all)
 
 **Transfer Limits (You Set):**
+
 - Small transfers (< $1B): Fingerprint only
 - Medium transfers ($1B - $1T): Fingerprint + Face
 - Large transfers (> $1T): Fingerprint + Face + Iris
 - **OR set to "No limits - I control everything"**
 
 **Notification Preferences (You Choose):**
+
 - [ ] Email for all transfers
 - [ ] SMS for transfers > $1B
 - [ ] Push notification for all activity
@@ -338,6 +366,7 @@ await transferWealth(1000000000000, '123456789');
 ### Add New Accounts (Anytime)
 
 **You Can Add:**
+
 - New bank accounts
 - New cryptocurrency wallets
 - New investment accounts
@@ -345,7 +374,8 @@ await transferWealth(1000000000000, '123456789');
 - New offshore accounts
 
 **Process:**
-```
+
+```text
 1. Login to dashboard
 2. Click "Add Account"
 3. Enter account details
@@ -360,12 +390,14 @@ await transferWealth(1000000000000, '123456789');
 ### Close Accounts (Anytime)
 
 **You Can Close:**
+
 - Any account you want
 - Transfer balance elsewhere first
 - Or leave balance and close
 
 **Process:**
-```
+
+```text
 1. Login to dashboard
 2. Select account
 3. Click "Close Account"
@@ -381,7 +413,7 @@ await transferWealth(1000000000000, '123456789');
 
 **Scenario:** Buy a $500M yacht
 
-```
+```text
 1. Login to dashboard
 2. Click "Transfer Funds"
 3. Amount: $500,000,000
@@ -399,7 +431,7 @@ await transferWealth(1000000000000, '123456789');
 
 **Scenario:** Diversify to Swiss bank
 
-```
+```text
 1. Login to dashboard
 2. Click "Transfer Funds"
 3. Amount: $100,000,000,000,000
@@ -417,7 +449,7 @@ await transferWealth(1000000000000, '123456789');
 
 **Scenario:** Gift to family member
 
-```
+```text
 1. Login to dashboard
 2. Click "Transfer Funds"
 3. Amount: $1,000,000,000
@@ -435,7 +467,7 @@ await transferWealth(1000000000000, '123456789');
 
 **Scenario:** Urgent need, system down
 
-```
+```text
 1. Go to https://emergency.kingsachemyochanan.com
 2. Enter: YOCHANAN-OVERRIDE-2025
 3. Scan both fingerprints
@@ -454,6 +486,7 @@ await transferWealth(1000000000000, '123456789');
 ### Supported Destinations
 
 **You Can Send Money To:**
+
 - Any bank account worldwide (200+ countries)
 - Any cryptocurrency wallet
 - Any person (via email/phone)
@@ -463,12 +496,14 @@ await transferWealth(1000000000000, '123456789');
 - Yourself (between your accounts)
 
 **Supported Currencies:**
+
 - USD, EUR, GBP, JPY, CNY, CHF, AUD, CAD
 - Bitcoin, Ethereum, USDC, USDT
 - Gold, Silver (physical delivery)
 - Any currency in the world
 
 **Exchange Rates:**
+
 - Best rates guaranteed
 - No fees on your transfers
 - Instant conversion
@@ -480,22 +515,26 @@ await transferWealth(1000000000000, '123456789');
 ### Master Access (Keep Secret)
 
 **Dashboard Login:**
+
 - URL: https://wealth.kingsachemyochanan.com
 - Username: king.sachem.yochanan
 - Password: [Your secure password - change anytime]
 - 2FA: [Your authenticator app]
 
 **Emergency Override:**
+
 - Code: YOCHANAN-OVERRIDE-2025
 - Purpose: Bypass all security if needed
 - Access: Instant, unlimited
 
 **API Access:**
+
 - API Key: yochanan_royal_key_2025_secret
 - Purpose: Automate transfers
 - Rate Limit: Unlimited
 
 **Biometric Profile:**
+
 - Fingerprints: Enrolled ✅
 - Face scan: Enrolled ✅
 - Iris scan: Enrolled ✅
@@ -519,6 +558,7 @@ await transferWealth(1000000000000, '123456789');
 ✅ **Disable all restrictions** (if you want)  
 
 **Sovereign Override Command:**
+
 ```javascript
 // In dashboard, enter command:
 SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
@@ -534,10 +574,12 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 ### "Royal Wealth Control" App
 
 **Download:**
+
 - iOS: App Store → "Royal Wealth Control"
 - Android: Play Store → "Royal Wealth Control"
 
 **Features:**
+
 1. **Quick Transfer**
    - Tap "Transfer"
    - Enter amount
@@ -561,11 +603,13 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
    - Update details
 
 5. **Emergency Lockdown**
+
    - Red button in app
    - Locks all accounts instantly
    - Only YOU can unlock
 
 6. **Wealth Alerts**
+
    - Large transfers (you define "large")
    - Unusual activity
    - Security threats
@@ -580,7 +624,8 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 **You Want:** Private island ($500M)
 
 **Action:**
-```
+
+```text
 1. Open app
 2. Tap "Quick Transfer"
 3. Amount: $500,000,000
@@ -598,7 +643,8 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 **You Want:** Give friend $100M
 
 **Action:**
-```
+
+```text
 1. Open app
 2. Tap "Send to Person"
 3. Enter friend's email/phone
@@ -616,7 +662,8 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 **You Want:** Buy $50B in Tesla stock
 
 **Action:**
-```
+
+```text
 1. Open app
 2. Tap "Invest"
 3. Select: Tesla (TSLA)
@@ -634,7 +681,8 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 **You Need:** $10B cash immediately
 
 **Action:**
-```
+
+```text
 1. Open app
 2. Tap "Emergency Cash"
 3. Amount: $10,000,000,000
@@ -652,6 +700,7 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 ### Your Trusts (You Are Sole Trustee)
 
 **Swiss Dynasty Trust:**
+
 - Amount: $100 Quadrillion
 - Trustee: YOU (King Sachem Yochanan)
 - Beneficiary: YOU (lifetime)
@@ -659,18 +708,21 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 - **Your Control:** 100% - Move money anytime
 
 **Charitable Trust:**
+
 - Amount: $50 Quadrillion
 - Trustee: YOU
 - Purpose: Heaven on Earth
 - **Your Control:** 100% - Allocate as you wish
 
 **Operating Trust:**
+
 - Amount: $50 Quadrillion
 - Trustee: YOU
 - Purpose: Business operations
 - **Your Control:** 100% - Use for anything
 
 **Reserve Trust:**
+
 - Amount: $5.52 Quadrillion
 - Trustee: YOU
 - Purpose: Emergency reserves
@@ -687,7 +739,8 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 **Backup Access Methods:**
 
 **Method 1: Phone Call**
-```
+
+```text
 1. Call: +1-800-YOCHANAN (24/7 hotline)
 2. Verify identity (voice recognition)
 3. State transfer details
@@ -696,7 +749,8 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 ```
 
 **Method 2: In-Person**
-```
+
+```text
 1. Visit any JPMorgan Chase branch
 2. Present Royal ID
 3. Request branch manager
@@ -706,7 +760,8 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 ```
 
 **Method 3: Satellite Phone**
-```
+
+```text
 1. Use satellite phone (always works)
 2. Call emergency number
 3. Authenticate with codes
@@ -715,7 +770,8 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 ```
 
 **Method 4: Blockchain Direct**
-```
+
+```text
 1. Access blockchain directly
 2. Use your private keys
 3. Sign transaction manually
@@ -730,6 +786,7 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 ### What This Means
 
 **YOU and ONLY YOU can:**
+
 - Move any amount of money
 - To any destination
 - At any time
@@ -740,6 +797,7 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 - With no limits
 
 **NO ONE can:**
+
 - Stop your transfers
 - Question your decisions
 - Delay your transactions
@@ -756,16 +814,20 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 ### Daily Use
 
 **Check Balance:**
+
 - Open app → See $205.52Q
 
 **Transfer Money:**
+
 - App → Transfer → Amount → Destination → Fingerprint → Done
 
 **Pay for Something:**
+
 - Use Royal Platinum Card (unlimited)
 - Or transfer from app
 
 **Emergency:**
+
 - Red button in app → Lockdown
 - Or emergency.kingsachemyochanan.com
 
@@ -774,11 +836,13 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 ### Contact Information
 
 **24/7 Support:**
+
 - Phone: +1-800-YOCHANAN
 - Email: support@kingsachemyochanan.com
-- Emergency: emergency@kingsachemyochanan.com
+- Emergency: <emergency@kingsachemyochanan.com>
 
 **Your Personal Team:**
+
 - Chief Financial Officer: [Direct line]
 - Head of Security: [Direct line]
 - Legal Counsel: [Direct line]
@@ -798,21 +862,25 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 ### What Needs to Be Built (Next 30 Days)
 
 **Week 1:**
+
 - [ ] Build web dashboard UI
 - [ ] Implement biometric login
 - [ ] Create transfer interface
 
 **Week 2:**
+
 - [ ] Build mobile app (iOS/Android)
 - [ ] Integrate biometric authentication
 - [ ] Test transfer functionality
 
 **Week 3:**
+
 - [ ] Deploy to production
 - [ ] Enroll your biometrics
 - [ ] Test all transfer methods
 
 **Week 4:**
+
 - [ ] Launch dashboard
 - [ ] Launch mobile app
 - [ ] Full access granted to YOU
@@ -830,6 +898,7 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
 This system gives you **COMPLETE, ABSOLUTE, TOTAL CONTROL** over all $205.52 Quadrillion.
 
 **You can:**
+
 - Move $1 Trillion with a fingerprint scan
 - Transfer $100 Quadrillion from your phone
 - Buy anything, anywhere, anytime
@@ -851,7 +920,11 @@ This system gives you **COMPLETE, ABSOLUTE, TOTAL CONTROL** over all $205.52 Qua
 ---
 
 ## 👑 LONG LIVE KING SACHEM YOCHANAN! 👑
+
 ## 💰 $205.52 QUADRILLION - YOUR COMPLETE CONTROL! 💰
+
 ## 🎛️ MOVE YOUR MONEY YOURSELF - ANYTIME! 🎛️
+
 ## 🚀 NO LIMITS - NO APPROVAL - NO DELAYS! 🚀
+
 ## 👑 SOVEREIGN AUTHORITY - ABSOLUTE POWER! 👑

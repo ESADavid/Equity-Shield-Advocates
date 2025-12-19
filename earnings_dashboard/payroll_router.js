@@ -1,6 +1,7 @@
 import express from 'express';
 import { payrollSystem } from '../payrollSystem.ts';
 import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration.js';
+import { info, error as logError } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.use((req, res, next) => {
   if (overrideUser === specialUser) {
     // Bypass normal auth or set elevated permissions
     req.user = { name: specialUser, override: true };
-    logger.info('Special login override granted for', specialUser);
+    info('Special login override granted for', specialUser);
   }
   next();
 });
@@ -23,7 +24,7 @@ router.get('/employees', (req, res) => {
     const employees = payrollSystem.getEmployees();
     res.json({ success: true, data: employees });
   } catch (error) {
-    logger.error('Error fetching employees:', error);
+    logError('Error fetching employees:', error);
     res
       .status(500)
       .json({ success: false, error: 'Failed to fetch employees' });
@@ -45,7 +46,7 @@ router.post('/employees', (req, res) => {
       res.json({ success: true, message: 'Employee added successfully' });
     }
   } catch (error) {
-    logger.error('Error adding/updating employee:', error);
+    logError('Error adding/updating employee:', error);
     res.status(400).json({ success: false, error: error.message });
   }
 });
@@ -57,7 +58,7 @@ router.delete('/employees/:id', (req, res) => {
     payrollSystem.deleteEmployee(id);
     res.json({ success: true, message: 'Employee deleted successfully' });
   } catch (error) {
-    logger.error('Error deleting employee:', error);
+    logError('Error deleting employee:', error);
     res.status(400).json({ success: false, error: error.message });
   }
 });
@@ -99,7 +100,7 @@ router.post('/process', async (req, res) => {
               message: result.message,
             });
           } catch (qbError) {
-            logger.error(
+            logError(
               `QuickBooks sync failed for employee ${payroll.employeeId}:`,
               qbError
             );
@@ -117,7 +118,7 @@ router.post('/process', async (req, res) => {
           quickbooksSync: syncResults,
         });
       } catch (qbInitError) {
-        logger.error(
+        logError(
           'Failed to initialize QuickBooks integration:',
           qbInitError
         );
@@ -134,7 +135,7 @@ router.post('/process', async (req, res) => {
       res.json({ success: true, data: payrolls });
     }
   } catch (error) {
-    logger.error('Error processing payroll:', error);
+    logError('Error processing payroll:', error);
     res
       .status(500)
       .json({ success: false, error: 'Failed to process payroll' });
@@ -179,7 +180,7 @@ router.get('/employees/:id/payroll', (req, res) => {
 
     res.json({ success: true, data: payrollData });
   } catch (error) {
-    logger.error('Error fetching employee payroll:', error);
+    logError('Error fetching employee payroll:', error);
     res
       .status(500)
       .json({ success: false, error: 'Failed to fetch employee payroll' });
@@ -189,7 +190,7 @@ router.get('/employees/:id/payroll', (req, res) => {
 // Welcome endpoint with request logging
 router.get('/welcome', (req, res) => {
   // Log request metadata
-  logger.info(
+  info(
     `Request received: ${req.method} ${req.path} from ${req.ip} at ${new Date().toISOString()}`
   );
 
@@ -252,7 +253,7 @@ router.post('/calculate', (req, res) => {
 
     res.json({ success: true, data: result });
   } catch (error) {
-    logger.error('Error calculating payroll:', error);
+    logError('Error calculating payroll:', error);
     res
       .status(500)
       .json({ success: false, error: 'Failed to calculate payroll' });
@@ -301,7 +302,7 @@ router.post('/sync-quickbooks', async (req, res) => {
           message: result.message,
         });
       } catch (qbError) {
-        logger.error(
+        logError(
           `QuickBooks sync failed for employee ${employee.id}:`,
           qbError
         );
@@ -324,7 +325,7 @@ router.post('/sync-quickbooks', async (req, res) => {
         .length,
     });
   } catch (error) {
-    logger.error('QuickBooks sync error:', error);
+    logError('QuickBooks sync error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to sync with QuickBooks',

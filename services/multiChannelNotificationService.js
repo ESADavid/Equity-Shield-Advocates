@@ -76,14 +76,14 @@ class MultiChannelNotificationService {
           <h2>UBI Payment Confirmation</h2>
           <p>Dear {{citizenName}},</p>
           <p>Your Universal Basic Income payment has been processed successfully.</p>
-          <p><strong>Amount:</strong> ${{ amount }}</p>
+          <p><strong>Amount:</strong> ${{ payment.amount || 0 }}</p>
           <p><strong>Payment Date:</strong> {{paymentDate}}</p>
           <p><strong>Reference:</strong> {{reference}}</p>
           <p>Thank you for being part of the Heaven on Earth initiative.</p>
         `,
         smsBody:
-          'UBI Payment: ${{amount}} processed successfully. Ref: {{reference}}',
-        pushBody: 'Your UBI payment of ${{amount}} has been processed',
+          'UBI Payment: ${{payment.amount || 0}} processed successfully. Ref: {{reference}}',
+        pushBody: 'Your UBI payment of ${{payment.amount || 0}} has been processed',
         priority: 'high',
       },
       {

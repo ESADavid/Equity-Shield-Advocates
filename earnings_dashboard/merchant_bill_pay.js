@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer';
 import fs from 'node:fs';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { info, warn, error as logError } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
 
@@ -14,14 +15,14 @@ const isMockMode = !process.env.STRIPE_SECRET_KEY;
 if (process.env.STRIPE_SECRET_KEY) {
   stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 } else {
-  logger.warn(
+  warn(
     '⚠️  STRIPE_SECRET_KEY not found. Running in mock mode for testing.'
   );
   // Create a mock Stripe object for testing
   stripe = {
     paymentIntents: {
       create: async (params) => {
-        logger.info('Mock Stripe: Creating payment intent', params);
+        info('Mock Stripe: Creating payment intent', params);
         return {
           id: `pi_mock_${Date.now()}`,
           client_secret: `pi_mock_secret_${Date.now()}`,
@@ -35,7 +36,7 @@ if (process.env.STRIPE_SECRET_KEY) {
     },
     webhooks: {
       constructEvent: (payload, signature, secret) => {
-        logger.info('Mock Stripe: Constructing webhook event');
+        info('Mock Stripe: Constructing webhook event');
         // For testing, accept any payload without signature verification
         return JSON.parse(payload);
       },
@@ -56,13 +57,13 @@ if (process.env.SMTP_USER && process.env.SMTP_PASS) {
     },
   });
 } else {
-  logger.warn(
+  warn(
     '⚠️  SMTP credentials not found. Email functionality will be disabled for testing.'
   );
   // Create a mock transporter for testing
   emailTransporter = {
     sendMail: async () => {
-      logger.info('Mock email sent (SMTP not configured)');
+      info('Mock email sent (SMTP not configured)');
     },
   };
 }
@@ -101,7 +102,7 @@ async function sendMerchantPaymentSuccessNotification(
       };
 
       await emailTransporter.sendMail(mailOptions);
-      logger.info(`Email notification sent to merchant ${merchantId}`);
+      info(`Email notification sent to merchant ${merchantId}`);
     }
 
     // SMS notification (if Twilio is configured)
@@ -116,7 +117,7 @@ async function sendMerchantPaymentSuccessNotification(
       );
     }
   } catch (error) {
-    logger.error('Error sending payment success notification:', error);
+    logError('Error sending payment success notification:', error);
   }
 }
 
@@ -154,7 +155,7 @@ async function sendMerchantPaymentFailureNotification(
       };
 
       await emailTransporter.sendMail(mailOptions);
-      logger.info(`Failure email notification sent to merchant ${merchantId}`);
+      info(`Failure email notification sent to merchant ${merchantId}`);
     }
 
     // SMS notification (if Twilio is configured)
@@ -169,7 +170,7 @@ async function sendMerchantPaymentFailureNotification(
       );
     }
   } catch (error) {
-    logger.error('Error sending payment failure notification:', error);
+    logError('Error sending payment failure notification:', error);
   }
 }
 
@@ -208,9 +209,9 @@ async function sendSMSNotification(phoneNumber, message) {
       to: phoneNumber,
     });
 
-    logger.info(`SMS notification sent to ${phoneNumber}`);
-  } catch (error) {
-    logger.error('Error sending SMS notification:', error);
+    info(`SMS notification sent to ${phoneNumber}`);
+  } catch (err) {
+    logError('Error sending SMS notification:', err);
   }
 }
 
@@ -306,7 +307,7 @@ async function processSuccessfulPayment(paymentIntent) {
   });
 
   writeRevenueData(data);
-  logger.info(
+  info(
     `Updated merchant ${merchantId} balance: $${merchantData.balance.toFixed(2)}`
   );
 
@@ -338,7 +339,7 @@ async function processFailedPayment(failedIntent) {
   });
 
   writeRevenueData(data);
-  logger.info(`Recorded failed payment for merchant ${merchantId}`);
+  info(`Recorded failed payment for merchant ${merchantId}`);
 
   // Send failure notification to merchant
   await sendMerchantPaymentFailureNotification(
@@ -361,7 +362,7 @@ async function handleMerchantWebhook(req, res) {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    logger.error(
+    logError(
       'Merchant webhook signature verification failed:',
       err.message
     );
@@ -371,22 +372,22 @@ async function handleMerchantWebhook(req, res) {
   try {
     if (event.type === 'payment_intent.succeeded') {
       const paymentIntent = event.data.object;
-      logger.info('Merchant PaymentIntent was successful!', paymentIntent.id);
+      info('Merchant PaymentIntent was successful!', paymentIntent.id);
       await processSuccessfulPayment(paymentIntent);
     } else if (event.type === 'payment_intent.payment_failed') {
       const failedIntent = event.data.object;
-      logger.info(
+      info(
         'Merchant PaymentIntent failed:',
         failedIntent.last_payment_error?.message
       );
       await processFailedPayment(failedIntent);
     } else {
-      logger.info(`Unhandled merchant event type ${event.type}`);
+      info(`Unhandled merchant event type ${event.type}`);
     }
 
     res.json({ received: true });
   } catch (error) {
-    logger.error('Error processing merchant webhook event:', error);
+    logError('Error processing merchant webhook event:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
@@ -394,10 +395,10 @@ async function handleMerchantWebhook(req, res) {
 // Express route to create payment intent
 router.post('/create-merchant-payment-intent', async (req, res) => {
   try {
-    logger.info('Merchant payment intent request received:', req.body);
+    info('Merchant payment intent request received:', req.body);
     // Mock mode check
     const isMockMode = !process.env.STRIPE_SECRET_KEY;
-    logger.info(
+    info(
       'Merchant payment intent creation - Mock mode:',
       isMockMode,
       'STRIPE_SECRET_KEY:',
@@ -415,7 +416,7 @@ router.post('/create-merchant-payment-intent', async (req, res) => {
       }
 
       const mockClientSecret = `pi_mock_${Date.now()}_secret_${Math.random().toString(36).substring(2)}`;
-      logger.info('Mock payment intent created:', mockClientSecret);
+      info('Mock payment intent created:', mockClientSecret);
 
       return res.json({
         success: true,
@@ -434,7 +435,7 @@ router.post('/create-merchant-payment-intent', async (req, res) => {
     const paymentIntent = await createMerchantPaymentIntent(req.body);
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
-    logger.error('Error creating merchant payment intent:', error);
+    logError('Error creating merchant payment intent:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -455,7 +456,7 @@ function processMockWebhookEvent() {
   };
 
   const paymentIntent = mockEvent.data.object;
-  logger.info('Mock PaymentIntent was successful!', paymentIntent.id);
+  info('Mock PaymentIntent was successful!', paymentIntent.id);
 
   const data = readRevenueData();
   if (data) {
@@ -484,7 +485,7 @@ function processMockWebhookEvent() {
       });
 
       writeRevenueData(data);
-      logger.info(
+      info(
         `Mock updated merchant ${merchantId} balance: $${data.merchants[merchantId].balance.toFixed(2)}`
       );
 
@@ -504,17 +505,17 @@ router.post(
   express.raw({ type: 'application/json' }),
   async (req, res) => {
     const isMockMode = !process.env.STRIPE_SECRET_KEY;
-    logger.info('Merchant webhook - Mock mode:', isMockMode);
+    info('Merchant webhook - Mock mode:', isMockMode);
 
     if (isMockMode) {
-      logger.info(
+      info(
         'Mock webhook received, processing without signature verification'
       );
       try {
         processMockWebhookEvent();
         return res.json({ received: true, mock: true });
       } catch (error) {
-        logger.error('Error in mock webhook processing:', error);
+        logError('Error in mock webhook processing:', error);
         return res.status(500).json({ error: 'Internal Server Error' });
       }
     }

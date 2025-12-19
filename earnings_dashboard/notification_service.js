@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import twilio from 'twilio';
+import { info, error } from '../utils/loggerWrapper.js';
 
 // Notification service for real-time alerts
 class NotificationService {
@@ -26,9 +27,9 @@ class NotificationService {
           pass: process.env.SMTP_PASS,
         },
       });
-      logger.info('✅ Email notification service initialized');
+      info('✅ Email notification service initialized');
     } else {
-      logger.info('⚠️ Email service not configured');
+      info('⚠️ Email service not configured');
     }
 
     // Initialize Twilio client
@@ -41,9 +42,9 @@ class NotificationService {
         process.env.TWILIO_ACCOUNT_SID,
         process.env.TWILIO_AUTH_TOKEN
       );
-      logger.info('✅ SMS notification service initialized');
+      info('✅ SMS notification service initialized');
     } else {
-      logger.info('⚠️ SMS service not configured');
+      info('⚠️ SMS service not configured');
     }
   }
 
@@ -51,14 +52,14 @@ class NotificationService {
   sendWebSocketNotification(event, data) {
     if (this.io) {
       this.io.emit(event, data);
-      logger.info(`📡 WebSocket notification sent: ${event}`);
+      info(`📡 WebSocket notification sent: ${event}`);
     }
   }
 
   // Send email notification
   async sendEmailNotification(to, subject, message) {
     if (!this.transporter) {
-      logger.info('⚠️ Email service not available');
+      info('⚠️ Email service not available');
       return false;
     }
 
@@ -69,10 +70,10 @@ class NotificationService {
         subject,
         html: message,
       });
-      logger.info(`📧 Email sent to ${to}`);
+      info(`📧 Email sent to ${to}`);
       return true;
-    } catch (error) {
-      logger.error('Email send error:', error);
+    } catch (err) {
+      error('Email send error:', err);
       return false;
     }
   }
@@ -80,7 +81,7 @@ class NotificationService {
   // Send SMS notification
   async sendSMSNotification(to, message) {
     if (!this.twilioClient) {
-      logger.info('⚠️ SMS service not available');
+      info('⚠️ SMS service not available');
       return false;
     }
 
@@ -90,10 +91,10 @@ class NotificationService {
         from: process.env.TWILIO_PHONE_NUMBER,
         to,
       });
-      logger.info(`📱 SMS sent to ${to}`);
+      info(`📱 SMS sent to ${to}`);
       return true;
-    } catch (error) {
-      logger.error('SMS send error:', error);
+    } catch (err) {
+      error('SMS send error:', err);
       return false;
     }
   }
