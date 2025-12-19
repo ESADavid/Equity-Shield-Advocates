@@ -280,5 +280,14 @@ export function uncaughtExceptionHandler() {
   });
 }
 
+/**
+ * Setup all unhandled rejection and exception handlers
+ * Convenience function to register both handlers at once
+ */
+export function setupUnhandledRejectionHandlers() {
+  unhandledRejectionHandler();
+  uncaughtExceptionHandler();
+}
+
 // Export default error handler
 export default errorHandler;

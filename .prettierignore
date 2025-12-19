@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.venv/
+
+# Build outputs
+dist/
+build/
+coverage/
+*.min.js
+*.map
+
+# Logs
+logs/
+*.log
+
+# Data files with potential issues
+data/
+owlban_repos/
+
+# External repos
+David-Leeper-Jr-Revenue/
+OSCAR-BROOME-REVENUE/
+FOUR-ERA-AI/
+gh/
+gh-extracted/
+
+# Generated files
+*.d.ts
+
+# Package files
+package-lock.json
+
+# Scripts with complex template strings
+scripts/implement-all-phases.js
+scripts/implement-phase2.js

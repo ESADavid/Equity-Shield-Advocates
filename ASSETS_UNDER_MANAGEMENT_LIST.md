@@ -2,14 +2,18 @@
 
 ## Executive Summary
 
-This document provides a comprehensive breakdown of all assets under management controlled by Oscar Broome within the Oscar Broome Revenue System. Total AUM: **$2,470,000,000,000.00** (2.47 Quadrillion USD).
+This document provides a comprehensive breakdown of all assets under management controlled by **King Sachem Yochanan** (Oscar Broome) within the Oscar Broome Revenue System operating under the **House of David** ✡️ and **House of Capet** ⚜️ through the **OWLBAN GROUP** 🦉.
+
+**Total AUM: $2,470,000,000,000.00** (2.47 Trillion USD)
 
 ## AUM Overview
 
 ### Total Assets Under Management
 
-- **Grand Total AUM**: $2,470,000,000,000.00
-- **Management Authority**: Oscar Broome (100% control)
+- **Grand Total AUM**: $2,470,000,000,000.00 (2.47 Trillion USD)
+- **Sovereign Authority**: King Sachem Yochanan (100% control)
+- **Management Entity**: OWLBAN GROUP
+- **Royal Authority**: House of David ✡️ & House of Capet ⚜️
 - **Performance YTD**: +12.5%
 - **Annualized Performance**: +15.3%
 - **Risk-Adjusted Return**: Sharpe Ratio 1.8
@@ -303,9 +307,16 @@ This document provides a comprehensive breakdown of all assets under management 
 
 ## Contact & Administration
 
+### Sovereign Authority
+
+- **Sovereign**: King Sachem Yochanan
+- **Title**: King Sachem Yochanan, Sovereign Leader
+- **Authority**: House of David ✡️ & House of Capet ⚜️
+- **Organization**: OWLBAN GROUP 🦉
+
 ### Primary Contact
 
-- **Portfolio Manager**: Oscar Broome
+- **Portfolio Manager**: King Sachem Yochanan (Oscar Broome)
 - **Email**: [oscar.broome@jpmorgan.com](mailto:oscar.broome@jpmorgan.com)
 - **Phone**: +1-212-270-6000
 
@@ -317,9 +328,23 @@ This document provides a comprehensive breakdown of all assets under management 
 
 ---
 
-**Document Owner**: Oscar Broome
-**Last Updated**: January 2024
-**Classification**: Restricted - Financial Information
-**Version**: 1.0
+## Royal Authority Declaration
 
-**This document contains detailed asset management information. Access is restricted to authorized personnel only.**
+**By the divine authority of King Sachem Yochanan, through the House of David and House of Capet, these assets totaling $2.47 Trillion USD are managed by the OWLBAN GROUP for the purpose of establishing Heaven on Earth, including the distribution of $379.5 billion annually in Universal Basic Income to 11.5 million citizens of Haiti.**
+
+---
+
+**Document Owner**: King Sachem Yochanan (Oscar Broome)  
+**Sovereign Authority**: House of David ✡️ & House of Capet ⚜️  
+**Management Entity**: OWLBAN GROUP 🦉  
+**Last Updated**: December 19, 2025  
+**Classification**: Restricted - Royal Financial Information  
+**Version**: 2.0
+
+**This document contains detailed asset management information under royal authority. Access is restricted to authorized personnel only.**
+
+---
+
+## 👑 LONG LIVE KING SACHEM YOCHANAN! 👑
+
+## 🌟 ASSETS MANAGED FOR HEAVEN ON EARTH! 🌟
