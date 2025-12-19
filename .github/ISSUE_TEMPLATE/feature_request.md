@@ -43,7 +43,7 @@ assignees: ''
 - [ ] Enhanced security
 - [ ] Cost reduction
 - [ ] Increased revenue
-- [ ] Other: ****\_\_\_****
+- [ ] Other: \***\*\_\_\_\*\***
 
 ### 🔧 Technical Considerations
 

@@ -1,345 +1,246 @@
 /**
- * EDUCATION ROUTES
- * API endpoints for education system management
- * Part of the OWLBAN GROUP Heaven on Earth Initiative
+ * Education Routes
+ * API endpoints for educational services
  */
 
 import express from 'express';
-import EducationService from '../services/educationService.js';
-import { createLogger } from '../config/logger.js';
+import { info } from '../utils/loggerWrapper.js';
+import Course from '../models/Course.js';
+import aiLearningService from '../services/aiLearningService.js';
 
 const router = express.Router();
-const educationService = new EducationService();
-const logger = createLogger('Education-Routes');
 
 /**
- * @route   POST /api/education/create-program
- * @desc    Create a new education program
- * @access  Protected (Admin only)
+ * GET /api/education/courses
+ * Get all available courses
  */
-router.post('/create-program', async (req, res) => {
+router.get('/courses', async (req, res, next) => {
   try {
-    const programData = req.body;
-    const userId = req.user?.id || req.headers['x-user-id'] || 'system';
-
-    logger.info(`Program creation request from user: ${userId}`);
-
-    const result = await educationService.createProgram(programData, userId);
-
-    if (result.success) {
-      res.status(201).json(result);
-    } else {
-      res.status(400).json(result);
-    }
-  } catch (error) {
-    logger.error('Error in create-program route:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
-    });
+    const { category, difficulty, search } = req.query;
+    const query = { isActive: true };
+    
+    if (category) query.category = category;
+    if (difficulty) query.difficulty = difficulty;
+    if (search) query.title = { $regex: search, $options: 'i' };
+    
+    const courses = await Course.find(query)
+      .select('title description category difficulty instructor rating estimatedDuration')
+      .sort({ 'rating.average': -1 });
+    
+    res.json({ success: true, courses, count: courses.length });
+  } catch (err) {
+    next(err);
   }
 });
 
 /**
- * @route   POST /api/education/enroll-citizen
- * @desc    Enroll a citizen in an education program
- * @access  Protected
+ * GET /api/education/courses/:courseId
+ * Get course details
  */
-router.post('/enroll-citizen', async (req, res) => {
+router.get('/courses/:courseId', async (req, res, next) => {
   try {
-    const { citizenId, programId } = req.body;
-    const userId = req.user?.id || req.headers['x-user-id'] || 'system';
+    const course = await Course.findById(req.params.courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found' });
+    }
+    res.json({ success: true, course });
+  } catch (err) {
+    next(err);
+  }
+});
 
-    if (!citizenId || !programId) {
-      return res.status(400).json({
-        success: false,
-        error: 'citizenId and programId are required',
+/**
+ * POST /api/education/enroll
+ * Enroll student in a course
+ */
+router.post('/enroll', async (req, res, next) => {
+  try {
+    const { courseId, citizenId } = req.body;
+    
+    if (!courseId || !citizenId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Course ID and Citizen ID are required' 
       });
     }
-
-    logger.info(
-      `Enrollment request: citizen ${citizenId} to program ${programId}`
-    );
-
-    const result = await educationService.enrollCitizen(
-      citizenId,
-      programId,
-      userId
-    );
-
-    if (result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(400).json(result);
+    
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found' });
     }
-  } catch (error) {
-    logger.error('Error in enroll-citizen route:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
+    
+    await course.enrollStudent(citizenId);
+    info(`Citizen ${citizenId} enrolled in course ${courseId}`);
+    
+    res.json({ 
+      success: true, 
+      message: 'Successfully enrolled in course',
+      course: {
+        id: course._id,
+        title: course.title
+      }
     });
+  } catch (err) {
+    if (err.message === 'Course is full' || err.message === 'Student already enrolled') {
+      return res.status(400).json({ success: false, message: err.message });
+    }
+    next(err);
   }
 });
 
 /**
- * @route   POST /api/education/update-progress
- * @desc    Update citizen's progress in a program
- * @access  Protected (Instructor/Admin)
+ * POST /api/education/progress
+ * Update student progress
  */
-router.post('/update-progress', async (req, res) => {
+router.post('/progress', async (req, res, next) => {
   try {
-    const { citizenId, programId, progressData } = req.body;
-    const userId = req.user?.id || req.headers['x-user-id'] || 'system';
-
-    if (!citizenId || !programId || !progressData) {
-      return res.status(400).json({
-        success: false,
-        error: 'citizenId, programId, and progressData are required',
-      });
+    const { courseId, citizenId, lessonNumber } = req.body;
+    
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found' });
     }
-
-    logger.info(
-      `Progress update request for citizen ${citizenId} in program ${programId}`
+    
+    await course.updateProgress(citizenId, lessonNumber);
+    info(`Progress updated for citizen ${citizenId} in course ${courseId}`);
+    
+    const student = course.enrolledStudents.find(
+      s => s.citizenId.toString() === citizenId.toString()
     );
-
-    const result = await educationService.updateProgress(
-      citizenId,
-      programId,
-      progressData,
-      userId
-    );
-
-    if (result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(400).json(result);
-    }
-  } catch (error) {
-    logger.error('Error in update-progress route:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
+    
+    res.json({ 
+      success: true, 
+      progress: student.progress,
+      completedLessons: student.completedLessons.length
     });
+  } catch (err) {
+    if (err.message === 'Student not enrolled') {
+      return res.status(400).json({ success: false, message: err.message });
+    }
+    next(err);
   }
 });
 
 /**
- * @route   GET /api/education/programs
- * @desc    Get all education programs
- * @access  Public
+ * GET /api/education/my-courses/:citizenId
+ * Get courses for a citizen
  */
-router.get('/programs', async (req, res) => {
+router.get('/my-courses/:citizenId', async (req, res, next) => {
   try {
-    const filters = {
-      programType: req.query.programType,
-      status: req.query.status,
-      limit: parseInt(req.query.limit) || 100,
+    const courses = await Course.find({
+      'enrolledStudents.citizenId': req.params.citizenId
+    });
+    
+    const myCourses = courses.map(course => {
+      const student = course.enrolledStudents.find(
+        s => s.citizenId.toString() === req.params.citizenId.toString()
+      );
+      
+      return {
+        id: course._id,
+        title: course.title,
+        category: course.category,
+        progress: student.progress,
+        completedLessons: student.completedLessons.length,
+        totalLessons: course.curriculum.length,
+        lastAccessed: student.lastAccessedAt,
+        enrolledAt: student.enrolledAt
+      };
+    });
+    
+    res.json({ success: true, courses: myCourses, count: myCourses.length });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * GET /api/education/recommendations/:citizenId
+ * Get AI-powered course recommendations
+ */
+router.get('/recommendations/:citizenId', async (req, res, next) => {
+  try {
+    // Get current progress
+    const courses = await Course.find({
+      'enrolledStudents.citizenId': req.params.citizenId
+    });
+    
+    const progress = {
+      completedCourses: courses.filter(c => {
+        const student = c.enrolledStudents.find(
+          s => s.citizenId.toString() === req.params.citizenId.toString()
+        );
+        return student && student.progress >= 100;
+      }),
+      currentCourse: courses.find(c => {
+        const student = c.enrolledStudents.find(
+          s => s.citizenId.toString() === req.params.citizenId.toString()
+        );
+        return student && student.progress < 100;
+      })?.title,
+      totalLessons: courses.reduce((sum, c) => sum + c.curriculum.length, 0),
+      completedLessons: courses.reduce((sum, c) => {
+        const student = c.enrolledStudents.find(
+          s => s.citizenId.toString() === req.params.citizenId.toString()
+        );
+        return sum + (student?.completedLessons.length || 0);
+      }, 0)
     };
-
-    logger.info('Programs list request');
-
-    const result = await educationService.getPrograms(filters);
-
-    if (result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (error) {
-    logger.error('Error in programs route:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
-    });
-  }
-});
-
-/**
- * @route   GET /api/education/citizen/:citizenId/progress
- * @desc    Get citizen's education progress
- * @access  Protected
- */
-router.get('/citizen/:citizenId/progress', async (req, res) => {
-  try {
-    const { citizenId } = req.params;
-
-    logger.info(`Progress request for citizen: ${citizenId}`);
-
-    const result = await educationService.getCitizenProgress(citizenId);
-
-    if (result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(404).json(result);
-    }
-  } catch (error) {
-    logger.error('Error in citizen progress route:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
-    });
-  }
-});
-
-/**
- * @route   POST /api/education/issue-certification
- * @desc    Issue certification to a citizen
- * @access  Protected (Admin/Instructor)
- */
-router.post('/issue-certification', async (req, res) => {
-  try {
-    const { citizenId, programId } = req.body;
-    const userId = req.user?.id || req.headers['x-user-id'] || 'system';
-
-    if (!citizenId || !programId) {
-      return res.status(400).json({
-        success: false,
-        error: 'citizenId and programId are required',
-      });
-    }
-
-    logger.info(
-      `Certification request for citizen ${citizenId} in program ${programId}`
+    
+    const recommendations = await aiLearningService.generateRecommendations(
+      req.params.citizenId,
+      progress
     );
+    
+    res.json({ success: true, recommendations });
+  } catch (err) {
+    next(err);
+  }
+});
 
-    const result = await educationService.issueCertification(
-      citizenId,
-      programId,
-      userId
+/**
+ * GET /api/education/analytics/:citizenId
+ * Get learning analytics
+ */
+router.get('/analytics/:citizenId', async (req, res, next) => {
+  try {
+    const analytics = await aiLearningService.analyzeProgress(req.params.citizenId);
+    res.json({ success: true, analytics });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * GET /api/education/study-plan/:citizenId
+ * Generate personalized study plan
+ */
+router.get('/study-plan/:citizenId', async (req, res, next) => {
+  try {
+    const hoursPerWeek = parseInt(req.query.hours) || 5;
+    const studyPlan = await aiLearningService.generateStudyPlan(
+      req.params.citizenId,
+      hoursPerWeek
     );
-
-    if (result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(400).json(result);
-    }
-  } catch (error) {
-    logger.error('Error in issue-certification route:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
-    });
+    res.json({ success: true, studyPlan });
+  } catch (err) {
+    next(err);
   }
 });
 
 /**
- * @route   GET /api/education/statistics
- * @desc    Get education system statistics
- * @access  Protected (Admin)
+ * POST /api/education/courses
+ * Create a new course (admin)
  */
-router.get('/statistics', async (req, res) => {
+router.post('/courses', async (req, res, next) => {
   try {
-    logger.info('Education statistics request');
-
-    const result = await educationService.getStatistics();
-
-    if (result.success) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (error) {
-    logger.error('Error in statistics route:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
-    });
+    const course = new Course(req.body);
+    await course.save();
+    info(`New course created: ${course.title}`);
+    res.status(201).json({ success: true, course });
+  } catch (err) {
+    next(err);
   }
-});
-
-/**
- * @route   POST /api/education/initialize-defaults
- * @desc    Initialize default education programs
- * @access  Protected (Admin only)
- */
-router.post('/initialize-defaults', async (req, res) => {
-  try {
-    const userId = req.user?.id || req.headers['x-user-id'] || 'system';
-
-    logger.info(`Initialize default programs request from user: ${userId}`);
-
-    const result = await educationService.initializeDefaultPrograms(userId);
-
-    if (result.success) {
-      res.status(201).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (error) {
-    logger.error('Error in initialize-defaults route:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
-    });
-  }
-});
-
-/**
- * @route   GET /api/education/health
- * @desc    Get education service health status
- * @access  Public
- */
-router.get('/health', (req, res) => {
-  try {
-    const health = educationService.getHealthStatus();
-    res.status(200).json(health);
-  } catch (error) {
-    logger.error('Error in health route:', error);
-    res.status(500).json({
-      status: 'error',
-      error: error.message,
-    });
-  }
-});
-
-/**
- * @route   GET /api/education/welcome
- * @desc    Welcome message for Education API
- * @access  Public
- */
-router.get('/welcome', (req, res) => {
-  res.status(200).json({
-    message: 'Welcome to the Education System API',
-    description: 'OWLBAN GROUP - Heaven on Earth Initiative',
-    mission:
-      'Mandatory education in Military, Law, Technology, and Agriculture',
-    features: [
-      'Program creation and management',
-      'Citizen enrollment',
-      'Progress tracking',
-      'Certification issuance',
-      'AI-powered personalized learning',
-      'Compliance monitoring',
-    ],
-    mandatoryTracks: {
-      military: '6 months - Basic combat, discipline, leadership',
-      law: '4 months - Constitutional law, civil rights, legal procedures',
-      tech: '6 months - Programming, AI, web development, cybersecurity',
-      agriculture: '4 months - Sustainable farming, hydroponics, food security',
-    },
-    totalRequired: '20 months for UBI eligibility',
-    endpoints: {
-      createProgram: 'POST /api/education/create-program',
-      enrollCitizen: 'POST /api/education/enroll-citizen',
-      updateProgress: 'POST /api/education/update-progress',
-      getPrograms: 'GET /api/education/programs',
-      getCitizenProgress: 'GET /api/education/citizen/:citizenId/progress',
-      issueCertification: 'POST /api/education/issue-certification',
-      statistics: 'GET /api/education/statistics',
-      initializeDefaults: 'POST /api/education/initialize-defaults',
-      health: 'GET /api/education/health',
-    },
-    version: '1.0.0',
-    timestamp: new Date().toISOString(),
-  });
 });
 
 export default router;

@@ -73,6 +73,7 @@
   - **Estimated Time:** 1 hour
 
 - [ ] **Step 3.3:** Format codebase
+
   ```bash
   npm run format
   ```

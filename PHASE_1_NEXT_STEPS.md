@@ -158,6 +158,7 @@ npm run format
    - Apply consistent formatting
 
 5. **Final verification**
+
    ```bash
    npm run lint
    tsc --noEmit

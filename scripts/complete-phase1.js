@@ -23,7 +23,7 @@ try {
 
   // Remove the conflicting *.js override
   const fixedConfig = eslintConfig.replace(
-    /    \{\n      files: \['\*\.js'\],\n      parser: 'espree',\n      parserOptions: \{\n        sourceType: 'script', \/\/ Allow require\(\) in \.js files\n      \},\n      rules: \{\n        '@typescript-eslint\/no-unused-vars': 'off',\n        'no-unused-vars': 'off',\n      \},\n    \},\n/,
+    / {4}\{\n {6}files: \['\*\.js'\],\n {6}parser: 'espree',\n {6}parserOptions: \{\n {8}sourceType: 'script', \/\/ Allow require\(\) in \.js files\n {6}\},\n {6}rules: \{\n {8}'@typescript-eslint\/no-unused-vars': 'off',\n {8}'no-unused-vars': 'off',\n {6}\},\n {4}\},\n/,
     ''
   );
 
