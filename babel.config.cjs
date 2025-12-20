@@ -4,8 +4,8 @@ module.exports = {
       '@babel/preset-env',
       {
         targets: { node: 'current' },
-        // Transform modules to CommonJS for Jest, but keep ES modules for other tools
-        modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false,
+        // Always transform modules to CommonJS for Jest compatibility
+        modules: 'commonjs',
       },
     ],
     '@babel/preset-typescript',
@@ -13,7 +13,13 @@ module.exports = {
   plugins: [
     '@babel/plugin-transform-runtime',
     '@babel/plugin-transform-private-methods',
-    '@babel/plugin-syntax-import-meta',
   ],
-  ignore: ['node_modules'],
+  // Don't ignore node_modules - let Jest's transformIgnorePatterns handle it
+  env: {
+    test: {
+      plugins: [
+        '@babel/plugin-transform-modules-commonjs',
+      ],
+    },
+  },
 };

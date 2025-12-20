@@ -7,7 +7,7 @@ module.exports = {
   // Handle ES modules properly
   extensionsToTreatAsEsm: ['.ts', '.tsx', '.mts'],
   
-  // Transform configuration
+  // Transform configuration - transform ALL JS files including test files
   transform: {
     '^.+\\.(ts|tsx)$': [
       'babel-jest',
@@ -23,9 +23,9 @@ module.exports = {
     ],
   },
   
-  // Transform node_modules that use ES modules
+  // Transform node_modules that use ES modules - FIXED: Don't ignore jest-runner
   transformIgnorePatterns: [
-    'node_modules/(?!(baseline-browser-mapping|@babel/runtime|jest-runner)/)',
+    'node_modules/(?!(baseline-browser-mapping|@babel/runtime)/)',
   ],
   
   // Module name mapping
