@@ -272,20 +272,20 @@ node test_email_sms_config.js
 
 ### Email Issues
 
-**Problem: "Email service not configured"**
+#### Problem: "Email service not configured"
 
 - Check that all required environment variables are set
 - Verify EMAIL_PROVIDER matches your configuration
 - Check logs in `logs/email-service-error.log`
 
-**Problem: "Authentication failed"**
+#### Problem: "Authentication failed"
 
 - Verify API key/credentials are correct
 - For Gmail: Ensure you're using App Password, not regular password
 
 - For SendGrid: Check API key has correct permissions
 
-**Problem: Emails not being received**
+#### Problem: Emails not being received
 
 - Check spam folder
 
@@ -295,19 +295,19 @@ node test_email_sms_config.js
 
 ### SMS Issues
 
-**Problem: "SMS service not configured"**
+#### Problem: "SMS service not configured"
 
 - Check that all required environment variables are set
 - Verify SMS_PROVIDER matches your configuration
 - Check logs in `logs/sms-service-error.log`
 
-**Problem: "Unable to create record" (Twilio)**
+#### Problem: "Unable to create record" (Twilio)
 
 - Verify phone number format includes country code (+1234567890)
 - For trial accounts: Verify recipient number in Twilio console
 - Check account balance
 
-**Problem: SMS not being received**
+#### Problem: SMS not being received
 
 - Verify phone number format
 - Check carrier restrictions
@@ -316,7 +316,7 @@ node test_email_sms_config.js
 
 ### General Issues
 
-**Problem: Services not initializing**
+#### Problem: Services not initializing
 
 ```bash
 # Check configuration status
@@ -324,7 +324,7 @@ node -e "import emailService from './services/emailService.js'; console.log(emai
 node -e "import smsService from './services/smsService.js'; console.log(smsService.getHealthStatus())"
 ```
 
-**Problem: Environment variables not loading**
+#### Problem: Environment variables not loading
 
 - Ensure `.env` file is in project root
 - Check file encoding (should be UTF-8)
@@ -464,7 +464,7 @@ Before deploying to production:
 
 ### Email Providers
 
-**SendGrid**
+#### SendGrid
 
 - Free: 100 emails/day
 - Essentials: $19.95/month (50,000 emails)
@@ -476,14 +476,14 @@ Before deploying to production:
 
 - First 62,000 emails free (if sent from EC2)
 
-**SMTP (Gmail)**
+#### SMTP (Gmail)
 
 - Free: 500 emails/day
 - Google Workspace: 2,000 emails/day
 
 ### SMS Providers
 
-**Twilio**
+#### Twilio
 
 - US: $0.0079 per SMS
 - International: varies by country

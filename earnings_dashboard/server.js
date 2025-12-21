@@ -8,8 +8,10 @@ import expressBasicAuth from 'express-basic-auth';
 import morgan from 'morgan';
 import winston from 'winston';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import jpmorganAuthRoutes from '../routes/jpmorganAuthRoutes.js';
 import payrollRouter from './payroll_router.js';
+import biometricRoutes from '../routes/biometricRoutes.js';
 
 dotenv.config();
 
@@ -35,6 +37,16 @@ const logger = winston.createLogger({
   ],
 });
 
+// Connect to MongoDB for biometric data
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/oscar-broome-revenue';
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    logger.info('MongoDB connected successfully for biometric system');
+  })
+  .catch((error) => {
+    logger.error('MongoDB connection error:', error);
+  });
+
 // Basic auth setup (fallback for legacy endpoints)
 app.use(
   expressBasicAuth({
@@ -54,6 +66,9 @@ app.use('/api/auth', jpmorganAuthRoutes);
 
 // Mount payroll routes
 app.use('/api/payroll', payrollRouter);
+
+// Mount biometric routes
+app.use('/api/biometric', biometricRoutes);
 
 // Load aggregated revenue data path from environment or default
 const revenueDataPath =
@@ -99,7 +114,6 @@ app.get('/', (_req, res) => {
     return;
   }
   res.sendFile(dashboardPath);
-  // Redundant return removed
 });
 
 // API endpoint to get earnings data
@@ -111,7 +125,6 @@ app.get('/api/earnings', (_req, res) => {
     return;
   }
   res.json(data);
-  // Redundant return removed
 });
 
 // API endpoint to download earnings report as JSON file
@@ -128,24 +141,22 @@ app.get('/api/earnings/download', (_req, res) => {
     'attachment; filename="earnings_report.json"'
   );
   res.json(data);
-  // Redundant return removed
 });
 
 // 404 handler
 app.use((_req, res, _next) => {
   res.status(404).json({ error: 'Not Found' });
-  // Redundant return removed
 });
 
 // Global error handler
 app.use((_err, _req, res, _next) => {
   logger.error('Unhandled error: ' + _err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
-  // Redundant return removed
 });
 
 const server = app.listen(PORT, () => {
   logger.info(`Earnings dashboard running at http://localhost:${PORT}`);
+  logger.info('Biometric authentication system enabled at /api/biometric');
 });
 
 export { server };

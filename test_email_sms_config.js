@@ -3,6 +3,8 @@
  * Comprehensive testing for email and SMS services
  */
 
+/* eslint-disable no-console */
+
 import emailService from './services/emailService.js';
 import smsService from './services/smsService.js';
 import emailConfig from './config/email.js';
