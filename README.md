@@ -7,18 +7,36 @@ The Oscar Broome Revenue System has been successfully completed with all feature
 **Completion Date**: December 2024
 **Status**: ✅ FULLY COMPLETE - READY FOR PRODUCTION DEPLOYMENT
 
-## 🚀 New in v3.5
+## 🚀 New in v3.5 - BLACKBOX AI Integration
 
-### Free Unlimited Agent Requests
-Use the BLACKBOX Agent for an unlimited free number tasks on free models to help you accelerate your coding and build products better and faster
+### ✨ Free Unlimited Agent Requests
 
-### Open Source BLACKBOX CLI
-Brings the full power of BLACKBOX AI directly to your terminal and helps you turn ideas into code.
+Use the BLACKBOX Agent for unlimited free tasks on **all Blackbox services and models** to accelerate your coding and product development. With unlimited credits, you can:
 
-[Guide](https://docs.blackbox.ai) | [GitHub](https://github.com/blackboxai)
+- Generate code snippets and full applications
+- Debug and optimize existing codebases
+- Get AI-powered code reviews and suggestions
+- Automate development workflows
+- Access **all Blackbox AI models** without usage limits
+- Utilize every Blackbox service feature freely
 
-### Remote Agents
-Run remote agents on BLACKBOX / CLAUDE CODE / CODEX through your browser with Blackbox.
+### 🖥️ Open Source BLACKBOX CLI
+
+Brings the full power of BLACKBOX AI directly to your terminal. Features include:
+
+- Command-line code generation and editing
+- AI-powered terminal assistance
+- Integration with development tools
+- Custom AI agents and workflows
+
+[Guide](https://docs.blackbox.ai) | [GitHub](https://github.com/blackboxai)ts
+
+Run remote agents on BLACKBOX, CLAUDE CODE, and CODEX through your browser with Blackbox. Access powerful AI assistance from anywhere with:
+
+- Browser-based AI agent execution
+- Multi-model support (BLACKBOX, Claude, Codex)
+- Secure remote processing
+- Real-time collaboration features
 
 ## Overview
 

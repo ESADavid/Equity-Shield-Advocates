@@ -8,10 +8,9 @@
  * removes current ownership, and ensures operational continuity with staff retention.
  */
 
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
-const { execSync } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const logger = require('../utils/loggerWrapper');
 
 // Configuration
 const CONFIG = {
@@ -63,9 +62,9 @@ class AcquisitionLogger {
     const timestamp = new Date().toISOString();
     const logEntry = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
     if (data) {
-      console.log(logEntry, JSON.stringify(data, null, 2));
+      logger.info(logEntry, JSON.stringify(data, null, 2));
     } else {
-      console.log(logEntry);
+      logger.info(logEntry);
     }
 
     // Log to file
@@ -82,7 +81,7 @@ class AcquisitionLogger {
 /**
  * Due Diligence Engine
  */
-class DueDiligenceEngine {
+class DueDiligenceEngine { 
   static async gatherIntelligence() {
     AcquisitionLogger.info('Initiating intelligence gathering for Biltmore Estate acquisition');
 
@@ -200,7 +199,7 @@ class NegotiationEngine {
     }
   }
 
-  static prepareInitialOffer(intelligence) {
+  static prepareInitialOffer(_intelligence) {
     return {
       basePrice: '$110,000,000',
       terms: 'Cash purchase, 30-day due diligence',
@@ -500,13 +499,13 @@ The Biltmore Estate has been successfully acquired and integrated into the Oscar
 // Execute acquisition if run directly
 if (require.main === module) {
   executeAcquisition()
-    .then((result) => {
-      console.log('\n🎉 Biltmore Estate Acquisition Completed Successfully!');
-      console.log('📋 See BILTMORE_ACQUISITION_COMPLETION_REPORT.md for details');
+    .then((_result) => {
+      AcquisitionLogger.success('\n🎉 Biltmore Estate Acquisition Completed Successfully!');
+      AcquisitionLogger.info('📋 See BILTMORE_ACQUISITION_COMPLETION_REPORT.md for details');
       process.exit(0);
     })
     .catch((error) => {
-      console.error('\n❌ Acquisition Failed:', error.message);
+      AcquisitionLogger.error('\n❌ Acquisition Failed:', error.message);
       process.exit(1);
     });
 }
