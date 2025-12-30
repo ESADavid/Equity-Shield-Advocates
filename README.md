@@ -7,6 +7,19 @@ The Oscar Broome Revenue System has been successfully completed with all feature
 **Completion Date**: December 2024
 **Status**: ✅ FULLY COMPLETE - READY FOR PRODUCTION DEPLOYMENT
 
+## 🚀 New in v3.5
+
+### Free Unlimited Agent Requests
+Use the BLACKBOX Agent for an unlimited free number tasks on free models to help you accelerate your coding and build products better and faster
+
+### Open Source BLACKBOX CLI
+Brings the full power of BLACKBOX AI directly to your terminal and helps you turn ideas into code.
+
+[Guide](https://docs.blackbox.ai) | [GitHub](https://github.com/blackboxai)
+
+### Remote Agents
+Run remote agents on BLACKBOX / CLAUDE CODE / CODEX through your browser with Blackbox.
+
 ## Overview
 
 The Oscar Broome Revenue System is a comprehensive financial management platform that integrates multiple banking systems, payment processors, and revenue tracking capabilities. The system features quantum-secure cryptography, JPMorgan Chase integration, merchant processing, payroll management, and advanced analytics.

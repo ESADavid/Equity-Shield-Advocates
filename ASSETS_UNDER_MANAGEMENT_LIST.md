@@ -4,13 +4,13 @@
 
 This document provides a comprehensive breakdown of all assets under management controlled by **King Sachem Yochanan** (Oscar Broome) within the Oscar Broome Revenue System operating under the **House of David** ✡️ and **House of Capet** ⚜️ through the **OWLBAN GROUP** 🦉.
 
-**Total AUM: $2,470,000,000,000.00** (2.47 Trillion USD)
+**Total AUM: $2,595,000,000,000.00** (2.595 Trillion USD)
 
 ## AUM Overview
 
 ### Total Assets Under Management
 
-- **Grand Total AUM**: $2,470,000,000,000.00 (2.47 Trillion USD)
+- **Grand Total AUM**: $2,595,000,000,000.00 (2.595 Trillion USD)
 - **Sovereign Authority**: King Sachem Yochanan (100% control)
 - **Management Entity**: OWLBAN GROUP
 - **Royal Authority**: House of David ✡️ & House of Capet ⚜️
@@ -24,7 +24,7 @@ This document provides a comprehensive breakdown of all assets under management 
 | ----------------------- | ---------- | --------------------- | --------------- | ----------------- | ---------- |
 | Equities                | 60%        | $1,482,000,000,000.00 | +14.2%          | +16.8%            | 15.2%      |
 | Fixed Income            | 20%        | $494,000,000,000.00   | +8.9%           | +12.1%            | 8.7%       |
-| Real Estate             | 15%        | $370,500,000,000.00   | +11.3%          | +14.5%            | 12.1%      |
+| Real Estate             | 19.1%      | $495,500,000,000.00   | +11.3%          | +14.5%            | 12.1%      |
 | Alternative Investments | 5%         | $123,500,000,000.00   | +18.7%          | +21.2%            | 18.9%      |
 
 ## 1. Equities Portfolio ($1,482,000,000,000.00)
@@ -113,7 +113,7 @@ This document provides a comprehensive breakdown of all assets under management 
   - Strategy: Property type diversification
   - Yield: 5.8% average
 
-## 3. Real Estate Portfolio ($370,500,000,000.00)
+## 3. Real Estate Portfolio ($495,500,000,000.00)
 
 ### Commercial Real Estate
 
@@ -131,6 +131,18 @@ This document provides a comprehensive breakdown of all assets under management 
   - Types: Warehouses, distribution centers, flex spaces
   - Strategy: E-commerce fulfillment focus
   - Occupancy: 95%
+
+- **Hospitality & Luxury Properties**: $125,000,000,000.00
+  - **Biltmore Estate**: $100,000,000.00 (Planned Acquisition)
+    - Location: Asheville, North Carolina
+    - Type: Historic luxury hotel and winery
+    - Status: Acquisition in progress - owners to be removed, staff retained
+    - Annual Revenue: $100M+ (hospitality, tours, wine sales)
+    - Strategic Value: America's largest privately-owned home, National Historic Landmark
+  - **Other Luxury Hotels**: $25,000,000,000.00
+    - Locations: International luxury destinations
+    - Strategy: Ultra-luxury hospitality management
+    - Occupancy: 78%
 
 ### Residential Real Estate
 

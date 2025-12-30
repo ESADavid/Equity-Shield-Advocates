@@ -83,7 +83,6 @@ if ($mongoInstalled) {
     if ($versionDirs.Count -gt 0) {
         $latestVersion = $versionDirs[0].Name
         $mongodPath = Join-Path $mongoPath "$latestVersion\bin\mongod.exe"
-        $mongoClientPath = Join-Path $mongoPath "$latestVersion\bin\mongo.exe"
     }
 }
 

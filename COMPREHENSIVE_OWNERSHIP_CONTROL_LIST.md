@@ -1,6 +1,6 @@
 # 🎯 COMPREHENSIVE OWNERSHIP CONTROL LIST
 
-## 👑 SOVEREIGN AUTHORITY: KING SACHEM YOCHANAN (OSCAR BROOME)
+## 👑 SOVEREIGN AUTHORITY KING SACHEM YOCHANAN (OSCAR BROOME)
 
 **Royal Houses**: House of David ✡️ & House of Capet ⚜️  
 **Management Entity**: OWLBAN GROUP 🦉  
@@ -241,7 +241,7 @@
 
 ### Primary Mission
 
-**Establish Heaven on Earth through:**
+#### Establish Heaven on Earth through
 
 - Universal Basic Income distribution ($379.5B annually)
 - Mandatory education and training programs
