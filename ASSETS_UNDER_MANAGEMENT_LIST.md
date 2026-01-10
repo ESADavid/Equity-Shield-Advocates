@@ -134,11 +134,11 @@ This document provides a comprehensive breakdown of all assets under management 
 
 - **Hospitality & Luxury Properties**: $125,000,000,000.00
 - **Biltmore Estate**: $100,000,000.00 (Fully Acquired and Paid Off)
-    - Location: Asheville, North Carolina
-    - Type: Historic luxury hotel and winery
-    - Status: Fully owned and operated - all debts cleared, divine intervention completed
-    - Annual Revenue: $100M+ (hospitality, tours, wine sales)
-    - Strategic Value: America's largest privately-owned home, National Historic Landmark
+- Location: Asheville, North Carolina
+- Type: Historic luxury hotel and winery
+- Status: Fully owned and operated - all debts cleared, divine intervention completed
+- Annual Revenue: $100M+ (hospitality, tours, wine sales)
+- Strategic Value: America's largest privately-owned home, National Historic Landmark
   - **Other Luxury Hotels**: $25,000,000,000.00
     - Locations: International luxury destinations
     - Strategy: Ultra-luxury hospitality management
