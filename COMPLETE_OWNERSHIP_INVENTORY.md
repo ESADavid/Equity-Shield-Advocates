@@ -620,7 +620,7 @@
 
 ### Strategic Objectives
 
-- **Economic Equality**: $33K/year UBI for 11.5M citizens
+- Economic Equality: $33K/year UBI for 11.5M citizens
 - **Education Access**: Free mandatory training programs
 - **Healthcare Coverage**: Comprehensive medical services
 - **Housing Security**: Affordable housing initiatives
