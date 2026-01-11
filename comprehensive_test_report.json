@@ -11,56 +11,56 @@
       "name": "Environment Config",
       "result": "failed",
       "message": "Missing variables: JPMORGAN_BASE_URL",
-      "timestamp": "2025-11-17T19:09:03.154Z"
+      "timestamp": "2026-01-11T21:09:22.317Z"
     },
     {
       "name": "Health Endpoint",
       "result": "failed",
       "message": "Health check failed: Error",
-      "timestamp": "2025-11-17T19:09:03.256Z"
+      "timestamp": "2026-01-11T21:09:22.396Z"
     },
     {
       "name": "Create Payment",
       "result": "failed",
       "message": "Payment creation failed: Error",
-      "timestamp": "2025-11-17T19:09:03.280Z"
+      "timestamp": "2026-01-11T21:09:22.407Z"
     },
     {
       "name": "Payment Status",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2025-11-17T19:09:03.281Z"
+      "timestamp": "2026-01-11T21:09:22.408Z"
     },
     {
       "name": "Refund Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2025-11-17T19:09:03.282Z"
+      "timestamp": "2026-01-11T21:09:22.408Z"
     },
     {
       "name": "Capture Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2025-11-17T19:09:03.283Z"
+      "timestamp": "2026-01-11T21:09:22.408Z"
     },
     {
       "name": "Void Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2025-11-17T19:09:03.283Z"
+      "timestamp": "2026-01-11T21:09:22.409Z"
     },
     {
       "name": "Get Transactions",
       "result": "failed",
       "message": "Transactions fetch failed: Error",
-      "timestamp": "2025-11-17T19:09:03.300Z"
+      "timestamp": "2026-01-11T21:09:22.420Z"
     },
     {
       "name": "Webhook Endpoint",
       "result": "failed",
       "message": "Webhook test failed: Error",
-      "timestamp": "2025-11-17T19:09:03.310Z"
+      "timestamp": "2026-01-11T21:09:22.426Z"
     }
   ],
-  "timestamp": "2025-11-17T19:09:03.313Z"
+  "timestamp": "2026-01-11T21:09:22.427Z"
 }
