@@ -10,7 +10,7 @@ const revenueDataPath = path.resolve(
 
 function validateNumber(value, fieldName) {
   if (typeof value !== 'number' || Number.isNaN(value) || value < 0) {
-    logger.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
+    warn(`Invalid number for ${fieldName}, defaulting to 0.`);
     return 0;
   }
   return value;
@@ -118,14 +118,14 @@ function integratePayroll(data) {
       ) {
         payrollTotal += payrollEntry.amount;
       } else {
-        logger.warn(
+        warn(
           'Invalid payroll entry amount detected, skipping:',
           payrollEntry
         );
       }
     }
     data.payrollTotal = payrollTotal;
-    logger.info(`Integrated payroll data total amount: ${payrollTotal}`);
+    info(`Integrated payroll data total amount: ${payrollTotal}`);
   }
 }
 
@@ -160,7 +160,7 @@ async function updateRevenueData(filePath, incremental = false) {
       typeof data.totalRevenue !== 'number' ||
       Number.isNaN(data.totalRevenue)
     ) {
-      logger.warn('Invalid or missing totalRevenue, defaulting to 0.');
+      warn('Invalid or missing totalRevenue, defaulting to 0.');
       data.totalRevenue = 0;
     }
     addSampleData(data, incremental);
@@ -169,14 +169,14 @@ async function updateRevenueData(filePath, incremental = false) {
     integratePayroll(data);
     addAuditTrail(data, incremental);
     await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
-    logger.info(
+    info(
       'Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.'
     );
     return true;
-  } catch (error) {
-    logger.error(
+  } catch (err) {
+    error(
       'Error accessing, parsing, or updating revenue data file:',
-      error.message
+      err.message
     );
     return false;
   }

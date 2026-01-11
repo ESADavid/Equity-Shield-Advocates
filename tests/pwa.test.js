@@ -10,23 +10,35 @@ describe('Progressive Web App (PWA) Tests', () => {
   let page;
 
   beforeAll(async () => {
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
+    try {
+      browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      });
+    } catch (error) {
+      console.warn('Puppeteer browser launch failed, skipping PWA tests:', error.message);
+      browser = null;
+    }
   });
 
   afterAll(async () => {
-    await browser.close();
+    if (browser) {
+      await browser.close();
+    }
   });
 
   beforeEach(async () => {
+    if (!browser) {
+      throw new Error('Browser not available, skipping test');
+    }
     page = await browser.newPage();
     await page.setViewport({ width: 1200, height: 800 });
   });
 
   afterEach(async () => {
-    await page.close();
+    if (page) {
+      await page.close();
+    }
   });
 
   describe('Service Worker Registration', () => {
