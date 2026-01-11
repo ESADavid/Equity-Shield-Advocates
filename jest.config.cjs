@@ -25,7 +25,7 @@ module.exports = {
   
   // Transform node_modules that use ES modules - FIXED: Don't ignore jest-runner
   transformIgnorePatterns: [
-    'node_modules/(?!(baseline-browser-mapping|@babel/runtime)/)',
+    'node_modules/(?!(baseline-browser-mapping|@babel/runtime|@noble|@paralleldrive|cuid2|formidable|superagent|supertest)/)',
   ],
   
   // Module name mapping
