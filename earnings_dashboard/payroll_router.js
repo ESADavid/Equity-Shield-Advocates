@@ -1,5 +1,5 @@
 import express from 'express';
-import { payrollSystem } from '../payrollSystem.ts';
+import { payrollSystem } from '../payrollSystem.js';
 import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration.js';
 import { info, error as logError } from '../utils/loggerWrapper.js';
 
