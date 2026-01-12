@@ -4,10 +4,7 @@ module.exports = {
   setupFiles: ['./jest.setup.js'],
   testEnvironment: 'node',
 
-  // Enable experimental ES modules - .js files are automatically treated as ESM due to package.json "type": "module"
-  extensionsToTreatAsEsm: ['.ts', '.tsx', '.mts'],
-
-  // Transform configuration - transform JS and TypeScript files
+  // Transform configuration - transform ALL JS files including test files
   transform: {
     '^.+\\.(ts|tsx)$': [
       'babel-jest',
@@ -22,19 +19,10 @@ module.exports = {
       },
     ],
   },
-  // Transform configuration - only transform TypeScript files
-  transform: {
-    '^.+\\.(ts|tsx)$': [
-      'babel-jest',
-      {
-        configFile: './babel.config.cjs',
-      },
-    ],
-  },
 
-  // Transform node_modules that use ES modules - allow ES modules from specific packages
+  // Transform node_modules that use ES modules - FIXED: Don't ignore jest-runner
   transformIgnorePatterns: [
-    'node_modules/(?!(baseline-browser-mapping|@babel/runtime|@noble|@paralleldrive|cuid2|formidable|superagent|supertest|chai)/)',
+    'node_modules/(?!(baseline-browser-mapping|@babel/runtime|@noble|@paralleldrive|cuid2|formidable|superagent|supertest)/)',
   ],
 
   // Module name mapping
@@ -49,7 +37,6 @@ module.exports = {
   // Test match patterns
   testMatch: [
     '<rootDir>/test/**/*.test.{js,jsx,ts,tsx}',
-    '<rootDir>/tests/**/*.test.{js,jsx,ts,tsx}',
     '<rootDir>/earnings_dashboard/**/*.test.{js,jsx,ts,tsx}',
     '<rootDir>/**/*.test.{js,jsx,ts,tsx}',
   ],

@@ -1,6 +1,6 @@
-// Use ES module syntax compatible with "type": "module" in package.json
-import { QuantumTransactionEngine } from '../quantum/quantumTransactionEngine.js';
-import { expect } from 'chai';
+// Use CommonJS syntax compatible with Jest configuration
+const { QuantumTransactionEngine } = require('../quantum/quantumTransactionEngine.js');
+const { expect } = require('chai');
 
 describe('Quantum Transaction Engine', () => {
   it('should process transactions correctly', async () => {

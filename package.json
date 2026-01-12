@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "Oscar Broome Revenue System with Transaction Override Capabilities - Performance Optimized",
   "main": "server-enhanced.js",
-  "type": "module",
+
   "scripts": {
     "start": "node server-enhanced.js",
     "dev": "nodemon server-enhanced.js",
