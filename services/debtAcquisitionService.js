@@ -1,16 +1,11 @@
-/**
+pda/**
  * DEBT ACQUISITION SERVICE
  * Manages the acquisition and management of sovereign and institutional debts
  * Provides comprehensive debt portfolio management and risk assessment
  */
 
 import { randomBytes } from 'node:crypto';
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
 import logger from '../utils/loggerWrapper.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 class DebtAcquisitionService {
   constructor() {
