@@ -1,8 +1,6 @@
 # OSCAR BROOME REVENUE - Production Docker Compose Configuration
 # This file defines the complete production stack
 
-version: '3.8'
-
 services:
   # Main Application
   app:
