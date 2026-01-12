@@ -7,7 +7,6 @@
 
 const { execSync } = require('child_process');
 const fs = require('fs');
-const path = require('path');
 
 class PilotDeployment {
   constructor() {
@@ -27,7 +26,7 @@ class PilotDeployment {
         step: '🔧 ',
       }[type] || '📝 ';
 
-    console.log(`[${timestamp}] ${prefix}${message}`);
+    console.warn(`[${timestamp}] ${prefix}${message}`);
   }
 
   async run() {
@@ -203,34 +202,34 @@ class PilotDeployment {
   showSummary() {
     const duration = ((Date.now() - this.startTime) / 1000).toFixed(2);
 
-    console.log('\n' + '='.repeat(60));
-    console.log('📊 PILOT DEPLOYMENT SUMMARY');
-    console.log('='.repeat(60));
-    console.log(`⏱️  Duration: ${duration} seconds`);
+    console.warn('\n' + '='.repeat(60));
+    console.warn('📊 PILOT DEPLOYMENT SUMMARY');
+    console.warn('='.repeat(60));
+    console.warn(`⏱️  Duration: ${duration} seconds`);
 
     if (this.errors.length > 0) {
-      console.log('\n❌ ERRORS:');
-      this.errors.forEach((error) => console.log(`   - ${error}`));
+      console.warn('\n❌ ERRORS:');
+      this.errors.forEach((error) => console.warn(`   - ${error}`));
     }
 
     if (this.warnings.length > 0) {
-      console.log('\n⚠️  WARNINGS:');
-      this.warnings.forEach((warning) => console.log(`   - ${warning}`));
+      console.warn('\n⚠️  WARNINGS:');
+      this.warnings.forEach((warning) => console.warn(`   - ${warning}`));
     }
 
-    console.log('\n✅ COMPLETED STEPS:');
-    console.log('   - Pilot environment configured');
-    console.log('   - Application deployed to pilot');
-    console.log('   - Pilot monitoring set up');
-    console.log('   - Test data initialized');
+    console.warn('\n✅ COMPLETED STEPS:');
+    console.warn('   - Pilot environment configured');
+    console.warn('   - Application deployed to pilot');
+    console.warn('   - Pilot monitoring set up');
+    console.warn('   - Test data initialized');
 
-    console.log('\n📝 NEXT STEPS:');
-    console.log('   1. Monitor pilot for 24-48 hours');
-    console.log('   2. Collect user feedback');
-    console.log('   3. Run pilot validation tests');
-    console.log('   4. Proceed to production deployment (Task 5.6)');
-    console.log('   5. Run: node scripts/execute-phase5-production.cjs');
-    console.log('='.repeat(60));
+    console.warn('\n📝 NEXT STEPS:');
+    console.warn('   1. Monitor pilot for 24-48 hours');
+    console.warn('   2. Collect user feedback');
+    console.warn('   3. Run pilot validation tests');
+    console.warn('   4. Proceed to production deployment (Task 5.6)');
+    console.warn('   5. Run: node scripts/execute-phase5-production.cjs');
+    console.warn('='.repeat(60));
   }
 }
 

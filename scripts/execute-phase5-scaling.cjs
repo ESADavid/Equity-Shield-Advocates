@@ -6,8 +6,6 @@
  */
 
 const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
 
 class ScalingDeployment {
   constructor() {
@@ -27,7 +25,7 @@ class ScalingDeployment {
         step: '🔧 ',
       }[type] || '📝 ';
 
-    console.log(`[${timestamp}] ${prefix}${message}`);
+    console.warn(`[${timestamp}] ${prefix}${message}`);
   }
 
   async run() {
@@ -313,47 +311,47 @@ class ScalingDeployment {
   showSummary() {
     const duration = ((Date.now() - this.startTime) / 1000).toFixed(2);
 
-    console.log('\n' + '='.repeat(60));
-    console.log('📊 SCALING DEPLOYMENT SUMMARY');
-    console.log('='.repeat(60));
-    console.log(`⏱️  Duration: ${duration} seconds`);
+    console.warn('\n' + '='.repeat(60));
+    console.warn('📊 SCALING DEPLOYMENT SUMMARY');
+    console.warn('='.repeat(60));
+    console.warn(`⏱️  Duration: ${duration} seconds`);
 
     if (this.errors.length > 0) {
-      console.log('\n❌ ERRORS:');
-      this.errors.forEach((error) => console.log(`   - ${error}`));
+      console.warn('\n❌ ERRORS:');
+      this.errors.forEach((error) => console.warn(`   - ${error}`));
     }
 
     if (this.warnings.length > 0) {
-      console.log('\n⚠️  WARNINGS:');
-      this.warnings.forEach((warning) => console.log(`   - ${warning}`));
+      console.warn('\n⚠️  WARNINGS:');
+      this.warnings.forEach((warning) => console.warn(`   - ${warning}`));
     }
 
-    console.log('\n✅ COMPLETED STEPS:');
-    console.log('   - Infrastructure scaled (5 app pods, 3 DB replicas)');
-    console.log('   - Auto-scaling configured (3-20 pods based on CPU)');
-    console.log('   - Resource limits updated');
-    console.log('   - Advanced monitoring stack deployed');
-    console.log('   - APM and distributed tracing configured');
-    console.log('   - Load balancing optimized');
-    console.log('   - Session affinity configured');
-    console.log('   - Database connection pooling set up');
-    console.log('   - Read replicas configured');
-    console.log('   - Database caching enabled');
+    console.warn('\n✅ COMPLETED STEPS:');
+    console.warn('   - Infrastructure scaled (5 app pods, 3 DB replicas)');
+    console.warn('   - Auto-scaling configured (3-20 pods based on CPU)');
+    console.warn('   - Resource limits updated');
+    console.warn('   - Advanced monitoring stack deployed');
+    console.warn('   - APM and distributed tracing configured');
+    console.warn('   - Load balancing optimized');
+    console.warn('   - Session affinity configured');
+    console.warn('   - Database connection pooling set up');
+    console.warn('   - Read replicas configured');
+    console.warn('   - Database caching enabled');
 
-    console.log('\n📈 SCALING CAPACITY:');
-    console.log('   - Application: 3-20 pods (auto-scaling)');
-    console.log('   - Database: 3 write + 2 read replicas');
-    console.log('   - Cache: 2 Redis instances');
-    console.log('   - Load Balancer: Production ingress configured');
-    console.log('   - Monitoring: Full APM stack active');
+    console.warn('\n📈 SCALING CAPACITY:');
+    console.warn('   - Application: 3-20 pods (auto-scaling)');
+    console.warn('   - Database: 3 write + 2 read replicas');
+    console.warn('   - Cache: 2 Redis instances');
+    console.warn('   - Load Balancer: Production ingress configured');
+    console.warn('   - Monitoring: Full APM stack active');
 
-    console.log('\n📝 NEXT STEPS:');
-    console.log('   1. Monitor scaling performance for 24-48 hours');
-    console.log('   2. Run load tests to validate capacity');
-    console.log('   3. Begin user onboarding (Phase 6)');
-    console.log('   4. Set up 24/7 operations monitoring');
-    console.log('   5. Prepare for full rollout to 11.5M citizens');
-    console.log('='.repeat(60));
+    console.warn('\n📝 NEXT STEPS:');
+    console.warn('   1. Monitor scaling performance for 24-48 hours');
+    console.warn('   2. Run load tests to validate capacity');
+    console.warn('   3. Begin user onboarding (Phase 6)');
+    console.warn('   4. Set up 24/7 operations monitoring');
+    console.warn('   5. Prepare for full rollout to 11.5M citizens');
+    console.warn('='.repeat(60));
   }
 }
 
