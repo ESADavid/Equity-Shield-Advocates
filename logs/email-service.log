@@ -827,3 +827,15 @@
 {"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-12T18:24:15.860Z"}
 {"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-01-12T18:30:16.969Z"}
 {"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-12T18:30:16.977Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-01-12T18:36:25.094Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-12T18:36:25.099Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-01-12T18:41:14.618Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-12T18:41:14.621Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-01-12T18:47:22.777Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-12T18:47:22.779Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-01-12T18:52:35.344Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-12T18:52:35.346Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-01-12T19:15:19.435Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-12T19:15:19.437Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-01-12T19:18:23.424Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-12T19:18:23.426Z"}

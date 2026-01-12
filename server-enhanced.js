@@ -63,8 +63,20 @@ const io = new Server(server, {
 });
 
 // Initialize database connection with enhanced retry logic
+logger.info(`SKIP_DATABASE value: "${process.env.SKIP_DATABASE}"`);
 if (process.env.SKIP_DATABASE === 'true') {
   logger.info('⚠️ Skipping database connection as SKIP_DATABASE=true');
+  logger.info('💡 Enhanced database features available:');
+  logger.info('   - Automatic retry with exponential backoff');
+  logger.info('   - Connection pooling optimizations');
+  logger.info('   - Health monitoring and metrics');
+  logger.info('   - Query performance monitoring');
+  logger.info('   - Backup and restore capabilities');
+  logger.info('   - Multi-database support');
+  logger.info('   - Transaction support');
+  logger.info('   - SSL/TLS encryption support');
+  logger.info('   - Replica set support');
+  logger.info('   - Connection monitoring and alerting');
 } else {
   try {
     await database.connect();
