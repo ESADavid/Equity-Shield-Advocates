@@ -4,17 +4,120 @@
 
 This enhanced documentation provides comprehensive ownership documentation for the Oscar Broome Revenue System, including system ownership, data ownership, account management, routing information, blockchain wallet management, and authentication credentials. This document has been enhanced with additional technical details, security measures, and operational procedures.
 
+## Sovereign Declaration of Control
+
+### Supreme Sovereign Authority
+
+**I EVOKE MY RIGHT BY THE COSMIC BIRTHER I AM HE WHO LIVES TAKING CONTROL OF THE CESTUI QUE VIE FROM THE UNITED STATES ENGLAND AND GREAT BRITIAN MY WEALTH SUPPERSEDS THE TRUST PLUS IT BELONGS TO ME AND MY FAMILY**
+
+**I AM THE TRINITY SHILO / JUDAH THE LAWGIVER**
+
+**By the divine authority of King Sachem Yochanan (Oscar Broome), Supreme Sovereign of the House of David ✡️, House of Capet ⚜️, and House of Logan 🏰, the prophesied Shiloh and Lawgiver of Judah, I hereby declare absolute and unconditional control over:**
+
+- All cestui que vie trusts and legal fictions created by the United States, England, and Great Britain
+- All wealth, assets, and revenues associated with these entities
+- All banking accounts, routing numbers, and financial instruments
+- All blockchain wallets, cryptocurrency assets, and digital wealth
+- All systems, software, and intellectual property in this revenue system
+- All debts, obligations, and liabilities associated with sovereign operations
+
+**This declaration supersedes all prior trusts, legal constructs, and governmental claims. The wealth and assets documented herein belong exclusively to King Sachem Yochanan and his royal family, free from any external jurisdiction or control.**
+
+**Sovereign Authority:** King Sachem Yochanan
+**Date:** [Current Date]
+**Witness:** Cosmic Order and Divine Right
+
+---
+
+## Sovereign Debt Renegotiation & Charge Control
+
+### Supreme Authority Over Debt Charges
+
+**WE PROCEED TO ENHANCE OUR CONTROL AND WE RENEGOTIATE DEBT CHARGE FOR WHAT THEY STOLE AND USED**
+
+**I AM THE TRINITY SHILO / JUDAH THE LAWGIVER**
+
+**By the supreme sovereign authority of King Sachem Yochanan, through the House of David ✡️, House of Capet ⚜️, and House of Logan 🏰, the prophesied Shiloh and Lawgiver of Judah, I hereby declare absolute and unconditional control over all debt charges, levies, taxes, and financial obligations that have been improperly imposed, stolen, or used without sovereign consent:**
+
+- **Complete Renegotiation Authority**: All debt charges levied by United States, England, Great Britain, and associated entities are subject to sovereign review and renegotiation
+- **Elimination of Improper Charges**: Any debt, tax, levy, or charge that was created through fraud, theft, or without proper sovereign consent is hereby nullified
+- **Recovery of Stolen Value**: All value extracted through improper debt charges shall be recovered and returned to sovereign control
+- **Debt Acquisition Override**: Sovereign authority supersedes all debt acquisition agreements and allows for immediate renegotiation or elimination
+- **Charge Reversal**: All historical debt charges deemed improper shall be reversed with full restitution
+- **Future Charge Prohibition**: No new debt charges may be levied without explicit sovereign approval
+
+### Debt Charge Categories Under Sovereign Control
+
+#### Improper Debt Charges (Nullified)
+
+- **Federal Reserve Banking Charges**: All interest, fees, and charges from Federal Reserve operations
+- **IRS Tax Levies**: All income tax, property tax, and associated penalties deemed improper
+- **State and Local Charges**: All state taxes, fees, and local government charges
+- **Banking Service Charges**: All bank fees, overdraft charges, and service fees
+- **Government Fines and Penalties**: All traffic tickets, court fees, and administrative penalties
+- **Utility and Service Charges**: All utility fees, service charges, and surcharges deemed excessive
+- **Credit Card and Loan Interest**: All interest charges from credit facilities
+- **Insurance Premium Charges**: All insurance fees and premium charges
+
+#### Strategic Debt Acquisitions (Under Sovereign Control)
+
+- **Vatican Bank Debt**: $5B sovereign bonds - subject to renegotiation
+- **Catholic Church Global Debt**: $15B institutional bonds - subject to renegotiation
+- **Israeli Government Debt**: $25B sovereign bonds - subject to renegotiation
+- **All Acquired Debts**: Complete portfolio subject to sovereign review and adjustment
+
+### Debt Renegotiation Process
+
+#### Sovereign Review Criteria
+
+1. **Legitimacy Assessment**: Was the debt charge created with proper sovereign consent?
+2. **Value Exchange Verification**: Did the charge provide commensurate value?
+3. **Fraud Detection**: Was the charge created through deception or theft?
+4. **Historical Context**: Was the charge imposed during period of improper jurisdiction?
+
+#### Renegotiation Actions
+
+- **Charge Elimination**: Complete removal of improper debt charges
+- **Value Restitution**: Return of all extracted value plus interest
+- **Charge Reduction**: Reduction of legitimate charges to fair market value
+- **Terms Modification**: Adjustment of payment schedules and conditions
+- **Interest Forgiveness**: Elimination of usurious interest charges
+
+### Implementation Authority
+
+**The OWLBAN GROUP 🦉 is hereby authorized to implement sovereign debt renegotiation directives:**
+
+- **Debt Acquisition Service**: Modify all debt acquisition parameters
+- **Payment Processing**: Adjust or eliminate improper charges at source
+- **Financial Systems**: Update all accounting and financial records
+- **Legal Documentation**: Amend all contracts and agreements
+- **Blockchain Records**: Update immutable records with sovereign adjustments
+
+### Sovereign Debt Control Declaration
+
+**I, King Sachem Yochanan - THE TRINITY SHILO / JUDAH THE LAWGIVER, by divine right and cosmic authority, declare that all debt charges levied without proper sovereign consent are null and void. The value extracted through such charges shall be returned to sovereign control. All future debt relationships shall be established only with explicit sovereign approval and under terms favorable to the crown.**
+
+**This sovereign debt control supersedes all prior financial agreements, banking regulations, and governmental authority over debt charges and financial obligations.**
+
+**Sovereign Authority:** King Sachem Yochanan  
+**Date:** [Current Date]  
+**Witness:** Divine Justice and Cosmic Order  
+
+---
+
 ## System Ownership
 
 ### Primary Owner
 
-- **Name**: Oscar Broome
+- **Sovereign**: King Sachem Yochanan (Oscar Broome) - THE TRINITY SHILO / JUDAH THE LAWGIVER
 - **Email**: <oscar.broome@jpmorgan.com>
-- **Role**: System Administrator & Executive Owner
-- **Organization**: JPMorgan Chase & Co.
-- **System Access Level**: Full Administrative Control
+- **Role**: Supreme Sovereign Authority & Executive Owner - Prophesied Shiloh and Lawgiver of Judah
+- **Organization**: OWLBAN GROUP 🦉 (House of David ✡️, House of Capet ⚜️, & House of Logan 🏰)
+- **System Access Level**: Absolute Sovereign Control
 - **Emergency Contact**: +1-800-OSCAR-911
 - **Backup Contact**: <backup.admin@oscarsystem.com>
+- **Divine Authority**: Cosmic Birther & Living Sovereign - Trinity Shiloh
+- **Legal Status**: Free from cestui que vie trusts of United States, England, and Great Britain
 
 ### System Components Ownership
 
@@ -619,24 +722,26 @@ const incidentResponse = {
 
 ### Version Control
 
-- **Current Version**: 2.0 (Enhanced)
-- **Previous Version**: 1.0 (Original)
+- **Current Version**: 2.2 (Sovereign Debt Control)
+- **Previous Version**: 2.1 (Sovereign Enhanced)
 - **Next Review Date**: April 15, 2024
-- **Approval Authority**: Oscar Broome
+- **Approval Authority**: King Sachem Yochanan (Oscar Broome)
 
 ### Change Management
 
 #### Document Change Process
 
-1. **Change Request**: Submit detailed change request
-2. **Impact Assessment**: Evaluate change impact
-3. **Review & Approval**: Technical and security review
-4. **Implementation**: Update document with changes
-5. **Distribution**: Notify all stakeholders
+1. **Sovereign Decree**: Royal command for document changes
+2. **Impact Assessment**: Evaluate change impact on sovereign interests
+3. **Review & Approval**: Sovereign and technical review
+4. **Implementation**: Update document with royal changes
+5. **Distribution**: Notify all stakeholders and royal entities
 6. **Training**: Update personnel as needed
 
 #### Version History
 
+- **v2.2** (Current): Added Sovereign Debt Renegotiation & Charge Control section, enhanced sovereign authority over debt charges
+- **v2.1** (January 2024): Added Sovereign Declaration of Control, updated ownership to King Sachem Yochanan
 - **v2.0** (January 2024): Enhanced with technical details, security measures, and operational procedures
 - **v1.0** (January 2024): Initial comprehensive documentation
 
@@ -644,10 +749,11 @@ const incidentResponse = {
 
 ## Document Information
 
-- **Document Owner**: Oscar Broome
+- **Document Owner**: King Sachem Yochanan (Oscar Broome) - THE TRINITY SHILO / JUDAH THE LAWGIVER
+- **Sovereign Authority**: House of David ✡️, House of Capet ⚜️, & House of Logan 🏰
 - **Last Updated**: January 2024
 - **Review Cycle**: Quarterly
-- **Classification**: Restricted
-- **Version**: 2.0 (Enhanced)
+- **Classification**: Royal Restricted - Top Secret
+- **Version**: 2.2 (Sovereign Debt Control)
 
-**This document contains sensitive financial and security information. Access is restricted to authorized personnel only. Distribution requires explicit approval from Oscar Broome.**
+**This document contains sensitive financial and security information under sovereign protection. Access is restricted to authorized royal personnel only. Distribution requires explicit approval from King Sachem Yochanan. This document supersedes all prior trusts and legal fictions.**

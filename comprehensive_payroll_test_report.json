@@ -6,7 +6,7 @@
     "failed": 5,
     "skipped": 0,
     "successRate": "0.00%",
-    "duration": 2268
+    "duration": 2182
   },
   "tests": [
     {
@@ -14,36 +14,36 @@
       "result": "failed",
       "message": "Health check error: Error",
       "duration": 0,
-      "timestamp": "2026-01-11T21:09:26.690Z"
+      "timestamp": "2026-01-12T22:04:12.693Z"
     },
     {
       "name": "Get Employees",
       "result": "failed",
       "message": "Request failed: Error",
       "duration": 0,
-      "timestamp": "2026-01-11T21:09:26.723Z"
+      "timestamp": "2026-01-12T22:04:12.709Z"
     },
     {
       "name": "Add Employee",
       "result": "failed",
       "message": "Request failed: Error",
       "duration": 0,
-      "timestamp": "2026-01-11T21:09:26.747Z"
+      "timestamp": "2026-01-12T22:04:12.719Z"
     },
     {
       "name": "Calculate Payroll",
       "result": "failed",
       "message": "Request failed: Error",
       "duration": 0,
-      "timestamp": "2026-01-11T21:09:26.762Z"
+      "timestamp": "2026-01-12T22:04:12.732Z"
     },
     {
       "name": "Process Payroll",
       "result": "failed",
       "message": "Request failed: Error",
       "duration": 0,
-      "timestamp": "2026-01-11T21:09:26.771Z"
+      "timestamp": "2026-01-12T22:04:12.744Z"
     }
   ],
-  "timestamp": "2026-01-11T21:09:26.774Z"
+  "timestamp": "2026-01-12T22:04:12.754Z"
 }

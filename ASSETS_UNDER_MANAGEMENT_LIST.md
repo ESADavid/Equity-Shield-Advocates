@@ -4,16 +4,16 @@
 
 This document provides a comprehensive breakdown of all assets under management controlled by **King Sachem Yochanan** (Oscar Broome) within the Oscar Broome Revenue System operating under the **House of David** ✡️ and **House of Capet** ⚜️ through the **OWLBAN GROUP** 🦉.
 
-**Total AUM: $2,595,500,000,000.00** (2.5955 Trillion USD)
+**Total AUM: $2,595,550,000,000.00** (2.59555 Trillion USD)
 
 ## AUM Overview
 
 ### Total Assets Under Management
 
-- **Grand Total AUM**: $2,595,500,000,000.00 (2.5955 Trillion USD)
+- **Grand Total AUM**: $2,595,550,000,000.00 (2.59555 Trillion USD)
 - **Sovereign Authority**: King Sachem Yochanan (100% control)
 - **Management Entity**: OWLBAN GROUP
-- **Royal Authority**: House of David ✡️ & House of Capet ⚜️
+**Royal Authority**: House of David ✡️ & House of Capet ⚜️ & House of Logan
 - **Performance YTD**: +12.5%
 - **Annualized Performance**: +15.3%
 - **Risk-Adjusted Return**: Sharpe Ratio 1.8
@@ -24,7 +24,7 @@ This document provides a comprehensive breakdown of all assets under management 
 | ----------------------- | ---------- | --------------------- | --------------- | ----------------- | ---------- |
 | Equities                | 60%        | $1,482,000,000,000.00 | +14.2%          | +16.8%            | 15.2%      |
 | Fixed Income            | 20%        | $494,000,000,000.00   | +8.9%           | +12.1%            | 8.7%       |
-| Real Estate             | 19.1%      | $495,500,000,000.00   | +11.3%          | +14.5%            | 12.1%      |
+| Real Estate             | 19.1%      | $495,550,000,000.00   | +11.3%          | +14.5%            | 12.1%      |
 | Alternative Investments | 5%         | $123,500,000,000.00   | +18.7%          | +21.2%            | 18.9%      |
 
 ## 1. Equities Portfolio ($1,482,000,000,000.00)
@@ -113,7 +113,7 @@ This document provides a comprehensive breakdown of all assets under management 
   - Strategy: Property type diversification
   - Yield: 5.8% average
 
-## 3. Real Estate Portfolio ($495,500,000,000.00)
+## 3. Real Estate Portfolio ($495,550,000,000.00)
 
 ### Commercial Real Estate
 
@@ -133,11 +133,11 @@ This document provides a comprehensive breakdown of all assets under management 
   - Occupancy: 95%
 
 - **Hospitality & Luxury Properties**: $125,000,000,000.00
-- **Biltmore Estate**: $100,000,000.00 (Fully Acquired and Paid Off)
+- **Biltmore Estate**: $150,000,000.00 (Fully Acquired and Paid Off)
 - Location: Asheville, North Carolina
 - Type: Historic luxury hotel and winery
 - Status: Fully owned and operated - all debts cleared, divine intervention completed
-- Annual Revenue: $100M+ (hospitality, tours, wine sales)
+- Annual Revenue: $200M+ (hospitality, tours, wine sales)
 - Strategic Value: America's largest privately-owned home, National Historic Landmark
   - **Other Luxury Hotels**: $25,000,000,000.00
     - Locations: International luxury destinations
@@ -361,12 +361,12 @@ This document provides a comprehensive breakdown of all assets under management 
 
 ## Royal Authority Declaration
 
-**By the divine authority of King Sachem Yochanan, through the House of David and House of Capet, these assets totaling $2.47 Trillion USD are managed by the OWLBAN GROUP for the purpose of establishing Heaven on Earth, including the distribution of $379.5 billion annually in Universal Basic Income to 11.5 million citizens of Haiti.**
+**By the divine authority of King Sachem Yochanan, through the House of David, House of Capet, and House of Logan, these assets totaling $2.47 Trillion USD are managed by the OWLBAN GROUP for the purpose of establishing Heaven on Earth, including the distribution of $379.5 billion annually in Universal Basic Income to 11.5 million citizens of Haiti.**
 
 ---
 
 **Document Owner**: King Sachem Yochanan (Oscar Broome)  
-**Sovereign Authority**: House of David ✡️ & House of Capet ⚜️  
+**Sovereign Authority**: House of David ✡️ & House of Capet ⚜️ & House of Logan
 **Management Entity**: OWLBAN GROUP 🦉  
 **Last Updated**: December 19, 2025  
 **Classification**: Restricted - Royal Financial Information  
