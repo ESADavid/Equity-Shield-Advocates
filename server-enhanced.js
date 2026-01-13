@@ -611,8 +611,8 @@ app.use(
 
 // Catch-all handler for SPA (must be before 404 handler)
 app.get('*', (req, res, next) => {
-  // Only serve SPA for non-API routes
-  if (req.path.startsWith('/api/')) {
+  // Only serve SPA for non-API routes and exclude health/metrics endpoints
+  if (req.path.startsWith('/api/') || req.path.startsWith('/jpmorgan/') || req.path === '/health' || req.path === '/metrics' || req.path === '/api/status') {
     return next();
   }
   // Serve override-dashboard.html instead of missing index.html

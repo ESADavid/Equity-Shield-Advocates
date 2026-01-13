@@ -4,6 +4,25 @@ import axios from 'axios';
 
 const router = express.Router();
 
+// Health check endpoint for JPMorgan integration
+router.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    service: 'JPMorgan Payment Integration',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+    endpoints: [
+      'POST /jpmorgan/create-payment',
+      'GET /jpmorgan/payment-status/:paymentId',
+      'POST /jpmorgan/refund',
+      'POST /jpmorgan/capture',
+      'POST /jpmorgan/void',
+      'GET /jpmorgan/transactions',
+      'POST /jpmorgan/webhook'
+    ]
+  });
+});
+
 // Environment variables
 const JPMORGAN_CLIENT_ID = process.env.JPMORGAN_CLIENT_ID;
 const JPMORGAN_CLIENT_SECRET = process.env.JPMORGAN_CLIENT_SECRET;
@@ -94,13 +113,67 @@ router.post('/create-payment', async (req, res) => {
       });
     }
 
+    // Check if credentials are configured for live API calls
+    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+
+    if (!hasCredentials) {
+      // Mock mode - return mock response
+      const mockPaymentId = `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      // Handle both simple format {amount: 100, currency: 'USD'} and nested format {amount: {value: 100, currency: 'USD'}}
+      let paymentAmount;
+      if (typeof amount === 'object' && amount.value !== undefined) {
+        // Nested format: {amount: {value: 100, currency: 'USD'}}
+        paymentAmount = {
+          value: amount.value,
+          currency: amount.currency || currency,
+        };
+      } else {
+        // Simple format: {amount: 100, currency: 'USD'}
+        paymentAmount = {
+          value: amount,
+          currency: currency,
+        };
+      }
+
+      return res.json({
+        success: true,
+        paymentId: mockPaymentId,
+        status: 'AUTHORIZED',
+        authorizationCode: `AUTH-${Date.now()}`,
+        transactionDetails: {
+          id: mockPaymentId,
+          amount: paymentAmount,
+          status: 'AUTHORIZED',
+          orderId: orderId,
+          description: description || 'Payment for services',
+          customer: customer || {},
+          createdAt: new Date().toISOString(),
+          mock: true,
+        },
+      });
+    }
+
     const headers = generateAuthHeaders();
 
-    const paymentData = {
-      amount: {
+    // Handle both simple format {amount: 100, currency: 'USD'} and nested format {amount: {value: 100, currency: 'USD'}}
+    let paymentAmount;
+    if (typeof amount === 'object' && amount.value !== undefined) {
+      // Nested format: {amount: {value: 100, currency: 'USD'}}
+      paymentAmount = {
+        value: amount.value,
+        currency: amount.currency || currency,
+      };
+    } else {
+      // Simple format: {amount: 100, currency: 'USD'}
+      paymentAmount = {
         value: amount,
         currency: currency,
-      },
+      };
+    }
+
+    const paymentData = {
+      amount: paymentAmount,
       order: {
         id: orderId,
         description: description || 'Payment for services',
@@ -118,7 +191,7 @@ router.post('/create-payment', async (req, res) => {
     const response = await axios.post(
       `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments`,
       paymentData,
-      { headers }
+      { headers, timeout: 30000 }
     );
 
     res.json({
@@ -146,11 +219,32 @@ router.get('/payment-status/:paymentId', async (req, res) => {
   try {
     const { paymentId } = req.params;
 
+    // Check if credentials are configured for live API calls
+    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+
+    if (!hasCredentials || paymentId.startsWith('mock-')) {
+      // Mock mode - return mock response
+      return res.json({
+        success: true,
+        paymentStatus: {
+          id: paymentId,
+          status: 'AUTHORIZED',
+          amount: {
+            value: 100.0,
+            currency: 'USD',
+          },
+          orderId: `TEST-${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          mock: true,
+        },
+      });
+    }
+
     const headers = generateAuthHeaders();
 
     const response = await axios.get(
       `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments/${paymentId}`,
-      { headers }
+      { headers, timeout: 30000 }
     );
 
     res.json({
@@ -182,6 +276,31 @@ router.post('/refund', async (req, res) => {
       });
     }
 
+    // Check if credentials are configured for live API calls
+    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+
+    if (!hasCredentials || paymentId.startsWith('mock-')) {
+      // Mock mode - return mock response
+      const mockRefundId = `refund-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      return res.json({
+        success: true,
+        refundId: mockRefundId,
+        status: 'COMPLETED',
+        refundDetails: {
+          id: mockRefundId,
+          paymentId: paymentId,
+          amount: {
+            value: amount,
+            currency: 'USD',
+          },
+          reason: reason || 'Customer request',
+          status: 'COMPLETED',
+          createdAt: new Date().toISOString(),
+          mock: true,
+        },
+      });
+    }
+
     const headers = generateAuthHeaders();
 
     const refundData = {
@@ -195,7 +314,7 @@ router.post('/refund', async (req, res) => {
     const response = await axios.post(
       `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments/${paymentId}/refunds`,
       refundData,
-      { headers }
+      { headers, timeout: 30000 }
     );
 
     res.json({
@@ -229,6 +348,33 @@ router.post('/capture', async (req, res) => {
       });
     }
 
+    // Check if credentials are configured for live API calls
+    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+
+    if (!hasCredentials || paymentId.startsWith('mock-')) {
+      // Mock mode - return mock response
+      const mockCaptureId = `capture-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      return res.json({
+        success: true,
+        captureId: mockCaptureId,
+        status: 'COMPLETED',
+        captureDetails: {
+          id: mockCaptureId,
+          paymentId: paymentId,
+          amount: amount ? {
+            value: amount,
+            currency: 'USD',
+          } : {
+            value: 100.0,
+            currency: 'USD',
+          },
+          status: 'COMPLETED',
+          createdAt: new Date().toISOString(),
+          mock: true,
+        },
+      });
+    }
+
     const headers = generateAuthHeaders();
 
     const captureData = {
@@ -243,7 +389,7 @@ router.post('/capture', async (req, res) => {
     const response = await axios.post(
       `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments/${paymentId}/capture`,
       captureData,
-      { headers }
+      { headers, timeout: 30000 }
     );
 
     res.json({
@@ -277,6 +423,27 @@ router.post('/void', async (req, res) => {
       });
     }
 
+    // Check if credentials are configured for live API calls
+    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+
+    if (!hasCredentials || paymentId.startsWith('mock-')) {
+      // Mock mode - return mock response
+      const mockVoidId = `void-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      return res.json({
+        success: true,
+        voidId: mockVoidId,
+        status: 'COMPLETED',
+        voidDetails: {
+          id: mockVoidId,
+          paymentId: paymentId,
+          reason: reason || 'Customer request',
+          status: 'COMPLETED',
+          createdAt: new Date().toISOString(),
+          mock: true,
+        },
+      });
+    }
+
     const headers = generateAuthHeaders();
 
     const voidData = {
@@ -286,7 +453,7 @@ router.post('/void', async (req, res) => {
     const response = await axios.post(
       `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/payments/${paymentId}/void`,
       voidData,
-      { headers }
+      { headers, timeout: 30000 }
     );
 
     res.json({
@@ -310,6 +477,35 @@ router.get('/transactions', async (req, res) => {
   try {
     const { startDate, endDate, status, limit = 50 } = req.query;
 
+    // Check if credentials are configured for live API calls
+    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+
+    if (!hasCredentials) {
+      // Mock mode - return mock response
+      const mockTransactions = [];
+      const limitNum = parseInt(limit) || 10;
+
+      for (let i = 0; i < Math.min(limitNum, 5); i++) {
+        mockTransactions.push({
+          id: `txn-${Date.now()}-${i}`,
+          paymentId: `mock-${Date.now()}-${i}`,
+          amount: {
+            value: Math.floor(Math.random() * 500) + 50,
+            currency: 'USD',
+          },
+          status: ['AUTHORIZED', 'CAPTURED', 'COMPLETED'][Math.floor(Math.random() * 3)],
+          createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+          mock: true,
+        });
+      }
+
+      return res.json({
+        success: true,
+        transactions: mockTransactions,
+        totalCount: mockTransactions.length,
+      });
+    }
+
     const headers = generateAuthHeaders();
 
     const params = new URLSearchParams();
@@ -320,7 +516,7 @@ router.get('/transactions', async (req, res) => {
 
     const response = await axios.get(
       `${JPMORGAN_BASE_URL}/organizations/${JPMORGAN_ORGANIZATION_ID}/projects/${JPMORGAN_PROJECT_ID}/v1/transactions?${params}`,
-      { headers }
+      { headers, timeout: 30000 }
     );
 
     res.json({
