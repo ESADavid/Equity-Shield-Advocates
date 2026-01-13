@@ -16,7 +16,7 @@ let fixedCount = 0;
 // Fix 1: owlban_repos/sample_repo/revenue.json - Remove duplicate closing brace
 info('\n📝 Fix 1: owlban_repos/sample_repo/revenue.json');
 try {
-  let content = readFileSync('owlban_repos/sample_repo/revenue.json', 'utf8');
+  const content = readFileSync('owlban_repos/sample_repo/revenue.json', 'utf8');
   // Replace "}]{" with "},"
   content = content.replace(/\]\s*\}\s*\{/g, '],{');
   writeFileSync('owlban_repos/sample_repo/revenue.json', content, 'utf8');
@@ -29,7 +29,7 @@ try {
 // Fix 2: scripts/implement-all-phases.js - Fix template string properly
 info('\n📝 Fix 2: scripts/implement-all-phases.js');
 try {
-  let content = readFileSync('scripts/implement-all-phases.js', 'utf8');
+  const content = readFileSync('scripts/implement-all-phases.js', 'utf8');
   // Find and fix the problematic line
   const lines = content.split('\n');
   for (let i = 0; i < lines.length; i++) {
@@ -52,7 +52,7 @@ try {
 // Fix 3: scripts/implement-phase2.js - Fix template string properly
 info('\n📝 Fix 3: scripts/implement-phase2.js');
 try {
-  let content = readFileSync('scripts/implement-phase2.js', 'utf8');
+  const content = readFileSync('scripts/implement-phase2.js', 'utf8');
   // Find and fix the problematic line
   const lines = content.split('\n');
   for (let i = 0; i < lines.length; i++) {

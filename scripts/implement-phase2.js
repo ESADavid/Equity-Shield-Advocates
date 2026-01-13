@@ -7,7 +7,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { info } from '../utils/loggerWrapper.js';
+import { info, error } from '../utils/loggerWrapper.js';
 
 info('🚀 Phase 2: Heaven on Earth - Rapid Implementation');
 info('='.repeat(80));
@@ -276,8 +276,8 @@ for (const [filePath, content] of Object.entries(componentsToCreate)) {
   }
 }
 
-info('\\n' + '='.repeat(80));
-info(\`Phase 2 Implementation Complete!\`);
-    info(`✅ Created: ${filePath}`);
-info(\`❌ Failed: \${failed} files\`);
+info('\n' + '='.repeat(80));
+info(`Phase 2 Implementation Complete!`);
+info(`✅ Created: ${created} files`);
+info(`❌ Failed: ${failed} files`);
 info('='.repeat(80));

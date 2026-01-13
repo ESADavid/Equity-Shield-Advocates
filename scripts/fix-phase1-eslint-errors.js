@@ -31,7 +31,7 @@ try {
 // Fix 2: scripts/implement-all-phases.js - Unicode escape sequence
 info('\n📝 Fix 2: scripts/implement-all-phases.js');
 try {
-  let content = readFileSync('scripts/implement-all-phases.js', 'utf8');
+  const content = readFileSync('scripts/implement-all-phases.js', 'utf8');
   // Fix Unicode escape sequences in strings
   content = content.replace(/\\u([0-9A-Fa-f]{4})/g, (match, hex) => {
     return String.fromCharCode(parseInt(hex, 16));

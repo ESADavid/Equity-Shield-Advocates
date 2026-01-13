@@ -17,7 +17,7 @@ let errorCount = 0;
 // Fix 1: Revert Unicode escape fix in scripts/implement-all-phases.js
 info('\n📝 Fix 1: scripts/implement-all-phases.js - Revert bad Unicode fix');
 try {
-  let content = readFileSync('scripts/implement-all-phases.js', 'utf8');
+  const content = readFileSync('scripts/implement-all-phases.js', 'utf8');
   // The issue is unterminated template - need to escape the backticks properly
   content = content.replace(
     /info\(`\nCreating \$\{Object\.keys\(files\)\.length\} files\.\.\.\n`\);/g,
@@ -34,7 +34,7 @@ try {
 // Fix 2: Revert Unicode escape fix in scripts/implement-phase2.js
 info('\n📝 Fix 2: scripts/implement-phase2.js - Revert bad Unicode fix');
 try {
-  let content = readFileSync('scripts/implement-phase2.js', 'utf8');
+  const content = readFileSync('scripts/implement-phase2.js', 'utf8');
   // Fix unterminated template
   content = content.replace(
     /info\(`✅ Created: \$\{filePath\}`\);/g,
@@ -58,7 +58,7 @@ const setupFiles = [
 for (const file of setupFiles) {
   info(`\n📝 Fix: ${file} - Fix shebang position`);
   try {
-    let content = readFileSync(file, 'utf8');
+    const content = readFileSync(file, 'utf8');
     // Remove import line and shebang, then reconstruct properly
     const lines = content.split('\n');
     const importLine = lines.find((l) => l.startsWith('import'));
@@ -98,7 +98,7 @@ const jsonFiles = [
 for (const file of jsonFiles) {
   info(`\n📝 Fix: ${file} - Resolve merge conflict`);
   try {
-    let content = readFileSync(file, 'utf8');
+    const content = readFileSync(file, 'utf8');
 
     if (content.includes('<<<<<<< HEAD')) {
       // Keep HEAD version (remove conflict markers and alternative version)
