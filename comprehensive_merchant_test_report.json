@@ -1,36 +1,36 @@
 {
   "summary": {
     "total": 4,
-    "passed": 0,
-    "failed": 4,
+    "passed": 3,
+    "failed": 1,
     "skipped": 0,
-    "successRate": "0.00"
+    "successRate": "75.00"
   },
   "tests": [
     {
       "name": "Environment Config",
       "result": "failed",
-      "message": "Could not verify server health: Error",
-      "timestamp": "2026-01-11T21:09:23.332Z"
+      "message": "Environment configuration mismatch between client and server",
+      "timestamp": "2026-01-13T03:39:11.950Z"
     },
     {
       "name": "Create Merchant Payment Intent",
-      "result": "failed",
-      "message": "Payment intent creation failed: Error",
-      "timestamp": "2026-01-11T21:09:23.341Z"
+      "result": "passed",
+      "message": "Payment intent created: pi_mock_1768275552033 (Mock: true)",
+      "timestamp": "2026-01-13T03:39:12.038Z"
     },
     {
       "name": "Merchant Webhook",
-      "result": "failed",
-      "message": "Webhook test failed: Error",
-      "timestamp": "2026-01-11T21:09:23.352Z"
+      "result": "passed",
+      "message": "Webhook processed successfully (Mock: true)",
+      "timestamp": "2026-01-13T03:39:12.247Z"
     },
     {
       "name": "Payment Intent Validation",
-      "result": "failed",
-      "message": "Unexpected error: Error",
-      "timestamp": "2026-01-11T21:09:23.359Z"
+      "result": "passed",
+      "message": "Properly validates required fields",
+      "timestamp": "2026-01-13T03:39:12.262Z"
     }
   ],
-  "timestamp": "2026-01-11T21:09:23.360Z"
+  "timestamp": "2026-01-13T03:39:12.264Z"
 }

@@ -12,7 +12,7 @@ describe('UBI Payment Flow Integration', () => {
   let testCitizenId;
 
   beforeAll(async () => {
-    ubiService = new UBIPaymentService();
+    ubiService = UBIPaymentService;
     portalService = new CitizenPortalService();
 
     // Register and verify citizen

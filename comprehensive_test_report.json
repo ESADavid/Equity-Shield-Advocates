@@ -1,66 +1,66 @@
 {
   "summary": {
     "total": 9,
-    "passed": 0,
-    "failed": 5,
+    "passed": 2,
+    "failed": 3,
     "skipped": 4,
-    "successRate": "0.00"
+    "successRate": "22.22"
   },
   "tests": [
     {
       "name": "Environment Config",
-      "result": "failed",
-      "message": "Missing variables: JPMORGAN_BASE_URL",
-      "timestamp": "2026-01-11T21:09:22.317Z"
+      "result": "passed",
+      "message": "All required environment variables are set",
+      "timestamp": "2026-01-13T04:02:11.674Z"
     },
     {
       "name": "Health Endpoint",
       "result": "failed",
-      "message": "Health check failed: Error",
-      "timestamp": "2026-01-11T21:09:22.396Z"
+      "message": "Unexpected response: \"<!doctype html>\\n<html lang=\\\"en\\\">\\n  <head>\\n    <meta charset=\\\"UTF-8\\\" />\\n    <meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1.0\\\" />\\n    <title>Oscar Broome - Transaction Override Dashboard</title>\\n    <link rel=\\\"stylesheet\\\" href=\\\"styles.css\\\" />\\n    <link rel=\\\"stylesheet\\\" href=\\\"override-dashboard.css\\\" />\\n  </head>\\n  <body>\\n    <div class=\\\"override-dashboard\\\">\\n      <h1>Oscar Broome Transaction Override Dashboard</h1>\\n\\n      <div class=\\\"override-section\\\">\\n        <h2>Create Override Request</h2>\\n        <form id=\\\"override-form\\\" class=\\\"override-form\\\">\\n          <div class=\\\"form-group\\\">\\n            <label for=\\\"transaction-id\\\">Transaction ID:</label>\\n            <input type=\\\"text\\\" id=\\\"transaction-id\\\" required />\\n          </div>\\n\\n          <div class=\\\"form-group\\\">\\n            <label for=\\\"transaction-type\\\">Transaction Type:</label>\\n            <select id=\\\"transaction-type\\\" required>\\n              <option value=\\\"\\\">Select Type</option>\\n              <option value=\\\"earnings\\\">Earnings</option>\\n              <option value=\\\"purchase\\\">Purchase</option>\\n              <option value=\\\"refund\\\">Refund</option>\\n              <option value=\\\"adjustment\\\">Adjustment</option>\\n            </select>\\n          </div>\\n\\n          <div class=\\\"form-group\\\">\\n            <label for=\\\"override-type\\\">Override Type:</label>\\n            <select id=\\\"override-type\\\" required>\\n              <option value=\\\"\\\">Select Type</option>\\n              <option value=\\\"amount\\\">Amount Change</option>\\n              <option value=\\\"status\\\">Status Change</option>\\n              <option value=\\\"date\\\">Date Change</option>\\n              <option value=\\\"delete\\\">Delete Transaction</option>\\n            </select>\\n          </div>\\n\\n          <div class=\\\"form-group\\\">\\n            <label for=\\\"original-value\\\">Original Value:</label>\\n            <input type=\\\"text\\\" id=\\\"original-value\\\" readonly />\\n          </div>\\n\\n          <div class=\\\"form-group\\\">\\n            <label for=\\\"new-value\\\">New Value:</label>\\n            <input type=\\\"text\\\" id=\\\"new-value\\\" required />\\n          </div>\\n\\n          <div class=\\\"form-group form-group-full-width\\\">\\n            <label for=\\\"reason\\\">Reason for Override:</label>\\n            <textarea id=\\\"reason\\\" rows=\\\"3\\\" required></textarea>\\n          </div>\\n\\n          <div class=\\\"form-group form-group-full-width\\\">\\n            <button type=\\\"submit\\\" class=\\\"btn btn-primary\\\">\\n              Submit Override Request\\n            </button>\\n          </div>\\n        </form>\\n      </div>\\n\\n      <div class=\\\"override-section\\\">\\n        <h2>Override Requests</h2>\\n        <table class=\\\"override-table\\\">\\n          <thead>\\n            <tr>\\n              <th>ID</th>\\n              <th>Transaction ID</th>\\n              <th>Type</th>\\n              <th>Original Value</th>\\n              <th>New Value</th>\\n              <th>Status</th>\\n              <th>Requested By</th>\\n              <th>Actions</th>\\n            </tr>\\n          </thead>\\n          <tbody id=\\\"override-list\\\">\\n            <!-- Override requests will be populated here -->\\n          </tbody>\\n        </table>\\n      </div>\\n\\n      <div class=\\\"override-section\\\">\\n        <h2>Transaction Audit Trail</h2>\\n        <div id=\\\"audit-trail\\\" class=\\\"audit-trail\\\">\\n          Select a transaction to view audit trail...\\n        </div>\\n      </div>\\n    </div>\\n\\n    <script>\\n      const authHeader = 'Basic ' + btoa('admin:securepassword');\\n\\n      // Load override requests\\n      async function loadOverrideRequests() {\\n        try {\\n          const response = await fetch('/api/transactions/overrides', {\\n            headers: { Authorization: authHeader },\\n          });\\n          const data = await response.json();\\n\\n          if (data.success) {\\n            renderOverrideRequests(data.data);\\n          }\\n        } catch (error) {\\n          console.error('Failed to load override requests:', error);\\n        }\\n      }\\n\\n      // Render override requests\\n      function renderOverrideRequests(overrides) {\\n        const tbody = document.getElementById('override-list');\\n        tbody.innerHTML = '';\\n\\n        overrides.forEach((override) => {\\n          const tr = document.createElement('tr');\\n          tr.innerHTML = `\\n                    <td>${override.id}</td>\\n                    <td>${override.originalTransactionId}</td>\\n                    <td>${override.overrideType}</td>\\n                    <td>${override.originalValue}</td>\\n                    <td>${override.newValue}</td>\\n                    <td><span class=\\\"status-badge status-${override.status}\\\">${override.status}</span></td>\\n                    <td>${override.requestedBy}</td>\\n                    <td class=\\\"action-buttons\\\">\\n                        <button class=\\\"btn btn-approve\\\" onclick=\\\"approveOverride('${override.id}')\\\">Approve</button>\\n                        <button class=\\\"btn btn-reject\\\" onclick=\\\"rejectOverride('${override.id}')\\\">Reject</button>\\n                        <button class=\\\"btn btn-view\\\" onclick=\\\"viewAuditTrail('${override.originalTransactionId}')\\\">Audit</button>\\n                    </td>\\n                `;\\n          tbody.appendChild(tr);\\n        });\\n      }\\n\\n      // Handle override form submission\\n      document\\n        .getElementById('override-form')\\n        .addEventListener('submit', async (e) => {\\n          e.preventDefault();\\n\\n          const formData = {\\n            originalTransactionId:\\n              document.getElementById('transaction-id').value,\\n            transactionType: document.getElementById('transaction-type').value,\\n            overrideType: document.getElementById('override-type').value,\\n            originalValue: document.getElementById('original-value').value,\\n            newValue: document.getElementById('new-value').value,\\n            reason: document.getElementById('reason').value,\\n          };\\n\\n          try {\\n            const response = await fetch('/api/transactions/override', {\\n              method: 'POST',\\n              headers: {\\n                'Content-Type': 'application/json',\\n                Authorization: authHeader,\\n              },\\n              body: JSON.stringify(formData),\\n            });\\n\\n            const result = await response.json();\\n            if (result.success) {\\n              alert('Override request submitted successfully');\\n              loadOverrideRequests();\\n              e.target.reset();\\n            }\\n          } catch (error) {\\n            alert('Failed to submit override request: ' + error.message);\\n          }\\n        });\\n\\n      // Approve override\\n      async function approveOverride(id) {\\n        if (confirm('Are you sure you want to approve this override?')) {\\n          try {\\n            const response = await fetch(`/api/transactions/${id}/override`, {\\n              method: 'PUT',\\n              headers: {\\n                'Content-Type': 'application/json',\\n                Authorization: authHeader,\\n              },\\n              body: JSON.stringify({ status: 'approved' }),\\n            });\\n\\n            const result = await response.json();\\n            if (result.success) {\\n              alert('Override approved successfully');\\n              loadOverrideRequests();\\n            }\\n          } catch (error) {\\n            alert('Failed to approve override: ' + error.message);\\n          }\\n        }\\n      }\\n\\n      // Reject override\\n      async function rejectOverride(id) {\\n        const reason = prompt('Please provide a reason for rejection:');\\n        if (reason) {\\n          try {\\n            const response = await fetch(`/api/transactions/${id}/override`, {\\n              method: 'DELETE',\\n              headers: {\\n                'Content-Type': 'application/json',\\n                Authorization: authHeader,\\n              },\\n              body: JSON.stringify({ reason }),\\n            });\\n\\n            const result = await response.json();\\n            if (result.success) {\\n              alert('Override rejected successfully');\\n              loadOverrideRequests();\\n            }\\n          } catch (error) {\\n            alert('Failed to reject override: ' + error.message);\\n          }\\n        }\\n      }\\n\\n      // View audit trail\\n      async function viewAuditTrail(transactionId) {\\n        try {\\n          const response = await fetch(\\n            `/api/transactions/${transactionId}/audit`,\\n            {\\n              headers: { Authorization: authHeader },\\n            }\\n          );\\n\\n          const result = await response.json();\\n          if (result.success) {\\n            const auditTrail = document.getElementById('audit-trail');\\n            auditTrail.innerHTML = '<h3>Transaction Audit Trail</h3>';\\n\\n            result.data.auditTrail.forEach((entry) => {\\n              const div = document.createElement('div');\\n              div.innerHTML = `\\n                            <strong>${entry.action}</strong> by ${entry.user} at ${entry.timestamp}\\n                            <br>${entry.details}\\n                        `;\\n              auditTrail.appendChild(div);\\n            });\\n          }\\n        } catch (error) {\\n          console.error('Failed to load audit trail:', error);\\n        }\\n      }\\n\\n      // Load initial data\\n      loadOverrideRequests();\\n    </script>\\n  </body>\\n</html>\\n\"",
+      "timestamp": "2026-01-13T04:02:11.876Z"
     },
     {
       "name": "Create Payment",
       "result": "failed",
-      "message": "Payment creation failed: Error",
-      "timestamp": "2026-01-11T21:09:22.407Z"
+      "message": "Payment creation failed: Request failed with status code 400",
+      "timestamp": "2026-01-13T04:02:11.906Z"
     },
     {
       "name": "Payment Status",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2026-01-11T21:09:22.408Z"
+      "timestamp": "2026-01-13T04:02:11.907Z"
     },
     {
       "name": "Refund Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2026-01-11T21:09:22.408Z"
+      "timestamp": "2026-01-13T04:02:11.907Z"
     },
     {
       "name": "Capture Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2026-01-11T21:09:22.408Z"
+      "timestamp": "2026-01-13T04:02:11.907Z"
     },
     {
       "name": "Void Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2026-01-11T21:09:22.409Z"
+      "timestamp": "2026-01-13T04:02:11.908Z"
     },
     {
       "name": "Get Transactions",
       "result": "failed",
-      "message": "Transactions fetch failed: Error",
-      "timestamp": "2026-01-11T21:09:22.420Z"
+      "message": "Transactions fetch failed: timeout of 10000ms exceeded",
+      "timestamp": "2026-01-13T04:02:21.914Z"
     },
     {
       "name": "Webhook Endpoint",
-      "result": "failed",
-      "message": "Webhook test failed: Error",
-      "timestamp": "2026-01-11T21:09:22.426Z"
+      "result": "passed",
+      "message": "Webhook signature validation working (expected 401 for test signature)",
+      "timestamp": "2026-01-13T04:02:21.950Z"
     }
   ],
-  "timestamp": "2026-01-11T21:09:22.427Z"
+  "timestamp": "2026-01-13T04:02:21.951Z"
 }
