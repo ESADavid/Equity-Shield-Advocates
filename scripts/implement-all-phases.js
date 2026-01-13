@@ -547,7 +547,7 @@ describe('UBI Payment Flow Integration', () => {
 };
 
 // Create all files
-info(\`\nCreating \${Object.keys(files).length} files...\n\`);
+info(`\nCreating ${Object.keys(files).length} files...\n`);
 
 for (const [filePath, content] of Object.entries(files)) {
   createFile(filePath, content);

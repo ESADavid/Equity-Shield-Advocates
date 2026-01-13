@@ -24,13 +24,8 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 // Get all employees
 app.get('/api/payroll/employees', (_req, res) => {
   try {
-    const result = payrollSystem.getEmployees();
-    if (result.success) {
-      res.json(result.data);
-    } else {
-      logger.error('Error getting employees:', result.error);
-      res.status(500).json({ error: result.error });
-    }
+    const employees = payrollSystem.getEmployees();
+    res.json(employees);
   } catch (error) {
     logger.error('Error getting employees:', {
       error: (error as Error).message,
@@ -44,32 +39,15 @@ app.get('/api/payroll/employees', (_req, res) => {
 app.post('/api/payroll/employees', (req, res) => {
   const employee = req.body;
   try {
-    const employeesResult = payrollSystem.getEmployees();
-    if (!employeesResult.success) {
-      return res.status(500).json({ error: employeesResult.error });
-    }
+    const employees = payrollSystem.getEmployees();
+    const existing = employees.find((e: any) => e.id === employee.id);
 
-    const existing = employeesResult.data?.find(
-      (e: any) => e.id === employee.id
-    );
     if (existing) {
-      const updateResult = payrollSystem.updateEmployee(employee.id, employee);
-      if (updateResult.success) {
-        return res
-          .status(200)
-          .json({ message: 'Employee updated successfully' });
-      } else {
-        return res.status(400).json({ error: updateResult.error });
-      }
+      payrollSystem.updateEmployee(employee);
+      return res.status(200).json({ message: 'Employee updated successfully' });
     } else {
-      const addResult = payrollSystem.addEmployee(employee);
-      if (addResult.success) {
-        return res.status(200).json({ message: 'Employee added successfully' });
-      } else {
-        return res
-          .status(400)
-          .json({ error: addResult.error || addResult.errors });
-      }
+      payrollSystem.addEmployee(employee);
+      return res.status(200).json({ message: 'Employee added successfully' });
     }
   } catch (error) {
     logger.error('Error adding/updating employee:', {
@@ -84,12 +62,8 @@ app.post('/api/payroll/employees', (req, res) => {
 app.delete('/api/payroll/employees/:id', (req, res) => {
   const id = req.params.id;
   try {
-    const deleteResult = payrollSystem.deleteEmployee(id);
-    if (deleteResult.success) {
-      res.status(200).json({ message: 'Employee deleted successfully' });
-    } else {
-      res.status(400).json({ error: deleteResult.error });
-    }
+    payrollSystem.deleteEmployee(id);
+    res.status(200).json({ message: 'Employee deleted successfully' });
   } catch (error) {
     logger.error('Error deleting employee:', {
       error: (error as Error).message,
@@ -122,12 +96,8 @@ app.get('/api/payroll/welcome', (req, res) => {
 app.post('/api/payroll/process', (_req, res) => {
   const payDate = new Date().toISOString();
   try {
-    const result = payrollSystem.processPayroll(payDate);
-    if (result.success) {
-      res.status(200).json(result.data);
-    } else {
-      res.status(500).json({ error: result.error });
-    }
+    const results = payrollSystem.processPayroll(payDate);
+    res.status(200).json(results);
   } catch (error) {
     logger.error('Error processing payroll:', {
       error: (error as Error).message,

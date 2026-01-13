@@ -4411,8 +4411,7 @@
         "incrementalUpdate": "C:\\Users\\bsean\\OneDrive\\Apps\\JPMORGAN-OWLBANGROUP\\owlban_revenue_repo\\owlban_repos\\sample_repo\\test_revenue.json"
       }
     }
-  ]
-}{
+  ],{
       "timestamp": "2025-11-24T01:19:08.377Z",
       "action": "updateRevenueData",
       "details": {

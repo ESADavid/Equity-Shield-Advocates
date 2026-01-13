@@ -1,4 +1,4 @@
-import { info, error as logError } from './utils/loggerWrapper.js';
+const { info, error: logError } = require('./utils/loggerWrapper.js');
 
 export interface Employee {
   id: string;
@@ -27,8 +27,8 @@ export interface PayrollResult {
   grossPay: number;
   taxAmount: number;
   netPay: number;
-  accountNumber?: string;
-  routingNumber?: string;
+  accountNumber: string | undefined;
+  routingNumber: string | undefined;
   payDate: string;
 }
 
