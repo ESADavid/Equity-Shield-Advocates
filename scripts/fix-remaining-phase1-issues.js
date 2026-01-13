@@ -17,7 +17,7 @@ let errorCount = 0;
 // Fix 1: Revert Unicode escape fix in scripts/implement-all-phases.js
 info('\n📝 Fix 1: scripts/implement-all-phases.js - Revert bad Unicode fix');
 try {
-  const content = readFileSync('scripts/implement-all-phases.js', 'utf8');
+  let content = readFileSync('scripts/implement-all-phases.js', 'utf8');
   // The issue is unterminated template - need to escape the backticks properly
   content = content.replace(
     /info\(`\nCreating \$\{Object\.keys\(files\)\.length\} files\.\.\.\n`\);/g,
@@ -34,7 +34,7 @@ try {
 // Fix 2: Revert Unicode escape fix in scripts/implement-phase2.js
 info('\n📝 Fix 2: scripts/implement-phase2.js - Revert bad Unicode fix');
 try {
-  const content = readFileSync('scripts/implement-phase2.js', 'utf8');
+  let content = readFileSync('scripts/implement-phase2.js', 'utf8');
   // Fix unterminated template
   content = content.replace(
     /info\(`✅ Created: \$\{filePath\}`\);/g,

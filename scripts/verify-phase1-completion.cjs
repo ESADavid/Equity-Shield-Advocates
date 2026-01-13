@@ -98,9 +98,9 @@ try {
     stdio: 'pipe'
   }).toString();
   
-  const errorMatch = eslintOutput.match(/(\d+)\s+error/);
-  const warningMatch = eslintOutput.match(/(\d+)\s+warning/);
-  
+  const errorMatch = eslintOutput.match(/(\d+)\s+errors?\)/);
+  const warningMatch = eslintOutput.match(/(\d+)\s+warnings?\)/);
+
   const errors = errorMatch ? parseInt(errorMatch[1]) : 0;
   const warnings = warningMatch ? parseInt(warningMatch[1]) : 0;
   
@@ -112,9 +112,9 @@ try {
 } catch (error) {
   // ESLint returns non-zero exit code when there are errors
   const output = error.stdout || error.message;
-  const errorMatch = output.match(/(\d+)\s+error/);
-  const warningMatch = output.match(/(\d+)\s+warning/);
-  
+  const errorMatch = output.match(/(\d+)\s+errors?\)/);
+  const warningMatch = output.match(/(\d+)\s+warnings?\)/);
+
   const errors = errorMatch ? parseInt(errorMatch[1]) : 0;
   const warnings = warningMatch ? parseInt(warningMatch[1]) : 0;
   

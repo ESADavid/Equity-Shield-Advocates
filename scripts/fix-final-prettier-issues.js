@@ -16,7 +16,7 @@ let fixedCount = 0;
 // Fix 1: owlban_repos/sample_repo/revenue.json - Remove duplicate closing brace
 info('\n📝 Fix 1: owlban_repos/sample_repo/revenue.json');
 try {
-  const content = readFileSync('owlban_repos/sample_repo/revenue.json', 'utf8');
+  let content = readFileSync('owlban_repos/sample_repo/revenue.json', 'utf8');
   // Replace "}]{" with "},"
   content = content.replace(/\]\s*\}\s*\{/g, '],{');
   writeFileSync('owlban_repos/sample_repo/revenue.json', content, 'utf8');

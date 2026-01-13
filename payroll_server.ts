@@ -16,7 +16,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
   if (overrideUser === specialUser) {
     // Bypass normal auth or set elevated permissions
     (req as any).user = { name: specialUser, override: true };
-    console.log('Special login override granted for', specialUser);
+    logger.info('Special login override granted for', specialUser);
   }
   next();
 });
@@ -76,7 +76,7 @@ app.delete('/api/payroll/employees/:id', (req, res) => {
 // Welcome endpoint with request logging
 app.get('/api/payroll/welcome', (req, res) => {
   // Log request metadata
-  console.log(
+  logger.info(
     `Request received: ${req.method} ${req.path} from ${req.ip} at ${new Date().toISOString()}`
   );
 
@@ -110,7 +110,7 @@ app.post('/api/payroll/process', (_req, res) => {
 // Only start the server if this file is run directly (not imported)
 if (require.main === module) {
   app.listen(port, () => {
-    console.log('Payroll server running at http://localhost:' + port);
+    logger.info('Payroll server running at http://localhost:' + port);
   });
 }
 

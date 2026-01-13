@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import logger from '../utils/loggerWrapper.js';
 
 const permissionSchema = new mongoose.Schema(
   {
@@ -510,7 +511,7 @@ permissionSchema.statics = {
           created.push(permission);
         }
       } catch (error) {
-        console.error(`Failed to create permission ${perm.code}:`, error.message);
+        logger.error(`Failed to create permission ${perm.code}:`, error.message);
       }
     }
     
