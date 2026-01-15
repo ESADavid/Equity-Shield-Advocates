@@ -1,6 +1,7 @@
 import express from 'express';
 import crypto from 'node:crypto';
 import axios from 'axios';
+import { info, error } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
 
@@ -83,7 +84,7 @@ router.post('/wallet-decrypt', async (req, res) => {
       decryptedWallet: response.data,
     });
   } catch (error) {
-    logger.error(
+    error(
       'JPMorgan wallet decryption error:',
       error.response?.data || error.message
     );
@@ -202,7 +203,7 @@ router.post('/create-payment', async (req, res) => {
       transactionDetails: response.data,
     });
   } catch (error) {
-    logger.error(
+    error(
       'JPMorgan payment creation error:',
       error.response?.data || error.message
     );
@@ -252,7 +253,7 @@ router.get('/payment-status/:paymentId', async (req, res) => {
       paymentStatus: response.data,
     });
   } catch (error) {
-    logger.error(
+    error(
       'JPMorgan payment status error:',
       error.response?.data || error.message
     );
@@ -324,7 +325,7 @@ router.post('/refund', async (req, res) => {
       refundDetails: response.data,
     });
   } catch (error) {
-    logger.error(
+    error(
       'JPMorgan refund error:',
       error.response?.data || error.message
     );
@@ -399,7 +400,7 @@ router.post('/capture', async (req, res) => {
       captureDetails: response.data,
     });
   } catch (error) {
-    logger.error(
+    error(
       'JPMorgan capture error:',
       error.response?.data || error.message
     );
@@ -463,7 +464,7 @@ router.post('/void', async (req, res) => {
       voidDetails: response.data,
     });
   } catch (error) {
-    logger.error('JPMorgan void error:', error.response?.data || error.message);
+    error('JPMorgan void error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to void payment',
@@ -525,7 +526,7 @@ router.get('/transactions', async (req, res) => {
       totalCount: response.data.totalCount,
     });
   } catch (error) {
-    logger.error(
+    error(
       'JPMorgan transactions error:',
       error.response?.data || error.message
     );
@@ -560,7 +561,7 @@ const verifyWebhookSignature = (req, res, next) => {
 
     next();
   } catch (error) {
-    logger.error('Webhook verification error:', error);
+    error('Webhook verification error:', error);
     res.status(500).json({ error: 'Webhook verification failed' });
   }
 };
@@ -574,27 +575,27 @@ router.post(
     try {
       const event = req.body;
 
-      logger.info('Received JPMorgan webhook event:', event.type, event.id);
+      info('Received JPMorgan webhook event:', event.type, event.id);
 
       switch (event.type) {
         case 'payment.authorized':
-          logger.info('Payment authorized:', event.data.paymentId);
+          info('Payment authorized:', event.data.paymentId);
           break;
 
         case 'payment.captured':
-          logger.info('Payment captured:', event.data.paymentId);
+          info('Payment captured:', event.data.paymentId);
           break;
 
         case 'payment.refunded':
-          logger.info('Payment refunded:', event.data.paymentId);
+          info('Payment refunded:', event.data.paymentId);
           break;
 
         case 'payment.voided':
-          logger.info('Payment voided:', event.data.paymentId);
+          info('Payment voided:', event.data.paymentId);
           break;
 
         case 'payment.failed':
-          logger.info(
+          info(
             'Payment failed:',
             event.data.paymentId,
             event.data.reason
@@ -602,12 +603,12 @@ router.post(
           break;
 
         default:
-          logger.info('Unhandled webhook event type:', event.type);
+          info('Unhandled webhook event type:', event.type);
       }
 
       res.json({ received: true });
     } catch (error) {
-      logger.error('Webhook processing error:', error);
+      error('Webhook processing error:', error);
       res.status(500).json({ error: 'Webhook processing failed' });
     }
   }

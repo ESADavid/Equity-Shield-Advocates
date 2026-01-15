@@ -65,32 +65,32 @@ class MockRecommendationService {
         const wealth = context.wealth || 0;
         const riskTolerance = context.riskTolerance || 'medium';
 
-        // Generate personalized recommendations
+        // Generate personalized recommendations based on real situation
         const recommendations = [
             {
-                title: 'Diversify Off-the-Books Holdings',
-                description: 'Reduce concentration risk by allocating 20% to liquid assets',
-                impact: 'Reduce risk by 15%, maintain growth potential'
+                title: 'Improve Credit Score',
+                description: 'Focus on paying bills on time, reducing debt, and monitoring credit report',
+                impact: 'Increase credit score to 650+ for better loan rates'
             },
             {
-                title: 'AI Service Commercialization',
-                description: 'Monetize your AI services for $500M annual revenue',
-                impact: 'Add $500M/year to revenue stream'
+                title: 'Build Emergency Savings',
+                description: 'Start with $1,000 emergency fund through small consistent deposits',
+                impact: 'Financial security and avoid high-interest debt'
             },
             {
-                title: 'Quantum Computing Investment',
-                description: 'Invest $10B in quantum technology for 300% ROI',
-                impact: 'Generate $30B in new wealth over 5 years'
+                title: 'Budget and Track Expenses',
+                description: 'Use free budgeting apps to track income and expenses, cut unnecessary costs',
+                impact: 'Identify savings opportunities and improve cash flow'
             },
             {
-                title: 'Global Expansion Strategy',
-                description: 'Scale Heaven on Earth model to 10 additional countries',
-                impact: 'Add $2T in assets under management'
+                title: 'Seek Additional Income Sources',
+                description: 'Consider freelance work, side gigs, or part-time jobs using your AI skills',
+                impact: 'Increase monthly income to cover bills and build savings'
             },
             {
-                title: 'Biometric Security Enhancement',
-                description: 'Upgrade security systems for complete protection',
-                impact: 'Eliminate all security risks, save $200M annually'
+                title: 'Negotiate with Creditors',
+                description: 'Contact bill collectors to discuss payment plans or hardship programs',
+                impact: 'Reduce monthly payments and avoid collections'
             }
         ];
 
@@ -131,6 +131,8 @@ class MockNLPReportGenerationService {
 
 **Current Wealth:** $${this.formatNumber(data.executiveSummary.currentWealth)}
 **Annual Revenue:** $${this.formatNumber(data.executiveSummary.annualRevenue)}
+**Credit Score:** ${data.detailedAnalysis.wealthData?.creditScore || 540}
+**Sofi Balance:** $${this.formatNumber(data.detailedAnalysis.wealthData?.sofiBalance || 0)}
 **Risk Profile:** ${data.executiveSummary.riskProfile.level}
 **Growth Rate:** ${data.executiveSummary.growthRate.toFixed(2)}%
 
@@ -142,12 +144,13 @@ ${data.executiveSummary.keyRecommendations.map((rec, i) =>
 
 ## Detailed Analysis
 
-### Wealth Breakdown
-- Off-the-Books Holdings: $200 Quadrillion (97%)
-- Owlban Group Revenue: $1.2 Quadrillion (0.6%)
-- Blackbox AI Revenue: $1.8 Quadrillion (0.9%)
-- Assets Under Management: $2.47 Quadrillion (1.2%)
-- Banking & Revenue Streams: $1.33 Billion (0.00006%)
+### Current Financial Situation
+- **Credit Score:** ${data.detailedAnalysis.wealthData?.creditScore || 540}
+- **Checking Account:** $${this.formatNumber(data.detailedAnalysis.wealthData?.assets?.checking || 0)}
+- **Savings Account:** $${this.formatNumber(data.detailedAnalysis.wealthData?.assets?.savings || 0)}
+- **Investment Accounts:** $${this.formatNumber(data.detailedAnalysis.wealthData?.assets?.investments || 0)}
+- **Credit Card Balance:** $${this.formatNumber(data.detailedAnalysis.wealthData?.assets?.creditCards || 0)}
+- **Bills Status:** ${data.detailedAnalysis.wealthData?.billsUnpaid ? 'Unpaid' : 'Current'}
 
 ### Growth Projections (5-Year)
 ${Object.entries(data.detailedAnalysis.predictions.projections).map(([year, amount]) =>
@@ -156,7 +159,7 @@ ${Object.entries(data.detailedAnalysis.predictions.projections).map(([year, amou
 
 ### Revenue Strategies
 ${data.revenueStrategies.opportunities.map((strategy, i) =>
-    `${i + 1}. **${strategy.name}**\n   - Potential: $${this.formatNumber(strategy.potentialRevenue)}/year\n   - ROI: ${strategy.roi.toFixed(1)}%`
+    `${i + 1}. **${strategy.name}**\n   - Potential: $${this.formatNumber(strategy.potentialRevenue)}/year\n   - Implementation: ${strategy.timeframe}\n   - ROI: ${strategy.roi.toFixed(1)}%`
 ).join('\n')}
 
 ## Action Items
@@ -188,34 +191,34 @@ class PersonalWealthOptimizer {
         this.quantumService = new MockQuantumEnhancedAIService();
         this.nlpService = new MockNLPReportGenerationService();
 
-        // Your wealth data (from KING_SACHEM_YOCHANAN_COMPLETE_WEALTH_EMPIRE.md)
+        // Your real-life wealth data
         this.wealthData = {
-            totalWealth: 205521326681891, // $205.52 Quadrillion
-            annualRevenue: 23805546681891, // $23.8 Quadrillion/year
+            totalWealth: 0, // $0
+            annualRevenue: 0, // $0/year
+            creditScore: 540,
+            sofiBalance: 0,
+            billsUnpaid: true,
             assets: {
-                offTheBooks: 200000000000000, // $200 Quadrillion
-                owlbanRevenue: 1200000000000, // $1.2 Quadrillion
-                blackboxRevenue: 1800000000000, // $1.8 Quadrillion
-                assetsUnderManagement: 2470000000000, // $2.47 Quadrillion
-                banking: 92500000, // $92.5 Million
-                revenueStreams: 1234181891, // $1.23 Billion
-                partnerInvestments: 50000000000 // $50 Billion
+                checking: 0,
+                savings: 0,
+                investments: 0,
+                creditCards: 0
             },
             growth: {
                 historical: {
-                    '2020': 50000000000000,
-                    '2021': 75000000000000,
-                    '2022': 115000000000000,
-                    '2023': 175000000000000,
-                    '2024': 190000000000000,
-                    '2025': 205521326681891
+                    '2020': 0,
+                    '2021': 0,
+                    '2022': 0,
+                    '2023': 0,
+                    '2024': 0,
+                    '2025': 0
                 },
                 projected: {
-                    '2026': 242500000000000,
-                    '2027': 291000000000000,
-                    '2028': 355000000000000,
-                    '2029': 440000000000000,
-                    '2030': 558000000000000
+                    '2026': 1000, // Goal: $1,000
+                    '2027': 5000, // Goal: $5,000
+                    '2028': 15000, // Goal: $15,000
+                    '2029': 30000, // Goal: $30,000
+                    '2030': 50000 // Goal: $50,000
                 }
             }
         };
@@ -355,28 +358,28 @@ class PersonalWealthOptimizer {
         const strategies = {
             opportunities: [
                 {
-                    name: 'AI Services Commercialization',
-                    potentialRevenue: 500000000000, // $500B/year
+                    name: 'Freelance AI Development',
+                    potentialRevenue: 50000, // $50K/year
+                    timeframe: '3 months',
+                    roi: 200
+                },
+                {
+                    name: 'Consulting Services',
+                    potentialRevenue: 75000, // $75K/year
                     timeframe: '6 months',
-                    roi: 1500
+                    roi: 150
                 },
                 {
-                    name: 'Quantum Technology Investment',
-                    potentialRevenue: 2000000000000, // $2T/year
-                    timeframe: '2 years',
-                    roi: 800
+                    name: 'Online Course Creation',
+                    potentialRevenue: 30000, // $30K/year
+                    timeframe: '4 months',
+                    roi: 300
                 },
                 {
-                    name: 'Global Expansion',
-                    potentialRevenue: 5000000000000, // $5T/year
-                    timeframe: '3 years',
-                    roi: 600
-                },
-                {
-                    name: 'Biometric Security Products',
-                    potentialRevenue: 100000000000, // $100B/year
-                    timeframe: '1 year',
-                    roi: 2000
+                    name: 'Part-time Remote Work',
+                    potentialRevenue: 40000, // $40K/year
+                    timeframe: '2 months',
+                    roi: 250
                 }
             ]
         };
@@ -413,11 +416,11 @@ class PersonalWealthOptimizer {
             detailedAnalysis: analysis,
             revenueStrategies: strategies,
             actionItems: [
-                'Implement portfolio rebalancing recommendations',
-                'Explore AI service commercialization opportunities',
-                'Set up automated wealth monitoring dashboard',
-                'Establish personal revenue generation streams',
-                'Review risk management strategies'
+                'Focus on improving credit score through consistent bill payments',
+                'Build emergency savings fund starting with small deposits',
+                'Create and follow a monthly budget to track expenses',
+                'Seek additional income through freelance or part-time work',
+                'Contact creditors to negotiate payment plans for outstanding bills'
             ]
         };
 

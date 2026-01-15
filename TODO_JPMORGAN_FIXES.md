@@ -15,8 +15,8 @@
 - [x] Update payment creation endpoint to accept both simple and nested amount formats
 - [x] Add mock mode support for all endpoints when credentials are not configured
 - [x] Add timeout handling for API calls
-- [ ] Verify JPMorgan API configuration and credentials
-- [ ] Test all fixes with comprehensive test suite
+- [x] Verify JPMorgan API configuration and credentials
+- [x] Test all fixes with comprehensive test suite
 
 
 ## Implementation Steps
