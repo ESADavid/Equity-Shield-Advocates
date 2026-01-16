@@ -6,7 +6,7 @@
 import express from 'express';
 import { info } from '../utils/loggerWrapper.js';
 import Course from '../models/Course.js';
-import aiLearningService from '../services/aiLearningService.js';
+import divineLearningService from '../services/aiLearningService.js';
 
 const router = express.Router();
 
@@ -198,7 +198,7 @@ router.get('/recommendations/:citizenId', async (req, res, next) => {
       }, 0),
     };
 
-    const recommendations = await aiLearningService.generateRecommendations(
+    const recommendations = await divineLearningService.generateRecommendations(
       req.params.citizenId,
       progress
     );
@@ -215,7 +215,7 @@ router.get('/recommendations/:citizenId', async (req, res, next) => {
  */
 router.get('/analytics/:citizenId', async (req, res, next) => {
   try {
-    const analytics = await aiLearningService.analyzeProgress(
+    const analytics = await divineLearningService.analyzeProgress(
       req.params.citizenId
     );
     res.json({ success: true, analytics });
@@ -231,7 +231,7 @@ router.get('/analytics/:citizenId', async (req, res, next) => {
 router.get('/study-plan/:citizenId', async (req, res, next) => {
   try {
     const hoursPerWeek = parseInt(req.query.hours) || 5;
-    const studyPlan = await aiLearningService.generateStudyPlan(
+    const studyPlan = await divineLearningService.generateStudyPlan(
       req.params.citizenId,
       hoursPerWeek
     );

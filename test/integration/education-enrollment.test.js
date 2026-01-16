@@ -3,7 +3,7 @@
  * Tests complete education system integration
  */
 
-import AILearningService from '../../services/aiLearningService.js';
+import divineLearningService from '../../services/aiLearningService.js';
 import CitizenPortalService from '../../services/citizenPortalService.js';
 
 describe('Education Enrollment Integration', () => {
@@ -13,7 +13,7 @@ describe('Education Enrollment Integration', () => {
   let testCourseId;
 
   beforeAll(async () => {
-    learningService = new AILearningService();
+    learningService = divineLearningService;
     portalService = new CitizenPortalService();
 
     // Register citizen
