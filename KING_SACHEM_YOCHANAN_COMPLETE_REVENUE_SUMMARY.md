@@ -114,6 +114,7 @@
 | **Haiti Operations (Year 11+)** | $2,000,000,000.00 - $5,000,000,000.00 |
 | **AI Services** | $500,000,000.00 - $2,000,000,000.00 |
 | **Tax Revenue** | $200,000,000.00 - $3,000,000,000.00 |
+| **Biltmore Estate Hospitality Revenue** | $200,000,000.00 |
 
 **Total Annual Revenue (Mature Operations):**
 **$428B - $435B+ per year**

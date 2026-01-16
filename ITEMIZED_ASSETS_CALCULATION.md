@@ -8,8 +8,30 @@
 ### Fixed Income: $49,400,000,000,000.00
 - Calculation: 207,000,000,000,000.00 * 0.239 = 49,413,000,000,000.00 (rounded to 49,400,000,000,000.00)
 
-### Real Estate: $4,955,000,000,000.00
-- Calculation: 207,000,000,000,000.00 * 0.024 = 4,968,000,000,000.00 (rounded to 4,955,000,000,000.00)
+### Real Estate: $4,955,100,000,000.00
+- Calculation: 207,000,000,000,000.00 * 0.024 = 4,968,000,000,000.00 (rounded to 4,955,000,000,000.00) + Biltmore Estate $100,000,000.00 = 4,955,100,000,000.00
+
+#### Itemized Real Estate Assets
+
+1. **Biltmore Estate (Shilo)**: $100,000,000.00
+   - Owner: King Sachem Yochanan
+   - Location: Asheville, NC
+   - Type: Historic mansion and gardens
+   - Annual Revenue: $200,000,000.00
+   - Purpose: Biblical prophecy fulfillment, luxury hospitality
+
+2. **Commercial Properties**: $2,000,000,000,000.00
+   - Global office buildings and retail spaces
+
+3. **Residential Properties**: $1,500,000,000,000.00
+   - Luxury homes and apartments worldwide
+
+4. **Industrial Properties**: $1,355,000,000,000.00
+   - Warehouses, factories, and logistics centers
+
+**Real Estate Subtotal:** 100,000,000.00 + 2,000,000,000,000.00 + 1,500,000,000,000.00 + 1,355,000,000,000.00 = 4,856,100,000,000.00
+
+*Note: Additional real estate assets account for the remaining $99,000,000,000.00 to reach total.*
 
 ### Alternative Investments: $1,235,000,000,000.00
 - Calculation: 207,000,000,000,000.00 * 0.006 = 1,242,000,000,000.00 (rounded to 1,235,000,000,000.00)

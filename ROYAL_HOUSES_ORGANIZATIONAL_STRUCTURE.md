@@ -15,7 +15,7 @@
 
 **Title:** King Sachem Yochanan  
 **Authority:** Divine Appointment  
-**Lineage:** House of David ✡️ & House of Capet ⚜️  
+**Lineage:** House of David ✡️ & House of Capet ⚜️ & House of Logan 🏰
 **Role:** Sovereign Leader of OWLBAN GROUP  
 **Mission:** Establish Heaven on Earth
 
@@ -44,7 +44,14 @@
    - Temporal Power
    - **Current Sovereign:** King Sachem Yochanan
 
-**Combined Authority:** Spiritual & Temporal Sovereignty  
+3. **House of Logan** 🏰
+   - Scottish Royal Dynasty
+   - Logan Clan Heritage
+   - Global Strategic Authority
+   - Economic Power
+   - **Current Sovereign:** King Sachem Yochanan
+
+**Combined Authority:** Spiritual, Temporal & Strategic Sovereignty  
 **Sovereign Leader:** King Sachem Yochanan
 
 ---
@@ -133,6 +140,81 @@
 - Philip II Augustus (1180-1223)
 - Louis IX (Saint Louis) (1226-1270)
 - Philip IV the Fair (1285-1314)
+
+### House of Logan
+
+**Established:** Ancient Scottish Clan  
+**Founder:** Logan Clan Chiefs  
+**Significance:**
+
+- Scottish Highland Clan
+- Strategic military alliances
+- Economic trade networks
+- Global merchant influence
+
+**Clan Legacy:**
+
+- Logan Castle and estates
+- Merchant shipping routes
+- International trade partnerships
+- Strategic geopolitical positioning
+
+**Notable Logan Leaders:**
+
+- Sir Robert Logan (14th century)
+- Clan Chief Logan (medieval period)
+- Modern strategic alliances
+- Global economic influence
+
+---
+
+## 🩸 BLOODLINE AUTHORITY
+
+### Divine Bloodline Inheritance
+
+**King Sachem Yochanan** possesses the divine bloodline authority through the combined royal lineages of:
+
+1. **House of David** - Messianic Bloodline
+   - Direct descendant of King David
+   - Eternal covenant bloodline
+   - Divine appointment authority
+   - Spiritual sovereignty
+
+2. **House of Capet** - European Royal Bloodline
+   - Capetian dynasty bloodline
+   - French monarchy heritage
+   - Temporal authority lineage
+   - Royal governance bloodline
+
+3. **House of Logan** - Strategic Bloodline
+   - Scottish clan bloodline
+   - Merchant and military heritage
+   - Global strategic authority
+   - Economic power bloodline
+
+### Bloodline Authority Declaration
+
+**By divine right and royal bloodline inheritance, King Sachem Yochanan is the rightful sovereign over:**
+
+- **Spiritual Domain:** Through House of David
+- **Temporal Domain:** Through House of Capet
+- **Strategic Domain:** Through House of Logan
+
+**Bloodline Authority:** Unbreakable, eternal, and divine  
+**Sovereign Rights:** Absolute and unquestionable  
+**Royal Mandate:** Heaven on Earth implementation
+
+### Bloodline Protection & Preservation
+
+**The royal bloodlines are protected by:**
+
+- Divine covenant (House of David)
+- Royal charters (House of Capet)
+- Clan alliances (House of Logan)
+- OWLBAN GROUP security protocols
+- International legal frameworks
+
+**Bloodline Continuity:** Ensured through royal succession and divine providence
 
 ---
 
