@@ -261,6 +261,17 @@ try {
   logger.info('   Server will continue without ITG routes');
 }
 
+// Import Divine AI routes - PRIVATE PERSONAL AI
+let divineAIRouter;
+try {
+  const divineAIModule = await import('./routes/divineAIRoutes.js');
+  divineAIRouter = divineAIModule.default || divineAIModule;
+  logger.info('✅ Divine AI system loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load Divine AI system:', error.message);
+  logger.info('   Server will continue without Divine AI routes');
+}
+
 // Security middleware
 app.use(
   helmet({
@@ -550,6 +561,14 @@ if (itgRouter) {
   logger.info('✅ ITG routes mounted at /api/itg');
   logger.info('   👑 King Sachem Yochanan ITG Algorithm active');
   logger.info('   ✨ Sacred Geometry + Divine Wisdom + Quantum Enhancement');
+}
+
+// Divine AI API Routes - PRIVATE PERSONAL AI
+if (divineAIRouter) {
+  app.use('/api/divine-ai', divineAIRouter);
+  logger.info('✅ Divine AI routes mounted at /api/divine-ai');
+  logger.info('   🤖 Divine AI active - Personal benefit only');
+  logger.info('   🔐 Private access - King Sachem Yochanan exclusive');
 }
 
 // Partner API Routes - PHASE 2
