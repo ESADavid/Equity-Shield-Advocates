@@ -1,11 +1,11 @@
 import { getAnalytics } from './earnings_dashboard/ai_analytics.js';
 import {
-  getTranscendenceAnalytics,
+  getSimpleAnalytics,
   optimizeRevenueAutonomously,
 } from './earnings_dashboard/ai_transcendence.js';
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  console.log('Testing AI Analytics...');
+  console.log('Testing Simple Analytics...');
   try {
     const analytics = getAnalytics();
     console.log('Analytics result:', JSON.stringify(analytics, null, 2));
@@ -13,15 +13,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.error('Analytics error:', error);
   }
 
-  console.log('\nTesting AI Transcendence...');
+  console.log('\nTesting Simple Revenue Optimization...');
   try {
-    const transcendence = getTranscendenceAnalytics();
+    const transcendence = getSimpleAnalytics();
     console.log(
-      'Transcendence result:',
+      'Optimization result:',
       JSON.stringify(transcendence, null, 2)
     );
   } catch (error) {
-    console.error('Transcendence error:', error);
+    console.error('Optimization error:', error);
   }
 
   console.log('\nTesting Revenue Optimization...');
