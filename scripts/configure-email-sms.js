@@ -27,15 +27,15 @@ const config = {
   sms: {},
 };
 
-console.log('='.repeat(60));
-console.log('EMAIL AND SMS CONFIGURATION WIZARD');
-console.log('='.repeat(60));
-console.log('\nThis wizard will help you configure email and SMS services.');
-console.log('Press Ctrl+C at any time to cancel.\n');
+logger.info('='.repeat(60));
+logger.info('EMAIL AND SMS CONFIGURATION WIZARD');
+logger.info('='.repeat(60));
+logger.info('\nThis wizard will help you configure email and SMS services.');
+logger.info('Press Ctrl+C at any time to cancel.\n');
 
 async function configureEmail() {
-  console.log('\n📧 EMAIL CONFIGURATION');
-  console.log('-'.repeat(60));
+  logger.info('\n📧 EMAIL CONFIGURATION');
+  logger.info('-'.repeat(60));
 
   const provider = await question(
     '\nSelect email provider:\n1. SendGrid\n2. AWS SES\n3. SMTP (Gmail, etc.)\nChoice (1-3): '
@@ -79,7 +79,7 @@ async function configureEmail() {
       break;
 
     default:
-      console.log('Invalid choice. Skipping email configuration.');
+      logger.info('Invalid choice. Skipping email configuration.');
       return;
   }
 
@@ -90,12 +90,12 @@ async function configureEmail() {
     'Enter "From" name (e.g., Your Company Name): '
   );
 
-  console.log('\n✅ Email configuration complete!');
+  logger.info('\n✅ Email configuration complete!');
 }
 
 async function configureSMS() {
-  console.log('\n📱 SMS CONFIGURATION');
-  console.log('-'.repeat(60));
+  logger.info('\n📱 SMS CONFIGURATION');
+  logger.info('-'.repeat(60));
 
   const provider = await question(
     '\nSelect SMS provider:\n1. Twilio\n2. AWS SNS\n3. Nexmo/Vonage\n4. Skip SMS configuration\nChoice (1-4): '
@@ -141,15 +141,15 @@ async function configureSMS() {
       break;
 
     case '4':
-      console.log('Skipping SMS configuration.');
+      logger.info('Skipping SMS configuration.');
       return;
 
     default:
-      console.log('Invalid choice. Skipping SMS configuration.');
+      logger.info('Invalid choice. Skipping SMS configuration.');
       return;
   }
 
-  console.log('\n✅ SMS configuration complete!');
+  logger.info('\n✅ SMS configuration complete!');
 }
 
 function generateEnvContent() {
@@ -171,8 +171,8 @@ function generateEnvContent() {
 }
 
 async function saveConfiguration() {
-  console.log('\n💾 SAVING CONFIGURATION');
-  console.log('-'.repeat(60));
+  logger.info('\n💾 SAVING CONFIGURATION');
+  logger.info('-'.repeat(60));
 
   const envPath = path.join(__dirname, '..', '.env');
   const envExamplePath = path.join(__dirname, '..', '.env.example');
@@ -190,7 +190,7 @@ async function saveConfiguration() {
       // Create backup
       const backupPath = `${envPath}.backup.${Date.now()}`;
       fs.copyFileSync(envPath, backupPath);
-      console.log(`\n📋 Backup created: ${backupPath}`);
+      logger.info(`\n📋 Backup created: ${backupPath}`);
     }
   }
 
@@ -199,7 +199,7 @@ async function saveConfiguration() {
 
   // Write to .env
   fs.writeFileSync(envPath, existingContent + newContent, 'utf8');
-  console.log(`\n✅ Configuration saved to: ${envPath}`);
+  logger.info(`\n✅ Configuration saved to: ${envPath}`);
 
   // Update .env.example if it exists
   if (fs.existsSync(envExamplePath)) {
@@ -212,48 +212,48 @@ async function saveConfiguration() {
         '=your_value_here'
       );
       fs.writeFileSync(envExamplePath, exampleContent, 'utf8');
-      console.log(`✅ .env.example updated`);
+      logger.info(`✅ .env.example updated`);
     }
   }
 }
 
 async function testConfiguration() {
-  console.log('\n🧪 TEST CONFIGURATION');
-  console.log('-'.repeat(60));
+  logger.info('\n🧪 TEST CONFIGURATION');
+  logger.info('-'.repeat(60));
 
   const runTests = await question(
     '\nWould you like to test the configuration? (y/n): '
   );
 
   if (runTests.toLowerCase() === 'y') {
-    console.log('\nRunning tests...');
-    console.log(
+    logger.info('\nRunning tests...');
+    logger.info(
       '\nTo test your configuration, run:\n  node test_email_sms_config.js\n'
     );
   }
 }
 
 function displaySummary() {
-  console.log('\n📊 CONFIGURATION SUMMARY');
-  console.log('='.repeat(60));
+  logger.info('\n📊 CONFIGURATION SUMMARY');
+  logger.info('='.repeat(60));
 
-  console.log('\n📧 Email Configuration:');
+  logger.info('\n📧 Email Configuration:');
   if (Object.keys(config.email).length > 0) {
-    console.log(`  Provider: ${config.email.EMAIL_PROVIDER || 'Not configured'}`);
-    console.log(`  From: ${config.email.EMAIL_FROM || 'Not configured'}`);
-    console.log(`  From Name: ${config.email.EMAIL_FROM_NAME || 'Not configured'}`);
+    logger.info(`  Provider: ${config.email.EMAIL_PROVIDER || 'Not configured'}`);
+    logger.info(`  From: ${config.email.EMAIL_FROM || 'Not configured'}`);
+    logger.info(`  From Name: ${config.email.EMAIL_FROM_NAME || 'Not configured'}`);
   } else {
-    console.log('  Not configured');
+    logger.info('  Not configured');
   }
 
-  console.log('\n📱 SMS Configuration:');
+  logger.info('\n📱 SMS Configuration:');
   if (Object.keys(config.sms).length > 0) {
-    console.log(`  Provider: ${config.sms.SMS_PROVIDER || 'Not configured'}`);
+    logger.info(`  Provider: ${config.sms.SMS_PROVIDER || 'Not configured'}`);
   } else {
-    console.log('  Not configured');
+    logger.info('  Not configured');
   }
 
-  console.log('\n' + '='.repeat(60));
+  logger.info('\n' + '='.repeat(60));
 }
 
 async function main() {
@@ -264,13 +264,13 @@ async function main() {
     await saveConfiguration();
     await testConfiguration();
 
-    console.log('\n✨ Configuration complete!');
-    console.log('\nNext steps:');
-    console.log('1. Review your .env file');
-    console.log('2. Run: node test_email_sms_config.js');
-    console.log('3. Start your application\n');
+    logger.info('\n✨ Configuration complete!');
+    logger.info('\nNext steps:');
+    logger.info('1. Review your .env file');
+    logger.info('2. Run: node test_email_sms_config.js');
+    logger.info('3. Start your application\n');
   } catch (error) {
-    console.error('\n❌ Error:', error.message);
+    logger.error('\n❌ Error:', error.message);
   } finally {
     rl.close();
   }

@@ -202,15 +202,15 @@ router.post('/create-payment', async (req, res) => {
       authorizationCode: response.data.authorizationCode,
       transactionDetails: response.data,
     });
-  } catch (error) {
+  } catch (err) {
     error(
       'JPMorgan payment creation error:',
-      error.response?.data || error.message
+      err.response?.data || err.message
     );
     res.status(500).json({
       success: false,
       error: 'Failed to create payment',
-      details: error.response?.data || error.message,
+      details: err.response?.data || err.message,
     });
   }
 });

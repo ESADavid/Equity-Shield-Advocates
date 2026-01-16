@@ -29,10 +29,10 @@ class QuickBooksPayrollIntegration {
             });
             this.accessToken = response.data.access_token;
             this.refreshToken = response.data.refresh_token || this.refreshToken;
-            console.log('QuickBooks access token refreshed');
+            logger.info('QuickBooks access token refreshed');
         }
         catch (error) {
-            console.error('Failed to refresh QuickBooks access token:', error);
+            logger.error('Failed to refresh QuickBooks access token:', error);
             throw error;
         }
     }
@@ -50,10 +50,10 @@ class QuickBooksPayrollIntegration {
                         continue;
                     }
                     catch (refreshError) {
-                        console.error('Failed to refresh token:', refreshError);
+                        logger.error('Failed to refresh token:', refreshError);
                     }
                 }
-                console.warn(`Attempt ${attempt} failed: ${error}. Retrying in ${delayMs}ms...`);
+                logger.warn(`Attempt ${attempt} failed: ${error}. Retrying in ${delayMs}ms...`);
                 await new Promise((resolve) => setTimeout(resolve, delayMs));
             }
         }
@@ -63,7 +63,7 @@ class QuickBooksPayrollIntegration {
         try {
             if (!employee.accountNumber || !employee.routingNumber) {
                 const message = 'Missing bank account or routing number for direct deposit';
-                console.error(message);
+                logger.error(message);
                 return { success: false, message };
             }
             const url = `${this.baseUrl}/company/${this.companyId}/employee`;
@@ -89,7 +89,7 @@ class QuickBooksPayrollIntegration {
             };
         }
         catch (error) {
-            console.error('Error updating QuickBooks payroll data:', error);
+            logger.error('Error updating QuickBooks payroll data:', error);
             return {
                 success: false,
                 message: 'Failed to update payroll data',
@@ -119,7 +119,7 @@ class QuickBooksPayrollIntegration {
             };
         }
         catch (error) {
-            console.error('Error fetching QuickBooks payroll data:', error);
+            logger.error('Error fetching QuickBooks payroll data:', error);
             return {
                 success: false,
                 message: 'Failed to fetch payroll data',
@@ -140,7 +140,7 @@ class QuickBooksPayrollIntegration {
             };
         }
         catch (error) {
-            console.error('Error fetching QuickBooks employees:', error);
+            logger.error('Error fetching QuickBooks employees:', error);
             return {
                 success: false,
                 message: 'Failed to fetch employees',
@@ -166,7 +166,7 @@ class QuickBooksPayrollIntegration {
             };
         }
         catch (error) {
-            console.error('Error creating QuickBooks payroll run:', error);
+            logger.error('Error creating QuickBooks payroll run:', error);
             return {
                 success: false,
                 message: 'Failed to create payroll run',

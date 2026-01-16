@@ -11,8 +11,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log('🔐 BIOMETRIC SYSTEM - ENVIRONMENT SETUP\n');
-console.log('=' .repeat(60));
+logger.info('🔐 BIOMETRIC SYSTEM - ENVIRONMENT SETUP\n');
+logger.info('=' .repeat(60));
 
 // Generate secure random key
 function generateSecureKey() {
@@ -23,26 +23,26 @@ function generateSecureKey() {
 const envPath = path.join(__dirname, '..', '.env');
 const envExamplePath = path.join(__dirname, '..', '.env.biometric.example');
 
-console.log('\n📋 Step 1: Checking for existing .env file...\n');
+logger.info('\n📋 Step 1: Checking for existing .env file...\n');
 
 if (fs.existsSync(envPath)) {
-  console.log('✅ .env file found');
-  console.log('⚠️  WARNING: .env file already exists!');
-  console.log('   To avoid overwriting, we will create .env.biometric.configured\n');
+  logger.info('✅ .env file found');
+  logger.info('⚠️  WARNING: .env file already exists!');
+  logger.info('   To avoid overwriting, we will create .env.biometric.configured\n');
 } else {
-  console.log('ℹ️  No .env file found - will create new one\n');
+  logger.info('ℹ️  No .env file found - will create new one\n');
 }
 
-console.log('📋 Step 2: Generating secure biometric configuration...\n');
+logger.info('📋 Step 2: Generating secure biometric configuration...\n');
 
 // Generate secure keys
 const biometricMasterKey = generateSecureKey();
 const jwtSecret = generateSecureKey();
 
-console.log('✅ Generated secure BIOMETRIC_MASTER_KEY');
-console.log('✅ Generated secure JWT_SECRET\n');
+logger.info('✅ Generated secure BIOMETRIC_MASTER_KEY');
+logger.info('✅ Generated secure JWT_SECRET\n');
 
-console.log('📋 Step 3: Creating configuration file...\n');
+logger.info('📋 Step 3: Creating configuration file...\n');
 
 // Read example file
 let envContent = fs.readFileSync(envExamplePath, 'utf-8');
@@ -65,36 +65,36 @@ const outputPath = fs.existsSync(envPath)
 
 fs.writeFileSync(outputPath, envContent);
 
-console.log(`✅ Configuration file created: ${path.basename(outputPath)}\n`);
+logger.info(`✅ Configuration file created: ${path.basename(outputPath)}\n`);
 
-console.log('=' .repeat(60));
-console.log('\n🎉 SETUP COMPLETE!\n');
+logger.info('=' .repeat(60));
+logger.info('\n🎉 SETUP COMPLETE!\n');
 
 if (outputPath.includes('.configured')) {
-  console.log('📝 NEXT STEPS:\n');
-  console.log('1. Review the generated file: .env.biometric.configured');
-  console.log('2. Merge the biometric settings into your existing .env file');
-  console.log('3. Update any additional settings as needed');
-  console.log('4. Ensure MongoDB is running');
-  console.log('5. Start your server: cd earnings_dashboard && node server.js\n');
+  logger.info('📝 NEXT STEPS:\n');
+  logger.info('1. Review the generated file: .env.biometric.configured');
+  logger.info('2. Merge the biometric settings into your existing .env file');
+  logger.info('3. Update any additional settings as needed');
+  logger.info('4. Ensure MongoDB is running');
+  logger.info('5. Start your server: cd earnings_dashboard && node server.js\n');
 } else {
-  console.log('📝 NEXT STEPS:\n');
-  console.log('1. Review the generated .env file');
-  console.log('2. Update MongoDB URI if needed');
-  console.log('3. Update any additional settings as needed');
-  console.log('4. Ensure MongoDB is running');
-  console.log('5. Start your server: cd earnings_dashboard && node server.js\n');
+  logger.info('📝 NEXT STEPS:\n');
+  logger.info('1. Review the generated .env file');
+  logger.info('2. Update MongoDB URI if needed');
+  logger.info('3. Update any additional settings as needed');
+  logger.info('4. Ensure MongoDB is running');
+  logger.info('5. Start your server: cd earnings_dashboard && node server.js\n');
 }
 
-console.log('🔒 SECURITY REMINDERS:\n');
-console.log('- NEVER commit .env files to version control');
-console.log('- Keep your BIOMETRIC_MASTER_KEY secure');
-console.log('- Rotate keys regularly in production');
-console.log('- Use strong passwords for admin accounts\n');
+logger.info('🔒 SECURITY REMINDERS:\n');
+logger.info('- NEVER commit .env files to version control');
+logger.info('- Keep your BIOMETRIC_MASTER_KEY secure');
+logger.info('- Rotate keys regularly in production');
+logger.info('- Use strong passwords for admin accounts\n');
 
-console.log('📚 DOCUMENTATION:\n');
-console.log('- Quick Start: BIOMETRIC_QUICK_START_GUIDE.md');
-console.log('- Full Docs: BIOMETRIC_SYSTEM_COMPLETION_REPORT.md\n');
+logger.info('📚 DOCUMENTATION:\n');
+logger.info('- Quick Start: BIOMETRIC_QUICK_START_GUIDE.md');
+logger.info('- Full Docs: BIOMETRIC_SYSTEM_COMPLETION_REPORT.md\n');
 
-console.log('=' .repeat(60));
-console.log('\n✨ Your biometric system is ready to use!\n');
+logger.info('=' .repeat(60));
+logger.info('\n✨ Your biometric system is ready to use!\n');

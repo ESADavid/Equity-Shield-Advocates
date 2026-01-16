@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 "use strict";
 /**
  * Unified Payroll System
@@ -83,7 +85,7 @@ var PayrollSystem = /** @class */ (function () {
             }
         }
         catch (error) {
-            console.error('Failed to load employees:', error);
+            logger.error('Failed to load employees:', error);
             this.employees = new Map();
         }
     };
@@ -93,7 +95,7 @@ var PayrollSystem = /** @class */ (function () {
             fs.writeFileSync(EMPLOYEES_FILE, JSON.stringify(employeesArray, null, 2), 'utf-8');
         }
         catch (error) {
-            console.error('Failed to save employees:', error);
+            logger.error('Failed to save employees:', error);
             throw new Error('Failed to save employee data');
         }
     };
@@ -105,7 +107,7 @@ var PayrollSystem = /** @class */ (function () {
             }
         }
         catch (error) {
-            console.error('Failed to load payroll records:', error);
+            logger.error('Failed to load payroll records:', error);
             this.payrollRecords = [];
         }
     };
@@ -114,7 +116,7 @@ var PayrollSystem = /** @class */ (function () {
             fs.writeFileSync(PAYROLL_RECORDS_FILE, JSON.stringify(this.payrollRecords, null, 2), 'utf-8');
         }
         catch (error) {
-            console.error('Failed to save payroll records:', error);
+            logger.error('Failed to save payroll records:', error);
             throw new Error('Failed to save payroll records');
         }
     };

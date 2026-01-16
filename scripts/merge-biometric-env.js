@@ -10,20 +10,20 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log('🔧 MERGING BIOMETRIC CONFIGURATION INTO .ENV\n');
-console.log('=' .repeat(60));
+logger.info('🔧 MERGING BIOMETRIC CONFIGURATION INTO .ENV\n');
+logger.info('=' .repeat(60));
 
 const envPath = path.join(__dirname, '..', '.env');
 const biometricConfigPath = path.join(__dirname, '..', '.env.biometric.configured');
 
 // Check if files exist
 if (!fs.existsSync(biometricConfigPath)) {
-  console.log('❌ ERROR: .env.biometric.configured not found!');
-  console.log('   Run: node scripts/setup-biometric-env.js first\n');
+  logger.info('❌ ERROR: .env.biometric.configured not found!');
+  logger.info('   Run: node scripts/setup-biometric-env.js first\n');
   process.exit(1);
 }
 
-console.log('✅ Found .env.biometric.configured\n');
+logger.info('✅ Found .env.biometric.configured\n');
 
 // Read biometric configuration
 const biometricConfig = fs.readFileSync(biometricConfigPath, 'utf-8');
@@ -49,15 +49,15 @@ for (const line of lines) {
   }
 }
 
-console.log(`📋 Found ${biometricVars.length} biometric configuration variables\n`);
+logger.info(`📋 Found ${biometricVars.length} biometric configuration variables\n`);
 
 // Read existing .env or create new one
 let existingEnv = '';
 if (fs.existsSync(envPath)) {
   existingEnv = fs.readFileSync(envPath, 'utf-8');
-  console.log('✅ Existing .env file found\n');
+  logger.info('✅ Existing .env file found\n');
 } else {
-  console.log('ℹ️  No existing .env file - creating new one\n');
+  logger.info('ℹ️  No existing .env file - creating new one\n');
 }
 
 // Check which variables already exist
@@ -82,14 +82,14 @@ for (const varLine of biometricVars) {
   }
 }
 
-console.log('📊 Merge Analysis:\n');
-console.log(`   Variables to add: ${varsToAdd.length}`);
-console.log(`   Variables to skip (already exist): ${varsToSkip.length}\n`);
+logger.info('📊 Merge Analysis:\n');
+logger.info(`   Variables to add: ${varsToAdd.length}`);
+logger.info(`   Variables to skip (already exist): ${varsToSkip.length}\n`);
 
 if (varsToSkip.length > 0) {
-  console.log('⚠️  Skipping existing variables:');
-  varsToSkip.forEach(v => console.log(`   - ${v}`));
-  console.log('');
+  logger.info('⚠️  Skipping existing variables:');
+  varsToSkip.forEach(v => logger.info(`   - ${v}`));
+  logger.info('');
 }
 
 // Build new .env content
@@ -115,38 +115,38 @@ varsToAdd.forEach(varLine => {
 if (fs.existsSync(envPath)) {
   const backupPath = path.join(__dirname, '..', '.env.backup');
   fs.copyFileSync(envPath, backupPath);
-  console.log('✅ Created backup: .env.backup\n');
+  logger.info('✅ Created backup: .env.backup\n');
 }
 
 // Write merged configuration
 fs.writeFileSync(envPath, newEnvContent);
 
-console.log('✅ Successfully merged biometric configuration into .env\n');
-console.log('=' .repeat(60));
-console.log('\n🎉 CONFIGURATION MERGE COMPLETE!\n');
+logger.info('✅ Successfully merged biometric configuration into .env\n');
+logger.info('=' .repeat(60));
+logger.info('\n🎉 CONFIGURATION MERGE COMPLETE!\n');
 
-console.log('📝 WHAT WAS ADDED:\n');
+logger.info('📝 WHAT WAS ADDED:\n');
 varsToAdd.forEach(varLine => {
   const varName = varLine.split('=')[0];
-  console.log(`   ✅ ${varName}`);
+  logger.info(`   ✅ ${varName}`);
 });
 
 if (varsToSkip.length > 0) {
-  console.log('\n⚠️  VARIABLES SKIPPED (already in .env):\n');
-  varsToSkip.forEach(v => console.log(`   - ${v}`));
+  logger.info('\n⚠️  VARIABLES SKIPPED (already in .env):\n');
+  varsToSkip.forEach(v => logger.info(`   - ${v}`));
 }
 
-console.log('\n📋 NEXT STEPS:\n');
-console.log('1. Review your .env file');
-console.log('2. Update MONGODB_URI if needed');
-console.log('3. Verify all biometric settings');
-console.log('4. Start MongoDB: mongod');
-console.log('5. Start server: cd earnings_dashboard && node server.js\n');
+logger.info('\n📋 NEXT STEPS:\n');
+logger.info('1. Review your .env file');
+logger.info('2. Update MONGODB_URI if needed');
+logger.info('3. Verify all biometric settings');
+logger.info('4. Start MongoDB: mongod');
+logger.info('5. Start server: cd earnings_dashboard && node server.js\n');
 
-console.log('🔒 SECURITY REMINDER:\n');
-console.log('- Your .env file now contains secure biometric keys');
-console.log('- NEVER commit .env to version control');
-console.log('- Backup created at: .env.backup\n');
+logger.info('🔒 SECURITY REMINDER:\n');
+logger.info('- Your .env file now contains secure biometric keys');
+logger.info('- NEVER commit .env to version control');
+logger.info('- Backup created at: .env.backup\n');
 
-console.log('=' .repeat(60));
-console.log('\n✨ Your biometric system is configured and ready!\n');
+logger.info('=' .repeat(60));
+logger.info('\n✨ Your biometric system is configured and ready!\n');

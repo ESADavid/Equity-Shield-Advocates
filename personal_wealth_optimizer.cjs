@@ -20,6 +20,7 @@
 
 const path = require('path');
 const fs = require('fs').promises;
+const { info, error } = require('./utils/loggerWrapper.js');
 
 // Mock AI services (simulating the real AI services you built)
 class MockEnhancedMLService {
@@ -225,13 +226,13 @@ class PersonalWealthOptimizer {
     }
 
     async initialize() {
-        console.log('🤖 Initializing Personal Wealth Optimizer...');
-        console.log('👑 For King Sachem Yochanan - Direct AI Benefits');
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+        info('🤖 Initializing Personal Wealth Optimizer...');
+        info('👑 For King Sachem Yochanan - Direct AI Benefits');
+        info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
         // Simulate AI service initialization
         await new Promise(resolve => setTimeout(resolve, 100));
-        console.log('✅ AI Services initialized successfully\n');
+        info('✅ AI Services initialized successfully\n');
     }
 
     async analyzeWealth() {

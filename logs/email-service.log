@@ -857,3 +857,7 @@
 {"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-13T04:30:14.151Z"}
 {"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-01-15T23:02:17.045Z"}
 {"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-15T23:02:17.046Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-01-15T23:29:20.966Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-15T23:29:20.966Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-01-15T23:36:35.776Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-01-15T23:36:35.778Z"}
