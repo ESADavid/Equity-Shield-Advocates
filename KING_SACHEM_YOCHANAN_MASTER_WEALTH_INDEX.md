@@ -506,7 +506,7 @@ Source: HAITI_STRATEGIC_ACQUISITION_PLAN.md
 
 - [x] Off-the-Books Holdings: $200Q (Corporate Structure)
 - [x] Owlban Group: $1.2Q (owlban_group_revenue_figures.md)
-- [x] Blackbox AI: $1.8Q (owlban_group_revenue_figures.md)
+- [x] Divine Revenue Systems: $1.8Q (owlban_group_revenue_figures.md)
 - [x] Assets Under Management: $2.47Q (ASSETS_UNDER_MANAGEMENT_LIST.md)
 - [x] Direct Banking: $92.5M (COMPREHENSIVE_OWNERSHIP_CONTROL_LIST.md)
 - [x] Revenue Streams: $1.23B (earnings_report.json)

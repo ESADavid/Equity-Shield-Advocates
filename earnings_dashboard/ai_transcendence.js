@@ -1,7 +1,7 @@
 // Simple Revenue Optimization - Restoring Divine Mission
 // Removed AI transcendence, focusing on divine guidance and manual optimization
 
-const { info } = require('../utils/loggerWrapper.js');
+import { info } from '../utils/loggerWrapper.js';
 
 class SimpleRevenueOptimization {
   constructor() {
@@ -209,6 +209,10 @@ export function getTranscendenceAnalytics() {
 
 export function assessRiskQuantum(portfolio, marketData) {
   return simpleRevenueOptimization.assessRiskSimple(portfolio, marketData);
+}
+
+export function getSimpleAnalytics() {
+  return simpleRevenueOptimization.getSimpleAnalytics();
 }
 
 export { simpleRevenueOptimization };

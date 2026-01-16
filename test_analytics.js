@@ -1,11 +1,11 @@
-import { getAnalytics } from './earnings_dashboard/ai_analytics.js';
-import {
-  getSimpleAnalytics,
-  optimizeRevenueAutonomously,
-} from './earnings_dashboard/ai_transcendence.js';
+(async () => {
+  const { getAnalytics } = await import('./earnings_dashboard/ai_analytics.js');
+  const {
+    getTranscendenceAnalytics,
+    optimizeRevenueAutonomously,
+  } = await import('./earnings_dashboard/ai_transcendence.js');
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  console.log('Testing Simple Analytics...');
+  console.log('Testing Simple Trend Analytics...');
   try {
     const analytics = getAnalytics();
     console.log('Analytics result:', JSON.stringify(analytics, null, 2));
@@ -13,18 +13,18 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.error('Analytics error:', error);
   }
 
-  console.log('\nTesting Simple Revenue Optimization...');
+  console.log('\nTesting Simple Revenue Forecasting...');
   try {
-    const transcendence = getSimpleAnalytics();
+    const transcendence = getTranscendenceAnalytics();
     console.log(
-      'Optimization result:',
+      'Forecasting result:',
       JSON.stringify(transcendence, null, 2)
     );
   } catch (error) {
-    console.error('Optimization error:', error);
+    console.error('Forecasting error:', error);
   }
 
-  console.log('\nTesting Revenue Optimization...');
+  console.log('\nTesting Traditional Revenue Optimization...');
   try {
     const result = await optimizeRevenueAutonomously(1750000, {
       growth: 0.08,
@@ -36,4 +36,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   } catch (error) {
     console.error('Optimization error:', error);
   }
-}
+})();
