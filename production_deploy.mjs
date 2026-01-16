@@ -3,8 +3,8 @@
 import fs from 'node:fs';
 import { execSync, spawn } from 'node:child_process';
 
-console.log('🚀 OSCAR BROOME REVENUE - Production Deployment Script');
-console.log('====================================================\n');
+this.log('🚀 OSCAR BROOME REVENUE - Production Deployment Script', 'step');
+this.log('====================================================', 'step');
 
 // Configuration
 const CONFIG = {
@@ -42,6 +42,7 @@ class ProductionDeployer {
         step: '🔧 ',
       }[type] || '📝 ';
 
+    // eslint-disable-next-line no-console
     console.log(`[${timestamp}] ${prefix}${message}`);
   }
 
@@ -227,26 +228,26 @@ class ProductionDeployer {
     this.log('Running pre-flight checks...', 'step');
 
     try {
-      // Test module imports
-      const { default: merchantBillPay } =
-        await import('./earnings_dashboard/merchant_bill_pay.js');
+      // Test module imports (same way as server)
+      const merchantModule = await import('./earnings_dashboard/merchant_bill_pay.js');
+      const merchantBillPay = merchantModule.default || merchantModule;
       this.log('Merchant bill pay module loaded successfully');
 
       // Check if all required functions exist
       const requiredFunctions = [
-        'createMerchantPaymentIntent',
-        'handleMerchantWebhook',
-        'sendMerchantPaymentSuccessNotification',
-        'sendMerchantPaymentFailureNotification',
-        'sendSMSNotification',
-        'getMerchantEmail',
-        'getMerchantPhone',
+        merchantBillPay.createMerchantPaymentIntent,
+        merchantBillPay.handleMerchantWebhook,
+        merchantBillPay.sendMerchantPaymentSuccessNotification,
+        merchantBillPay.sendMerchantPaymentFailureNotification,
+        merchantBillPay.sendSMSNotification,
+        merchantBillPay.getMerchantEmail,
+        merchantBillPay.getMerchantPhone,
       ];
 
       const missingFunctions = [];
-      for (const funcName of requiredFunctions) {
-        if (typeof merchantBillPay[funcName] !== 'function') {
-          missingFunctions.push(funcName);
+      for (const func of requiredFunctions) {
+        if (typeof func !== 'function') {
+          missingFunctions.push(func.name || 'unknown function');
         }
       }
 
@@ -350,42 +351,42 @@ class ProductionDeployer {
   }
 
   showSummary() {
-    console.log('\n📊 DEPLOYMENT SUMMARY');
-    console.log('====================');
+    this.log('\n📊 DEPLOYMENT SUMMARY', 'info');
+    this.log('====================', 'info');
 
     if (this.errors.length > 0) {
-      console.log('\n❌ ERRORS:');
+      this.log('\n❌ ERRORS:', 'error');
       for (const error of this.errors) {
-        console.log(`   - ${error}`);
+        this.log(`   - ${error}`, 'error');
       }
     }
 
     if (this.warnings.length > 0) {
-      console.log('\n⚠️  WARNINGS:');
+      this.log('\n⚠️  WARNINGS:', 'warning');
       for (const warning of this.warnings) {
-        console.log(`   - ${warning}`);
+        this.log(`   - ${warning}`, 'warning');
       }
     }
 
-    console.log('\n✅ COMPLETED STEPS:');
-    console.log('   - Environment validation');
-    console.log('   - Dependency installation');
-    console.log('   - Configuration setup');
-    console.log('   - Pre-flight checks');
-    console.log('   - Production server startup');
+    this.log('\n✅ COMPLETED STEPS:', 'success');
+    this.log('   - Environment validation', 'success');
+    this.log('   - Dependency installation', 'success');
+    this.log('   - Configuration setup', 'success');
+    this.log('   - Pre-flight checks', 'success');
+    this.log('   - Production server startup', 'success');
 
-    console.log('\n🔧 NEXT STEPS:');
-    console.log('   1. Configure your production credentials in .env');
-    console.log('   2. Set up SSL certificates for HTTPS');
-    console.log('   3. Configure reverse proxy (nginx recommended)');
-    console.log('   4. Set up monitoring and alerting');
-    console.log('   5. Configure backup and recovery procedures');
+    this.log('\n🔧 NEXT STEPS:', 'info');
+    this.log('   1. Configure your production credentials in .env', 'info');
+    this.log('   2. Set up SSL certificates for HTTPS', 'info');
+    this.log('   3. Configure reverse proxy (nginx recommended)', 'info');
+    this.log('   4. Set up monitoring and alerting', 'info');
+    this.log('   5. Configure backup and recovery procedures', 'info');
 
-    console.log('\n📝 USEFUL COMMANDS:');
-    console.log('   - View logs: pm2 logs oscar-broome-revenue');
-    console.log('   - Monitor: pm2 monit');
-    console.log('   - Restart: pm2 restart oscar-broome-revenue');
-    console.log('   - Stop: pm2 stop oscar-broome-revenue');
+    this.log('\n📝 USEFUL COMMANDS:', 'info');
+    this.log('   - View logs: pm2 logs oscar-broome-revenue', 'info');
+    this.log('   - Monitor: pm2 monit', 'info');
+    this.log('   - Restart: pm2 restart oscar-broome-revenue', 'info');
+    this.log('   - Stop: pm2 stop oscar-broome-revenue', 'info');
   }
 }
 
@@ -396,8 +397,8 @@ try {
   await deployer.run();
   deployer.showSummary();
 } catch (error) {
-  console.error('\n💥 DEPLOYMENT FAILED');
-  console.error('==================');
-  console.error(error.message);
+  this.log('\n💥 DEPLOYMENT FAILED', 'error');
+  this.log('==================', 'error');
+  this.log(error.message, 'error');
   process.exit(1);
 }

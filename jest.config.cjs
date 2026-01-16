@@ -3,6 +3,7 @@ module.exports = {
   verbose: true,
   setupFiles: ['./jest.setup.js'],
   testEnvironment: 'node',
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
 
   // Transform configuration - transform ALL JS files including test files
   transform: {
@@ -20,9 +21,9 @@ module.exports = {
     ],
   },
 
-  // Transform node_modules that use ES modules - FIXED: Don't ignore jest-runner
+  // Transform node_modules that use ES modules - expanded list
   transformIgnorePatterns: [
-    'node_modules/(?!(baseline-browser-mapping|@babel/runtime|@noble|@paralleldrive|cuid2|formidable|superagent|supertest)/)',
+    'node_modules/(?!(baseline-browser-mapping|@babel/runtime|@noble|@paralleldrive|cuid2|formidable|superagent|supertest|chai|uuid|jsonwebtoken|bcrypt|bcryptjs|crypto-js|mathjs|merkletreejs|web3|axios|express|mongoose|mysql2|ioredis|socket.io|winston|morgan|helmet|cors|compression|express-rate-limit|express-validator|express-basic-auth|express-winston|passport|passport-jwt|twilio|nodemailer|node-cron|response-time|sha3|stripe|puppeteer|react|react-dom|d3|chart.js|recharts|lucide-react|framer-motion|react-chartjs-2|react-query|socket.io-client|pm2|baseline-browser-mapping|@headlessui|@heroicons)/)',
   ],
 
   // Module name mapping

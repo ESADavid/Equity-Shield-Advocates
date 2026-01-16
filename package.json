@@ -4,7 +4,6 @@
   "description": "Oscar Broome Revenue System with Transaction Override Capabilities - Performance Optimized",
   "main": "server-enhanced.js",
   "type": "module",
-
   "scripts": {
     "start": "node server-enhanced.js",
     "dev": "nodemon server-enhanced.js",
@@ -114,6 +113,7 @@
     "@babel/preset-typescript": "^7.27.1",
     "@eslint/config-array": "^0.20.0",
     "@eslint/object-schema": "^2.1.6",
+    "@testing-library/jest-dom": "^6.9.1",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
