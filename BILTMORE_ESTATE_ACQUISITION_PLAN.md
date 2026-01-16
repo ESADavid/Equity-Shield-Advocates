@@ -14,18 +14,21 @@ This document outlines the strategic acquisition plan for the Biltmore Estate (O
 ## Acquisition Strategy
 
 ### Phase 1: Intelligence Gathering & Valuation
+
 - Conduct comprehensive due diligence on current ownership structure
 - Analyze financial performance (revenue streams, operating costs, debt obligations)
 - Assess market value through independent appraisals
 - Identify key stakeholders and decision-makers
 
 ### Phase 2: Negotiation & Purchase
+
 - Initiate contact through intermediaries
 - Present compelling acquisition offer
 - Structure deal to minimize tax implications
 - Secure financing through JPMorgan integration
 
 ### Phase 3: Transition & Operations
+
 - Execute ownership transfer
 - Maintain continuity of operations
 - Retain existing staff for seamless transition
@@ -34,18 +37,21 @@ This document outlines the strategic acquisition plan for the Biltmore Estate (O
 ## Financial Structure
 
 ### Acquisition Funding
+
 - **Primary Source**: JPMorgan Chase banking facilities
 - **Secondary Source**: Private wealth funds
 - **Debt Acquisition**: Leverage existing debt acquisition service
 - **Total Capital Required**: $150M (including working capital)
 
 ### Revenue Projections
+
 - **Hospitality Revenue**: $100M+ annually
 - **Tourism Income**: $50M+ from ticket sales and events
 - **Ancillary Revenue**: Wine sales, retail, catering
 - **Total Annual Revenue**: $200M+
 
 ### ROI Timeline
+
 - **Year 1**: Operational stabilization
 - **Year 2-3**: Revenue optimization
 - **Year 5**: 25% ROI target
@@ -54,18 +60,21 @@ This document outlines the strategic acquisition plan for the Biltmore Estate (O
 ## Operational Continuity Plan
 
 ### Staff Retention Strategy
+
 - **Immediate Action**: Guarantee all current positions
 - **Compensation**: Maintain or improve salary structures
 - **Benefits**: Preserve existing benefit packages
 - **Training**: Integrate with Oscar Broome systems
 
 ### Management Transition
+
 - **Current Management**: Assess and retain key executives
 - **New Leadership**: Appoint experienced hospitality professionals
 - **Training Programs**: Comprehensive onboarding for new systems
 - **Cultural Integration**: Maintain Biltmore's heritage and values
 
 ### Business Continuity
+
 - **Guest Experience**: Zero disruption to visitor operations
 - **Vendor Relations**: Maintain existing supplier contracts
 - **Marketing**: Continue established branding and promotions
@@ -74,12 +83,14 @@ This document outlines the strategic acquisition plan for the Biltmore Estate (O
 ## Legal & Regulatory Considerations
 
 ### Ownership Transfer
+
 - **Due Diligence**: Complete legal audit of property titles
 - **Zoning Compliance**: Verify all permits and licenses
 - **Environmental Assessment**: Confirm ecological compliance
 - **Historic Preservation**: Maintain National Historic Landmark status
 
 ### Tax Optimization
+
 - **Acquisition Structure**: Utilize tax-advantaged entities
 - **Depreciation**: Maximize real estate tax benefits
 - **State Tax Credits**: Leverage North Carolina incentives
@@ -88,18 +99,21 @@ This document outlines the strategic acquisition plan for the Biltmore Estate (O
 ## Integration with Oscar Broome Systems
 
 ### Revenue Management
+
 - **Integration**: Connect to earnings dashboard
 - **Real-time Tracking**: Monitor hospitality revenue streams
 - **Analytics**: Implement AI-powered performance analysis
 - **Reporting**: Automated financial reporting
 
 ### Asset Management
+
 - **Property Portfolio**: Add to comprehensive asset list
 - **Valuation Tracking**: Regular appraisal updates
 - **Insurance**: Comprehensive coverage through partners
 - **Maintenance**: Scheduled upkeep and capital improvements
 
 ### Security & Operations
+
 - **Biometric Access**: Implement advanced security systems
 - **Monitoring**: 24/7 surveillance and threat detection
 - **Emergency Response**: Integrated crisis management
@@ -108,18 +122,21 @@ This document outlines the strategic acquisition plan for the Biltmore Estate (O
 ## Risk Assessment & Mitigation
 
 ### Operational Risks
+
 - **Staff Retention**: Competitive compensation packages
 - **Guest Satisfaction**: Quality assurance programs
 - **Market Competition**: Differentiated luxury positioning
 - **Economic Downturn**: Diversified revenue streams
 
 ### Financial Risks
+
 - **Interest Rate Fluctuations**: Fixed-rate financing
 - **Revenue Variability**: Hedging strategies
 - **Insurance Coverage**: Comprehensive risk transfer
 - **Liquidity Management**: Cash reserve requirements
 
 ### Legal Risks
+
 - **Ownership Disputes**: Thorough title verification
 - **Regulatory Changes**: Compliance monitoring
 - **Contract Obligations**: Assumption planning
@@ -128,21 +145,25 @@ This document outlines the strategic acquisition plan for the Biltmore Estate (O
 ## Implementation Timeline
 
 ### Month 1-3: Planning & Due Diligence
+
 - Complete financial and legal audits
 - Secure financing commitments
 - Develop transition plans
 
 ### Month 4-6: Negotiation & Closing
+
 - Initiate acquisition discussions
 - Finalize purchase agreement
 - Complete regulatory approvals
 
 ### Month 7-12: Transition & Integration
+
 - Execute ownership transfer
 - Implement new management systems
 - Begin operational optimization
 
 ### Year 2+: Optimization & Growth
+
 - Revenue enhancement initiatives
 - Capital improvement projects
 - Market expansion opportunities
@@ -150,12 +171,14 @@ This document outlines the strategic acquisition plan for the Biltmore Estate (O
 ## Success Metrics
 
 ### Financial KPIs
+
 - **Revenue Growth**: 15% annual increase
 - **Profit Margins**: 25%+ operating margin
 - **ROI**: 20%+ annual return
 - **Asset Appreciation**: 5%+ annual growth
 
 ### Operational KPIs
+
 - **Guest Satisfaction**: 95%+ satisfaction scores
 - **Staff Retention**: 90%+ retention rate
 - **Occupancy Rates**: 85%+ average occupancy

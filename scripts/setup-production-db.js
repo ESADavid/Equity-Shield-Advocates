@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 #!/usr/bin/env node
 
 /**
@@ -19,19 +21,19 @@ class ProductionDatabaseSetup {
 
   async connect() {
     try {
-      console.log('🔧 Connecting to production database...');
+      logger.info('🔧 Connecting to production database...');
       this.client = new MongoClient(this.mongoUri);
       await this.client.connect();
       this.db = this.client.db(this.dbName);
-      console.log('✅ Connected to production database');
+      logger.info('✅ Connected to production database');
     } catch (error) {
-      console.error('❌ Failed to connect to database:', error.message);
+      logger.error('❌ Failed to connect to database:', error.message);
       throw error;
     }
   }
 
   async createCollections() {
-    console.log('🔧 Creating collections...');
+    logger.info('🔧 Creating collections...');
 
     const collections = [
       'users',
@@ -50,19 +52,19 @@ class ProductionDatabaseSetup {
     for (const collectionName of collections) {
       try {
         await this.db.createCollection(collectionName);
-        console.log(`✅ Created collection: ${collectionName}`);
+        logger.info(`✅ Created collection: ${collectionName}`);
       } catch (error) {
         if (error.code === 48) { // Collection already exists
-          console.log(`ℹ️ Collection already exists: ${collectionName}`);
+          logger.info(`ℹ️ Collection already exists: ${collectionName}`);
         } else {
-          console.error(`❌ Failed to create collection ${collectionName}:`, error.message);
+          logger.error(`❌ Failed to create collection ${collectionName}:`, error.message);
         }
       }
     }
   }
 
   async createIndexes() {
-    console.log('🔧 Creating indexes...');
+    logger.info('🔧 Creating indexes...');
 
     const indexes = [
       // Users collection
@@ -124,15 +126,15 @@ class ProductionDatabaseSetup {
     for (const index of indexes) {
       try {
         await this.db.collection(index.collection).createIndex(index.key, index.options || {});
-        console.log(`✅ Created index on ${index.collection}: ${JSON.stringify(index.key)}`);
+        logger.info(`✅ Created index on ${index.collection}: ${JSON.stringify(index.key)}`);
       } catch (error) {
-        console.error(`❌ Failed to create index on ${index.collection}:`, error.message);
+        logger.error(`❌ Failed to create index on ${index.collection}:`, error.message);
       }
     }
   }
 
   async createInitialData() {
-    console.log('🔧 Creating initial data...');
+    logger.info('🔧 Creating initial data...');
 
     // Create admin user if it doesn't exist
     const adminUser = {
@@ -149,12 +151,12 @@ class ProductionDatabaseSetup {
       const existingAdmin = await this.db.collection('users').findOne({ email: adminUser.email });
       if (!existingAdmin) {
         await this.db.collection('users').insertOne(adminUser);
-        console.log('✅ Created admin user');
+        logger.info('✅ Created admin user');
       } else {
-        console.log('ℹ️ Admin user already exists');
+        logger.info('ℹ️ Admin user already exists');
       }
     } catch (error) {
-      console.error('❌ Failed to create admin user:', error.message);
+      logger.error('❌ Failed to create admin user:', error.message);
     }
 
     // Create system configuration document
@@ -184,19 +186,19 @@ class ProductionDatabaseSetup {
         systemConfig,
         { upsert: true }
       );
-      console.log('✅ Created system configuration');
+      logger.info('✅ Created system configuration');
     } catch (error) {
-      console.error('❌ Failed to create system configuration:', error.message);
+      logger.error('❌ Failed to create system configuration:', error.message);
     }
   }
 
   async runMaintenance() {
-    console.log('🔧 Running database maintenance...');
+    logger.info('🔧 Running database maintenance...');
 
     try {
       // Run database stats
       const stats = await this.db.stats();
-      console.log('📊 Database stats:', {
+      logger.info('📊 Database stats:', {
         collections: stats.collections,
         objects: stats.objects,
         dataSize: `${(stats.dataSize / 1024 / 1024).toFixed(2)} MB`,
@@ -209,29 +211,29 @@ class ProductionDatabaseSetup {
         try {
           const validation = await this.db.command({ validate: collection.name });
           if (validation.valid) {
-            console.log(`✅ Collection ${collection.name} is valid`);
+            logger.info(`✅ Collection ${collection.name} is valid`);
           } else {
-            console.warn(`⚠️ Collection ${collection.name} has issues`);
+            logger.warn(`⚠️ Collection ${collection.name} has issues`);
           }
         } catch (error) {
-          console.error(`❌ Failed to validate collection ${collection.name}:`, error.message);
+          logger.error(`❌ Failed to validate collection ${collection.name}:`, error.message);
         }
       }
     } catch (error) {
-      console.error('❌ Database maintenance failed:', error.message);
+      logger.error('❌ Database maintenance failed:', error.message);
     }
   }
 
   async disconnect() {
     if (this.client) {
       await this.client.close();
-      console.log('✅ Disconnected from database');
+      logger.info('✅ Disconnected from database');
     }
   }
 
   async run() {
     try {
-      console.log('🚀 Starting production database setup...');
+      logger.info('🚀 Starting production database setup...');
 
       await this.connect();
       await this.createCollections();
@@ -239,9 +241,9 @@ class ProductionDatabaseSetup {
       await this.createInitialData();
       await this.runMaintenance();
 
-      console.log('✅ Production database setup completed successfully');
+      logger.info('✅ Production database setup completed successfully');
     } catch (error) {
-      console.error('❌ Production database setup failed:', error.message);
+      logger.error('❌ Production database setup failed:', error.message);
       process.exit(1);
     } finally {
       await this.disconnect();
@@ -252,6 +254,6 @@ class ProductionDatabaseSetup {
 // Execute setup
 const setup = new ProductionDatabaseSetup();
 setup.run().catch((error) => {
-  console.error('Fatal error:', error);
+  logger.error('Fatal error:', error);
   process.exit(1);
 });

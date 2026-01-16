@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 // Owlban Group Corporate Structure Implementation
 // Based on the designed hierarchy for proper compensation and operations
 
@@ -83,5 +85,5 @@ export default OwlbanGroup;
 
 // Example usage:
 // const owlban = new OwlbanGroup();
-// console.log('Designer Compensation:', owlban.getDesignerCompensation());
-// console.log('Corporate Hierarchy:', owlban.getHierarchy());
+// logger.info('Designer Compensation:', owlban.getDesignerCompensation());
+// logger.info('Corporate Hierarchy:', owlban.getHierarchy());
