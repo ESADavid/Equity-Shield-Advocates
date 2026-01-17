@@ -72,9 +72,10 @@ async function testPlaidService() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Run the test unconditionally
+(async () => {
   await testPlaidService();
-}
+})();
 
 export { testPlaidService };
 export default testPlaidService;

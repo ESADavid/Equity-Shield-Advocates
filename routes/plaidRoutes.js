@@ -1,10 +1,11 @@
 import express from 'express';
 import plaidService from '../services/plaidService.js';
+import { authenticateToken } from '../../config/security.js';
 
 const router = express.Router();
 
 // Create link token for account linking
-router.post('/create-link-token', async (req, res) => {
+router.post('/create-link-token', authenticateToken, async (req, res) => {
   try {
     const { userId, products } = req.body;
 
@@ -32,7 +33,7 @@ router.post('/create-link-token', async (req, res) => {
 });
 
 // Exchange public token for access token
-router.post('/exchange-public-token', async (req, res) => {
+router.post('/exchange-public-token', authenticateToken, async (req, res) => {
   try {
     const { publicToken } = req.body;
 
@@ -60,7 +61,7 @@ router.post('/exchange-public-token', async (req, res) => {
 });
 
 // Get account information
-router.get('/accounts/:accessToken', async (req, res) => {
+router.get('/accounts/:accessToken', authenticateToken, async (req, res) => {
   try {
     const { accessToken } = req.params;
 
@@ -81,7 +82,7 @@ router.get('/accounts/:accessToken', async (req, res) => {
 });
 
 // Get account balances
-router.get('/balances/:accessToken', async (req, res) => {
+router.get('/balances/:accessToken', authenticateToken, async (req, res) => {
   try {
     const { accessToken } = req.params;
 
@@ -102,7 +103,7 @@ router.get('/balances/:accessToken', async (req, res) => {
 });
 
 // Get transactions
-router.get('/transactions/:accessToken', async (req, res) => {
+router.get('/transactions/:accessToken', authenticateToken, async (req, res) => {
   try {
     const { accessToken } = req.params;
     const { startDate, endDate, count, offset } = req.query;
@@ -134,7 +135,7 @@ router.get('/transactions/:accessToken', async (req, res) => {
 });
 
 // Get income information
-router.get('/income/:accessToken', async (req, res) => {
+router.get('/income/:accessToken', authenticateToken, async (req, res) => {
   try {
     const { accessToken } = req.params;
 
@@ -155,7 +156,7 @@ router.get('/income/:accessToken', async (req, res) => {
 });
 
 // Verify account ownership (proof of funds)
-router.post('/verify-ownership/:accessToken/:accountId', async (req, res) => {
+router.post('/verify-ownership/:accessToken/:accountId', authenticateToken, async (req, res) => {
   try {
     const { accessToken, accountId } = req.params;
     const { amounts } = req.body;
@@ -184,7 +185,7 @@ router.post('/verify-ownership/:accessToken/:accountId', async (req, res) => {
 });
 
 // Get identity information
-router.get('/identity/:accessToken', async (req, res) => {
+router.get('/identity/:accessToken', authenticateToken, async (req, res) => {
   try {
     const { accessToken } = req.params;
 
@@ -205,7 +206,7 @@ router.get('/identity/:accessToken', async (req, res) => {
 });
 
 // Remove item (disconnect account)
-router.delete('/item/:accessToken', async (req, res) => {
+router.delete('/item/:accessToken', authenticateToken, async (req, res) => {
   try {
     const { accessToken } = req.params;
 
