@@ -239,6 +239,42 @@ export const plaidService = {
     }
   },
 
+  // Get institutions
+  async getInstitutions(options = {}) {
+    if (!plaidClient) {
+      // Return mock data for testing
+      const fs = await import('fs');
+      const path = await import('path');
+      const { fileURLToPath } = await import('url');
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+      const mockDataPath = path.join(__dirname, '../../../data/plaid_institutions.json');
+
+      try {
+        const mockData = fs.readFileSync(mockDataPath, 'utf8');
+        return JSON.parse(mockData);
+      } catch (error) {
+        logger.error('Error reading mock institutions data:', error);
+        throw new Error('Failed to get institutions data');
+      }
+    }
+
+    try {
+      const request = {
+        count: options.count || 50,
+        offset: options.offset || 0,
+        country_codes: options.country_codes || ['US'],
+        ...options,
+      };
+
+      const response = await plaidClient.institutionsGet(request);
+      return response.data;
+    } catch (error) {
+      logger.error('Error getting institutions:', error);
+      throw new Error('Failed to get institutions');
+    }
+  },
+
   // Webhook handling
   async handleWebhook(event) {
     logger.info('Received Plaid webhook:', event);

@@ -235,6 +235,33 @@ router.delete('/item/:accessToken', authenticateToken, async (req, res) => {
   }
 });
 
+// Get institutions
+router.get('/institutions', authenticateToken, async (req, res) => {
+  try {
+    const { count, offset, country_codes } = req.query;
+
+    const options = {
+      count: count ? parseInt(count) : undefined,
+      offset: offset ? parseInt(offset) : undefined,
+      country_codes: country_codes ? country_codes.split(',') : undefined,
+    };
+
+    const institutions = await plaidService.getInstitutions(options);
+
+    res.json({
+      success: true,
+      data: institutions,
+    });
+  } catch (error) {
+    logger.error('Error getting institutions:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get institutions',
+      error: error.message,
+    });
+  }
+});
+
 // Webhook endpoint
 router.post(
   '/webhook',
