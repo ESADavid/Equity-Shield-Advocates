@@ -160,6 +160,27 @@ router.get('/income/:accessToken', authenticateToken, async (req, res) => {
   }
 });
 
+// Get auth information (account and routing numbers)
+router.get('/auth/:accessToken', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken } = req.params;
+
+    const auth = await plaidService.getAuth(accessToken);
+
+    res.json({
+      success: true,
+      data: auth,
+    });
+  } catch (error) {
+    logger.error('Error getting auth:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get auth',
+      error: error.message,
+    });
+  }
+});
+
 // Verify account ownership (proof of funds)
 router.post('/verify-ownership/:accessToken/:accountId', authenticateToken, async (req, res) => {
   try {
@@ -262,14 +283,77 @@ router.get('/institutions', authenticateToken, async (req, res) => {
   }
 });
 
+// Get webhook verification key
+router.get('/webhook-verification-key', authenticateToken, async (req, res) => {
+  try {
+    const verificationKey = await plaidService.getWebhookVerificationKey();
+
+    res.json({
+      success: true,
+      data: {
+        key: verificationKey,
+      },
+    });
+  } catch (error) {
+    logger.error('Error getting webhook verification key:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get webhook verification key',
+      error: error.message,
+    });
+  }
+});
+
 // Webhook endpoint
 router.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
   async (req, res) => {
     try {
-      // Verify webhook signature (in production, implement proper verification)
-      const event = JSON.parse(req.body);
+      const rawBody = req.body;
+      const signature = req.headers['plaid-webhook-signature'];
+
+      // Get webhook verification key dynamically (fallback to env var)
+      let verificationKey = process.env.PLAID_WEBHOOK_VERIFICATION_KEY;
+      if (!verificationKey) {
+        try {
+          verificationKey = await plaidService.getWebhookVerificationKey();
+        } catch (error) {
+          logger.error('Failed to retrieve webhook verification key:', error);
+          return res.status(500).json({
+            success: false,
+            message: 'Webhook verification key unavailable',
+          });
+        }
+      }
+
+      // Verify webhook signature in production
+      if (process.env.NODE_ENV === 'production' && verificationKey) {
+        const isValidSignature = await plaidService.verifyWebhookSignature(
+          rawBody,
+          signature,
+          verificationKey
+        );
+
+        if (!isValidSignature) {
+          logger.warn('Invalid webhook signature received');
+          return res.status(401).json({
+            success: false,
+            message: 'Invalid webhook signature',
+          });
+        }
+      }
+
+      const event = JSON.parse(rawBody);
+
+      // Validate webhook event structure
+      if (!event.webhook_type || !event.webhook_code) {
+        logger.warn('Invalid webhook event structure:', event);
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid webhook event structure',
+        });
+      }
 
       const result = await plaidService.handleWebhook(event);
 
