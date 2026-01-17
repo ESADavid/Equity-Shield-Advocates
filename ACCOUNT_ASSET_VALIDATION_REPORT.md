@@ -15,11 +15,11 @@ This report provides comprehensive validation of banking accounts, private banki
 
 #### Account Details
 
-| Account Name | Type | Balance | Status | Last Transaction |
-|-------------|------|---------|--------|------------------|
-| Primary Checking | Checking | $25,000,000.00 | Active | 2024-01-15 |
-| Investment Portfolio | Investment | $50,000,000.00 | Active | 2024-01-14 |
-| Private Banking Reserve | Savings | $17,500,000.00 | Active | 2024-01-13 |
+| Account Name            | Type       | Balance        | Status | Last Transaction |
+| ----------------------- | ---------- | -------------- | ------ | ---------------- |
+| Primary Checking        | Checking   | $25,000,000.00 | Active | 2024-01-15       |
+| Investment Portfolio    | Investment | $50,000,000.00 | Active | 2024-01-14       |
+| Private Banking Reserve | Savings    | $17,500,000.00 | Active | 2024-01-13       |
 
 ### Routing Number Validation
 
@@ -69,13 +69,13 @@ This report provides comprehensive validation of banking accounts, private banki
 
 #### Asset Allocation
 
-| Asset Class | Allocation | Value | Performance (YTD) |
-|-------------|------------|-------|-------------------|
-| US Equities | 35% | $25,000,000 | +12.8% |
-| International Equities | 20% | $15,000,000 | +9.5% |
-| Fixed Income | 25% | $20,000,000 | +4.2% |
-| Alternative Investments | 12% | $10,000,00 | +8.9% |
-| Cash Equivalents | 8% | $5,000,000 | +2.5% |
+| Asset Class             | Allocation | Value       | Performance (YTD) |
+| ----------------------- | ---------- | ----------- | ----------------- |
+| US Equities             | 35%        | $25,000,000 | +12.8%            |
+| International Equities  | 20%        | $15,000,000 | +9.5%             |
+| Fixed Income            | 25%        | $20,000,000 | +4.2%             |
+| Alternative Investments | 12%        | $10,000,00  | +8.9%             |
+| Cash Equivalents        | 8%         | $5,000,000  | +2.5%             |
 
 ### Performance Metrics
 
@@ -153,15 +153,15 @@ This report provides comprehensive validation of banking accounts, private banki
 
 ## ✅ Validation Summary
 
-| Component | Status | Score |
-|-----------|--------|-------|
-| Account Validation | ✅ Passed | 100% |
-| Routing Numbers | ✅ Passed | 100% |
-| Wallet Security | ✅ Passed | 100% |
-| Private Banking | ✅ Passed | 98% |
-| Asset Management | ✅ Passed | 96% |
-| Security Systems | ✅ Passed | 100% |
-| Performance | ✅ Passed | 97% |
+| Component          | Status    | Score |
+| ------------------ | --------- | ----- |
+| Account Validation | ✅ Passed | 100%  |
+| Routing Numbers    | ✅ Passed | 100%  |
+| Wallet Security    | ✅ Passed | 100%  |
+| Private Banking    | ✅ Passed | 98%   |
+| Asset Management   | ✅ Passed | 96%   |
+| Security Systems   | ✅ Passed | 100%  |
+| Performance        | ✅ Passed | 97%   |
 
 **Overall Validation Score: 99%**
 

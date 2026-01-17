@@ -3,21 +3,18 @@
 ## Income Sources
 
 - **Owlban Group**
-
   - Amount: $1.2 Quadrillion
 
-  - Notes: __________
+  - Notes: \***\*\_\_\*\***
 
 - **Blackbox AI**
-
   - Amount: $1.8 Quadrillion
 
-  - Notes: __________
+  - Notes: \***\*\_\_\*\***
 
 ## Assets Under Management
 
 - **Owlban Group Total Assets:**
-
   - Amount: $24.7 Quadrillion
 
   - Notes: Includes all assets under management across divisions.
@@ -28,4 +25,4 @@
 
 ## Additional Notes
 
-- ______________________________________________________
+- ***

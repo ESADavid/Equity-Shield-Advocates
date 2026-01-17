@@ -10,13 +10,16 @@ async function testWalletDecryption() {
     // Test 1: Valid wallet decryption request
     console.log('Test 1: Valid wallet decryption request');
     const testWalletData = {
-      encryptedWalletData: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImNhcmROdW1iZXIiOiI0MTExMTExMTExMTExMTEiLCJleHBpcnlEYXRlIjoiMTIvMjUiLCJjdnYiOiIxMjMifX0.signature'
+      encryptedWalletData:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImNhcmROdW1iZXIiOiI0MTExMTExMTExMTExMTEiLCJleHBpcnlEYXRlIjoiMTIvMjUiLCJjdnYiOiIxMjMifX0.signature',
     };
 
-    const response = await axios.post(`${baseURL}/wallet-decrypt`, testWalletData);
+    const response = await axios.post(
+      `${baseURL}/wallet-decrypt`,
+      testWalletData
+    );
     console.log('✅ Success:', response.data);
     console.log('');
-
   } catch (error) {
     if (error.response) {
       console.log('❌ API Error:', error.response.status, error.response.data);
@@ -31,10 +34,12 @@ async function testWalletDecryption() {
     console.log('Test 2: Missing encryptedWalletData');
     const response = await axios.post(`${baseURL}/wallet-decrypt`, {});
     console.log('❌ Should have failed:', response.data);
-
   } catch (error) {
     if (error.response && error.response.status === 400) {
-      console.log('✅ Correctly rejected invalid request:', error.response.data);
+      console.log(
+        '✅ Correctly rejected invalid request:',
+        error.response.data
+      );
     } else {
       console.log('❌ Unexpected error:', error.message);
     }
@@ -45,13 +50,15 @@ async function testWalletDecryption() {
     // Test 3: Invalid encryptedWalletData format
     console.log('Test 3: Invalid encryptedWalletData format');
     const response = await axios.post(`${baseURL}/wallet-decrypt`, {
-      encryptedWalletData: 'invalid-format'
+      encryptedWalletData: 'invalid-format',
     });
     console.log('❌ Should have failed:', response.data);
-
   } catch (error) {
     if (error.response && error.response.status === 500) {
-      console.log('✅ Correctly handled invalid format:', error.response.data.error);
+      console.log(
+        '✅ Correctly handled invalid format:',
+        error.response.data.error
+      );
     } else {
       console.log('❌ Unexpected error:', error.message);
     }

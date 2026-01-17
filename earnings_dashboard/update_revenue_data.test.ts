@@ -1,11 +1,11 @@
-
 const fs = require('node:fs').promises;
 const path = require('node:path');
 const updateRevenueData = require('./update_revenue_data');
 
-
-const testDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/test_revenue.json');
-
+const testDataPath = path.resolve(
+  __dirname,
+  '../owlban_repos/sample_repo/test_revenue.json'
+);
 
 // Mock data for testing
 const mockRevenueData = {
@@ -14,19 +14,19 @@ const mockRevenueData = {
     corporateHomes: 0,
     corporateHomesDetails: [],
     autoFleet: 0,
-    autoFleetDetails: []
+    autoFleetDetails: [],
   },
   revenueStreams: {
     consulting: { amount: 500000 },
     software: { amount: 300000 },
-    hardware: { amount: 200000 }
+    hardware: { amount: 200000 },
   },
   revenueStreamsDetails: {},
   payroll: [
     { employeeId: 'EMP001', amount: 5000, date: '2024-01-01' },
-    { employeeId: 'EMP002', amount: 6000, date: '2024-01-01' }
+    { employeeId: 'EMP002', amount: 6000, date: '2024-01-01' },
   ],
-  auditTrail: []
+  auditTrail: [],
 };
 
 describe('updateRevenueData', () => {
@@ -99,12 +99,15 @@ describe('updateRevenueData', () => {
   });
 
   test('should validate and sanitize purchase costs', async () => {
-    const invalidData = { ...mockRevenueData, purchases: {
-      corporateHomes: 'invalid',
-      corporateHomesDetails: [],
-      autoFleet: -100,
-      autoFleetDetails: []
-    } };
+    const invalidData = {
+      ...mockRevenueData,
+      purchases: {
+        corporateHomes: 'invalid',
+        corporateHomesDetails: [],
+        autoFleet: -100,
+        autoFleetDetails: [],
+      },
+    };
 
     await fs.writeFile(testDataPath, JSON.stringify(invalidData, null, 2));
 
@@ -123,9 +126,10 @@ describe('updateRevenueData', () => {
       delete dataWithoutPurchases.purchases;
     }
 
-    await fs.writeFile(testDataPath, JSON.stringify(dataWithoutPurchases, null, 2));
-
-
+    await fs.writeFile(
+      testDataPath,
+      JSON.stringify(dataWithoutPurchases, null, 2)
+    );
 
     const result = await updateRevenueData(testDataPath, false);
     expect(result).toBe(true);
@@ -146,15 +150,19 @@ describe('updateRevenueData', () => {
   });
 
   test('should handle invalid payroll entries', async () => {
-    const dataWithInvalidPayroll = { ...mockRevenueData, 
+    const dataWithInvalidPayroll = {
+      ...mockRevenueData,
       payroll: [
         { employeeId: 'EMP001', amount: 5000, date: '2024-01-01' },
         { employeeId: 'EMP002', amount: 'invalid', date: '2024-01-01' },
-        { employeeId: 'EMP003', amount: -1000, date: '2024-01-01' }
-      ]
+        { employeeId: 'EMP003', amount: -1000, date: '2024-01-01' },
+      ],
     };
 
-    await fs.writeFile(testDataPath, JSON.stringify(dataWithInvalidPayroll, null, 2));
+    await fs.writeFile(
+      testDataPath,
+      JSON.stringify(dataWithInvalidPayroll, null, 2)
+    );
 
     const result = await updateRevenueData(testDataPath, false);
     expect(result).toBe(true);
@@ -184,9 +192,10 @@ describe('updateRevenueData', () => {
       delete dataWithoutRevenueStreamsDetails.revenueStreamsDetails;
     }
 
-    await fs.writeFile(testDataPath, JSON.stringify(dataWithoutRevenueStreamsDetails, null, 2));
-
-
+    await fs.writeFile(
+      testDataPath,
+      JSON.stringify(dataWithoutRevenueStreamsDetails, null, 2)
+    );
 
     const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
@@ -205,7 +214,9 @@ describe('updateRevenueData', () => {
     // Check that transaction details were added for each revenue stream
     for (const streamName of Object.keys(updatedData.revenueStreams)) {
       expect(updatedData.revenueStreamsDetails[streamName]).toBeDefined();
-      expect(Array.isArray(updatedData.revenueStreamsDetails[streamName])).toBe(true);
+      expect(Array.isArray(updatedData.revenueStreamsDetails[streamName])).toBe(
+        true
+      );
       if (updatedData.revenueStreamsDetails[streamName].length > 0) {
         const transaction = updatedData.revenueStreamsDetails[streamName][0];
         expect(transaction).toHaveProperty('transactionId');
@@ -224,9 +235,15 @@ describe('updateRevenueData', () => {
   });
 
   test('should handle invalid totalRevenue values', async () => {
-    const dataWithInvalidRevenue = { ...mockRevenueData, totalRevenue: 'invalid' };
+    const dataWithInvalidRevenue = {
+      ...mockRevenueData,
+      totalRevenue: 'invalid',
+    };
 
-    await fs.writeFile(testDataPath, JSON.stringify(dataWithInvalidRevenue, null, 2));
+    await fs.writeFile(
+      testDataPath,
+      JSON.stringify(dataWithInvalidRevenue, null, 2)
+    );
 
     const result = await updateRevenueData(false, testDataPath);
     expect(result).toBe(true);
@@ -236,12 +253,13 @@ describe('updateRevenueData', () => {
   });
 
   test('should preserve existing data structure', async () => {
-    const customData = { ...mockRevenueData, 
+    const customData = {
+      ...mockRevenueData,
       customField: 'test value',
       nestedObject: {
         property1: 'value1',
-        property2: 42
-      }
+        property2: 42,
+      },
     };
 
     await fs.writeFile(testDataPath, JSON.stringify(customData, null, 2));
@@ -253,7 +271,7 @@ describe('updateRevenueData', () => {
     expect(updatedData.customField).toBe('test value');
     expect(updatedData.nestedObject).toEqual({
       property1: 'value1',
-      property2: 42
+      property2: 42,
     });
   });
 });

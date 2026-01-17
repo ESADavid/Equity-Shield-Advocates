@@ -7,7 +7,7 @@ import {
   Employee,
   EmployeeInput,
   PayrollCalculationInput,
-  PAYROLL_CONSTANTS
+  PAYROLL_CONSTANTS,
 } from '../types/payroll.js';
 
 export class PayrollValidationError extends Error {
@@ -25,25 +25,52 @@ export class PayrollValidationError extends Error {
 /**
  * Validates a required string field
  */
-function validateRequiredString(value: any, fieldName: string, errors: PayrollValidationError[]): void {
+function validateRequiredString(
+  value: any,
+  fieldName: string,
+  errors: PayrollValidationError[]
+): void {
   if (!value || typeof value !== 'string' || value.trim().length === 0) {
-    errors.push(new PayrollValidationError(fieldName, `${fieldName} is required and must be a non-empty string`));
+    errors.push(
+      new PayrollValidationError(
+        fieldName,
+        `${fieldName} is required and must be a non-empty string`
+      )
+    );
   }
 }
 
 /**
  * Validates a numeric field within bounds
  */
-function validateNumericField(value: any, fieldName: string, min: number, max: number, errors: PayrollValidationError[]): void {
+function validateNumericField(
+  value: any,
+  fieldName: string,
+  min: number,
+  max: number,
+  errors: PayrollValidationError[]
+): void {
   if (typeof value !== 'number' || value < min || value > max) {
-    errors.push(new PayrollValidationError(fieldName, `${fieldName} must be between ${min} and ${max}`, value));
+    errors.push(
+      new PayrollValidationError(
+        fieldName,
+        `${fieldName} must be between ${min} and ${max}`,
+        value
+      )
+    );
   }
 }
 
 /**
  * Validates an optional numeric field
  */
-function validateOptionalNumericField(value: any, fieldName: string, min: number, max: number, errors: PayrollValidationError[]): void {
+function validateOptionalNumericField(
+  value: any,
+  fieldName: string,
+  min: number,
+  max: number,
+  errors: PayrollValidationError[]
+): void {
   if (value !== undefined) {
     validateNumericField(value, fieldName, min, max, errors);
   }
@@ -52,16 +79,37 @@ function validateOptionalNumericField(value: any, fieldName: string, min: number
 /**
  * Validates banking information
  */
-function validateBankingInfo(input: EmployeeInput, errors: PayrollValidationError[]): void {
+function validateBankingInfo(
+  input: EmployeeInput,
+  errors: PayrollValidationError[]
+): void {
   if (input.accountNumber !== undefined) {
-    if (typeof input.accountNumber !== 'string' || !/^\d{8,17}$/.test(input.accountNumber)) {
-      errors.push(new PayrollValidationError('accountNumber', 'Account number must be 8-17 digits', input.accountNumber));
+    if (
+      typeof input.accountNumber !== 'string' ||
+      !/^\d{8,17}$/.test(input.accountNumber)
+    ) {
+      errors.push(
+        new PayrollValidationError(
+          'accountNumber',
+          'Account number must be 8-17 digits',
+          input.accountNumber
+        )
+      );
     }
   }
 
   if (input.routingNumber !== undefined) {
-    if (typeof input.routingNumber !== 'string' || !/^\d{9}$/.test(input.routingNumber)) {
-      errors.push(new PayrollValidationError('routingNumber', 'Routing number must be 9 digits', input.routingNumber));
+    if (
+      typeof input.routingNumber !== 'string' ||
+      !/^\d{9}$/.test(input.routingNumber)
+    ) {
+      errors.push(
+        new PayrollValidationError(
+          'routingNumber',
+          'Routing number must be 9 digits',
+          input.routingNumber
+        )
+      );
     }
   }
 }
@@ -69,10 +117,19 @@ function validateBankingInfo(input: EmployeeInput, errors: PayrollValidationErro
 /**
  * Validates salary field
  */
-function validateSalaryField(input: EmployeeInput, errors: PayrollValidationError[]): void {
+function validateSalaryField(
+  input: EmployeeInput,
+  errors: PayrollValidationError[]
+): void {
   if (input.salary !== undefined) {
     if (typeof input.salary !== 'number' || input.salary < 0) {
-      errors.push(new PayrollValidationError('salary', 'Salary must be a positive number', input.salary));
+      errors.push(
+        new PayrollValidationError(
+          'salary',
+          'Salary must be a positive number',
+          input.salary
+        )
+      );
     }
   }
 }
@@ -80,31 +137,108 @@ function validateSalaryField(input: EmployeeInput, errors: PayrollValidationErro
 /**
  * Validates optional payroll calculation fields
  */
-function validateOptionalPayrollFields(input: PayrollCalculationInput, errors: PayrollValidationError[]): void {
-  validateOptionalNumericField(input.hoursWorked, 'hoursWorked', 0, PAYROLL_CONSTANTS.MAX_HOURS_WORKED, errors);
-  validateOptionalNumericField(input.hourlyRate, 'hourlyRate', 0, PAYROLL_CONSTANTS.MAX_HOURLY_RATE, errors);
-  validateOptionalNumericField(input.overtimeHours, 'overtimeHours', 0, PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS, errors);
-  validateOptionalNumericField(input.taxRate, 'taxRate', PAYROLL_CONSTANTS.MIN_TAX_RATE, PAYROLL_CONSTANTS.MAX_TAX_RATE, errors);
-  validateOptionalNumericField(input.deductions, 'deductions', 0, PAYROLL_CONSTANTS.MAX_DEDUCTIONS, errors);
-  validateOptionalNumericField(input.bonuses, 'bonuses', 0, PAYROLL_CONSTANTS.MAX_BONUSES, errors);
+function validateOptionalPayrollFields(
+  input: PayrollCalculationInput,
+  errors: PayrollValidationError[]
+): void {
+  validateOptionalNumericField(
+    input.hoursWorked,
+    'hoursWorked',
+    0,
+    PAYROLL_CONSTANTS.MAX_HOURS_WORKED,
+    errors
+  );
+  validateOptionalNumericField(
+    input.hourlyRate,
+    'hourlyRate',
+    0,
+    PAYROLL_CONSTANTS.MAX_HOURLY_RATE,
+    errors
+  );
+  validateOptionalNumericField(
+    input.overtimeHours,
+    'overtimeHours',
+    0,
+    PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS,
+    errors
+  );
+  validateOptionalNumericField(
+    input.taxRate,
+    'taxRate',
+    PAYROLL_CONSTANTS.MIN_TAX_RATE,
+    PAYROLL_CONSTANTS.MAX_TAX_RATE,
+    errors
+  );
+  validateOptionalNumericField(
+    input.deductions,
+    'deductions',
+    0,
+    PAYROLL_CONSTANTS.MAX_DEDUCTIONS,
+    errors
+  );
+  validateOptionalNumericField(
+    input.bonuses,
+    'bonuses',
+    0,
+    PAYROLL_CONSTANTS.MAX_BONUSES,
+    errors
+  );
 }
 
 /**
  * Validates employee input data
  */
-export function validateEmployeeInput(input: EmployeeInput): PayrollValidationError[] {
+export function validateEmployeeInput(
+  input: EmployeeInput
+): PayrollValidationError[] {
   const errors: PayrollValidationError[] = [];
 
   // Required fields
   validateRequiredString(input.name, 'name', errors);
-  validateNumericField(input.taxRate, 'taxRate', PAYROLL_CONSTANTS.MIN_TAX_RATE, PAYROLL_CONSTANTS.MAX_TAX_RATE, errors);
-  validateNumericField(input.deductions, 'deductions', 0, PAYROLL_CONSTANTS.MAX_DEDUCTIONS, errors);
-  validateNumericField(input.bonuses, 'bonuses', 0, PAYROLL_CONSTANTS.MAX_BONUSES, errors);
+  validateNumericField(
+    input.taxRate,
+    'taxRate',
+    PAYROLL_CONSTANTS.MIN_TAX_RATE,
+    PAYROLL_CONSTANTS.MAX_TAX_RATE,
+    errors
+  );
+  validateNumericField(
+    input.deductions,
+    'deductions',
+    0,
+    PAYROLL_CONSTANTS.MAX_DEDUCTIONS,
+    errors
+  );
+  validateNumericField(
+    input.bonuses,
+    'bonuses',
+    0,
+    PAYROLL_CONSTANTS.MAX_BONUSES,
+    errors
+  );
 
   // Optional numeric fields
-  validateOptionalNumericField(input.hourlyRate, 'hourlyRate', 0, PAYROLL_CONSTANTS.MAX_HOURLY_RATE, errors);
-  validateOptionalNumericField(input.hoursWorked, 'hoursWorked', 0, PAYROLL_CONSTANTS.MAX_HOURS_WORKED, errors);
-  validateOptionalNumericField(input.overtimeHours, 'overtimeHours', 0, PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS, errors);
+  validateOptionalNumericField(
+    input.hourlyRate,
+    'hourlyRate',
+    0,
+    PAYROLL_CONSTANTS.MAX_HOURLY_RATE,
+    errors
+  );
+  validateOptionalNumericField(
+    input.hoursWorked,
+    'hoursWorked',
+    0,
+    PAYROLL_CONSTANTS.MAX_HOURS_WORKED,
+    errors
+  );
+  validateOptionalNumericField(
+    input.overtimeHours,
+    'overtimeHours',
+    0,
+    PAYROLL_CONSTANTS.MAX_OVERTIME_HOURS,
+    errors
+  );
 
   // Salary validation
   validateSalaryField(input, errors);
@@ -118,7 +252,9 @@ export function validateEmployeeInput(input: EmployeeInput): PayrollValidationEr
 /**
  * Validates payroll calculation input
  */
-export function validatePayrollCalculationInput(input: PayrollCalculationInput): PayrollValidationError[] {
+export function validatePayrollCalculationInput(
+  input: PayrollCalculationInput
+): PayrollValidationError[] {
   const errors: PayrollValidationError[] = [];
 
   // Required field
@@ -145,7 +281,7 @@ export function sanitizeEmployeeInput(input: EmployeeInput): EmployeeInput {
     name: input.name?.trim(),
     taxRate: input.taxRate,
     deductions: input.deductions,
-    bonuses: input.bonuses
+    bonuses: input.bonuses,
   };
 
   if (input.hourlyRate !== undefined) {
@@ -189,10 +325,12 @@ export function sanitizeEmployeeInput(input: EmployeeInput): EmployeeInput {
  * Checks if an employee ID is valid format
  */
 export function isValidEmployeeId(employeeId: string): boolean {
-  return typeof employeeId === 'string' &&
-         employeeId.length > 0 &&
-         employeeId.length <= 50 &&
-         /^[a-zA-Z0-9_-]+$/.test(employeeId);
+  return (
+    typeof employeeId === 'string' &&
+    employeeId.length > 0 &&
+    employeeId.length <= 50 &&
+    /^[a-zA-Z0-9_-]+$/.test(employeeId)
+  );
 }
 
 /**
@@ -200,5 +338,8 @@ export function isValidEmployeeId(employeeId: string): boolean {
  */
 export function isValidPayPeriod(payPeriod: string): boolean {
   const date = new Date(payPeriod);
-  return !Number.isNaN(date.getTime()) && payPeriod === date.toISOString().split('T')[0];
+  return (
+    !Number.isNaN(date.getTime()) &&
+    payPeriod === date.toISOString().split('T')[0]
+  );
 }

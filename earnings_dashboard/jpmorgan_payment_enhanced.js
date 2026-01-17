@@ -16,15 +16,18 @@ const logger = winston.createLogger({
   ),
   defaultMeta: { service: 'jpmorgan-payment' },
   transports: [
-    new winston.transports.File({ filename: 'logs/jpmorgan-error.log', level: 'error' }),
+    new winston.transports.File({
+      filename: 'logs/jpmorgan-error.log',
+      level: 'error',
+    }),
     new winston.transports.File({ filename: 'logs/jpmorgan-combined.log' }),
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.simple()
-      )
-    })
-  ]
+      ),
+    }),
+  ],
 });
 
 // Create logs directory if it doesn't exist
@@ -58,18 +61,22 @@ class AuthenticationError extends JPMorganPaymentError {
 
 // JPMorgan Payments API Configuration
 const CONFIG = {
-  BASE_URL: process.env.JPMORGAN_BASE_URL || 'https://api-mock.payments.jpmorgan.com',
+  BASE_URL:
+    process.env.JPMORGAN_BASE_URL || 'https://api-mock.payments.jpmorgan.com',
   CLIENT_ID: process.env.JPMORGAN_CLIENT_ID,
   CLIENT_SECRET: process.env.JPMORGAN_CLIENT_SECRET,
   MERCHANT_ID: process.env.JPMORGAN_MERCHANT_ID,
   TERMINAL_ID: process.env.JPMORGAN_TERMINAL_ID,
   WEBHOOK_SECRET: process.env.JPMORGAN_WEBHOOK_SECRET,
   TIMEOUT: parseInt(process.env.JPMORGAN_API_TIMEOUT) || 10000,
-  RETRY_ATTEMPTS: parseInt(process.env.JPMORGAN_RETRY_ATTEMPTS) || 3
+  RETRY_ATTEMPTS: parseInt(process.env.JPMORGAN_RETRY_ATTEMPTS) || 3,
 };
 
 // Revenue data path
-const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+const revenueDataPath = path.resolve(
+  __dirname,
+  '../owlban_repos/sample_repo/revenue.json'
+);
 
 // Input validation schemas
 const validatePaymentRequest = (data) => {
@@ -96,7 +103,7 @@ const validatePaymentRequest = (data) => {
     currency: currency.toUpperCase(),
     orderId: orderId.trim(),
     description: description?.trim(),
-    customer
+    customer,
   };
 };
 
@@ -118,7 +125,7 @@ const validateRefundRequest = (data) => {
   return {
     paymentId: paymentId.trim(),
     amount,
-    reason: reason?.trim()
+    reason: reason?.trim(),
   };
 };
 
@@ -127,8 +134,8 @@ const axiosInstance = axios.create({
   baseURL: CONFIG.BASE_URL,
   timeout: CONFIG.TIMEOUT,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
 // Request interceptor for logging
@@ -137,7 +144,7 @@ axiosInstance.interceptors.request.use(
     logger.info('JPMorgan API Request', {
       method: config.method?.toUpperCase(),
       url: config.url,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
     return config;
   },
@@ -153,7 +160,7 @@ axiosInstance.interceptors.response.use(
     logger.info('JPMorgan API Response', {
       status: response.status,
       url: response.config.url,
-      duration: Date.now() - response.config.metadata?.startTime
+      duration: Date.now() - response.config.metadata?.startTime,
     });
     return response;
   },
@@ -162,7 +169,7 @@ axiosInstance.interceptors.response.use(
       status: error.response?.status,
       url: error.config?.url,
       error: error.response?.data || error.message,
-      duration: Date.now() - error.config?.metadata?.startTime
+      duration: Date.now() - error.config?.metadata?.startTime,
     });
     return Promise.reject(error);
   }
@@ -214,11 +221,11 @@ function generateAuthHeaders() {
   return {
     'Content-Type': 'application/json',
     'Client-Id': CONFIG.CLIENT_ID,
-    'Timestamp': timestamp.toString(),
-    'Nonce': nonce,
-    'Signature': signature,
+    Timestamp: timestamp.toString(),
+    Nonce: nonce,
+    Signature: signature,
     'Merchant-Id': CONFIG.MERCHANT_ID,
-    'Terminal-Id': CONFIG.TERMINAL_ID
+    'Terminal-Id': CONFIG.TERMINAL_ID,
   };
 }
 
@@ -232,18 +239,18 @@ const logRequest = (req, res, next) => {
     method: req.method,
     url: req.url,
     ip: req.ip,
-    userAgent: req.get('User-Agent')
+    userAgent: req.get('User-Agent'),
   });
 
   // Override res.json to log response
   const originalJson = res.json;
-  res.json = function(data) {
+  res.json = function (data) {
     const duration = Date.now() - startTime;
     logger.info('Request completed', {
       requestId,
       statusCode: res.statusCode,
       duration,
-      success: data.success !== false
+      success: data.success !== false,
     });
     return originalJson.call(this, data);
   };
@@ -259,14 +266,14 @@ const handleErrors = (error, req, res, next) => {
       message: error.message,
       code: error.code,
       statusCode: error.statusCode,
-      stack: error.stack
+      stack: error.stack,
     });
 
     return res.status(error.statusCode).json({
       success: false,
       error: error.message,
       code: error.code,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -275,14 +282,14 @@ const handleErrors = (error, req, res, next) => {
     logger.error('JPMorgan API error', {
       status: error.response.status,
       data: error.response.data,
-      url: error.config?.url
+      url: error.config?.url,
     });
 
     return res.status(error.response.status).json({
       success: false,
       error: 'JPMorgan API error',
       details: error.response.data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -291,19 +298,19 @@ const handleErrors = (error, req, res, next) => {
     return res.status(504).json({
       success: false,
       error: 'Request timeout',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
   logger.error('Unexpected error', {
     message: error.message,
-    stack: error.stack
+    stack: error.stack,
   });
 
   res.status(500).json({
     success: false,
     error: 'Internal server error',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -319,29 +326,29 @@ router.post('/create-payment', async (req, res, next) => {
     const paymentData = {
       amount: {
         value: validatedData.amount,
-        currency: validatedData.currency
+        currency: validatedData.currency,
       },
       order: {
         id: validatedData.orderId,
-        description: validatedData.description || 'Payment for services'
+        description: validatedData.description || 'Payment for services',
       },
       customer: validatedData.customer || {},
       merchant: {
         id: CONFIG.MERCHANT_ID,
-        terminalId: CONFIG.TERMINAL_ID
+        terminalId: CONFIG.TERMINAL_ID,
       },
       paymentMethod: {
-        type: 'CARD'
+        type: 'CARD',
       },
       metadata: {
         source: 'oscar-broome-revenue',
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     };
 
     const response = await axiosInstance.post('/v1/payments', paymentData, {
       headers,
-      metadata: { startTime: Date.now() }
+      metadata: { startTime: Date.now() },
     });
 
     // Update local revenue data
@@ -353,7 +360,7 @@ router.post('/create-payment', async (req, res, next) => {
         currency: validatedData.currency,
         orderId: validatedData.orderId,
         status: response.data.status,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       });
       writeRevenueData(revenueData);
     }
@@ -364,9 +371,8 @@ router.post('/create-payment', async (req, res, next) => {
       status: response.data.status,
       authorizationCode: response.data.authorizationCode,
       transactionDetails: response.data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     next(error);
   }
@@ -387,13 +393,13 @@ router.get('/payment-status/:paymentId', async (req, res, next) => {
     // Check cache first
     const cacheKey = `payment_${paymentId}`;
     const cached = paymentCache.get(cacheKey);
-    if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
       logger.info('Returning cached payment status', { paymentId });
       return res.json({
         success: true,
         paymentStatus: cached.data,
         cached: true,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -401,21 +407,20 @@ router.get('/payment-status/:paymentId', async (req, res, next) => {
 
     const response = await axiosInstance.get(`/v1/payments/${paymentId}`, {
       headers,
-      metadata: { startTime: Date.now() }
+      metadata: { startTime: Date.now() },
     });
 
     // Cache the result
     paymentCache.set(cacheKey, {
       data: response.data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     res.json({
       success: true,
       paymentStatus: response.data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     next(error);
   }
@@ -428,30 +433,37 @@ router.post('/refund', async (req, res, next) => {
     const headers = generateAuthHeaders();
 
     // Check if payment exists and is refundable
-    const paymentResponse = await axiosInstance.get(`/v1/payments/${validatedData.paymentId}`, {
-      headers,
-      metadata: { startTime: Date.now() }
-    });
+    const paymentResponse = await axiosInstance.get(
+      `/v1/payments/${validatedData.paymentId}`,
+      {
+        headers,
+        metadata: { startTime: Date.now() },
+      }
+    );
 
     const payment = paymentResponse.data;
     if (!['CAPTURED', 'AUTHORIZED'].includes(payment.status)) {
-      throw new ValidationError(`Cannot refund payment with status: ${payment.status}`);
+      throw new ValidationError(
+        `Cannot refund payment with status: ${payment.status}`
+      );
     }
 
     if (validatedData.amount > payment.amount.value) {
-      throw new ValidationError('Refund amount cannot exceed original payment amount');
+      throw new ValidationError(
+        'Refund amount cannot exceed original payment amount'
+      );
     }
 
     const refundData = {
       amount: {
         value: validatedData.amount,
-        currency: 'USD'
+        currency: 'USD',
       },
       reason: validatedData.reason || 'Customer request',
       metadata: {
         source: 'oscar-broome-revenue',
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     };
 
     const response = await axiosInstance.post(
@@ -459,21 +471,24 @@ router.post('/refund', async (req, res, next) => {
       refundData,
       {
         headers,
-        metadata: { startTime: Date.now() }
+        metadata: { startTime: Date.now() },
       }
     );
 
     // Update local revenue data
     const revenueData = readRevenueData();
     if (revenueData) {
-      const paymentIndex = revenueData.payments.findIndex(p => p.id === validatedData.paymentId);
+      const paymentIndex = revenueData.payments.findIndex(
+        (p) => p.id === validatedData.paymentId
+      );
       if (paymentIndex !== -1) {
-        revenueData.payments[paymentIndex].refunds = revenueData.payments[paymentIndex].refunds || [];
+        revenueData.payments[paymentIndex].refunds =
+          revenueData.payments[paymentIndex].refunds || [];
         revenueData.payments[paymentIndex].refunds.push({
           id: response.data.id,
           amount: validatedData.amount,
           reason: validatedData.reason,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         });
         writeRevenueData(revenueData);
       }
@@ -484,9 +499,8 @@ router.post('/refund', async (req, res, next) => {
       refundId: response.data.id,
       status: response.data.status,
       refundDetails: response.data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     next(error);
   }
@@ -504,28 +518,35 @@ router.post('/capture', async (req, res, next) => {
     const headers = generateAuthHeaders();
 
     // Verify payment status before capture
-    const paymentResponse = await axiosInstance.get(`/v1/payments/${paymentId}`, {
-      headers,
-      metadata: { startTime: Date.now() }
-    });
+    const paymentResponse = await axiosInstance.get(
+      `/v1/payments/${paymentId}`,
+      {
+        headers,
+        metadata: { startTime: Date.now() },
+      }
+    );
 
     if (paymentResponse.data.status !== 'AUTHORIZED') {
-      throw new ValidationError(`Cannot capture payment with status: ${paymentResponse.data.status}`);
+      throw new ValidationError(
+        `Cannot capture payment with status: ${paymentResponse.data.status}`
+      );
     }
 
-    const captureData = amount ? {
-      amount: {
-        value: amount,
-        currency: 'USD'
-      }
-    } : {};
+    const captureData = amount
+      ? {
+          amount: {
+            value: amount,
+            currency: 'USD',
+          },
+        }
+      : {};
 
     const response = await axiosInstance.post(
       `/v1/payments/${paymentId}/capture`,
       captureData,
       {
         headers,
-        metadata: { startTime: Date.now() }
+        metadata: { startTime: Date.now() },
       }
     );
 
@@ -534,9 +555,8 @@ router.post('/capture', async (req, res, next) => {
       captureId: response.data.id,
       status: response.data.status,
       captureDetails: response.data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     next(error);
   }
@@ -558,21 +578,26 @@ router.post('/void', async (req, res, next) => {
     const headers = generateAuthHeaders();
 
     // Check if payment can be voided
-    const paymentResponse = await axiosInstance.get(`/v1/payments/${paymentId}`, {
-      headers,
-      metadata: { startTime: Date.now() }
-    });
+    const paymentResponse = await axiosInstance.get(
+      `/v1/payments/${paymentId}`,
+      {
+        headers,
+        metadata: { startTime: Date.now() },
+      }
+    );
 
     if (!['AUTHORIZED', 'PENDING'].includes(paymentResponse.data.status)) {
-      throw new ValidationError(`Cannot void payment with status: ${paymentResponse.data.status}`);
+      throw new ValidationError(
+        `Cannot void payment with status: ${paymentResponse.data.status}`
+      );
     }
 
     const voidData = {
       reason: reason || 'Customer request',
       metadata: {
         source: 'oscar-broome-revenue',
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     };
 
     const response = await axiosInstance.post(
@@ -580,7 +605,7 @@ router.post('/void', async (req, res, next) => {
       voidData,
       {
         headers,
-        metadata: { startTime: Date.now() }
+        metadata: { startTime: Date.now() },
       }
     );
 
@@ -589,9 +614,8 @@ router.post('/void', async (req, res, next) => {
       voidId: response.data.id,
       status: response.data.status,
       voidDetails: response.data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     next(error);
   }
@@ -630,7 +654,7 @@ router.get('/transactions', async (req, res, next) => {
 
     const response = await axiosInstance.get(`/v1/transactions?${params}`, {
       headers,
-      metadata: { startTime: Date.now() }
+      metadata: { startTime: Date.now() },
     });
 
     res.json({
@@ -639,9 +663,8 @@ router.get('/transactions', async (req, res, next) => {
       totalCount: response.data.totalCount || 0,
       limit: parseInt(limit),
       offset: parseInt(offset),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     next(error);
   }
@@ -658,7 +681,7 @@ const verifyWebhookSignature = (req, res, next) => {
       logger.warn('Missing webhook authentication headers');
       return res.status(401).json({
         success: false,
-        error: 'Missing authentication headers'
+        error: 'Missing authentication headers',
       });
     }
 
@@ -669,7 +692,7 @@ const verifyWebhookSignature = (req, res, next) => {
       logger.warn('Webhook timestamp too old', { timeDiff });
       return res.status(401).json({
         success: false,
-        error: 'Webhook timestamp expired'
+        error: 'Webhook timestamp expired',
       });
     }
 
@@ -683,7 +706,7 @@ const verifyWebhookSignature = (req, res, next) => {
       logger.warn('Invalid webhook signature');
       return res.status(401).json({
         success: false,
-        error: 'Invalid webhook signature'
+        error: 'Invalid webhook signature',
       });
     }
 
@@ -693,79 +716,89 @@ const verifyWebhookSignature = (req, res, next) => {
     logger.error('Webhook verification error', { error: error.message });
     res.status(500).json({
       success: false,
-      error: 'Webhook verification failed'
+      error: 'Webhook verification failed',
     });
   }
 };
 
 // Enhanced webhook endpoint
-router.post('/webhook', express.json({ limit: '10mb' }), verifyWebhookSignature, async (req, res, next) => {
-  try {
-    const event = req.body;
+router.post(
+  '/webhook',
+  express.json({ limit: '10mb' }),
+  verifyWebhookSignature,
+  async (req, res, next) => {
+    try {
+      const event = req.body;
 
-    logger.info('Received JPMorgan webhook event', {
-      type: event.type,
-      id: event.id,
-      paymentId: event.data?.paymentId
-    });
+      logger.info('Received JPMorgan webhook event', {
+        type: event.type,
+        id: event.id,
+        paymentId: event.data?.paymentId,
+      });
 
-    // Update local revenue data based on webhook events
-    const revenueData = readRevenueData();
-    if (revenueData && event.data?.paymentId) {
-      const paymentIndex = revenueData.payments.findIndex(p => p.id === event.data.paymentId);
-      if (paymentIndex !== -1) {
-        revenueData.payments[paymentIndex].status = event.type.split('.')[1];
-        revenueData.payments[paymentIndex].updatedAt = new Date().toISOString();
-        revenueData.payments[paymentIndex].webhookEvents = revenueData.payments[paymentIndex].webhookEvents || [];
-        revenueData.payments[paymentIndex].webhookEvents.push({
-          type: event.type,
-          timestamp: new Date().toISOString(),
-          data: event.data
-        });
-        writeRevenueData(revenueData);
+      // Update local revenue data based on webhook events
+      const revenueData = readRevenueData();
+      if (revenueData && event.data?.paymentId) {
+        const paymentIndex = revenueData.payments.findIndex(
+          (p) => p.id === event.data.paymentId
+        );
+        if (paymentIndex !== -1) {
+          revenueData.payments[paymentIndex].status = event.type.split('.')[1];
+          revenueData.payments[paymentIndex].updatedAt =
+            new Date().toISOString();
+          revenueData.payments[paymentIndex].webhookEvents =
+            revenueData.payments[paymentIndex].webhookEvents || [];
+          revenueData.payments[paymentIndex].webhookEvents.push({
+            type: event.type,
+            timestamp: new Date().toISOString(),
+            data: event.data,
+          });
+          writeRevenueData(revenueData);
+        }
       }
+
+      // Process different event types
+      switch (event.type) {
+        case 'payment.authorized':
+          logger.info('Payment authorized', {
+            paymentId: event.data.paymentId,
+          });
+          break;
+
+        case 'payment.captured':
+          logger.info('Payment captured', { paymentId: event.data.paymentId });
+          break;
+
+        case 'payment.refunded':
+          logger.info('Payment refunded', { paymentId: event.data.paymentId });
+          break;
+
+        case 'payment.voided':
+          logger.info('Payment voided', { paymentId: event.data.paymentId });
+          break;
+
+        case 'payment.failed':
+          logger.error('Payment failed', {
+            paymentId: event.data.paymentId,
+            reason: event.data.reason,
+          });
+          break;
+
+        default:
+          logger.info('Unhandled webhook event type', { type: event.type });
+      }
+
+      res.json({
+        success: true,
+        received: true,
+        eventType: event.type,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      next(error);
     }
-
-    // Process different event types
-    switch (event.type) {
-      case 'payment.authorized':
-        logger.info('Payment authorized', { paymentId: event.data.paymentId });
-        break;
-
-      case 'payment.captured':
-        logger.info('Payment captured', { paymentId: event.data.paymentId });
-        break;
-
-      case 'payment.refunded':
-        logger.info('Payment refunded', { paymentId: event.data.paymentId });
-        break;
-
-      case 'payment.voided':
-        logger.info('Payment voided', { paymentId: event.data.paymentId });
-        break;
-
-      case 'payment.failed':
-        logger.error('Payment failed', {
-          paymentId: event.data.paymentId,
-          reason: event.data.reason
-        });
-        break;
-
-      default:
-        logger.info('Unhandled webhook event type', { type: event.type });
-    }
-
-    res.json({
-      success: true,
-      received: true,
-      eventType: event.type,
-      timestamp: new Date().toISOString()
-    });
-
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // Enhanced health check with detailed status
 router.get('/health', async (req, res, next) => {
@@ -776,7 +809,7 @@ router.get('/health', async (req, res, next) => {
     const response = await axiosInstance.get('/v1/health', {
       headers,
       timeout: 5000,
-      metadata: { startTime }
+      metadata: { startTime },
     });
 
     const responseTime = Date.now() - startTime;
@@ -787,7 +820,7 @@ router.get('/health', async (req, res, next) => {
       clientSecret: !!CONFIG.CLIENT_SECRET,
       merchantId: !!CONFIG.MERCHANT_ID,
       terminalId: !!CONFIG.TERMINAL_ID,
-      baseUrl: !!CONFIG.BASE_URL
+      baseUrl: !!CONFIG.BASE_URL,
     };
 
     const configHealthy = Object.values(configStatus).every(Boolean);
@@ -796,7 +829,7 @@ router.get('/health', async (req, res, next) => {
     const revenueData = readRevenueData();
     const dataStatus = {
       revenueFile: !!revenueData,
-      payments: revenueData ? revenueData.payments?.length || 0 : 0
+      payments: revenueData ? revenueData.payments?.length || 0 : 0,
     };
 
     res.json({
@@ -807,9 +840,8 @@ router.get('/health', async (req, res, next) => {
       config: configStatus,
       data: dataStatus,
       timestamp: new Date().toISOString(),
-      version: '2.0.0'
+      version: '2.0.0',
     });
-
   } catch (error) {
     logger.error('Health check failed', { error: error.message });
 
@@ -818,7 +850,7 @@ router.get('/health', async (req, res, next) => {
       status: 'unhealthy',
       error: 'JPMorgan API unavailable',
       details: error.message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 });
@@ -829,12 +861,12 @@ router.get('/metrics', (req, res) => {
     cacheSize: paymentCache.size,
     uptime: process.uptime(),
     memory: process.memoryUsage(),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   res.json({
     success: true,
-    metrics
+    metrics,
   });
 });
 

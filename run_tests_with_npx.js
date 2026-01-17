@@ -1,6 +1,10 @@
 const { spawn } = require('child_process');
 
-const jest = spawn('npx', ['jest', '--verbose', '--testRegex', 'server\\.test\\.fixed\\.js$'], { shell: true });
+const jest = spawn(
+  'npx',
+  ['jest', '--verbose', '--testRegex', 'server\\.test\\.fixed\\.js$'],
+  { shell: true }
+);
 
 jest.stdout.on('data', (data) => {
   console.log(`stdout: ${data}`);

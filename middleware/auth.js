@@ -10,14 +10,19 @@ const logger = winston.createLogger({
   defaultMeta: { service: 'auth-middleware' },
   transports: [
     new winston.transports.File({ filename: 'logs/auth-middleware.log' }),
-    new winston.transports.File({ filename: 'logs/auth-middleware-error.log', level: 'error' })
-  ]
+    new winston.transports.File({
+      filename: 'logs/auth-middleware-error.log',
+      level: 'error',
+    }),
+  ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 // Authenticate JWT token
@@ -29,7 +34,7 @@ export const authenticate = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Access token required'
+        message: 'Access token required',
       });
     }
 
@@ -44,11 +49,11 @@ export const authenticate = async (req, res, next) => {
     if (!tenantId) {
       logger.error('No tenant ID found in token or user', {
         userId: user._id,
-        tokenData: tokenData
+        tokenData: tokenData,
       });
       return res.status(400).json({
         success: false,
-        message: 'Tenant information missing'
+        message: 'Tenant information missing',
       });
     }
 
@@ -57,29 +62,33 @@ export const authenticate = async (req, res, next) => {
       logger.error('User tenant mismatch', {
         userId: user._id,
         userTenantId: user.tenantId,
-        tokenTenantId: tenantId
+        tokenTenantId: tenantId,
       });
       return res.status(403).json({
         success: false,
-        message: 'Invalid tenant access'
+        message: 'Invalid tenant access',
       });
     }
 
     // Attach tenant to request
     req.tenantId = tenantId;
 
-    logger.debug('Authentication successful', { userId: user._id, tenantId, path: req.path });
+    logger.debug('Authentication successful', {
+      userId: user._id,
+      tenantId,
+      path: req.path,
+    });
     next();
   } catch (error) {
     logger.error('Authentication failed', {
       error: error.message,
       path: req.path,
-      ip: req.ip
+      ip: req.ip,
     });
 
     return res.status(401).json({
       success: false,
-      message: 'Invalid or expired token'
+      message: 'Invalid or expired token',
     });
   }
 };
@@ -101,7 +110,7 @@ export const optionalAuth = async (req, res, next) => {
     // Don't fail, just continue without user
     logger.debug('Optional authentication failed, continuing without user', {
       error: error.message,
-      path: req.path
+      path: req.path,
     });
     next();
   }
@@ -114,29 +123,32 @@ export const requirePermission = (permission) => {
       if (!req.user) {
         return res.status(401).json({
           success: false,
-          message: 'Authentication required'
+          message: 'Authentication required',
         });
       }
 
-      const hasPermission = await authService.checkPermission(req.user._id, permission);
+      const hasPermission = await authService.checkPermission(
+        req.user._id,
+        permission
+      );
 
       if (!hasPermission) {
         logger.warn('Permission denied', {
           userId: req.user._id,
           permission,
-          path: req.path
+          path: req.path,
         });
 
         return res.status(403).json({
           success: false,
-          message: 'Insufficient permissions'
+          message: 'Insufficient permissions',
         });
       }
 
       logger.debug('Permission granted', {
         userId: req.user._id,
         permission,
-        path: req.path
+        path: req.path,
       });
 
       next();
@@ -145,12 +157,12 @@ export const requirePermission = (permission) => {
         error: error.message,
         userId: req.user?._id,
         permission,
-        path: req.path
+        path: req.path,
       });
 
       return res.status(500).json({
         success: false,
-        message: 'Permission check failed'
+        message: 'Permission check failed',
       });
     }
   };
@@ -163,7 +175,7 @@ export const requireAnyPermission = (...permissions) => {
       if (!req.user) {
         return res.status(401).json({
           success: false,
-          message: 'Authentication required'
+          message: 'Authentication required',
         });
       }
 
@@ -179,19 +191,19 @@ export const requireAnyPermission = (...permissions) => {
         logger.warn('Permission denied (any)', {
           userId: req.user._id,
           permissions,
-          path: req.path
+          path: req.path,
         });
 
         return res.status(403).json({
           success: false,
-          message: 'Insufficient permissions'
+          message: 'Insufficient permissions',
         });
       }
 
       logger.debug('Permission granted (any)', {
         userId: req.user._id,
         permissions,
-        path: req.path
+        path: req.path,
       });
 
       next();
@@ -200,12 +212,12 @@ export const requireAnyPermission = (...permissions) => {
         error: error.message,
         userId: req.user?._id,
         permissions,
-        path: req.path
+        path: req.path,
       });
 
       return res.status(500).json({
         success: false,
-        message: 'Permission check failed'
+        message: 'Permission check failed',
       });
     }
   };
@@ -217,7 +229,7 @@ export const requireRole = (role) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: 'Authentication required'
+        message: 'Authentication required',
       });
     }
 
@@ -226,19 +238,19 @@ export const requireRole = (role) => {
         userId: req.user._id,
         userRole: req.user.role,
         requiredRole: role,
-        path: req.path
+        path: req.path,
       });
 
       return res.status(403).json({
         success: false,
-        message: `Role '${role}' required`
+        message: `Role '${role}' required`,
       });
     }
 
     logger.debug('Role check passed', {
       userId: req.user._id,
       role: req.user.role,
-      path: req.path
+      path: req.path,
     });
 
     next();
@@ -251,7 +263,7 @@ export const requireAnyRole = (...roles) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: 'Authentication required'
+        message: 'Authentication required',
       });
     }
 
@@ -260,19 +272,19 @@ export const requireAnyRole = (...roles) => {
         userId: req.user._id,
         userRole: req.user.role,
         requiredRoles: roles,
-        path: req.path
+        path: req.path,
       });
 
       return res.status(403).json({
         success: false,
-        message: `One of roles [${roles.join(', ')}] required`
+        message: `One of roles [${roles.join(', ')}] required`,
       });
     }
 
     logger.debug('Role check passed (any)', {
       userId: req.user._id,
       role: req.user.role,
-      path: req.path
+      path: req.path,
     });
 
     next();
@@ -298,13 +310,13 @@ export const authRateLimit = (req, res, next) => {
   }
 
   const requests = global.authRateLimit.get(clientId);
-  const recentRequests = requests.filter(time => time > windowStart);
+  const recentRequests = requests.filter((time) => time > windowStart);
 
   if (recentRequests.length >= maxRequests) {
     logger.warn('Rate limit exceeded', { clientId, path: req.path });
     return res.status(429).json({
       success: false,
-      message: 'Too many authentication attempts. Please try again later.'
+      message: 'Too many authentication attempts. Please try again later.',
     });
   }
 
@@ -329,7 +341,7 @@ export const logAuthEvent = (eventType) => {
         statusCode: res.statusCode,
         duration,
         ip: req.ip,
-        userAgent: req.get('User-Agent')
+        userAgent: req.get('User-Agent'),
       });
     });
 
@@ -343,7 +355,10 @@ export const validateAuthRequest = (schema) => {
     // Basic validation - in production, use a proper validation library like Joi
     const errors = [];
 
-    if (schema.username && (!req.body.username || req.body.username.length < 3)) {
+    if (
+      schema.username &&
+      (!req.body.username || req.body.username.length < 3)
+    ) {
       errors.push('Username must be at least 3 characters long');
     }
 
@@ -351,7 +366,10 @@ export const validateAuthRequest = (schema) => {
       errors.push('Valid email is required');
     }
 
-    if (schema.password && (!req.body.password || req.body.password.length < 6)) {
+    if (
+      schema.password &&
+      (!req.body.password || req.body.password.length < 6)
+    ) {
       errors.push('Password must be at least 6 characters long');
     }
 
@@ -359,9 +377,48 @@ export const validateAuthRequest = (schema) => {
       return res.status(400).json({
         success: false,
         message: 'Validation failed',
-        errors
+        errors,
       });
     }
+
+    next();
+  };
+};
+
+/**
+ * Authorization middleware - checks if user has required role
+ * @param {string[]} roles - Array of allowed roles
+ */
+export const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ 
+        success: false,
+        error: 'Authentication required' 
+      });
+    }
+
+    if (roles.length && !roles.includes(req.user.role)) {
+      logger.warn('Authorization failed', {
+        userId: req.user._id,
+        userRole: req.user.role,
+        requiredRoles: roles,
+        path: req.path,
+      });
+
+      return res.status(403).json({ 
+        success: false,
+        error: 'Insufficient permissions',
+        required: roles,
+        current: req.user.role
+      });
+    }
+
+    logger.debug('Authorization successful', {
+      userId: req.user._id,
+      role: req.user.role,
+      path: req.path,
+    });
 
     next();
   };

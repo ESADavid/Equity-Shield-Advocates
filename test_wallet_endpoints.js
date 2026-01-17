@@ -19,8 +19,8 @@ async function testWalletEndpoints() {
         city: 'New York',
         state: 'NY',
         zipCode: '10001',
-        country: 'US'
-      }
+        country: 'US',
+      },
     });
     console.log('✅ Success:', encryptResponse.data);
     console.log('');
@@ -28,7 +28,7 @@ async function testWalletEndpoints() {
     // Test 2: Wallet Validation
     console.log('Test 2: Wallet Validation');
     const validateResponse = await axios.post(`${baseURL}/wallet-validate`, {
-      walletData: encryptResponse.data.encryptedData
+      walletData: encryptResponse.data.encryptedData,
     });
     console.log('✅ Success:', validateResponse.data);
     console.log('');
@@ -45,24 +45,27 @@ async function testWalletEndpoints() {
         city: 'New York',
         state: 'NY',
         zipCode: '10001',
-        country: 'US'
-      }
+        country: 'US',
+      },
     });
     console.log('✅ Success:', tokenizeResponse.data);
     console.log('');
 
     // Test 4: Wallet Detokenization
     console.log('Test 4: Wallet Detokenization');
-    const detokenizeResponse = await axios.post(`${baseURL}/wallet-detokenize`, {
-      token: tokenizeResponse.data.token
-    });
+    const detokenizeResponse = await axios.post(
+      `${baseURL}/wallet-detokenize`,
+      {
+        token: tokenizeResponse.data.token,
+      }
+    );
     console.log('✅ Success:', detokenizeResponse.data);
     console.log('');
 
     // Test 5: Wallet Decryption (existing endpoint)
     console.log('Test 5: Wallet Decryption');
     const decryptResponse = await axios.post(`${baseURL}/wallet-decrypt`, {
-      encryptedWalletData: encryptResponse.data.encryptedData
+      encryptedWalletData: encryptResponse.data.encryptedData,
     });
     console.log('✅ Success:', decryptResponse.data);
     console.log('');
@@ -81,7 +84,7 @@ async function testWalletEndpoints() {
     console.log('Test 7: Invalid wallet data - Validation');
     try {
       await axios.post(`${baseURL}/wallet-validate`, {
-        walletData: 'invalid-data'
+        walletData: 'invalid-data',
       });
       console.log('❌ Should have failed');
     } catch (error) {
@@ -100,7 +103,6 @@ async function testWalletEndpoints() {
     console.log('');
 
     console.log('🎉 All wallet endpoint tests completed!');
-
   } catch (error) {
     console.error('❌ Test failed:', error.response?.data || error.message);
   }

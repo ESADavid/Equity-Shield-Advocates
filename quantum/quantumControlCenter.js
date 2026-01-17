@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 /**
  * QUANTUM CONTROL CENTER
  * Advanced quantum-powered control and data synchronization system
@@ -35,7 +37,7 @@ class QuantumControlCenter extends EventEmitter {
       syncInterval: 30000, // 30 seconds
       dataPoints: 0,
       errors: 0,
-      success: true
+      success: true,
     };
 
     // Control commands
@@ -49,7 +51,7 @@ class QuantumControlCenter extends EventEmitter {
       BACKUP_DATA: 'backup_data',
       RESTORE_DATA: 'restore_data',
       SCALE_SYSTEM: 'scale_system',
-      EMERGENCY_SHUTDOWN: 'emergency_shutdown'
+      EMERGENCY_SHUTDOWN: 'emergency_shutdown',
     };
 
     // Initialize control center
@@ -64,7 +66,7 @@ class QuantumControlCenter extends EventEmitter {
       quantumHash: this.generateQuantumHash(),
       capabilities: Object.values(this.controlCommands),
       jpmorganConnected: false,
-      syncActive: false
+      syncActive: false,
     };
 
     this.quantumEngine.setQuantumState('control_center', controlState);
@@ -75,7 +77,9 @@ class QuantumControlCenter extends EventEmitter {
     // Start data synchronization
     this.startDataSynchronization();
 
-    this.emit('control-center-initialized', { centerId: controlState.centerId });
+    this.emit('control-center-initialized', {
+      centerId: controlState.centerId,
+    });
   }
 
   generateCenterId() {
@@ -85,7 +89,7 @@ class QuantumControlCenter extends EventEmitter {
   generateQuantumHash() {
     const data = JSON.stringify({
       timestamp: Date.now(),
-      center: 'quantum-control-center'
+      center: 'quantum-control-center',
     });
     return crypto.createHash('sha3-512').update(data).digest('hex');
   }
@@ -100,19 +104,19 @@ class QuantumControlCenter extends EventEmitter {
           accounts: '/api/v2/accounts',
           transactions: '/api/v2/transactions',
           payments: '/api/v2/payments',
-          reports: '/api/v2/reports'
+          reports: '/api/v2/reports',
         },
         authToken: crypto.randomBytes(32).toString('hex'),
-        lastHeartbeat: Date.now()
+        lastHeartbeat: Date.now(),
       };
 
       this.emit('jpmorgan-connected', {
-        connectionId: this.jpmorganConnection.authToken.substring(0, 8)
+        connectionId: this.jpmorganConnection.authToken.substring(0, 8),
       });
 
-      console.log('✅ JPMorgan connection established');
+      logger.info('✅ JPMorgan connection established');
     } catch (error) {
-      console.error('❌ JPMorgan connection failed:', error.message);
+      logger.error('❌ JPMorgan connection failed:', error.message);
       this.emit('jpmorgan-connection-failed', { error: error.message });
     }
   }
@@ -123,13 +127,13 @@ class QuantumControlCenter extends EventEmitter {
       await this.performDataSynchronization();
     }, this.syncStatus.syncInterval);
 
-    console.log('🔄 Data synchronization started');
+    logger.info('🔄 Data synchronization started');
   }
 
   async performDataSynchronization() {
     try {
       if (!this.jpmorganConnection?.connected) {
-        console.warn('⚠️ JPMorgan connection not available for sync');
+        logger.warn('⚠️ JPMorgan connection not available for sync');
         return;
       }
 
@@ -157,21 +161,22 @@ class QuantumControlCenter extends EventEmitter {
       this.emit('data-sync-completed', {
         timestamp: this.syncStatus.lastSync,
         duration: syncDuration,
-        dataPoints: this.syncStatus.dataPoints
+        dataPoints: this.syncStatus.dataPoints,
       });
 
-      console.log(`✅ Data synchronization completed in ${syncDuration.toFixed(2)}ms`);
-
+      logger.info(
+        `✅ Data synchronization completed in ${syncDuration.toFixed(2)}ms`
+      );
     } catch (error) {
       this.syncStatus.errors++;
       this.syncStatus.success = false;
 
       this.emit('data-sync-failed', {
         error: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
-      console.error('❌ Data synchronization failed:', error.message);
+      logger.error('❌ Data synchronization failed:', error.message);
     }
   }
 
@@ -181,11 +186,11 @@ class QuantumControlCenter extends EventEmitter {
       totalAccounts: 1250,
       activeAccounts: 1180,
       totalBalance: 2500000000, // $2.5B
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
     this.quantumEngine.setQuantumState('jpmorgan_accounts', accountsData);
-    console.log('📊 Accounts data synchronized');
+    logger.info('📊 Accounts data synchronized');
   }
 
   async syncTransactionsData() {
@@ -194,11 +199,14 @@ class QuantumControlCenter extends EventEmitter {
       totalTransactions: 50000,
       todayTransactions: 1250,
       totalVolume: 500000000, // $500M
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
-    this.quantumEngine.setQuantumState('jpmorgan_transactions', transactionsData);
-    console.log('💰 Transactions data synchronized');
+    this.quantumEngine.setQuantumState(
+      'jpmorgan_transactions',
+      transactionsData
+    );
+    logger.info('💰 Transactions data synchronized');
   }
 
   async syncPaymentsData() {
@@ -208,11 +216,11 @@ class QuantumControlCenter extends EventEmitter {
       completedPayments: 48000,
       failedPayments: 25,
       totalVolume: 300000000, // $300M
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
     this.quantumEngine.setQuantumState('jpmorgan_payments', paymentsData);
-    console.log('💳 Payments data synchronized');
+    logger.info('💳 Payments data synchronized');
   }
 
   async syncReportsData() {
@@ -222,11 +230,11 @@ class QuantumControlCenter extends EventEmitter {
       monthlyReports: 1,
       quarterlyReports: 1,
       complianceReports: 12,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
     this.quantumEngine.setQuantumState('jpmorgan_reports', reportsData);
-    console.log('📈 Reports data synchronized');
+    logger.info('📈 Reports data synchronized');
   }
 
   // Control Commands
@@ -240,11 +248,14 @@ class QuantumControlCenter extends EventEmitter {
         parameters,
         status: 'pending',
         createdAt: new Date().toISOString(),
-        quantumHash: this.generateCommandHash(command, parameters)
+        quantumHash: this.generateCommandHash(command, parameters),
       };
 
       // Store command
-      this.quantumEngine.setQuantumState(`control_command_${commandId}`, controlCommand);
+      this.quantumEngine.setQuantumState(
+        `control_command_${commandId}`,
+        controlCommand
+      );
       this.commandQueue.push(controlCommand);
 
       // Execute command based on type
@@ -256,24 +267,26 @@ class QuantumControlCenter extends EventEmitter {
       controlCommand.result = result;
 
       // Update quantum state
-      this.quantumEngine.setQuantumState(`control_command_${commandId}`, controlCommand);
+      this.quantumEngine.setQuantumState(
+        `control_command_${commandId}`,
+        controlCommand
+      );
 
       this.emit('control-command-completed', {
         commandId,
         command,
-        success: result.success
+        success: result.success,
       });
 
       return {
         success: result.success,
         commandId,
-        result
+        result,
       };
-
     } catch (error) {
       this.emit('control-command-failed', {
         command,
-        error: error.message
+        error: error.message,
       });
       throw error;
     }
@@ -288,7 +301,7 @@ class QuantumControlCenter extends EventEmitter {
       command,
       parameters,
       timestamp: Date.now(),
-      nonce: crypto.randomBytes(16).toString('hex')
+      nonce: crypto.randomBytes(16).toString('hex'),
     });
     return crypto.createHash('sha3-512').update(data).digest('hex');
   }
@@ -302,9 +315,13 @@ class QuantumControlCenter extends EventEmitter {
       case this.controlCommands.EXECUTE_TRANSACTION:
         return await this.executeTransactionCommand(controlCommand.parameters);
       case this.controlCommands.GENERATE_REPORT:
-        return await this.executeGenerateReportCommand(controlCommand.parameters);
+        return await this.executeGenerateReportCommand(
+          controlCommand.parameters
+        );
       case this.controlCommands.OPTIMIZE_SYSTEM:
-        return await this.executeOptimizeSystemCommand(controlCommand.parameters);
+        return await this.executeOptimizeSystemCommand(
+          controlCommand.parameters
+        );
       case this.controlCommands.SECURITY_SCAN:
         return await this.executeSecurityScanCommand(controlCommand.parameters);
       case this.controlCommands.BACKUP_DATA:
@@ -314,7 +331,9 @@ class QuantumControlCenter extends EventEmitter {
       case this.controlCommands.SCALE_SYSTEM:
         return await this.executeScaleSystemCommand(controlCommand.parameters);
       case this.controlCommands.EMERGENCY_SHUTDOWN:
-        return await this.executeEmergencyShutdownCommand(controlCommand.parameters);
+        return await this.executeEmergencyShutdownCommand(
+          controlCommand.parameters
+        );
       default:
         throw new Error(`Unknown control command: ${controlCommand.command}`);
     }
@@ -327,7 +346,7 @@ class QuantumControlCenter extends EventEmitter {
     return {
       success: true,
       message: 'Data synchronization completed',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -338,14 +357,14 @@ class QuantumControlCenter extends EventEmitter {
     this.quantumEngine.setQuantumState(`config_${configKey}`, {
       key: configKey,
       value: configValue,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
 
     return {
       success: true,
       message: `Configuration ${configKey} updated`,
       key: configKey,
-      value: configValue
+      value: configValue,
     };
   }
 
@@ -356,7 +375,7 @@ class QuantumControlCenter extends EventEmitter {
     return {
       success: result.success,
       transactionId: result.transactionId,
-      message: 'Transaction executed successfully'
+      message: 'Transaction executed successfully',
     };
   }
 
@@ -368,16 +387,19 @@ class QuantumControlCenter extends EventEmitter {
       type: reportType,
       generatedAt: new Date().toISOString(),
       data: this.generateReportData(reportType),
-      quantumVerified: true
+      quantumVerified: true,
     };
 
-    this.quantumEngine.setQuantumState(`report_${reportType}_${Date.now()}`, report);
+    this.quantumEngine.setQuantumState(
+      `report_${reportType}_${Date.now()}`,
+      report
+    );
 
     return {
       success: true,
       reportId: `RPT_${Date.now()}`,
       reportType,
-      message: `${reportType} report generated`
+      message: `${reportType} report generated`,
     };
   }
 
@@ -388,7 +410,7 @@ class QuantumControlCenter extends EventEmitter {
     return {
       success: true,
       optimization,
-      message: 'System optimization completed'
+      message: 'System optimization completed',
     };
   }
 
@@ -399,7 +421,7 @@ class QuantumControlCenter extends EventEmitter {
     return {
       success: true,
       securityResults,
-      message: 'Security scan completed'
+      message: 'Security scan completed',
     };
   }
 
@@ -411,7 +433,7 @@ class QuantumControlCenter extends EventEmitter {
       id: backupId,
       timestamp: new Date().toISOString(),
       data: this.getSystemDataSnapshot(),
-      quantumHash: this.generateQuantumHash()
+      quantumHash: this.generateQuantumHash(),
     };
 
     this.quantumEngine.setQuantumState(`backup_${backupId}`, backup);
@@ -419,7 +441,7 @@ class QuantumControlCenter extends EventEmitter {
     return {
       success: true,
       backupId,
-      message: 'Data backup completed'
+      message: 'Data backup completed',
     };
   }
 
@@ -433,12 +455,12 @@ class QuantumControlCenter extends EventEmitter {
     }
 
     // Restore data (simplified)
-    console.log(`Restoring data from backup ${backupId}`);
+    logger.info(`Restoring data from backup ${backupId}`);
 
     return {
       success: true,
       backupId,
-      message: 'Data restore completed'
+      message: 'Data restore completed',
     };
   }
 
@@ -450,7 +472,7 @@ class QuantumControlCenter extends EventEmitter {
       type: scaleType,
       factor: scaleFactor,
       timestamp: new Date().toISOString(),
-      quantumOptimized: true
+      quantumOptimized: true,
     };
 
     this.quantumEngine.setQuantumState(`scaling_${Date.now()}`, scaling);
@@ -459,13 +481,13 @@ class QuantumControlCenter extends EventEmitter {
       success: true,
       scaleType,
       scaleFactor,
-      message: `System scaled ${scaleType} by factor ${scaleFactor}`
+      message: `System scaled ${scaleType} by factor ${scaleFactor}`,
     };
   }
 
   async executeEmergencyShutdownCommand(parameters) {
     // Execute emergency shutdown
-    console.log('🚨 EMERGENCY SHUTDOWN INITIATED');
+    logger.info('🚨 EMERGENCY SHUTDOWN INITIATED');
 
     // Stop all operations
     if (this.syncInterval) {
@@ -475,12 +497,12 @@ class QuantumControlCenter extends EventEmitter {
     // Shutdown components
     this.emit('emergency-shutdown', {
       timestamp: new Date().toISOString(),
-      reason: parameters.reason || 'Emergency shutdown command'
+      reason: parameters.reason || 'Emergency shutdown command',
     });
 
     return {
       success: true,
-      message: 'Emergency shutdown completed'
+      message: 'Emergency shutdown completed',
     };
   }
 
@@ -501,13 +523,14 @@ class QuantumControlCenter extends EventEmitter {
 
   getSystemReportData() {
     return {
-      controlCenterId: this.quantumEngine.getQuantumState('control_center')?.centerId,
+      controlCenterId:
+        this.quantumEngine.getQuantumState('control_center')?.centerId,
       jpmorganConnection: this.jpmorganConnection?.connected,
       syncStatus: this.syncStatus,
       activeOperations: this.activeOperations.size,
       commandQueueLength: this.commandQueue.length,
       uptime: performance.now(),
-      memory: process.memoryUsage()
+      memory: process.memoryUsage(),
     };
   }
 
@@ -519,7 +542,7 @@ class QuantumControlCenter extends EventEmitter {
       commandQueue: this.commandQueue,
       activeOperations: Object.fromEntries(this.activeOperations),
       quantumStates: this.getAllQuantumStates(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -542,21 +565,23 @@ class QuantumControlCenter extends EventEmitter {
       securityStatus: this.quantumSecurity.verifySecurity(),
       performanceMetrics: this.quantumOptimizer.getRealTimeMetrics(),
       uptime: performance.now(),
-      memory: process.memoryUsage()
+      memory: process.memoryUsage(),
     };
   }
 
   getSyncStatus() {
     return {
       ...this.syncStatus,
-      nextSyncIn: this.syncStatus.syncInterval - (Date.now() - new Date(this.syncStatus.lastSync || 0).getTime()),
-      jpmorganConnected: this.jpmorganConnection?.connected
+      nextSyncIn:
+        this.syncStatus.syncInterval -
+        (Date.now() - new Date(this.syncStatus.lastSync || 0).getTime()),
+      jpmorganConnected: this.jpmorganConnection?.connected,
     };
   }
 
   // Emergency Controls
   async emergencyStop() {
-    console.log('🚨 EMERGENCY STOP ACTIVATED');
+    logger.info('🚨 EMERGENCY STOP ACTIVATED');
 
     // Stop all sync operations
     if (this.syncInterval) {
@@ -568,20 +593,20 @@ class QuantumControlCenter extends EventEmitter {
     this.commandQueue.length = 0;
 
     this.emit('emergency-stop', {
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     return { success: true, message: 'Emergency stop completed' };
   }
 
   async emergencyRestart() {
-    console.log('🔄 EMERGENCY RESTART INITIATED');
+    logger.info('🔄 EMERGENCY RESTART INITIATED');
 
     // Restart all systems
     await this.initializeControlCenter();
 
     this.emit('emergency-restart', {
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     return { success: true, message: 'Emergency restart completed' };

@@ -12,7 +12,11 @@ async function demonstrateQuantumTransactions() {
   const transactionEngine = new QuantumTransactionEngine();
 
   console.log('✅ Quantum Transaction Engine initialized');
-  console.log('Engine ID:', transactionEngine.quantumEngine.getQuantumState('transaction_engine')?.engineId);
+  console.log(
+    'Engine ID:',
+    transactionEngine.quantumEngine.getQuantumState('transaction_engine')
+      ?.engineId
+  );
   console.log('');
 
   try {
@@ -23,23 +27,27 @@ async function demonstrateQuantumTransactions() {
       amount: 299.99,
       from: 'oscar.broome@jpmorgan.com',
       to: 'quantum_merchant_luxury',
-      description: 'Luxury watch purchase'
+      description: 'Luxury watch purchase',
     });
     console.log('✅ Payment Processed:');
     console.log('   Transaction ID:', paymentResult.transactionId);
     console.log('   Amount: $299.99');
     console.log('   Payment ID:', paymentResult.result.details.paymentId);
-    console.log('   Processing Time:', paymentResult.result.processingTime, 'ms');
+    console.log(
+      '   Processing Time:',
+      paymentResult.result.processingTime,
+      'ms'
+    );
     console.log('');
 
     // 2. Process Transfer Transaction
     console.log('🔄 Processing Transfer Transaction...');
     const transferResult = await transactionEngine.processTransaction({
       type: 'transfer',
-      amount: 50000.00,
+      amount: 50000.0,
       from: 'jpmorgan_checking_oscar',
       to: 'jpmorgan_investment_oscar',
-      description: 'Monthly investment transfer'
+      description: 'Monthly investment transfer',
     });
     console.log('✅ Transfer Processed:');
     console.log('   Transaction ID:', transferResult.transactionId);
@@ -51,25 +59,28 @@ async function demonstrateQuantumTransactions() {
     console.log('🏦 Processing Withdrawal Transaction...');
     const withdrawalResult = await transactionEngine.processTransaction({
       type: 'withdrawal',
-      amount: 1000.00,
+      amount: 1000.0,
       from: 'jpmorgan_checking_oscar',
       destination: 'external_bank_account',
-      description: 'Cash withdrawal for business expenses'
+      description: 'Cash withdrawal for business expenses',
     });
     console.log('✅ Withdrawal Processed:');
     console.log('   Transaction ID:', withdrawalResult.transactionId);
     console.log('   Amount: $1,000.00');
-    console.log('   Withdrawal ID:', withdrawalResult.result.details.withdrawalId);
+    console.log(
+      '   Withdrawal ID:',
+      withdrawalResult.result.details.withdrawalId
+    );
     console.log('');
 
     // 4. Process Deposit Transaction
     console.log('💳 Processing Deposit Transaction...');
     const depositResult = await transactionEngine.processTransaction({
       type: 'deposit',
-      amount: 75000.00,
+      amount: 75000.0,
       to: 'jpmorgan_checking_oscar',
       source: 'salary_deposit_jpmorgan',
-      description: 'Monthly salary deposit'
+      description: 'Monthly salary deposit',
     });
     console.log('✅ Deposit Processed:');
     console.log('   Transaction ID:', depositResult.transactionId);
@@ -84,26 +95,29 @@ async function demonstrateQuantumTransactions() {
       amount: 299.99,
       to: 'oscar.broome@jpmorgan.com',
       originalTransactionId: paymentResult.transactionId,
-      description: 'Refund for luxury watch purchase'
+      description: 'Refund for luxury watch purchase',
     });
     console.log('✅ Refund Processed:');
     console.log('   Transaction ID:', refundResult.transactionId);
     console.log('   Amount: $299.99');
     console.log('   Refund ID:', refundResult.result.details.refundId);
-    console.log('   Original Transaction:', refundResult.result.details.originalTransaction);
+    console.log(
+      '   Original Transaction:',
+      refundResult.result.details.originalTransaction
+    );
     console.log('');
 
     // 6. Process Currency Exchange Transaction
     console.log('💱 Processing Currency Exchange Transaction...');
     const exchangeResult = await transactionEngine.processTransaction({
       type: 'exchange',
-      amount: 10000.00,
+      amount: 10000.0,
       fromCurrency: 'USD',
       toCurrency: 'EUR',
       exchangeRate: 0.85,
       from: 'jpmorgan_trading_oscar',
       to: 'european_bank_account',
-      description: 'Business trip currency exchange'
+      description: 'Business trip currency exchange',
     });
     console.log('✅ Exchange Processed:');
     console.log('   Transaction ID:', exchangeResult.transactionId);
@@ -123,8 +137,12 @@ async function demonstrateQuantumTransactions() {
     console.log('📈 Recent Transaction History:');
     const history = transactionEngine.getTransactionHistory(5);
     history.forEach((txn, index) => {
-      console.log(`${index + 1}. ${txn.type.toUpperCase()}: $${txn.amount.toLocaleString()} - ${txn.description}`);
-      console.log(`   ID: ${txn.id} | Status: ${txn.status} | Time: ${txn.createdAt}`);
+      console.log(
+        `${index + 1}. ${txn.type.toUpperCase()}: $${txn.amount.toLocaleString()} - ${txn.description}`
+      );
+      console.log(
+        `   ID: ${txn.id} | Status: ${txn.status} | Time: ${txn.createdAt}`
+      );
       console.log('');
     });
 
@@ -141,10 +159,22 @@ async function demonstrateQuantumTransactions() {
     const validType = transactionEngine.validateTransactionType('payment');
     const invalidType = transactionEngine.validateTransactionType('invalid');
 
-    console.log('Amount $500 validation:', validAmount.valid ? '✅ Valid' : '❌ Invalid');
-    console.log('Amount -$100 validation:', invalidAmount.valid ? '✅ Valid' : '❌ Invalid');
-    console.log('Type "payment" validation:', validType.valid ? '✅ Valid' : '❌ Invalid');
-    console.log('Type "invalid" validation:', invalidType.valid ? '✅ Valid' : '❌ Invalid');
+    console.log(
+      'Amount $500 validation:',
+      validAmount.valid ? '✅ Valid' : '❌ Invalid'
+    );
+    console.log(
+      'Amount -$100 validation:',
+      invalidAmount.valid ? '✅ Valid' : '❌ Invalid'
+    );
+    console.log(
+      'Type "payment" validation:',
+      validType.valid ? '✅ Valid' : '❌ Invalid'
+    );
+    console.log(
+      'Type "invalid" validation:',
+      invalidType.valid ? '✅ Valid' : '❌ Invalid'
+    );
     console.log('');
 
     console.log('🎉 Quantum Transaction Engine Demo Complete!');
@@ -157,7 +187,6 @@ async function demonstrateQuantumTransactions() {
     console.log('   • Comprehensive transaction history');
     console.log('   • Quantum validation and integrity checks');
     console.log('   • Engine status monitoring');
-
   } catch (error) {
     console.error('❌ Demo failed:', error.message);
     console.error(error.stack);

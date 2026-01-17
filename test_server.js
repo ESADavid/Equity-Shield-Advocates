@@ -46,8 +46,8 @@ app.get('/health', (req, res) => {
       'GET /jpmorgan/transactions',
       'POST /jpmorgan/webhook',
       'GET /jpmorgan/health',
-      'POST /jpmorgan/sync-quickbooks'
-    ]
+      'POST /jpmorgan/sync-quickbooks',
+    ],
   });
 });
 
@@ -65,8 +65,8 @@ app.use((req, res) => {
       'GET /jpmorgan/transactions',
       'POST /jpmorgan/webhook',
       'GET /jpmorgan/health',
-      'POST /jpmorgan/sync-quickbooks'
-    ]
+      'POST /jpmorgan/sync-quickbooks',
+    ],
   });
 });
 
@@ -75,15 +75,19 @@ app.use((err, req, res, next) => {
   console.error('Server error:', err);
   res.status(500).json({
     error: 'Internal server error',
-    message: err.message
+    message: err.message,
   });
 });
 
 // Start server
 const server = app.listen(PORT, () => {
-  console.log(`🚀 JPMorgan Payment Integration Test Server running at http://localhost:${PORT}`);
+  console.log(
+    `🚀 JPMorgan Payment Integration Test Server running at http://localhost:${PORT}`
+  );
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
-  console.log(`💳 JPMorgan endpoints available at http://localhost:${PORT}/jpmorgan/*`);
+  console.log(
+    `💳 JPMorgan endpoints available at http://localhost:${PORT}/jpmorgan/*`
+  );
   console.log('='.repeat(60));
 });
 

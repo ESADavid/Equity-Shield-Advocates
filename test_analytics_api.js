@@ -13,7 +13,7 @@ class AnalyticsAPITester {
     this.results = {
       passed: 0,
       failed: 0,
-      errors: []
+      errors: [],
     };
   }
 
@@ -25,7 +25,9 @@ class AnalyticsAPITester {
   logFail(testName, error, details = '') {
     this.results.failed++;
     this.results.errors.push({ test: testName, error, details });
-    console.log(`❌ ${testName} - FAILED: ${error}${details ? ' (' + details + ')' : ''}`);
+    console.log(
+      `❌ ${testName} - FAILED: ${error}${details ? ' (' + details + ')' : ''}`
+    );
   }
 
   makeRequest(path, method = 'GET', data = null) {
@@ -38,12 +40,14 @@ class AnalyticsAPITester {
         method: method,
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
+          Accept: 'application/json',
+        },
       };
 
       if (data) {
-        options.headers['Content-Length'] = Buffer.byteLength(JSON.stringify(data));
+        options.headers['Content-Length'] = Buffer.byteLength(
+          JSON.stringify(data)
+        );
       }
 
       const req = http.request(options, (res) => {
@@ -56,7 +60,7 @@ class AnalyticsAPITester {
             const response = {
               statusCode: res.statusCode,
               headers: res.headers,
-              body: body ? JSON.parse(body) : null
+              body: body ? JSON.parse(body) : null,
             };
             resolve(response);
           } catch (error) {
@@ -64,7 +68,7 @@ class AnalyticsAPITester {
               statusCode: res.statusCode,
               headers: res.headers,
               body: body,
-              parseError: error.message
+              parseError: error.message,
             });
           }
         });
@@ -91,11 +95,19 @@ class AnalyticsAPITester {
     console.log('\n🏥 Testing Health Endpoint...');
     try {
       const response = await this.makeRequest('/health');
-      if (response.statusCode === 200 && response.body && response.body.status) {
+      if (
+        response.statusCode === 200 &&
+        response.body &&
+        response.body.status
+      ) {
         this.logPass('Health Endpoint', `Status: ${response.body.status}`);
         return true;
       } else {
-        this.logFail('Health Endpoint', 'Invalid response', `Status: ${response.statusCode}`);
+        this.logFail(
+          'Health Endpoint',
+          'Invalid response',
+          `Status: ${response.statusCode}`
+        );
         return false;
       }
     } catch (error) {
@@ -111,17 +123,30 @@ class AnalyticsAPITester {
       if (response.statusCode === 200 && response.body) {
         // Check for expected analytics structure
         const requiredFields = ['predictions', 'anomalies', 'riskAssessment'];
-        const hasRequiredFields = requiredFields.every(field => Object.prototype.hasOwnProperty.call(response.body, field));
+        const hasRequiredFields = requiredFields.every((field) =>
+          Object.prototype.hasOwnProperty.call(response.body, field)
+        );
 
         if (hasRequiredFields) {
-          this.logPass('Analytics Endpoint', `Contains ${Object.keys(response.body).length} fields`);
+          this.logPass(
+            'Analytics Endpoint',
+            `Contains ${Object.keys(response.body).length} fields`
+          );
           return response.body;
         } else {
-          this.logFail('Analytics Endpoint', 'Missing required fields', `Expected: ${requiredFields.join(', ')}`);
+          this.logFail(
+            'Analytics Endpoint',
+            'Missing required fields',
+            `Expected: ${requiredFields.join(', ')}`
+          );
           return null;
         }
       } else {
-        this.logFail('Analytics Endpoint', 'Invalid response', `Status: ${response.statusCode}`);
+        this.logFail(
+          'Analytics Endpoint',
+          'Invalid response',
+          `Status: ${response.statusCode}`
+        );
         return null;
       }
     } catch (error) {
@@ -131,23 +156,42 @@ class AnalyticsAPITester {
   }
 
   async testTranscendenceEndpoint() {
-    console.log('\n🧠 Testing Transcendence Analytics Endpoint (/api/analytics/transcendence)...');
+    console.log(
+      '\n🧠 Testing Transcendence Analytics Endpoint (/api/analytics/transcendence)...'
+    );
     try {
       const response = await this.makeRequest('/api/analytics/transcendence');
       if (response.statusCode === 200 && response.body) {
         // Check for expected transcendence structure
-        const requiredFields = ['deepLearning', 'quantumOptimization', 'autonomousDecisions'];
-        const hasRequiredFields = requiredFields.every(field => Object.prototype.hasOwnProperty.call(response.body, field));
+        const requiredFields = [
+          'deepLearning',
+          'quantumOptimization',
+          'autonomousDecisions',
+        ];
+        const hasRequiredFields = requiredFields.every((field) =>
+          Object.prototype.hasOwnProperty.call(response.body, field)
+        );
 
         if (hasRequiredFields) {
-          this.logPass('Transcendence Analytics Endpoint', `Contains ${Object.keys(response.body).length} fields`);
+          this.logPass(
+            'Transcendence Analytics Endpoint',
+            `Contains ${Object.keys(response.body).length} fields`
+          );
           return response.body;
         } else {
-          this.logFail('Transcendence Analytics Endpoint', 'Missing required fields', `Expected: ${requiredFields.join(', ')}`);
+          this.logFail(
+            'Transcendence Analytics Endpoint',
+            'Missing required fields',
+            `Expected: ${requiredFields.join(', ')}`
+          );
           return null;
         }
       } else {
-        this.logFail('Transcendence Analytics Endpoint', 'Invalid response', `Status: ${response.statusCode}`);
+        this.logFail(
+          'Transcendence Analytics Endpoint',
+          'Invalid response',
+          `Status: ${response.statusCode}`
+        );
         return null;
       }
     } catch (error) {
@@ -157,32 +201,57 @@ class AnalyticsAPITester {
   }
 
   async testOptimizationEndpoint() {
-    console.log('\n⚡ Testing Revenue Optimization Endpoint (/api/analytics/optimize)...');
+    console.log(
+      '\n⚡ Testing Revenue Optimization Endpoint (/api/analytics/optimize)...'
+    );
     try {
       const testData = {
         currentRevenue: 1750000,
         marketConditions: {
           volatility: 0.15,
           growth: 0.08,
-          competition: 0.12
-        }
+          competition: 0.12,
+        },
       };
 
-      const response = await this.makeRequest('/api/analytics/optimize', 'POST', testData);
+      const response = await this.makeRequest(
+        '/api/analytics/optimize',
+        'POST',
+        testData
+      );
       if (response.statusCode === 200 && response.body) {
         // Check for expected optimization structure
         const requiredFields = ['optimized', 'decisions'];
-        const hasRequiredFields = requiredFields.every(field => Object.prototype.hasOwnProperty.call(response.body, field));
+        const hasRequiredFields = requiredFields.every((field) =>
+          Object.prototype.hasOwnProperty.call(response.body, field)
+        );
 
-        if (hasRequiredFields && response.body.optimized && Object.prototype.hasOwnProperty.call(response.body.optimized, 'projectedRevenue')) {
-          this.logPass('Revenue Optimization Endpoint', `Projected revenue: $${response.body.optimized.projectedRevenue.toLocaleString()}`);
+        if (
+          hasRequiredFields &&
+          response.body.optimized &&
+          Object.prototype.hasOwnProperty.call(
+            response.body.optimized,
+            'projectedRevenue'
+          )
+        ) {
+          this.logPass(
+            'Revenue Optimization Endpoint',
+            `Projected revenue: $${response.body.optimized.projectedRevenue.toLocaleString()}`
+          );
           return response.body;
         } else {
-          this.logFail('Revenue Optimization Endpoint', 'Missing required fields or invalid structure');
+          this.logFail(
+            'Revenue Optimization Endpoint',
+            'Missing required fields or invalid structure'
+          );
           return null;
         }
       } else {
-        this.logFail('Revenue Optimization Endpoint', 'Invalid response', `Status: ${response.statusCode}`);
+        this.logFail(
+          'Revenue Optimization Endpoint',
+          'Invalid response',
+          `Status: ${response.statusCode}`
+        );
         return null;
       }
     } catch (error) {
@@ -197,18 +266,31 @@ class AnalyticsAPITester {
       const response = await this.makeRequest('/api/status');
       if (response.statusCode === 200 && response.body) {
         // Check for expected status structure
-        const requiredFields = ['merchantBillPay', 'jpmorganPayment', 'environment'];
-        const hasRequiredFields = requiredFields.every(field => Object.prototype.hasOwnProperty.call(response.body, field));
+        const requiredFields = [
+          'merchantBillPay',
+          'jpmorganPayment',
+          'environment',
+        ];
+        const hasRequiredFields = requiredFields.every((field) =>
+          Object.prototype.hasOwnProperty.call(response.body, field)
+        );
 
         if (hasRequiredFields) {
-          this.logPass('API Status Endpoint', `Environment: ${response.body.environment.environment}, Port: ${response.body.environment.port}`);
+          this.logPass(
+            'API Status Endpoint',
+            `Environment: ${response.body.environment.environment}, Port: ${response.body.environment.port}`
+          );
           return response.body;
         } else {
           this.logFail('API Status Endpoint', 'Missing required fields');
           return null;
         }
       } else {
-        this.logFail('API Status Endpoint', 'Invalid response', `Status: ${response.statusCode}`);
+        this.logFail(
+          'API Status Endpoint',
+          'Invalid response',
+          `Status: ${response.statusCode}`
+        );
         return null;
       }
     } catch (error) {
@@ -222,10 +304,17 @@ class AnalyticsAPITester {
     try {
       const response = await this.makeRequest('/api/analytics/invalid');
       if (response.statusCode === 404) {
-        this.logPass('Invalid Endpoint Handling', 'Correctly returns 404 for invalid endpoint');
+        this.logPass(
+          'Invalid Endpoint Handling',
+          'Correctly returns 404 for invalid endpoint'
+        );
         return true;
       } else {
-        this.logFail('Invalid Endpoint Handling', 'Should return 404', `Returned: ${response.statusCode}`);
+        this.logFail(
+          'Invalid Endpoint Handling',
+          'Should return 404',
+          `Returned: ${response.statusCode}`
+        );
         return false;
       }
     } catch (error) {
@@ -247,36 +336,64 @@ class AnalyticsAPITester {
 
     // Check predictions structure
     qualityChecks++;
-    if (analyticsData.predictions && typeof analyticsData.predictions.nextMonth === 'number') {
+    if (
+      analyticsData.predictions &&
+      typeof analyticsData.predictions.nextMonth === 'number'
+    ) {
       passedChecks++;
-      this.logPass('Predictions Data Quality', `Next month prediction: $${analyticsData.predictions.nextMonth.toLocaleString()}`);
+      this.logPass(
+        'Predictions Data Quality',
+        `Next month prediction: $${analyticsData.predictions.nextMonth.toLocaleString()}`
+      );
     } else {
       this.logFail('Predictions Data Quality', 'Invalid predictions structure');
     }
 
     // Check anomalies detection
     qualityChecks++;
-    if (analyticsData.anomalies && typeof analyticsData.anomalies.detected === 'boolean') {
+    if (
+      analyticsData.anomalies &&
+      typeof analyticsData.anomalies.detected === 'boolean'
+    ) {
       passedChecks++;
-      this.logPass('Anomalies Data Quality', `Anomalies detected: ${analyticsData.anomalies.detected}`);
+      this.logPass(
+        'Anomalies Data Quality',
+        `Anomalies detected: ${analyticsData.anomalies.detected}`
+      );
     } else {
       this.logFail('Anomalies Data Quality', 'Invalid anomalies structure');
     }
 
     // Check risk assessment
     qualityChecks++;
-    if (analyticsData.riskAssessment && typeof analyticsData.riskAssessment.overallRisk === 'number') {
+    if (
+      analyticsData.riskAssessment &&
+      typeof analyticsData.riskAssessment.overallRisk === 'number'
+    ) {
       passedChecks++;
-      this.logPass('Risk Assessment Data Quality', `Overall risk: ${(analyticsData.riskAssessment.overallRisk * 100).toFixed(2)}%`);
+      this.logPass(
+        'Risk Assessment Data Quality',
+        `Overall risk: ${(analyticsData.riskAssessment.overallRisk * 100).toFixed(2)}%`
+      );
     } else {
-      this.logFail('Risk Assessment Data Quality', 'Invalid risk assessment structure');
+      this.logFail(
+        'Risk Assessment Data Quality',
+        'Invalid risk assessment structure'
+      );
     }
 
     // Check historical data
     qualityChecks++;
-    if (analyticsData.historicalData && Array.isArray(analyticsData.historicalData) && analyticsData.historicalData.length > 0) {
+    if (
+      analyticsData.historicalData &&
+      Array.isArray(analyticsData.historicalData) &&
+      analyticsData.historicalData.length > 0
+    ) {
       passedChecks++;
-      this.logPass('Historical Data Quality', `${analyticsData.historicalData.length} data points available`);
+      this.logPass(
+        'Historical Data Quality',
+        `${analyticsData.historicalData.length} data points available`
+      );
     } else {
       this.logFail('Historical Data Quality', 'Invalid historical data');
     }
@@ -286,7 +403,7 @@ class AnalyticsAPITester {
 
   async runAllTests() {
     console.log('🧪 Starting Comprehensive Analytics API Test Suite');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
 
     // Test basic connectivity
     const healthOk = await this.testHealthEndpoint();
@@ -317,17 +434,21 @@ class AnalyticsAPITester {
   }
 
   printSummary() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('📊 Analytics API Test Summary:');
     console.log(`✅ Passed: ${this.results.passed}`);
     console.log(`❌ Failed: ${this.results.failed}`);
     console.log(`📈 Total: ${this.results.passed + this.results.failed}`);
-    console.log(`📊 Success Rate: ${((this.results.passed / (this.results.passed + this.results.failed)) * 100).toFixed(2)}%`);
+    console.log(
+      `📊 Success Rate: ${((this.results.passed / (this.results.passed + this.results.failed)) * 100).toFixed(2)}%`
+    );
 
     if (this.results.errors.length > 0) {
       console.log('\n🔍 Failed Tests:');
       for (const [index, err] of this.results.errors.entries()) {
-        console.log(`${index + 1}. ${err.test}: ${err.error}${err.details ? ' (' + err.details + ')' : ''}`);
+        console.log(
+          `${index + 1}. ${err.test}: ${err.error}${err.details ? ' (' + err.details + ')' : ''}`
+        );
       }
     }
 

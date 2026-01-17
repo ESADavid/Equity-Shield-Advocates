@@ -22,13 +22,13 @@ function makeRequest(options, data = null) {
   return new Promise((resolve, reject) => {
     const req = http.request(options, (res) => {
       let body = '';
-      res.on('data', chunk => body += chunk);
+      res.on('data', (chunk) => (body += chunk));
       res.on('end', () => {
         try {
           const response = {
             statusCode: res.statusCode,
             headers: res.headers,
-            body: body ? JSON.parse(body) : null
+            body: body ? JSON.parse(body) : null,
           };
           resolve(response);
         } catch (e) {
@@ -53,7 +53,7 @@ async function testHealthEndpoint() {
     hostname: 'localhost',
     port: 3000,
     path: '/health',
-    method: 'GET'
+    method: 'GET',
   });
 
   testResults.total++;
@@ -72,7 +72,7 @@ async function testAPIStatus() {
     hostname: 'localhost',
     port: 3000,
     path: '/api/status',
-    method: 'GET'
+    method: 'GET',
   });
 
   testResults.total++;
@@ -91,7 +91,7 @@ async function testStaticFileServing() {
     hostname: 'localhost',
     port: 3000,
     path: '/',
-    method: 'GET'
+    method: 'GET',
   });
 
   testResults.total++;
@@ -110,12 +110,13 @@ async function testSecurityHeaders() {
     hostname: 'localhost',
     port: 3000,
     path: '/health',
-    method: 'GET'
+    method: 'GET',
   });
 
   testResults.total++;
-  const hasSecurityHeaders = response.headers['content-security-policy'] &&
-                            response.headers['x-frame-options'];
+  const hasSecurityHeaders =
+    response.headers['content-security-policy'] &&
+    response.headers['x-frame-options'];
 
   if (hasSecurityHeaders) {
     testResults.passed++;
@@ -133,7 +134,7 @@ async function testCORSConfiguration() {
     port: 3000,
     path: '/health',
     method: 'GET',
-    headers: { 'Origin': 'http://localhost:3000' }
+    headers: { Origin: 'http://localhost:3000' },
   });
 
   testResults.total++;
@@ -154,12 +155,13 @@ async function testRateLimiting() {
     hostname: 'localhost',
     port: 3000,
     path: '/api/status',
-    method: 'GET'
+    method: 'GET',
   });
 
   testResults.total++;
-  const hasRateLimitHeaders = response.headers['ratelimit-limit'] &&
-                             response.headers['ratelimit-remaining'];
+  const hasRateLimitHeaders =
+    response.headers['ratelimit-limit'] &&
+    response.headers['ratelimit-remaining'];
 
   if (hasRateLimitHeaders) {
     testResults.passed++;
@@ -176,7 +178,7 @@ async function testAPIRouteHandling() {
     hostname: 'localhost',
     port: 3000,
     path: '/api/payroll/status',
-    method: 'GET'
+    method: 'GET',
   });
 
   testResults.total++;
@@ -195,12 +197,12 @@ async function testSystemIntegrations() {
     hostname: 'localhost',
     port: 3000,
     path: '/api/status',
-    method: 'GET'
+    method: 'GET',
   });
 
   testResults.total++;
-  const hasIntegrations = response.body?.merchantBillPay &&
-                         response.body?.jpmorganPayment;
+  const hasIntegrations =
+    response.body?.merchantBillPay && response.body?.jpmorganPayment;
 
   if (hasIntegrations) {
     testResults.passed++;
@@ -217,14 +219,15 @@ async function testAIAnalytics() {
     hostname: 'localhost',
     port: 3000,
     path: '/api/analytics',
-    method: 'GET'
+    method: 'GET',
   });
 
   testResults.total++;
-  const hasAnalytics = response.statusCode === 200 &&
-                      response.body?.predictions &&
-                      response.body?.anomalies &&
-                      response.body?.riskAssessment;
+  const hasAnalytics =
+    response.statusCode === 200 &&
+    response.body?.predictions &&
+    response.body?.anomalies &&
+    response.body?.riskAssessment;
 
   if (hasAnalytics) {
     testResults.passed++;
@@ -241,14 +244,15 @@ async function testAITranscendence() {
     hostname: 'localhost',
     port: 3000,
     path: '/api/analytics/transcendence',
-    method: 'GET'
+    method: 'GET',
   });
 
   testResults.total++;
-  const hasTranscendence = response.statusCode === 200 &&
-                         response.body?.deepLearning &&
-                         response.body?.quantumOptimization &&
-                         response.body?.autonomousDecisions;
+  const hasTranscendence =
+    response.statusCode === 200 &&
+    response.body?.deepLearning &&
+    response.body?.quantumOptimization &&
+    response.body?.autonomousDecisions;
 
   if (hasTranscendence) {
     testResults.passed++;
@@ -261,26 +265,30 @@ async function testAITranscendence() {
 
 async function testRevenueOptimization() {
   log('Testing Autonomous Revenue Optimization...');
-  const response = await makeRequest({
-    hostname: 'localhost',
-    port: 3000,
-    path: '/api/analytics/optimize',
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' }
-  }, {
-    currentRevenue: 1750000,
-    marketConditions: {
-      growth: 0.08,
-      volatility: 0.15,
-      competition: 0.2,
-      regulation: 0.1
+  const response = await makeRequest(
+    {
+      hostname: 'localhost',
+      port: 3000,
+      path: '/api/analytics/optimize',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    },
+    {
+      currentRevenue: 1750000,
+      marketConditions: {
+        growth: 0.08,
+        volatility: 0.15,
+        competition: 0.2,
+        regulation: 0.1,
+      },
     }
-  });
+  );
 
   testResults.total++;
-  const hasOptimization = response.statusCode === 200 &&
-                         response.body?.optimized?.projectedRevenue &&
-                         response.body?.decisions?.actions;
+  const hasOptimization =
+    response.statusCode === 200 &&
+    response.body?.optimized?.projectedRevenue &&
+    response.body?.decisions?.actions;
 
   if (hasOptimization) {
     testResults.passed++;
@@ -297,8 +305,14 @@ function displayTestResults() {
   log('===================================================', 'info');
   log(`Total Tests: ${testResults.total}`, 'info');
   log(`✅ Passed: ${testResults.passed}`, 'success');
-  log(`❌ Failed: ${testResults.failed}`, testResults.failed > 0 ? 'error' : 'info');
-  log(`📊 Success Rate: ${((testResults.passed / testResults.total) * 100).toFixed(1)}%`, 'info');
+  log(
+    `❌ Failed: ${testResults.failed}`,
+    testResults.failed > 0 ? 'error' : 'info'
+  );
+  log(
+    `📊 Success Rate: ${((testResults.passed / testResults.total) * 100).toFixed(1)}%`,
+    'info'
+  );
 
   if (testResults.failed === 0) {
     log('', 'info');
@@ -310,7 +324,10 @@ function displayTestResults() {
     log('✅ Rate Limiting: CONFIGURED', 'success');
   } else {
     log('', 'info');
-    log('⚠️ Some tests failed. Please review the system configuration.', 'error');
+    log(
+      '⚠️ Some tests failed. Please review the system configuration.',
+      'error'
+    );
   }
 
   process.exit(testResults.failed === 0 ? 0 : 1);
@@ -335,7 +352,7 @@ async function runE2EPerfectionTest() {
   displayTestResults();
 }
 
-runE2EPerfectionTest().catch(error => {
+runE2EPerfectionTest().catch((error) => {
   log(`Fatal error: ${error.message}`, 'error');
   process.exit(1);
 });

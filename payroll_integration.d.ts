@@ -38,13 +38,20 @@ export interface ReconciliationResult {
 export declare class PayrollIntegration {
   constructor(baseUrl: string, accessToken: string);
   getAuthHeaders(): { Authorization: string; 'Content-Type': string };
-  retryRequest<T>(fn: () => Promise<T>, retries?: number, delayMs?: number): Promise<T>;
+  retryRequest<T>(
+    fn: () => Promise<T>,
+    retries?: number,
+    delayMs?: number
+  ): Promise<T>;
   addOrUpdateEmployeePayroll(employee: Employee): Promise<PayrollResponse>;
   getEmployeePayroll(employeeId: string): Promise<PayrollResponse>;
   validateDirectDeposit(employee: Employee): Promise<PayrollResponse>;
   getTransactionStatus(transactionId: string): Promise<TransactionStatus>;
   reconcileTransactions(): Promise<ReconciliationResult>;
-  simulateBankValidation(accountNumber: string, routingNumber: string): Promise<boolean>;
+  simulateBankValidation(
+    accountNumber: string,
+    routingNumber: string
+  ): Promise<boolean>;
 }
 
 export default PayrollIntegration;

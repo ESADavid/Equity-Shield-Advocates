@@ -4,6 +4,7 @@
  * Provides quantum-enhanced AI/ML capabilities with Blackwell acceleration
  */
 import { randomBytes } from 'node:crypto';
+import logger from '../utils/loggerWrapper.js';
 
 class NvidiaBlackwellService {
   constructor() {
@@ -17,7 +18,7 @@ class NvidiaBlackwellService {
       fp8Precision: true,
       transformerEngine: true,
       nvlinkSwitch: true,
-      quantumIntegration: true
+      quantumIntegration: true,
     };
     this.initializeBlackwellGPUs();
   }
@@ -26,7 +27,7 @@ class NvidiaBlackwellService {
     try {
       // Initialize Blackwell GPUs
       const gpuCount = await this.detectBlackwellGPUs();
-      console.log(`🚀 Initialized ${gpuCount} NVIDIA Blackwell GPUs`);
+      logger.info(`🚀 Initialized ${gpuCount} NVIDIA Blackwell GPUs`);
 
       for (let i = 0; i < gpuCount; i++) {
         this.gpuDevices.push({
@@ -35,7 +36,7 @@ class NvidiaBlackwellService {
           memory: '96GB',
           status: 'active',
           quantumMode: this.quantumHybridMode,
-          utilization: 0
+          utilization: 0,
         });
       }
 
@@ -44,7 +45,7 @@ class NvidiaBlackwellService {
 
       return { success: true, gpuCount };
     } catch (error) {
-      console.error('Blackwell GPU initialization failed:', error);
+      logger.error('Blackwell GPU initialization failed:', error);
       return { success: false, error: error.message };
     }
   }
@@ -61,7 +62,7 @@ class NvidiaBlackwellService {
         total: 96 * 1024 * 1024 * 1024, // 96GB in bytes
         used: 0,
         available: 96 * 1024 * 1024 * 1024,
-        quantumShared: 0
+        quantumShared: 0,
       });
     }
   }
@@ -73,12 +74,17 @@ class NvidiaBlackwellService {
 
     try {
       // Launch Blackwell kernel
-      const kernel = await this.launchBlackwellKernel(gpuId, model, input, options);
+      const kernel = await this.launchBlackwellKernel(
+        gpuId,
+        model,
+        input,
+        options
+      );
       this.activeKernels.set(kernelId, {
         gpuId,
         model,
         startTime: Date.now(),
-        status: 'running'
+        status: 'running',
       });
 
       // Wait for completion with quantum acceleration
@@ -93,10 +99,10 @@ class NvidiaBlackwellService {
         result,
         gpuId,
         latency: Date.now() - this.activeKernels.get(kernelId).startTime,
-        blackwellOptimized: true
+        blackwellOptimized: true,
       };
     } catch (error) {
-      console.error('Blackwell inference failed:', error);
+      logger.error('Blackwell inference failed:', error);
       return { success: false, error: error.message };
     }
   }
@@ -124,7 +130,11 @@ class NvidiaBlackwellService {
         resolve({
           output: this.processWithBlackwellAcceleration(model, input, options),
           gpuId,
-          blackwellFeatures: ['fp8-precision', 'transformer-engine', 'nvlink-bandwidth']
+          blackwellFeatures: [
+            'fp8-precision',
+            'transformer-engine',
+            'nvlink-bandwidth',
+          ],
         });
       }, 10); // Simulated 10ms Blackwell processing
     });
@@ -150,9 +160,9 @@ class NvidiaBlackwellService {
     // Blackwell-optimized transformer inference using FP8 and Transformer Engine
     return {
       tokens: input.tokens,
-      embeddings: input.embeddings.map(x => x * boost),
+      embeddings: input.embeddings.map((x) => x * boost),
       attention: 'blackwell-optimized',
-      latency: `${10 / boost}ms`
+      latency: `${10 / boost}ms`,
     };
   }
 
@@ -161,7 +171,7 @@ class NvidiaBlackwellService {
     return {
       generated: `blackwell-enhanced-${input.prompt}`,
       quality: 'ultra-high',
-      speed: `${boost}x faster`
+      speed: `${boost}x faster`,
     };
   }
 
@@ -170,7 +180,7 @@ class NvidiaBlackwellService {
     return {
       quantumState: 'entangled',
       classicalProcessing: 'blackwell-accelerated',
-      hybridEfficiency: `${boost}x improvement`
+      hybridEfficiency: `${boost}x improvement`,
     };
   }
 
@@ -178,7 +188,7 @@ class NvidiaBlackwellService {
     return {
       processed: true,
       blackwellAcceleration: boost,
-      output: `enhanced-${input.data}`
+      output: `enhanced-${input.data}`,
     };
   }
 
@@ -218,7 +228,7 @@ class NvidiaBlackwellService {
       allocationId: randomBytes(8).toString('hex'),
       gpuId,
       size,
-      quantumShared
+      quantumShared,
     };
   }
 
@@ -239,7 +249,7 @@ class NvidiaBlackwellService {
         { type: 'quantum-classical', data: classicalData },
         classicalData
       ),
-      hybridOptimization: 'blackwell-quantum-entanglement'
+      hybridOptimization: 'blackwell-quantum-entanglement',
     };
 
     return hybridResult;
@@ -251,23 +261,23 @@ class NvidiaBlackwellService {
       qubits: circuit.qubits,
       entanglement: 'maximized',
       blackwellAcceleration: true,
-      coherenceTime: 'extended'
+      coherenceTime: 'extended',
     };
   }
 
   // Blackwell performance monitoring
   getBlackwellMetrics() {
     return {
-      gpus: this.gpuDevices.map(gpu => ({
+      gpus: this.gpuDevices.map((gpu) => ({
         id: gpu.id,
         utilization: gpu.utilization,
         memory: this.memoryPools.get(gpu.id),
         status: gpu.status,
-        quantumMode: gpu.quantumMode
+        quantumMode: gpu.quantumMode,
       })),
       activeKernels: Array.from(this.activeKernels.entries()),
       totalMemory: this.calculateTotalMemory(),
-      quantumHybridEfficiency: this.quantumHybridMode ? 95 : 0
+      quantumHybridEfficiency: this.quantumHybridMode ? 95 : 0,
     };
   }
 
@@ -287,7 +297,7 @@ class NvidiaBlackwellService {
       kernelFusion: 'enabled',
       quantumEntanglement: 'active',
       nvlinkBandwidth: 'maximized',
-      fp8Precision: 'enabled'
+      fp8Precision: 'enabled',
     };
 
     // Apply optimizations
@@ -308,7 +318,7 @@ class NvidiaBlackwellService {
       hoursUsed: usageMetrics.hours,
       memoryUsageGB: usageMetrics.memoryGB,
       operationsPerformed: usageMetrics.operations,
-      quantumHybrid: this.quantumHybridMode
+      quantumHybrid: this.quantumHybridMode,
     };
 
     // This would integrate with the existing NVIDIA payment system
@@ -316,7 +326,7 @@ class NvidiaBlackwellService {
       success: true,
       billingId: `blackwell-${kernelId}`,
       cost: this.calculateBlackwellCost(billingData),
-      billingData
+      billingData,
     };
   }
 
@@ -326,7 +336,12 @@ class NvidiaBlackwellService {
     const memoryMultiplier = usage.memoryUsageGB * 0.1;
     const quantumMultiplier = usage.quantumHybrid ? 1.5 : 1;
 
-    return (baseRate * usage.hoursUsed * memoryMultiplier * quantumMultiplier).toFixed(2);
+    return (
+      baseRate *
+      usage.hoursUsed *
+      memoryMultiplier *
+      quantumMultiplier
+    ).toFixed(2);
   }
 }
 

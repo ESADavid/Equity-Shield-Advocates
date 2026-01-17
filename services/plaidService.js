@@ -1,4 +1,5 @@
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
+import logger from '../utils/loggerWrapper.js';
 
 // Plaid API configuration
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
@@ -20,7 +21,9 @@ if (PLAID_CLIENT_ID && PLAID_SECRET) {
 
   plaidClient = new PlaidApi(configuration);
 } else {
-  console.warn('⚠️  PLAID_CLIENT_ID and/or PLAID_SECRET not found. Plaid functionality will be disabled for testing.');
+  logger.warn(
+    '⚠️  PLAID_CLIENT_ID and/or PLAID_SECRET not found. Plaid functionality will be disabled for testing.'
+  );
 }
 
 // Plaid service functions
@@ -50,7 +53,7 @@ export const plaidService = {
         expiration: response.data.expiration,
       };
     } catch (error) {
-      console.error('Error creating Plaid link token:', error);
+      logger.error('Error creating Plaid link token:', error);
       throw new Error('Failed to create link token');
     }
   },
@@ -73,7 +76,7 @@ export const plaidService = {
         item_id: response.data.item_id,
       };
     } catch (error) {
-      console.error('Error exchanging public token:', error);
+      logger.error('Error exchanging public token:', error);
       throw new Error('Failed to exchange public token');
     }
   },
@@ -92,7 +95,7 @@ export const plaidService = {
       const response = await plaidClient.accountsGet(request);
       return response.data.accounts;
     } catch (error) {
-      console.error('Error getting accounts:', error);
+      logger.error('Error getting accounts:', error);
       throw new Error('Failed to get accounts');
     }
   },
@@ -118,7 +121,7 @@ export const plaidService = {
       const response = await plaidClient.transactionsGet(request);
       return response.data.transactions;
     } catch (error) {
-      console.error('Error getting transactions:', error);
+      logger.error('Error getting transactions:', error);
       throw new Error('Failed to get transactions');
     }
   },
@@ -137,7 +140,7 @@ export const plaidService = {
       const response = await plaidClient.accountsBalanceGet(request);
       return response.data.accounts;
     } catch (error) {
-      console.error('Error getting balances:', error);
+      logger.error('Error getting balances:', error);
       throw new Error('Failed to get balances');
     }
   },
@@ -156,7 +159,7 @@ export const plaidService = {
       const response = await plaidClient.incomeGet(request);
       return response.data.income;
     } catch (error) {
-      console.error('Error getting income:', error);
+      logger.error('Error getting income:', error);
       throw new Error('Failed to get income');
     }
   },
@@ -170,14 +173,14 @@ export const plaidService = {
     try {
       // Get account details
       const accounts = await this.getAccounts(accessToken);
-      const account = accounts.find(acc => acc.account_id === accountId);
+      const account = accounts.find((acc) => acc.account_id === accountId);
 
       if (!account) {
         throw new Error('Account not found');
       }
 
       // Check if account has sufficient balance for verification amounts
-      const verificationResults = amounts.map(amount => ({
+      const verificationResults = amounts.map((amount) => ({
         amount,
         sufficient: account.balances.available >= amount,
         available_balance: account.balances.available,
@@ -193,7 +196,7 @@ export const plaidService = {
         verified_at: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('Error verifying account ownership:', error);
+      logger.error('Error verifying account ownership:', error);
       throw new Error('Failed to verify account ownership');
     }
   },
@@ -212,7 +215,7 @@ export const plaidService = {
       const response = await plaidClient.identityGet(request);
       return response.data.accounts;
     } catch (error) {
-      console.error('Error getting identity:', error);
+      logger.error('Error getting identity:', error);
       throw new Error('Failed to get identity');
     }
   },
@@ -231,18 +234,21 @@ export const plaidService = {
       const response = await plaidClient.itemRemove(request);
       return response.data;
     } catch (error) {
-      console.error('Error removing item:', error);
+      logger.error('Error removing item:', error);
       throw new Error('Failed to remove item');
     }
   },
 
   // Webhook handling
   async handleWebhook(event) {
-    console.log('Received Plaid webhook:', event);
+    logger.info('Received Plaid webhook:', event);
 
     switch (event.webhook_type) {
       case 'TRANSACTIONS':
-        if (event.webhook_code === 'INITIAL_UPDATE' || event.webhook_code === 'HISTORICAL_UPDATE') {
+        if (
+          event.webhook_code === 'INITIAL_UPDATE' ||
+          event.webhook_code === 'HISTORICAL_UPDATE'
+        ) {
           // Handle transaction updates
           await this.processTransactionUpdate(event);
         }
@@ -256,7 +262,7 @@ export const plaidService = {
         break;
 
       default:
-        console.log('Unhandled webhook type:', event.webhook_type);
+        logger.info('Unhandled webhook type:', event.webhook_type);
     }
 
     return { received: true };
@@ -269,25 +275,33 @@ export const plaidService = {
       const accessToken = await this.getAccessTokenForItem(event.item_id);
       if (!accessToken) return;
 
-      const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split('T')[0];
       const endDate = new Date().toISOString().split('T')[0];
 
-      const transactions = await this.getTransactions(accessToken, startDate, endDate);
+      const transactions = await this.getTransactions(
+        accessToken,
+        startDate,
+        endDate
+      );
 
       // Process and store transactions
       for (const transaction of transactions) {
         await this.storeTransaction(transaction);
       }
 
-      console.log(`Processed ${transactions.length} transactions for item ${event.item_id}`);
+      logger.info(
+        `Processed ${transactions.length} transactions for item ${event.item_id}`
+      );
     } catch (error) {
-      console.error('Error processing transaction update:', error);
+      logger.error('Error processing transaction update:', error);
     }
   },
 
   // Handle item errors
   async handleItemError(event) {
-    console.error('Plaid item error:', event.error);
+    logger.error('Plaid item error:', event.error);
     // Handle item errors (e.g., invalid credentials, item locked)
   },
 
@@ -300,7 +314,7 @@ export const plaidService = {
 
   async storeTransaction(transaction) {
     // Store transaction in your database
-    console.log('Storing transaction:', transaction.transaction_id);
+    logger.info('Storing transaction:', transaction.transaction_id);
   },
 };
 

@@ -34,16 +34,16 @@ describe('NVIDIA Blackwell GPU Integration Tests', () => {
       const inferenceData = {
         model: {
           type: 'transformer',
-          name: 'blackwell-llm'
+          name: 'blackwell-llm',
         },
         input: {
           tokens: [101, 7592, 1010, 2088, 102],
-          embeddings: [0.1, 0.2, 0.3, 0.4, 0.5]
+          embeddings: [0.1, 0.2, 0.3, 0.4, 0.5],
         },
         options: {
           maxTokens: 100,
-          temperature: 0.7
-        }
+          temperature: 0.7,
+        },
       };
 
       const response = await request(app)
@@ -63,13 +63,13 @@ describe('NVIDIA Blackwell GPU Integration Tests', () => {
       const inferenceData = {
         model: {
           type: 'diffusion',
-          name: 'blackwell-stable-diffusion'
+          name: 'blackwell-stable-diffusion',
         },
         input: {
           prompt: 'A beautiful landscape with mountains and lakes',
           width: 512,
-          height: 512
-        }
+          height: 512,
+        },
       };
 
       const response = await request(app)
@@ -90,13 +90,13 @@ describe('NVIDIA Blackwell GPU Integration Tests', () => {
         quantumCircuit: {
           qubits: 4,
           gates: ['H', 'CNOT', 'X'],
-          entanglement: 'maximal'
+          entanglement: 'maximal',
         },
         classicalData: {
           type: 'optimization',
           problemSize: 1000,
-          constraints: ['linear', 'non-linear']
-        }
+          constraints: ['linear', 'non-linear'],
+        },
       };
 
       const response = await request(app)
@@ -108,7 +108,9 @@ describe('NVIDIA Blackwell GPU Integration Tests', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.result.quantumProcessing).toBeDefined();
       expect(response.body.result.classicalAcceleration).toBeDefined();
-      expect(response.body.result.hybridOptimization).toContain('blackwell-quantum-entanglement');
+      expect(response.body.result.hybridOptimization).toContain(
+        'blackwell-quantum-entanglement'
+      );
     });
   });
 
@@ -117,7 +119,7 @@ describe('NVIDIA Blackwell GPU Integration Tests', () => {
       const memoryRequest = {
         gpuId: 0,
         size: 1024 * 1024 * 1024, // 1GB
-        quantumShared: true
+        quantumShared: true,
       };
 
       const response = await request(app)
@@ -136,7 +138,7 @@ describe('NVIDIA Blackwell GPU Integration Tests', () => {
       const freeRequest = {
         gpuId: 0,
         allocationId: 'test-allocation-123',
-        size: 1024 * 1024 * 1024
+        size: 1024 * 1024 * 1024,
       };
 
       const response = await request(app)
@@ -181,7 +183,7 @@ describe('NVIDIA Blackwell GPU Integration Tests', () => {
       const billingData = {
         hoursUsed: 2,
         memoryUsageGB: 16,
-        operationsPerformed: 1000000
+        operationsPerformed: 1000000,
       };
 
       const response = await request(app)
@@ -243,7 +245,7 @@ describe('NVIDIA Blackwell GPU Integration Tests', () => {
       const memoryRequest = {
         gpuId: 999, // Invalid GPU ID
         size: 1024 * 1024 * 1024 * 1024 * 1024, // 1PB - way too much
-        quantumShared: false
+        quantumShared: false,
       };
 
       const response = await request(app)
@@ -273,12 +275,12 @@ describe('NVIDIA Blackwell GPU Integration Tests', () => {
       const quantumData = {
         quantumCircuit: {
           qubits: 2,
-          gates: ['H', 'X']
+          gates: ['H', 'X'],
         },
         classicalData: {
           algorithm: 'optimization',
-          data: [1, 2, 3, 4, 5]
-        }
+          data: [1, 2, 3, 4, 5],
+        },
       };
 
       const response = await request(app)

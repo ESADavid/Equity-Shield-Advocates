@@ -25,11 +25,11 @@ function generateAuthHeaders() {
   return {
     'Content-Type': 'application/json',
     'Client-Id': JPMORGAN_CLIENT_ID,
-    'Timestamp': timestamp.toString(),
-    'Nonce': nonce,
-    'Signature': signature,
+    Timestamp: timestamp.toString(),
+    Nonce: nonce,
+    Signature: signature,
     'Merchant-Id': JPMORGAN_MERCHANT_ID,
-    'Terminal-Id': JPMORGAN_TERMINAL_ID
+    'Terminal-Id': JPMORGAN_TERMINAL_ID,
   };
 }
 
@@ -67,7 +67,10 @@ function validatePaymentId(paymentId) {
 function validateRefund(body) {
   const { paymentId, amount } = body;
   if (!paymentId || !amount) {
-    return { valid: false, error: 'Payment ID and amount are required for refund' };
+    return {
+      valid: false,
+      error: 'Payment ID and amount are required for refund',
+    };
   }
   if (amount <= 0) {
     return { valid: false, error: 'Amount must be positive' };
@@ -95,13 +98,23 @@ function validateTransactionsQuery(query) {
 }
 
 // Run critical path tests
-console.log('🧪 Running Critical Path Tests for JPMorgan Payment Integration\n');
+console.log(
+  '🧪 Running Critical Path Tests for JPMorgan Payment Integration\n'
+);
 
 // Test 1: Authentication Header Generation
 console.log('1. Testing Authentication Header Generation...');
 try {
   const headers = generateAuthHeaders();
-  const requiredHeaders = ['Content-Type', 'Client-Id', 'Timestamp', 'Nonce', 'Signature', 'Merchant-Id', 'Terminal-Id'];
+  const requiredHeaders = [
+    'Content-Type',
+    'Client-Id',
+    'Timestamp',
+    'Nonce',
+    'Signature',
+    'Merchant-Id',
+    'Terminal-Id',
+  ];
 
   let allHeadersPresent = true;
   for (const header of requiredHeaders) {
@@ -112,7 +125,9 @@ try {
   }
 
   if (allHeadersPresent) {
-    console.log('✅ All required authentication headers generated successfully');
+    console.log(
+      '✅ All required authentication headers generated successfully'
+    );
     console.log(`   Client-Id: ${headers['Client-Id']}`);
     console.log(`   Timestamp: ${headers['Timestamp']}`);
     console.log(`   Nonce: ${headers['Nonce']}`);
@@ -137,7 +152,12 @@ try {
     .digest('base64');
 
   // Test valid signature
-  const validResult = verifyWebhookSignature(validSignature, timestamp.toString(), nonce, testBody);
+  const validResult = verifyWebhookSignature(
+    validSignature,
+    timestamp.toString(),
+    nonce,
+    testBody
+  );
   if (validResult.valid) {
     console.log('✅ Valid webhook signature accepted');
   } else {
@@ -145,7 +165,12 @@ try {
   }
 
   // Test invalid signature
-  const invalidResult = verifyWebhookSignature('invalid-signature', timestamp.toString(), nonce, testBody);
+  const invalidResult = verifyWebhookSignature(
+    'invalid-signature',
+    timestamp.toString(),
+    nonce,
+    testBody
+  );
   if (!invalidResult.valid) {
     console.log('✅ Invalid webhook signature rejected');
   } else {
@@ -153,7 +178,12 @@ try {
   }
 
   // Test missing headers
-  const missingResult = verifyWebhookSignature(null, timestamp.toString(), nonce, testBody);
+  const missingResult = verifyWebhookSignature(
+    null,
+    timestamp.toString(),
+    nonce,
+    testBody
+  );
   if (!missingResult.valid) {
     console.log('✅ Missing signature header rejected');
   } else {
@@ -168,28 +198,47 @@ console.log('\n3. Testing Input Validation...');
 try {
   // Test payment ID validation
   console.log('   Payment ID validation:');
-  console.log(`   - Valid ID: ${validatePaymentId('test-payment-123').valid ? '✅' : '❌'}`);
+  console.log(
+    `   - Valid ID: ${validatePaymentId('test-payment-123').valid ? '✅' : '❌'}`
+  );
   console.log(`   - Empty ID: ${!validatePaymentId('').valid ? '✅' : '❌'}`);
   console.log(`   - Null ID: ${!validatePaymentId(null).valid ? '✅' : '❌'}`);
 
   // Test refund validation
   console.log('   Refund validation:');
-  console.log(`   - Valid refund: ${validateRefund({ paymentId: 'test', amount: 100 }).valid ? '✅' : '❌'}`);
-  console.log(`   - Missing amount: ${!validateRefund({ paymentId: 'test' }).valid ? '✅' : '❌'}`);
-  console.log(`   - Negative amount: ${!validateRefund({ paymentId: 'test', amount: -50 }).valid ? '✅' : '❌'}`);
+  console.log(
+    `   - Valid refund: ${validateRefund({ paymentId: 'test', amount: 100 }).valid ? '✅' : '❌'}`
+  );
+  console.log(
+    `   - Missing amount: ${!validateRefund({ paymentId: 'test' }).valid ? '✅' : '❌'}`
+  );
+  console.log(
+    `   - Negative amount: ${!validateRefund({ paymentId: 'test', amount: -50 }).valid ? '✅' : '❌'}`
+  );
 
   // Test payment creation validation
   console.log('   Payment creation validation:');
-  console.log(`   - Valid payment: ${validatePaymentCreation({ amount: 100, orderId: 'order-123' }).valid ? '✅' : '❌'}`);
-  console.log(`   - Missing orderId: ${!validatePaymentCreation({ amount: 100 }).valid ? '✅' : '❌'}`);
-  console.log(`   - Zero amount: ${!validatePaymentCreation({ amount: 0, orderId: 'order-123' }).valid ? '✅' : '❌'}`);
+  console.log(
+    `   - Valid payment: ${validatePaymentCreation({ amount: 100, orderId: 'order-123' }).valid ? '✅' : '❌'}`
+  );
+  console.log(
+    `   - Missing orderId: ${!validatePaymentCreation({ amount: 100 }).valid ? '✅' : '❌'}`
+  );
+  console.log(
+    `   - Zero amount: ${!validatePaymentCreation({ amount: 0, orderId: 'order-123' }).valid ? '✅' : '❌'}`
+  );
 
   // Test transaction query validation
   console.log('   Transaction query validation:');
-  console.log(`   - Valid limit: ${validateTransactionsQuery({ limit: 50 }).valid ? '✅' : '❌'}`);
-  console.log(`   - Invalid limit (too high): ${!validateTransactionsQuery({ limit: 2000 }).valid ? '✅' : '❌'}`);
-  console.log(`   - Invalid limit (negative): ${!validateTransactionsQuery({ limit: -1 }).valid ? '✅' : '❌'}`);
-
+  console.log(
+    `   - Valid limit: ${validateTransactionsQuery({ limit: 50 }).valid ? '✅' : '❌'}`
+  );
+  console.log(
+    `   - Invalid limit (too high): ${!validateTransactionsQuery({ limit: 2000 }).valid ? '✅' : '❌'}`
+  );
+  console.log(
+    `   - Invalid limit (negative): ${!validateTransactionsQuery({ limit: -1 }).valid ? '✅' : '❌'}`
+  );
 } catch (error) {
   console.log(`❌ Input validation failed: ${error.message}`);
 }
@@ -200,7 +249,11 @@ try {
   const errorResponses = [
     { success: false, error: 'encryptedWalletData is required' },
     { success: false, error: 'Payment ID and amount are required for refund' },
-    { success: false, error: 'Failed to decrypt wallet data', details: 'API Error' }
+    {
+      success: false,
+      error: 'Failed to decrypt wallet data',
+      details: 'API Error',
+    },
   ];
 
   let validStructure = true;
@@ -226,7 +279,7 @@ try {
   const successResponses = [
     { success: true, decryptedWallet: {} },
     { success: true, paymentId: 'test-id', status: 'authorized' },
-    { success: true, refundId: 'refund-id', status: 'processed' }
+    { success: true, refundId: 'refund-id', status: 'processed' },
   ];
 
   let validStructure = true;
@@ -247,4 +300,6 @@ try {
 }
 
 console.log('\n🎯 Critical Path Testing Complete!');
-console.log('All core functionality has been validated for the JPMorgan payment integration.');
+console.log(
+  'All core functionality has been validated for the JPMorgan payment integration.'
+);

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 /**
  * Simple JPMorgan Integration Validation
  *
@@ -10,85 +12,88 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔍 JPMorgan Payment Integration Validation');
-console.log('='.repeat(50));
+logger.info('🔍 JPMorgan Payment Integration Validation');
+logger.info('='.repeat(50));
 
 // Test 1: Check if required files exist
-console.log('\n📁 Checking required files...');
+logger.info('\n📁 Checking required files...');
 
 const requiredFiles = [
   'earnings_dashboard/jpmorgan_payment.js',
   'package.json',
   'JPMORGAN_SETUP_GUIDE.md',
   'setup_jpmorgan_credentials.js',
-  'comprehensive_jpmorgan_test.js'
+  'comprehensive_jpmorgan_test.js',
 ];
 
 let filesExist = true;
-requiredFiles.forEach(file => {
+requiredFiles.forEach((file) => {
   const filePath = path.join(__dirname, file);
   if (fs.existsSync(filePath)) {
-    console.log(`✅ ${file} - Found`);
+    logger.info(`✅ ${file} - Found`);
   } else {
-    console.log(`❌ ${file} - Missing`);
+    logger.info(`❌ ${file} - Missing`);
     filesExist = false;
   }
 });
 
 // Test 2: Check environment configuration
-console.log('\n🔧 Checking environment configuration...');
+logger.info('\n🔧 Checking environment configuration...');
 
 const envPath = path.join(__dirname, '.env');
 const envExamplePath = path.join(__dirname, '.env.example');
 
 let envConfigured = false;
 if (fs.existsSync(envPath)) {
-  console.log('✅ .env file exists');
+  logger.info('✅ .env file exists');
   const envContent = fs.readFileSync(envPath, 'utf-8');
   const requiredVars = [
     'JPMORGAN_PROJECT_ID',
     'JPMORGAN_ORGANIZATION_ID',
-    'JPMORGAN_BASE_URL'
+    'JPMORGAN_BASE_URL',
   ];
 
-  requiredVars.forEach(varName => {
+  requiredVars.forEach((varName) => {
     if (envContent.includes(varName + '=')) {
-      console.log(`✅ ${varName} configured`);
+      logger.info(`✅ ${varName} configured`);
       envConfigured = true;
     } else {
-      console.log(`⚠️  ${varName} not found in .env`);
+      logger.info(`⚠️  ${varName} not found in .env`);
     }
   });
 } else {
-  console.log('⚠️  .env file not found');
+  logger.info('⚠️  .env file not found');
   if (fs.existsSync(envExamplePath)) {
-    console.log('ℹ️  .env.example template available');
+    logger.info('ℹ️  .env.example template available');
   }
 }
 
 // Test 3: Check package.json dependencies
-console.log('\n📦 Checking package dependencies...');
+logger.info('\n📦 Checking package dependencies...');
 
 const packagePath = path.join(__dirname, 'package.json');
 if (fs.existsSync(packagePath)) {
   const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
   const requiredDeps = ['express', 'axios', 'dotenv', 'cors'];
 
-  requiredDeps.forEach(dep => {
+  requiredDeps.forEach((dep) => {
     if (packageJson.dependencies && packageJson.dependencies[dep]) {
-      console.log(`✅ ${dep} dependency found`);
+      logger.info(`✅ ${dep} dependency found`);
     } else {
-      console.log(`❌ ${dep} dependency missing`);
+      logger.info(`❌ ${dep} dependency missing`);
     }
   });
 } else {
-  console.log('❌ package.json not found');
+  logger.info('❌ package.json not found');
 }
 
 // Test 4: Validate JPMorgan payment module structure
-console.log('\n🏗️  Validating JPMorgan payment module...');
+logger.info('\n🏗️  Validating JPMorgan payment module...');
 
-const jpmorganPath = path.join(__dirname, 'earnings_dashboard/jpmorgan_payment.js');
+const jpmorganPath = path.join(
+  __dirname,
+  'earnings_dashboard/jpmorgan_payment.js'
+);
 if (fs.existsSync(jpmorganPath)) {
   const jpmorganContent = fs.readFileSync(jpmorganPath, 'utf-8');
 
@@ -101,22 +106,22 @@ if (fs.existsSync(jpmorganPath)) {
     'void',
     'transactions',
     'webhook',
-    'health'
+    'health',
   ];
 
-  requiredFunctions.forEach(func => {
+  requiredFunctions.forEach((func) => {
     if (jpmorganContent.includes(func)) {
-      console.log(`✅ ${func} function/route found`);
+      logger.info(`✅ ${func} function/route found`);
     } else {
-      console.log(`❌ ${func} function/route missing`);
+      logger.info(`❌ ${func} function/route missing`);
     }
   });
 } else {
-  console.log('❌ JPMorgan payment module not found');
+  logger.info('❌ JPMorgan payment module not found');
 }
 
 // Test 5: Check setup guide completeness
-console.log('\n📖 Checking setup guide...');
+logger.info('\n📖 Checking setup guide...');
 
 const guidePath = path.join(__dirname, 'JPMORGAN_SETUP_GUIDE.md');
 if (fs.existsSync(guidePath)) {
@@ -128,49 +133,44 @@ if (fs.existsSync(guidePath)) {
     'API Credentials',
     'Available Endpoints',
     'Testing Your Setup',
-    'Production Deployment'
+    'Production Deployment',
   ];
 
-  requiredSections.forEach(section => {
+  requiredSections.forEach((section) => {
     if (guideContent.includes(section)) {
-      console.log(`✅ ${section} section found`);
+      logger.info(`✅ ${section} section found`);
     } else {
-      console.log(`❌ ${section} section missing`);
+      logger.info(`❌ ${section} section missing`);
     }
   });
 } else {
-  console.log('❌ Setup guide not found');
+  logger.info('❌ Setup guide not found');
 }
 
 // Test 6: Check setup script
-console.log('\n⚙️  Checking setup script...');
+logger.info('\n⚙️  Checking setup script...');
 
 const setupPath = path.join(__dirname, 'setup_jpmorgan_credentials.js');
 if (fs.existsSync(setupPath)) {
   const setupContent = fs.readFileSync(setupPath, 'utf-8');
 
-  const setupFeatures = [
-    'interactive',
-    'credentials',
-    'validation',
-    '.env'
-  ];
+  const setupFeatures = ['interactive', 'credentials', 'validation', '.env'];
 
-  setupFeatures.forEach(feature => {
+  setupFeatures.forEach((feature) => {
     if (setupContent.includes(feature)) {
-      console.log(`✅ ${feature} feature found`);
+      logger.info(`✅ ${feature} feature found`);
     } else {
-      console.log(`❌ ${feature} feature missing`);
+      logger.info(`❌ ${feature} feature missing`);
     }
   });
 } else {
-  console.log('❌ Setup script not found');
+  logger.info('❌ Setup script not found');
 }
 
 // Summary
-console.log('\n' + '='.repeat(50));
-console.log('📊 VALIDATION SUMMARY');
-console.log('='.repeat(50));
+logger.info('\n' + '='.repeat(50));
+logger.info('📊 VALIDATION SUMMARY');
+logger.info('='.repeat(50));
 
 const summary = {
   files: filesExist ? '✅ Complete' : '❌ Incomplete',
@@ -178,30 +178,34 @@ const summary = {
   dependencies: '✅ Ready',
   module: '✅ Valid',
   documentation: '✅ Complete',
-  setup: '✅ Ready'
+  setup: '✅ Ready',
 };
 
 Object.entries(summary).forEach(([key, value]) => {
-  console.log(`${key.padEnd(15)}: ${value}`);
+  logger.info(`${key.padEnd(15)}: ${value}`);
 });
 
-console.log('='.repeat(50));
+logger.info('='.repeat(50));
 
 if (filesExist && envConfigured) {
-  console.log('🎉 JPMorgan integration is fully configured and ready!');
-  console.log('\n🚀 Next steps:');
-  console.log('1. Start your server: node test_server.js');
-  console.log('2. Run comprehensive tests: node comprehensive_jpmorgan_test.js');
-  console.log('3. Test live API calls with real credentials');
+  logger.info('🎉 JPMorgan integration is fully configured and ready!');
+  logger.info('\n🚀 Next steps:');
+  logger.info('1. Start your server: node test_server.js');
+  logger.info(
+    '2. Run comprehensive tests: node comprehensive_jpmorgan_test.js'
+  );
+  logger.info('3. Test live API calls with real credentials');
 } else {
-  console.log('⚠️  JPMorgan integration needs setup:');
+  logger.info('⚠️  JPMorgan integration needs setup:');
   if (!envConfigured) {
-    console.log('• Run: node setup_jpmorgan_credentials.js');
+    logger.info('• Run: node setup_jpmorgan_credentials.js');
   }
   if (!filesExist) {
-    console.log('• Check for missing files listed above');
+    logger.info('• Check for missing files listed above');
   }
 }
 
-console.log('\n📄 For detailed setup instructions, see: JPMORGAN_SETUP_GUIDE.md');
-console.log('='.repeat(50));
+logger.info(
+  '\n📄 For detailed setup instructions, see: JPMORGAN_SETUP_GUIDE.md'
+);
+logger.info('='.repeat(50));

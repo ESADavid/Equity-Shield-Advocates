@@ -20,8 +20,13 @@ class LoadTester {
       { path: '/health', weight: 30 },
       { path: '/api/status', weight: 20 },
       { path: '/metrics', weight: 10 },
-      { path: '/api/auth/login', weight: 15, method: 'POST', body: JSON.stringify({ username: 'test', password: 'test' }) },
-      { path: '/api/analytics/summary', weight: 25 }
+      {
+        path: '/api/auth/login',
+        weight: 15,
+        method: 'POST',
+        body: JSON.stringify({ username: 'test', password: 'test' }),
+      },
+      { path: '/api/analytics/summary', weight: 25 },
     ];
 
     this.results = {
@@ -39,13 +44,13 @@ class LoadTester {
       p95ResponseTime: 0,
       p99ResponseTime: 0,
       statusCodes: {},
-      endpointStats: {}
+      endpointStats: {},
     };
   }
 
   async runLoadTest() {
     console.log('🚀 Starting Load Test...');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
     console.log(`Target: ${this.baseUrl}`);
     console.log(`Duration: ${this.duration}s`);
     console.log(`Concurrency: ${this.concurrency} users`);
@@ -74,7 +79,7 @@ class LoadTester {
 
   async simulateUser(userId) {
     const userStartTime = performance.now();
-    const userEndTime = userStartTime + (this.duration * 1000);
+    const userEndTime = userStartTime + this.duration * 1000;
 
     // Ramp up delay
     const rampUpDelay = (userId / this.concurrency) * (this.rampUpTime * 1000);
@@ -116,37 +121,51 @@ class LoadTester {
         method: endpoint.method || 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'User-Agent': `LoadTest-User-${userId}`
-        }
+          'User-Agent': `LoadTest-User-${userId}`,
+        },
       };
 
-      const req = (url.protocol === 'https:' ? https : http).request(options, (res) => {
-        const responseTime = performance.now() - startTime;
+      const req = (url.protocol === 'https:' ? https : http).request(
+        options,
+        (res) => {
+          const responseTime = performance.now() - startTime;
 
-        this.results.responseTimes.push(responseTime);
-        this.results.minResponseTime = Math.min(this.results.minResponseTime, responseTime);
-        this.results.maxResponseTime = Math.max(this.results.maxResponseTime, responseTime);
+          this.results.responseTimes.push(responseTime);
+          this.results.minResponseTime = Math.min(
+            this.results.minResponseTime,
+            responseTime
+          );
+          this.results.maxResponseTime = Math.max(
+            this.results.maxResponseTime,
+            responseTime
+          );
 
-        // Track status codes
-        this.results.statusCodes[res.statusCode] = (this.results.statusCodes[res.statusCode] || 0) + 1;
+          // Track status codes
+          this.results.statusCodes[res.statusCode] =
+            (this.results.statusCodes[res.statusCode] || 0) + 1;
 
-        // Track endpoint stats
-        if (!this.results.endpointStats[endpoint.path]) {
-          this.results.endpointStats[endpoint.path] = { requests: 0, totalTime: 0, errors: 0 };
+          // Track endpoint stats
+          if (!this.results.endpointStats[endpoint.path]) {
+            this.results.endpointStats[endpoint.path] = {
+              requests: 0,
+              totalTime: 0,
+              errors: 0,
+            };
+          }
+          this.results.endpointStats[endpoint.path].requests++;
+          this.results.endpointStats[endpoint.path].totalTime += responseTime;
+
+          if (res.statusCode >= 200 && res.statusCode < 400) {
+            this.results.successfulRequests++;
+          } else {
+            this.results.failedRequests++;
+            this.results.endpointStats[endpoint.path].errors++;
+          }
+
+          res.on('data', () => {}); // consume response
+          res.on('end', () => resolve());
         }
-        this.results.endpointStats[endpoint.path].requests++;
-        this.results.endpointStats[endpoint.path].totalTime += responseTime;
-
-        if (res.statusCode >= 200 && res.statusCode < 400) {
-          this.results.successfulRequests++;
-        } else {
-          this.results.failedRequests++;
-          this.results.endpointStats[endpoint.path].errors++;
-        }
-
-        res.on('data', () => {}); // consume response
-        res.on('end', () => resolve());
-      });
+      );
 
       req.on('error', (error) => {
         const responseTime = performance.now() - startTime;
@@ -156,11 +175,15 @@ class LoadTester {
           endpoint: endpoint.path,
           error: error.message,
           userId,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
         if (!this.results.endpointStats[endpoint.path]) {
-          this.results.endpointStats[endpoint.path] = { requests: 0, totalTime: 0, errors: 0 };
+          this.results.endpointStats[endpoint.path] = {
+            requests: 0,
+            totalTime: 0,
+            errors: 0,
+          };
         }
         this.results.endpointStats[endpoint.path].errors++;
 
@@ -176,7 +199,7 @@ class LoadTester {
           endpoint: endpoint.path,
           error: 'Request timeout',
           userId,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         resolve();
       });
@@ -192,7 +215,9 @@ class LoadTester {
   calculateResults() {
     const totalTime = (this.results.endTime - this.results.startTime) / 1000; // seconds
     this.results.throughput = this.results.totalRequests / totalTime; // requests per second
-    this.results.avgResponseTime = this.results.responseTimes.reduce((a, b) => a + b, 0) / this.results.responseTimes.length;
+    this.results.avgResponseTime =
+      this.results.responseTimes.reduce((a, b) => a + b, 0) /
+      this.results.responseTimes.length;
 
     // Calculate percentiles
     const sortedTimes = [...this.results.responseTimes].sort((a, b) => a - b);
@@ -205,20 +230,28 @@ class LoadTester {
 
   printResults() {
     console.log('\n📊 Load Test Results:');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
     console.log(`Total Requests: ${this.results.totalRequests}`);
     console.log(`Successful Requests: ${this.results.successfulRequests}`);
     console.log(`Failed Requests: ${this.results.failedRequests}`);
-    console.log(`Success Rate: ${((this.results.successfulRequests / this.results.totalRequests) * 100).toFixed(2)}%`);
-    console.log(`Throughput: ${this.results.throughput.toFixed(2)} requests/second`);
+    console.log(
+      `Success Rate: ${((this.results.successfulRequests / this.results.totalRequests) * 100).toFixed(2)}%`
+    );
+    console.log(
+      `Throughput: ${this.results.throughput.toFixed(2)} requests/second`
+    );
     console.log('');
 
     console.log('Response Times:');
     console.log(`  Average: ${this.results.avgResponseTime.toFixed(2)}ms`);
     console.log(`  Min: ${this.results.minResponseTime.toFixed(2)}ms`);
     console.log(`  Max: ${this.results.maxResponseTime.toFixed(2)}ms`);
-    console.log(`  95th Percentile: ${this.results.p95ResponseTime.toFixed(2)}ms`);
-    console.log(`  99th Percentile: ${this.results.p99ResponseTime.toFixed(2)}ms`);
+    console.log(
+      `  95th Percentile: ${this.results.p95ResponseTime.toFixed(2)}ms`
+    );
+    console.log(
+      `  99th Percentile: ${this.results.p99ResponseTime.toFixed(2)}ms`
+    );
     console.log('');
 
     console.log('Status Codes:');
@@ -240,12 +273,12 @@ class LoadTester {
     if (this.results.errors.length > 0) {
       console.log(`\n🚨 Top Errors (${this.results.errors.length} total):`);
       const errorCounts = {};
-      this.results.errors.forEach(err => {
+      this.results.errors.forEach((err) => {
         errorCounts[err.error] = (errorCounts[err.error] || 0) + 1;
       });
 
       Object.entries(errorCounts)
-        .sort(([,a], [,b]) => b - a)
+        .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
         .forEach(([error, count]) => {
           console.log(`  ${error}: ${count} times`);
@@ -267,7 +300,7 @@ class LoadTester {
   }
 
   delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 
@@ -298,12 +331,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
 
   const tester = new LoadTester(options);
-  tester.runLoadTest().then(() => {
-    process.exit(0);
-  }).catch(error => {
-    console.error('Load test failed:', error);
-    process.exit(1);
-  });
+  tester
+    .runLoadTest()
+    .then(() => {
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('Load test failed:', error);
+      process.exit(1);
+    });
 }
 
 export default LoadTester;

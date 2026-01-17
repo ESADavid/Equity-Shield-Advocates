@@ -1,14 +1,20 @@
 /**
  * @jest-environment node
  */
-import { QuantumAIWallet, QuantumAIEngine } from '../quantum/quantumAIWallet.js';
+import {
+  QuantumAIWallet,
+  QuantumAIEngine,
+} from '../quantum/quantumAIWallet.js';
 
 describe('🚀 Quantum AI Wallet Critical Testing', () => {
   let oscarWallet;
 
   beforeAll(async () => {
     // Create Oscar Broome's quantum AI wallet
-    oscarWallet = new QuantumAIWallet('USER_1759425133168_851683FD', 'oscar.broome@jpmorgan.com');
+    oscarWallet = new QuantumAIWallet(
+      'USER_1759425133168_851683FD',
+      'oscar.broome@jpmorgan.com'
+    );
   });
 
   afterAll(async () => {
@@ -41,7 +47,10 @@ describe('🚀 Quantum AI Wallet Critical Testing', () => {
       const withdrawalAmount = 1000;
       const destination = 'external_account_123';
 
-      const result = await oscarWallet.instantWithdrawal(withdrawalAmount, destination);
+      const result = await oscarWallet.instantWithdrawal(
+        withdrawalAmount,
+        destination
+      );
 
       expect(result.success).toBe(true);
       expect(result.transactionId).toMatch(/^TXN_/);
@@ -54,8 +63,9 @@ describe('🚀 Quantum AI Wallet Critical Testing', () => {
       const highRiskAmount = 50000; // High amount
       const riskyDestination = 'crypto_exchange_xyz';
 
-      await expect(oscarWallet.instantWithdrawal(highRiskAmount, riskyDestination))
-        .rejects.toThrow('AI Risk Assessment Failed');
+      await expect(
+        oscarWallet.instantWithdrawal(highRiskAmount, riskyDestination)
+      ).rejects.toThrow('AI Risk Assessment Failed');
     });
   });
 
@@ -66,7 +76,7 @@ describe('🚀 Quantum AI Wallet Critical Testing', () => {
       const tapData = {
         nfcId: 'nfc_123456',
         deviceId: 'device_789',
-        location: 'quantum_store'
+        location: 'quantum_store',
       };
 
       const result = await oscarWallet.tapToPay(merchantId, amount, tapData);
@@ -135,7 +145,10 @@ describe('🚀 Quantum AI Wallet Critical Testing', () => {
 
   describe('🧠 Quantum AI Engine', () => {
     test('should assess withdrawal risk accurately', async () => {
-      const riskAssessment = await oscarWallet.aiEngine.assessWithdrawalRisk(500, 'trusted_merchant');
+      const riskAssessment = await oscarWallet.aiEngine.assessWithdrawalRisk(
+        500,
+        'trusted_merchant'
+      );
 
       expect(riskAssessment.approved).toBe(true);
       expect(riskAssessment.riskScore).toBeLessThan(0.7);
@@ -143,7 +156,8 @@ describe('🚀 Quantum AI Wallet Critical Testing', () => {
     });
 
     test('should analyze merchants', async () => {
-      const merchantAnalysis = await oscarWallet.aiEngine.analyzeMerchant('quantum_store_001');
+      const merchantAnalysis =
+        await oscarWallet.aiEngine.analyzeMerchant('quantum_store_001');
 
       expect(merchantAnalysis.name).toBe('Quantum Merchant');
       expect(merchantAnalysis.category).toBe('Technology');
@@ -180,7 +194,7 @@ describe('🚀 Quantum AI Wallet Critical Testing', () => {
       const operations = [
         oscarWallet.instantWithdrawal(100, 'test1'),
         oscarWallet.tapToPay('merchant1', 50, { nfcId: 'test' }),
-        oscarWallet.aiDeposit(200, 'test_source')
+        oscarWallet.aiDeposit(200, 'test_source'),
       ];
 
       const results = await Promise.all(operations);
@@ -195,13 +209,13 @@ describe('🚀 Quantum AI Wallet Critical Testing', () => {
     test('should handle insufficient funds', async () => {
       const largeAmount = 1000000;
 
-      await expect(oscarWallet.instantWithdrawal(largeAmount, 'test'))
-        .rejects.toThrow();
+      await expect(
+        oscarWallet.instantWithdrawal(largeAmount, 'test')
+      ).rejects.toThrow();
     });
 
     test('should handle invalid merchant', async () => {
-      await expect(oscarWallet.tapToPay('', 10, {}))
-        .rejects.toThrow();
+      await expect(oscarWallet.tapToPay('', 10, {})).rejects.toThrow();
     });
 
     test('should handle sync failures gracefully', async () => {
@@ -216,5 +230,5 @@ describe('🚀 Quantum AI Wallet Critical Testing', () => {
 if (import.meta.url === `file://${process.argv[1]}`) {
   console.log('🚀 Running Quantum AI Wallet Critical Tests...');
   console.log('✅ Quantum AI Wallet tests completed');
-  console.log('🎯 Oscar Broome\'s Quantum AI Wallet is operational');
+  console.log("🎯 Oscar Broome's Quantum AI Wallet is operational");
 }

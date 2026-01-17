@@ -55,7 +55,7 @@ describe('QuantumSecurity Class', () => {
       timestamp: Date.now(),
       data,
       signature,
-      blockchain: {}
+      blockchain: {},
     };
     expect(quantumSecurity.verifyZeroTrust(request)).toBe(true);
   });
@@ -76,5 +76,4 @@ describe('QuantumSecurity Class', () => {
     expect(metrics.quantumSafe).toBe(true);
     expect(metrics.encryptionStrength).toBe('256-bit');
   });
-
 });

@@ -36,11 +36,26 @@
   font-size: 0.9em;
 }
 
-.status.operational { background: #4CAF50; color: white; }
-.status.active { background: #2196F3; color: white; }
-.status.warning { background: #FF9800; color: white; }
-.status.error { background: #F44336; color: white; }
-.status.unknown { background: #9E9E9E; color: white; }
+.status.operational {
+  background: #4caf50;
+  color: white;
+}
+.status.active {
+  background: #2196f3;
+  color: white;
+}
+.status.warning {
+  background: #ff9800;
+  color: white;
+}
+.status.error {
+  background: #f44336;
+  color: white;
+}
+.status.unknown {
+  background: #9e9e9e;
+  color: white;
+}
 
 .control-navigation {
   display: flex;
@@ -87,14 +102,20 @@
   gap: 20px;
 }
 
-.status-card, .actions-card, .metrics-card, .activities-card {
+.status-card,
+.actions-card,
+.metrics-card,
+.activities-card {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   padding: 20px;
   backdrop-filter: blur(5px);
 }
 
-.status-card h3, .actions-card h3, .metrics-card h3, .activities-card h3 {
+.status-card h3,
+.actions-card h3,
+.metrics-card h3,
+.activities-card h3 {
   margin-top: 0;
   margin-bottom: 20px;
   color: #00d4ff;
@@ -137,10 +158,22 @@
   font-size: 0.9em;
 }
 
-.action-btn.primary { background: #4CAF50; color: white; }
-.action-btn.secondary { background: #2196F3; color: white; }
-.action-btn.warning { background: #FF9800; color: white; }
-.action-btn.danger { background: #F44336; color: white; }
+.action-btn.primary {
+  background: #4caf50;
+  color: white;
+}
+.action-btn.secondary {
+  background: #2196f3;
+  color: white;
+}
+.action-btn.warning {
+  background: #ff9800;
+  color: white;
+}
+.action-btn.danger {
+  background: #f44336;
+  color: white;
+}
 
 .action-btn:hover {
   transform: translateY(-2px);
@@ -194,9 +227,15 @@
   font-size: 0.8em;
 }
 
-.activity-item .status.success { color: #4CAF50; }
-.activity-item .status.error { color: #F44336; }
-.activity-item .status.pending { color: #FF9800; }
+.activity-item .status.success {
+  color: #4caf50;
+}
+.activity-item .status.error {
+  color: #f44336;
+}
+.activity-item .status.pending {
+  color: #ff9800;
+}
 
 .no-activities {
   text-align: center;
@@ -215,7 +254,7 @@
 
 .refresh-btn {
   padding: 10px 20px;
-  background: #2196F3;
+  background: #2196f3;
   color: white;
   border: none;
   border-radius: 6px;
@@ -224,7 +263,7 @@
 }
 
 .refresh-btn:hover {
-  background: #1976D2;
+  background: #1976d2;
 }
 
 .websites-grid {
@@ -294,7 +333,7 @@
   cursor: pointer;
 }
 
-.config-options input[type="checkbox"] {
+.config-options input[type='checkbox'] {
   width: 18px;
   height: 18px;
 }
@@ -419,7 +458,7 @@
   cursor: pointer;
 }
 
-.settings-options input[type="checkbox"] {
+.settings-options input[type='checkbox'] {
   width: 18px;
   height: 18px;
 }
@@ -510,7 +549,7 @@
 
 .cancel-btn {
   padding: 12px 24px;
-  background: #9E9E9E;
+  background: #9e9e9e;
   color: white;
   border: none;
   border-radius: 6px;
@@ -520,7 +559,7 @@
 
 .confirm-btn {
   padding: 12px 24px;
-  background: linear-gradient(45deg, #4CAF50, #45a049);
+  background: linear-gradient(45deg, #4caf50, #45a049);
   color: white;
   border: none;
   border-radius: 6px;
@@ -533,7 +572,7 @@
 }
 
 .confirm-btn:hover {
-  background: linear-gradient(45deg, #45a049, #4CAF50);
+  background: linear-gradient(45deg, #45a049, #4caf50);
 }
 
 /* Main Dashboard Navigation */
@@ -595,7 +634,7 @@
 .error {
   text-align: center;
   padding: 40px;
-  color: #F44336;
+  color: #f44336;
   background: rgba(244, 67, 54, 0.1);
   border-radius: 8px;
   margin: 20px 0;

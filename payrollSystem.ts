@@ -1,437 +1,214 @@
-/**
- * Unified Payroll System
- * Consolidated TypeScript implementation with proper validation and error handling
- */
+const { info, error: logError } = require('./utils/loggerWrapper.js');
 
-import * as fs from 'node:fs';
-import * as path from 'node:path';
+export interface Employee {
+  id: string;
+  name: string;
+  position: string;
+  hourlyRate: number;
+  hoursWorked?: number;
+  overtimeHours?: number;
+  taxRate?: number;
+  deductions?: number;
+  bonuses?: number;
+  accountNumber?: string;
+  routingNumber?: string;
+}
 
-import {
-  Employee,
-  PayrollRecord,
-  PayrollSummary,
-  EmployeeInput,
-  PayrollApiResponse,
-  PayrollSyncResult
-} from './types/payroll.js';
-
-import {
-  validateEmployeeInput,
-  sanitizeEmployeeInput
-} from './utils/payrollValidation.js';
-
-import {
-  calculatePayrollForEmployee,
-  calculateSalariedPayroll,
-  calculatePayrollSummary,
-  isSalariedEmployee
-} from './utils/payrollCalculator.js';
-
-// Use module directory for data directory - works in both Node.js and Jest
-const DATA_DIR = path.join(__dirname, 'data');
-const EMPLOYEES_FILE = path.join(DATA_DIR, 'employees.json');
-const PAYROLL_RECORDS_FILE = path.join(DATA_DIR, 'payroll_records.json');
+export interface PayrollResult {
+  employeeId: string;
+  name: string;
+  position: string;
+  hoursWorked: number;
+  hourlyRate: number;
+  overtimeHours: number;
+  taxRate: number;
+  deductions: number;
+  bonuses: number;
+  grossPay: number;
+  taxAmount: number;
+  netPay: number;
+  accountNumber: string | undefined;
+  routingNumber: string | undefined;
+  payDate: string;
+}
 
 export class PayrollSystem {
-  private employees: Map<string, Employee> = new Map();
-  private payrollRecords: PayrollRecord[] = [];
+  private employees: Employee[] = [];
 
   constructor() {
-    this.ensureDataDirectory();
-    this.loadEmployees();
-    this.loadPayrollRecords();
+    // Initialize with some sample employees
+    this.initializeSampleEmployees();
   }
 
-  private ensureDataDirectory(): void {
-    const dataDir = path.dirname(EMPLOYEES_FILE);
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
-  }
-
-  private loadEmployees(): void {
-    try {
-      if (fs.existsSync(EMPLOYEES_FILE)) {
-        const data = fs.readFileSync(EMPLOYEES_FILE, 'utf-8');
-        const employeesArray: Employee[] = JSON.parse(data);
-        this.employees = new Map(employeesArray.map(emp => [emp.id, emp]));
-      }
-    } catch (error) {
-      console.error('Failed to load employees:', error);
-      this.employees = new Map();
-    }
-  }
-
-  private saveEmployees(): void {
-    try {
-      const employeesArray = Array.from(this.employees.values());
-      fs.writeFileSync(EMPLOYEES_FILE, JSON.stringify(employeesArray, null, 2), 'utf-8');
-    } catch (error) {
-      console.error('Failed to save employees:', error);
-      throw new Error('Failed to save employee data');
-    }
-  }
-
-  private loadPayrollRecords(): void {
-    try {
-      if (fs.existsSync(PAYROLL_RECORDS_FILE)) {
-        const data = fs.readFileSync(PAYROLL_RECORDS_FILE, 'utf-8');
-        this.payrollRecords = JSON.parse(data);
-      }
-    } catch (error) {
-      console.error('Failed to load payroll records:', error);
-      this.payrollRecords = [];
-    }
-  }
-
-  private savePayrollRecords(): void {
-    try {
-      fs.writeFileSync(PAYROLL_RECORDS_FILE, JSON.stringify(this.payrollRecords, null, 2), 'utf-8');
-    } catch (error) {
-      console.error('Failed to save payroll records:', error);
-      throw new Error('Failed to save payroll records');
-    }
-  }
-
-  /**
-   * Adds a new employee to the system
-   */
-  addEmployee(input: EmployeeInput): PayrollApiResponse<Employee> {
-    try {
-      // Validate input
-      const validationErrors = validateEmployeeInput(input);
-      if (validationErrors.length > 0) {
-        return {
-          success: false,
-          errors: validationErrors,
-          timestamp: new Date().toISOString()
-        };
-      }
-
-      // Sanitize input
-      const sanitizedInput = sanitizeEmployeeInput(input);
-
-      // Generate ID if not provided
-      const employeeId = sanitizedInput.id || this.generateEmployeeId();
-
-      // Check if employee already exists
-      if (this.employees.has(employeeId)) {
-        return {
-          success: false,
-          error: `Employee with ID ${employeeId} already exists`,
-          timestamp: new Date().toISOString()
-        };
-      }
-
-      // Create employee object
-      const employee: Employee = {
-        id: employeeId,
-        name: sanitizedInput.name,
-        taxRate: sanitizedInput.taxRate,
-        deductions: sanitizedInput.deductions,
-        bonuses: sanitizedInput.bonuses,
-        hireDate: new Date().toISOString(),
-        isActive: true,
-        ...(sanitizedInput.position !== undefined && { position: sanitizedInput.position }),
-        ...(sanitizedInput.department !== undefined && { department: sanitizedInput.department }),
-        ...(sanitizedInput.hourlyRate !== undefined && { hourlyRate: sanitizedInput.hourlyRate }),
-        ...(sanitizedInput.hoursWorked !== undefined && { hoursWorked: sanitizedInput.hoursWorked }),
-        ...(sanitizedInput.overtimeHours !== undefined && { overtimeHours: sanitizedInput.overtimeHours }),
-        ...(sanitizedInput.salary !== undefined && { salary: sanitizedInput.salary }),
-        ...(sanitizedInput.accountNumber !== undefined && { accountNumber: sanitizedInput.accountNumber }),
-        ...(sanitizedInput.routingNumber !== undefined && { routingNumber: sanitizedInput.routingNumber })
-      };
-
-      // Add to collection
-      this.employees.set(employeeId, employee);
-      this.saveEmployees();
-
-      return {
-        success: true,
-        data: employee,
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
-      };
-    }
-  }
-
-  /**
-   * Updates an existing employee
-   */
-  updateEmployee(employeeId: string, updates: Partial<EmployeeInput>): PayrollApiResponse<Employee> {
-    try {
-      const existingEmployee = this.employees.get(employeeId);
-      if (!existingEmployee) {
-        return {
-          success: false,
-          error: `Employee with ID ${employeeId} not found`,
-          timestamp: new Date().toISOString()
-        };
-      }
-
-      // Create update input with existing values as defaults
-      const updateInput: EmployeeInput = {
-        id: employeeId,
-        name: updates.name ?? existingEmployee.name,
-        taxRate: updates.taxRate ?? existingEmployee.taxRate,
-        deductions: updates.deductions ?? existingEmployee.deductions,
-        bonuses: updates.bonuses ?? existingEmployee.bonuses,
-        ...(updates.position !== undefined || existingEmployee.position !== undefined ? { position: updates.position ?? existingEmployee.position } : {}),
-        ...(updates.department !== undefined || existingEmployee.department !== undefined ? { department: updates.department ?? existingEmployee.department } : {}),
-        ...(updates.hourlyRate !== undefined || existingEmployee.hourlyRate !== undefined ? { hourlyRate: updates.hourlyRate ?? existingEmployee.hourlyRate } : {}),
-        ...(updates.hoursWorked !== undefined || existingEmployee.hoursWorked !== undefined ? { hoursWorked: updates.hoursWorked ?? existingEmployee.hoursWorked } : {}),
-        ...(updates.overtimeHours !== undefined || existingEmployee.overtimeHours !== undefined ? { overtimeHours: updates.overtimeHours ?? existingEmployee.overtimeHours } : {}),
-        ...(updates.salary !== undefined || existingEmployee.salary !== undefined ? { salary: updates.salary ?? existingEmployee.salary } : {}),
-        ...(updates.accountNumber !== undefined || existingEmployee.accountNumber !== undefined ? { accountNumber: updates.accountNumber ?? existingEmployee.accountNumber } : {}),
-        ...(updates.routingNumber !== undefined || existingEmployee.routingNumber !== undefined ? { routingNumber: updates.routingNumber ?? existingEmployee.routingNumber } : {})
-      };
-
-      // Validate updates
-      const validationErrors = validateEmployeeInput(updateInput);
-      if (validationErrors.length > 0) {
-        return {
-          success: false,
-          errors: validationErrors,
-          timestamp: new Date().toISOString()
-        };
-      }
-
-      // Sanitize and update
-      const sanitizedUpdates = sanitizeEmployeeInput(updateInput);
-      const updatedEmployee: Employee = {
-        ...existingEmployee,
-        ...sanitizedUpdates,
-        id: employeeId // Ensure ID doesn't change
-      };
-
-      this.employees.set(employeeId, updatedEmployee);
-      this.saveEmployees();
-
-      return {
-        success: true,
-        data: updatedEmployee,
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
-      };
-    }
-  }
-
-  /**
-   * Deletes an employee from the system
-   */
-  deleteEmployee(employeeId: string): PayrollApiResponse<boolean> {
-    try {
-      if (!this.employees.has(employeeId)) {
-        return {
-          success: false,
-          error: `Employee with ID ${employeeId} not found`,
-          timestamp: new Date().toISOString()
-        };
-      }
-
-      this.employees.delete(employeeId);
-      this.saveEmployees();
-
-      return {
-        success: true,
-        data: true,
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
-      };
-    }
-  }
-
-  /**
-   * Gets all employees
-   */
-  getEmployees(): PayrollApiResponse<Employee[]> {
-    try {
-      const employees = Array.from(this.employees.values());
-      return {
-        success: true,
-        data: employees,
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
-      };
-    }
-  }
-
-  /**
-   * Gets a specific employee by ID
-   */
-  getEmployee(employeeId: string): PayrollApiResponse<Employee> {
-    try {
-      const employee = this.employees.get(employeeId);
-      if (!employee) {
-        return {
-          success: false,
-          error: `Employee with ID ${employeeId} not found`,
-          timestamp: new Date().toISOString()
-        };
-      }
-
-      return {
-        success: true,
-        data: employee,
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
-      };
-    }
-  }
-
-  /**
-   * Processes payroll for all employees
-   */
-  processPayroll(payDate?: string): PayrollApiResponse<PayrollRecord[]> {
-    try {
-      const payPeriod = payDate || new Date().toISOString().split('T')[0];
-      const records: PayrollRecord[] = [];
-
-      for (const employee of this.employees.values()) {
-        if (!employee.isActive) continue;
-
-        let calculation;
-        if (isSalariedEmployee(employee)) {
-          calculation = calculateSalariedPayroll(employee, payPeriod);
-        } else {
-          calculation = calculatePayrollForEmployee(employee);
-        }
-
-        const record: PayrollRecord = {
-          ...calculation,
-          id: this.generatePayrollRecordId(),
-          payDate: payPeriod,
-          status: 'processed',
-          paymentMethod: employee.accountNumber ? 'direct_deposit' : 'check'
-        };
-
-        records.push(record);
-      }
-
-      // Add to records and save
-      this.payrollRecords.push(...records);
-      this.savePayrollRecords();
-
-      return {
-        success: true,
-        data: records,
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
-      };
-    }
-  }
-
-  /**
-   * Gets payroll records with optional filtering
-   */
-  getPayrollRecords(employeeId?: string, payPeriod?: string): PayrollApiResponse<PayrollRecord[]> {
-    try {
-      let records = this.payrollRecords;
-
-      if (employeeId) {
-        records = records.filter(r => r.employeeId === employeeId);
-      }
-
-      if (payPeriod) {
-        records = records.filter(r => r.payPeriod === payPeriod);
-      }
-
-      return {
-        success: true,
-        data: records,
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
-      };
-    }
-  }
-
-  /**
-   * Gets payroll summary for a specific period
-   */
-  getPayrollSummary(payPeriod?: string): PayrollApiResponse<PayrollSummary> {
-    try {
-      const targetPeriod = payPeriod || new Date().toISOString().split('T')[0];
-      const employees = Array.from(this.employees.values()).filter(e => e.isActive);
-
-      const summary = calculatePayrollSummary(employees, targetPeriod);
-
-      return {
-        success: true,
-        data: summary,
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
-      };
-    }
-  }
-
-  /**
-   * Syncs payroll data (placeholder for future integration)
-   */
-  async syncPayrollData(): Promise<PayrollApiResponse<PayrollSyncResult>> {
-    // Placeholder implementation
-    return {
-      success: true,
-      data: {
-        success: true,
-        syncedEmployees: this.employees.size,
-        newRecords: 0,
-        errors: [],
-        duration: 0
+  private initializeSampleEmployees() {
+    this.employees = [
+      {
+        id: 'emp001',
+        name: 'John Smith',
+        position: 'Software Engineer',
+        hourlyRate: 45.0,
+        hoursWorked: 40,
+        overtimeHours: 5,
+        taxRate: 0.25,
+        deductions: 100,
+        bonuses: 500,
+        accountNumber: '123456789',
+        routingNumber: '021000021',
       },
-      timestamp: new Date().toISOString()
+      {
+        id: 'emp002',
+        name: 'Sarah Johnson',
+        position: 'Project Manager',
+        hourlyRate: 55.0,
+        hoursWorked: 40,
+        overtimeHours: 0,
+        taxRate: 0.28,
+        deductions: 150,
+        bonuses: 1000,
+        accountNumber: '987654321',
+        routingNumber: '021000021',
+      },
+      {
+        id: 'emp003',
+        name: 'Mike Davis',
+        position: 'Senior Developer',
+        hourlyRate: 65.0,
+        hoursWorked: 40,
+        overtimeHours: 10,
+        taxRate: 0.30,
+        deductions: 200,
+        bonuses: 750,
+        accountNumber: '456789123',
+        routingNumber: '021000021',
+      },
+    ];
+    info('Payroll system initialized with sample employees');
+  }
+
+  getEmployees(): Employee[] {
+    return [...this.employees];
+  }
+
+  addEmployee(employee: Employee): void {
+    // Validate employee data
+    if (!employee.id || !employee.name || !employee.position) {
+      throw new Error('Employee must have id, name, and position');
+    }
+    if (employee.hourlyRate <= 0) {
+      throw new Error('Hourly rate must be positive');
+    }
+
+    // Check if employee already exists
+    if (this.employees.find(e => e.id === employee.id)) {
+      throw new Error('Employee with this ID already exists');
+    }
+
+    this.employees.push(employee);
+    info(`Employee added: ${employee.name} (${employee.id})`);
+  }
+
+  updateEmployee(employee: Employee): void {
+    const index = this.employees.findIndex(e => e.id === employee.id);
+    if (index === -1) {
+      throw new Error('Employee not found');
+    }
+
+    this.employees[index] = { ...employee };
+    info(`Employee updated: ${employee.name} (${employee.id})`);
+  }
+
+  deleteEmployee(id: string): void {
+    const index = this.employees.findIndex(e => e.id === id);
+    if (index === -1) {
+      throw new Error('Employee not found');
+    }
+
+    const employee = this.employees[index];
+    this.employees.splice(index, 1);
+    info(`Employee deleted: ${employee.name} (${employee.id})`);
+  }
+
+  processPayroll(payDate: string): PayrollResult[] {
+    const results: PayrollResult[] = [];
+
+    for (const employee of this.employees) {
+      try {
+        const payroll = this.calculatePayroll(employee, payDate);
+        results.push(payroll);
+      } catch (err) {
+        logError(`Error processing payroll for ${employee.name}:`, err);
+        // Continue with other employees
+      }
+    }
+
+    info(`Payroll processed for ${results.length} employees on ${payDate}`);
+    return results;
+  }
+
+  calculatePayroll(employee: Employee, payDate: string): PayrollResult {
+    const hoursWorked = employee.hoursWorked || 0;
+    const hourlyRate = employee.hourlyRate;
+    const overtimeHours = employee.overtimeHours || 0;
+    const taxRate = employee.taxRate || 0.25;
+    const deductions = employee.deductions || 0;
+    const bonuses = employee.bonuses || 0;
+
+    // Calculate pay
+    const regularPay = hoursWorked * hourlyRate;
+    const overtimePay = overtimeHours * hourlyRate * 1.5;
+    const grossPay = regularPay + overtimePay + bonuses;
+    const taxAmount = grossPay * taxRate;
+    const netPay = grossPay - taxAmount - deductions;
+
+    return {
+      employeeId: employee.id,
+      name: employee.name,
+      position: employee.position,
+      hoursWorked,
+      hourlyRate,
+      overtimeHours,
+      taxRate,
+      deductions,
+      bonuses,
+      grossPay,
+      taxAmount,
+      netPay,
+      accountNumber: employee.accountNumber,
+      routingNumber: employee.routingNumber,
+      payDate,
     };
   }
 
-  private generateEmployeeId(): string {
-    let id: string;
-    do {
-      id = `EMP${Date.now().toString(36).toUpperCase()}`;
-    } while (this.employees.has(id));
-    return id;
+  getEmployeeById(id: string): Employee | undefined {
+    return this.employees.find(e => e.id === id);
   }
 
-  private generatePayrollRecordId(): string {
-    return `PR${Date.now()}${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+  // Method to calculate payroll for a specific employee with custom parameters
+  calculateCustomPayroll(params: {
+    employeeId: string;
+    hoursWorked: number;
+    hourlyRate: number;
+    overtimeHours?: number;
+    taxRate?: number;
+    deductions?: number;
+    bonuses?: number;
+  }): PayrollResult {
+    const employee = this.getEmployeeById(params.employeeId);
+    if (!employee) {
+      throw new Error('Employee not found');
+    }
+
+    const customEmployee: Employee = {
+      ...employee,
+      hoursWorked: params.hoursWorked,
+      hourlyRate: params.hourlyRate,
+      overtimeHours: params.overtimeHours || 0,
+      taxRate: params.taxRate || employee.taxRate || 0.25,
+      deductions: params.deductions || employee.deductions || 0,
+      bonuses: params.bonuses || employee.bonuses || 0,
+    };
+
+    return this.calculatePayroll(customEmployee, new Date().toISOString());
   }
 }
 

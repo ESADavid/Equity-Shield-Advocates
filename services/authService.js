@@ -12,28 +12,42 @@ const logger = winston.createLogger({
   defaultMeta: { service: 'auth' },
   transports: [
     new winston.transports.File({ filename: 'logs/auth.log' }),
-    new winston.transports.File({ filename: 'logs/auth-error.log', level: 'error' })
-  ]
+    new winston.transports.File({
+      filename: 'logs/auth-error.log',
+      level: 'error',
+    }),
+  ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 class AuthService {
   constructor() {
-    this.jwtSecret = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+    this.jwtSecret =
+      process.env.JWT_SECRET ||
+      'your-super-secret-jwt-key-change-in-production';
     this.jwtExpiresIn = process.env.JWT_EXPIRES_IN || '24h';
     this.refreshTokenExpiresIn = process.env.REFRESH_TOKEN_EXPIRES_IN || '7d';
   }
 
   // Register new user
   async register(userData) {
-    const { username, email, password, firstName, lastName, role = 'user', tenantId } = userData;
+    const {
+      username,
+      email,
+      password,
+      firstName,
+      lastName,
+      role = 'user',
+      tenantId,
+    } = userData;
     try {
-
       // Validate tenantId is provided
       if (!tenantId) {
         throw new Error('Tenant ID is required for registration');
@@ -42,11 +56,13 @@ class AuthService {
       // Check if user already exists within the tenant
       const existingUser = await User.findOne({
         tenantId,
-        $or: [{ email }, { username }]
+        $or: [{ email }, { username }],
       });
 
       if (existingUser) {
-        throw new Error('User already exists with this email or username in this tenant');
+        throw new Error(
+          'User already exists with this email or username in this tenant'
+        );
       }
 
       // Create new user
@@ -57,22 +73,30 @@ class AuthService {
         password,
         firstName,
         lastName,
-        role
+        role,
       });
 
       await user.save();
 
-      logger.info('User registered successfully', { userId: user._id, username, tenantId });
+      logger.info('User registered successfully', {
+        userId: user._id,
+        username,
+        tenantId,
+      });
 
       // Generate tokens
       const tokens = this.generateTokens(user);
 
       return {
         user: user.toPublicJSON(),
-        tokens
+        tokens,
       };
     } catch (error) {
-      logger.error('User registration failed', { error: error.message, email, username });
+      logger.error('User registration failed', {
+        error: error.message,
+        email,
+        username,
+      });
       throw error;
     }
   }
@@ -90,7 +114,9 @@ class AuthService {
 
       // Check if account is locked
       if (user.isLocked) {
-        throw new Error('Account is temporarily locked due to too many failed login attempts');
+        throw new Error(
+          'Account is temporarily locked due to too many failed login attempts'
+        );
       }
 
       // Verify password
@@ -103,17 +129,23 @@ class AuthService {
       // Reset login attempts and update last login
       await user.resetLoginAttempts();
 
-      logger.info('User logged in successfully', { userId: user._id, username: user.username });
+      logger.info('User logged in successfully', {
+        userId: user._id,
+        username: user.username,
+      });
 
       // Generate tokens
       const tokens = this.generateTokens(user);
 
       return {
         user: user.toPublicJSON(),
-        tokens
+        tokens,
       };
     } catch (error) {
-      logger.error('User login failed', { error: error.message, username: credentials?.username });
+      logger.error('User login failed', {
+        error: error.message,
+        username: credentials?.username,
+      });
       throw error;
     }
   }
@@ -163,7 +195,7 @@ class AuthService {
 
       return {
         user,
-        tokenData: decoded
+        tokenData: decoded,
       };
     } catch (error) {
       logger.error('Token verification failed', { error: error.message });
@@ -179,7 +211,7 @@ class AuthService {
         username: user.username,
         role: user.role,
         permissions: user.permissions,
-        tenantId: user.tenantId
+        tenantId: user.tenantId,
       },
       this.jwtSecret,
       { expiresIn: this.jwtExpiresIn }
@@ -189,7 +221,7 @@ class AuthService {
       {
         _id: user._id,
         type: 'refresh',
-        tenantId: user.tenantId
+        tenantId: user.tenantId,
       },
       this.jwtSecret,
       { expiresIn: this.refreshTokenExpiresIn }
@@ -198,7 +230,7 @@ class AuthService {
     return {
       accessToken,
       refreshToken,
-      expiresIn: this.jwtExpiresIn
+      expiresIn: this.jwtExpiresIn,
     };
   }
 
@@ -235,7 +267,10 @@ class AuthService {
       const user = await User.findOne({ email, isActive: true });
       if (!user) {
         // Don't reveal if email exists or not for security
-        return { success: true, message: 'If the email exists, a reset link has been sent' };
+        return {
+          success: true,
+          message: 'If the email exists, a reset link has been sent',
+        };
       }
 
       // Generate reset token
@@ -247,25 +282,40 @@ class AuthService {
 
       // Save reset token to user
       user.security.passwordResetToken = resetToken;
-      user.security.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      user.security.passwordResetExpires = new Date(
+        Date.now() + 60 * 60 * 1000
+      ); // 1 hour
       await user.save();
 
       // Send password reset email
       try {
-        await emailService.sendPasswordResetEmail(user.email, user.firstName, resetToken);
-        logger.info('Password reset email sent successfully', { userId: user._id, email });
+        await emailService.sendPasswordResetEmail(
+          user.email,
+          user.firstName,
+          resetToken
+        );
+        logger.info('Password reset email sent successfully', {
+          userId: user._id,
+          email,
+        });
       } catch (emailError) {
         logger.error('Failed to send password reset email', {
           userId: user._id,
           email,
-          error: emailError.message
+          error: emailError.message,
         });
         // Don't fail the request if email fails, but log it
       }
 
-      return { success: true, message: 'Password reset link sent to your email' };
+      return {
+        success: true,
+        message: 'Password reset link sent to your email',
+      };
     } catch (error) {
-      logger.error('Password reset request failed', { error: error.message, email });
+      logger.error('Password reset request failed', {
+        error: error.message,
+        email,
+      });
       throw error;
     }
   }
@@ -280,7 +330,11 @@ class AuthService {
       }
 
       const user = await User.findById(decoded._id);
-      if (!user || !user.security.passwordResetToken || user.security.passwordResetToken !== token) {
+      if (
+        !user ||
+        !user.security.passwordResetToken ||
+        user.security.passwordResetToken !== token
+      ) {
         throw new Error('Invalid or expired reset token');
       }
 
@@ -313,7 +367,11 @@ class AuthService {
 
       return user.hasPermission(permission);
     } catch (error) {
-      logger.error('Permission check failed', { error: error.message, userId, permission });
+      logger.error('Permission check failed', {
+        error: error.message,
+        userId,
+        permission,
+      });
       return false;
     }
   }
@@ -342,7 +400,7 @@ class AuthService {
       }
 
       const allowedFields = ['firstName', 'lastName', 'department', 'profile'];
-      allowedFields.forEach(field => {
+      allowedFields.forEach((field) => {
         if (profileData[field] !== undefined) {
           if (field === 'profile') {
             user.profile = { ...user.profile, ...profileData.profile };

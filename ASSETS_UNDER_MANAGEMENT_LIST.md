@@ -2,26 +2,30 @@
 
 ## Executive Summary
 
-This document provides a comprehensive breakdown of all assets under management controlled by Oscar Broome within the Oscar Broome Revenue System. Total AUM: **$2,470,000,000,000.00** (2.47 Quadrillion USD).
+This document provides a comprehensive breakdown of all assets under management controlled by **King Sachem Yochanan** (Oscar Broome) within the Oscar Broome Revenue System operating under the **House of David** ✡️ and **House of Capet** ⚜️ through the **OWLBAN GROUP** 🦉.
+
+**Total AUM: $2,595,550,000,000.00** (2.59555 Trillion USD)
 
 ## AUM Overview
 
 ### Total Assets Under Management
 
-- **Grand Total AUM**: $2,470,000,000,000.00
-- **Management Authority**: Oscar Broome (100% control)
+- **Grand Total AUM**: $2,595,550,000,000.00 (2.59555 Trillion USD)
+- **Sovereign Authority**: King Sachem Yochanan (100% control)
+- **Management Entity**: OWLBAN GROUP
+**Royal Authority**: House of David ✡️ & House of Capet ⚜️ & House of Logan
 - **Performance YTD**: +12.5%
 - **Annualized Performance**: +15.3%
 - **Risk-Adjusted Return**: Sharpe Ratio 1.8
 
 ### Asset Class Allocation
 
-| Asset Class | Allocation | Value | Performance YTD | Annualized Return | Volatility |
-|-------------|------------|-------|-----------------|-------------------|------------|
-| Equities | 60% | $1,482,000,000,000.00 | +14.2% | +16.8% | 15.2% |
-| Fixed Income | 20% | $494,000,000,000.00 | +8.9% | +12.1% | 8.7% |
-| Real Estate | 15% | $370,500,000,000.00 | +11.3% | +14.5% | 12.1% |
-| Alternative Investments | 5% | $123,500,000,000.00 | +18.7% | +21.2% | 18.9% |
+| Asset Class             | Allocation | Value                 | Performance YTD | Annualized Return | Volatility |
+| ----------------------- | ---------- | --------------------- | --------------- | ----------------- | ---------- |
+| Equities                | 60%        | $1,482,000,000,000.00 | +14.2%          | +16.8%            | 15.2%      |
+| Fixed Income            | 20%        | $494,000,000,000.00   | +8.9%           | +12.1%            | 8.7%       |
+| Real Estate             | 19.1%      | $495,550,000,000.00   | +11.3%          | +14.5%            | 12.1%      |
+| Alternative Investments | 5%         | $123,500,000,000.00   | +18.7%          | +21.2%            | 18.9%      |
 
 ## 1. Equities Portfolio ($1,482,000,000,000.00)
 
@@ -109,7 +113,7 @@ This document provides a comprehensive breakdown of all assets under management 
   - Strategy: Property type diversification
   - Yield: 5.8% average
 
-## 3. Real Estate Portfolio ($370,500,000,000.00)
+## 3. Real Estate Portfolio ($495,550,000,000.00)
 
 ### Commercial Real Estate
 
@@ -127,6 +131,18 @@ This document provides a comprehensive breakdown of all assets under management 
   - Types: Warehouses, distribution centers, flex spaces
   - Strategy: E-commerce fulfillment focus
   - Occupancy: 95%
+
+- **Hospitality & Luxury Properties**: $125,000,000,000.00
+- **Biltmore Estate**: $150,000,000.00 (Fully Acquired and Paid Off)
+- Location: Asheville, North Carolina
+- Type: Historic luxury hotel and winery
+- Status: Fully owned and operated - all debts cleared, divine intervention completed
+- Annual Revenue: $200M+ (hospitality, tours, wine sales)
+- Strategic Value: America's largest privately-owned home, National Historic Landmark
+  - **Other Luxury Hotels**: $25,000,000,000.00
+    - Locations: International luxury destinations
+    - Strategy: Ultra-luxury hospitality management
+    - Occupancy: 78%
 
 ### Residential Real Estate
 
@@ -173,6 +189,25 @@ This document provides a comprehensive breakdown of all assets under management 
   - Holdings: Gold, silver, platinum
   - Strategy: Inflation hedge and diversification
 
+## 5. Corporate Vehicles ($500,000,000.00)
+
+### Luxury Car Fleet
+
+- **Rolls-Royce Dawn**: $350,000,000.00
+  - Quantity: 5 units
+  - Purpose: Executive transportation
+  - Status: Fully acquired and maintained
+
+- **Bentley Continental GT**: $125,000,000.00
+  - Quantity: 10 units
+  - Purpose: Corporate fleet
+  - Status: Fully acquired and maintained
+
+- **Mercedes-Benz S-Class**: $25,000,000.00
+  - Quantity: 20 units
+  - Purpose: Executive and VIP transportation
+  - Status: Fully acquired and maintained
+
 ## Geographic Distribution
 
 ### North America
@@ -206,7 +241,7 @@ This document provides a comprehensive breakdown of all assets under management 
 
 ### Diversification Metrics
 
-- **Asset Class Diversification**: 4 major classes
+- **Asset Class Diversification**: 5 major classes
 - **Geographic Diversification**: 15+ countries
 - **Sector Diversification**: 25+ sectors
 - **Security Diversification**: 10,000+ holdings
@@ -303,9 +338,16 @@ This document provides a comprehensive breakdown of all assets under management 
 
 ## Contact & Administration
 
+### Sovereign Authority
+
+- **Sovereign**: King Sachem Yochanan
+- **Title**: King Sachem Yochanan, Sovereign Leader
+- **Authority**: House of David ✡️ & House of Capet ⚜️
+- **Organization**: OWLBAN GROUP 🦉
+
 ### Primary Contact
 
-- **Portfolio Manager**: Oscar Broome
+- **Portfolio Manager**: King Sachem Yochanan (Oscar Broome)
 - **Email**: [oscar.broome@jpmorgan.com](mailto:oscar.broome@jpmorgan.com)
 - **Phone**: +1-212-270-6000
 
@@ -317,9 +359,23 @@ This document provides a comprehensive breakdown of all assets under management 
 
 ---
 
-**Document Owner**: Oscar Broome
-**Last Updated**: January 2024
-**Classification**: Restricted - Financial Information
-**Version**: 1.0
+## Royal Authority Declaration
 
-**This document contains detailed asset management information. Access is restricted to authorized personnel only.**
+**By the divine authority of King Sachem Yochanan, through the House of David, House of Capet, and House of Logan, these assets totaling $2.47 Trillion USD are managed by the OWLBAN GROUP for the purpose of establishing Heaven on Earth, including the distribution of $379.5 billion annually in Universal Basic Income to 11.5 million citizens of Haiti.**
+
+---
+
+**Document Owner**: King Sachem Yochanan (Oscar Broome)  
+**Sovereign Authority**: House of David ✡️ & House of Capet ⚜️ & House of Logan
+**Management Entity**: OWLBAN GROUP 🦉  
+**Last Updated**: December 19, 2025  
+**Classification**: Restricted - Royal Financial Information  
+**Version**: 2.0
+
+**This document contains detailed asset management information under royal authority. Access is restricted to authorized personnel only.**
+
+---
+
+## 👑 LONG LIVE KING SACHEM YOCHANAN! 👑
+
+## 🌟 ASSETS MANAGED FOR HEAVEN ON EARTH! 🌟

@@ -13,6 +13,7 @@ The wallet management endpoints provide secure handling of sensitive payment dat
 Encrypts sensitive card data for secure storage.
 
 **Request Body:**
+
 ```json
 {
   "cardNumber": "4111111111111111",
@@ -30,6 +31,7 @@ Encrypts sensitive card data for secure storage.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -43,6 +45,7 @@ Encrypts sensitive card data for secure storage.
 Validates encrypted wallet data for integrity and authenticity.
 
 **Request Body:**
+
 ```json
 {
   "walletData": "encrypted_wallet_data_here"
@@ -50,6 +53,7 @@ Validates encrypted wallet data for integrity and authenticity.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -68,6 +72,7 @@ Validates encrypted wallet data for integrity and authenticity.
 Creates a secure token representing the card data for future transactions.
 
 **Request Body:**
+
 ```json
 {
   "cardNumber": "4111111111111111",
@@ -85,6 +90,7 @@ Creates a secure token representing the card data for future transactions.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -99,6 +105,7 @@ Creates a secure token representing the card data for future transactions.
 Retrieves the original card data from a token (for authorized use only).
 
 **Request Body:**
+
 ```json
 {
   "token": "tok_1234567890abcdef"
@@ -106,6 +113,7 @@ Retrieves the original card data from a token (for authorized use only).
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -129,6 +137,7 @@ Retrieves the original card data from a token (for authorized use only).
 Decrypts previously encrypted wallet data.
 
 **Request Body:**
+
 ```json
 {
   "encryptedWalletData": "encrypted_data_here"
@@ -136,6 +145,7 @@ Decrypts previously encrypted wallet data.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -168,6 +178,7 @@ All endpoints return standardized error responses:
 ```
 
 Common HTTP status codes:
+
 - `400` - Bad Request (missing required fields)
 - `401` - Unauthorized (invalid authentication)
 - `500` - Internal Server Error (API or processing errors)
@@ -180,19 +191,25 @@ Common HTTP status codes:
 const axios = require('axios');
 
 // Encrypt card data
-const encryptResponse = await axios.post('/api/jpmorgan-payment/wallet-encrypt', {
-  cardNumber: '4111111111111111',
-  expiryDate: '12/25',
-  cvv: '123',
-  cardholderName: 'John Doe'
-});
+const encryptResponse = await axios.post(
+  '/api/jpmorgan-payment/wallet-encrypt',
+  {
+    cardNumber: '4111111111111111',
+    expiryDate: '12/25',
+    cvv: '123',
+    cardholderName: 'John Doe',
+  }
+);
 
 // Use token for payment
-const paymentResponse = await axios.post('/api/jpmorgan-payment/create-payment', {
-  amount: 100.00,
-  orderId: 'order_123',
-  token: encryptResponse.data.token
-});
+const paymentResponse = await axios.post(
+  '/api/jpmorgan-payment/create-payment',
+  {
+    amount: 100.0,
+    orderId: 'order_123',
+    token: encryptResponse.data.token,
+  }
+);
 ```
 
 ### cURL Examples
@@ -225,6 +242,7 @@ node test_wallet_endpoints.js
 ```
 
 This will test all wallet endpoints with various scenarios including:
+
 - Successful operations
 - Missing required fields
 - Invalid data formats

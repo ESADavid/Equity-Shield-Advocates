@@ -31,13 +31,13 @@ async function manualTest() {
       name: 'Health Check Endpoint',
       endpoint: '/health',
       method: 'GET',
-      description: 'Test basic health check functionality'
+      description: 'Test basic health check functionality',
     },
     {
       name: 'Treasury Health Check',
       endpoint: '/treasury/health',
       method: 'GET',
-      description: 'Test treasury health check'
+      description: 'Test treasury health check',
     },
     {
       name: 'Create Payment Validation',
@@ -45,7 +45,7 @@ async function manualTest() {
       method: 'POST',
       data: {},
       description: 'Test payment creation validation (should fail with 400)',
-      expectError: true
+      expectError: true,
     },
     {
       name: 'Webhook Endpoint',
@@ -55,10 +55,10 @@ async function manualTest() {
       headers: {
         'x-jpmorgan-signature': 'test-sig',
         'x-jpmorgan-timestamp': '1234567890',
-        'x-jpmorgan-nonce': 'test-nonce'
+        'x-jpmorgan-nonce': 'test-nonce',
       },
-      description: 'Test webhook endpoint structure'
-    }
+      description: 'Test webhook endpoint structure',
+    },
   ];
 
   let passed = 0;
@@ -73,7 +73,7 @@ async function manualTest() {
       const config = {
         method: test.method,
         url: `${baseURL}${test.endpoint}`,
-        timeout: 5000
+        timeout: 5000,
       };
 
       if (test.data) {
@@ -95,17 +95,22 @@ async function manualTest() {
       } else {
         passed++;
       }
-
     } catch (error) {
       if (test.expectError && error.response) {
         console.log(`✓ Expected error received: ${error.response.status}`);
-        console.log(`Error response:`, JSON.stringify(error.response.data, null, 2));
+        console.log(
+          `Error response:`,
+          JSON.stringify(error.response.data, null, 2)
+        );
         passed++;
       } else {
         console.log(`✗ Unexpected error: ${error.message}`);
         if (error.response) {
           console.log(`Status: ${error.response.status}`);
-          console.log(`Error response:`, JSON.stringify(error.response.data, null, 2));
+          console.log(
+            `Error response:`,
+            JSON.stringify(error.response.data, null, 2)
+          );
         }
         failed++;
       }
@@ -121,26 +126,32 @@ async function manualTest() {
   console.log(`Success Rate: ${((passed / tests.length) * 100).toFixed(2)}%`);
 
   if (failed === 0) {
-    console.log('\n🎉 ALL TESTS PASSED! JPMorgan integration is working correctly.');
+    console.log(
+      '\n🎉 ALL TESTS PASSED! JPMorgan integration is working correctly.'
+    );
   } else {
-    console.log(`\n⚠️  ${failed} test(s) failed. Please review the integration.`);
+    console.log(
+      `\n⚠️  ${failed} test(s) failed. Please review the integration.`
+    );
   }
 
   console.log('='.repeat(60));
 }
 
 // Run the manual test
-manualTest().then(() => {
-  // Give some time for any pending requests to complete
-  setTimeout(() => {
+manualTest()
+  .then(() => {
+    // Give some time for any pending requests to complete
+    setTimeout(() => {
+      server.close(() => {
+        console.log('\nTest server stopped.');
+        process.exit(0);
+      });
+    }, 1000);
+  })
+  .catch((error) => {
+    console.error('Test failed:', error);
     server.close(() => {
-      console.log('\nTest server stopped.');
-      process.exit(0);
+      process.exit(1);
     });
-  }, 1000);
-}).catch((error) => {
-  console.error('Test failed:', error);
-  server.close(() => {
-    process.exit(1);
   });
-});

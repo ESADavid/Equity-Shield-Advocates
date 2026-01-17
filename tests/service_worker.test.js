@@ -39,10 +39,22 @@ describe('Service Worker events registration', () => {
   });
 
   test('should register event listeners for install, push, notificationclick, and periodicsync', () => {
-    expect(globalThis.addEventListener).toHaveBeenCalledWith('install', expect.any(Function));
-    expect(globalThis.addEventListener).toHaveBeenCalledWith('push', expect.any(Function));
-    expect(globalThis.addEventListener).toHaveBeenCalledWith('notificationclick', expect.any(Function));
-    expect(globalThis.addEventListener).toHaveBeenCalledWith('periodicsync', expect.any(Function));
+    expect(globalThis.addEventListener).toHaveBeenCalledWith(
+      'install',
+      expect.any(Function)
+    );
+    expect(globalThis.addEventListener).toHaveBeenCalledWith(
+      'push',
+      expect.any(Function)
+    );
+    expect(globalThis.addEventListener).toHaveBeenCalledWith(
+      'notificationclick',
+      expect.any(Function)
+    );
+    expect(globalThis.addEventListener).toHaveBeenCalledWith(
+      'periodicsync',
+      expect.any(Function)
+    );
   });
 });
 
@@ -50,7 +62,7 @@ describe('Service Worker install event', () => {
   test('should call caches.open during install event', () => {
     // Find install event listener function
     const installCall = globalThis.addEventListener.mock.calls.find(
-      call => call[0] === 'install'
+      (call) => call[0] === 'install'
     );
     expect(installCall).toBeDefined();
 

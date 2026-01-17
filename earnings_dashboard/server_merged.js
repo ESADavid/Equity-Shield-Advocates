@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs').promises;
@@ -11,18 +13,25 @@ const ADMIN_PASS = process.env.ADMIN_PASS || 'securepassword';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
 
 // Basic authentication setup
-app.use(basicAuth({
-  users: { [ADMIN_USER]: ADMIN_PASS },
-  challenge: true,
-}));
+app.use(
+  basicAuth({
+    users: { [ADMIN_USER]: ADMIN_PASS },
+    challenge: true,
+  })
+);
 
-app.use(cors({
-  origin: CORS_ORIGIN,
-}));
+app.use(
+  cors({
+    origin: CORS_ORIGIN,
+  })
+);
 app.use(express.json());
 
 // Resolve the directory name for ES module compatibility
-const revenueDataPath = path.resolve(__dirname, '../owlban_repos/aggregated_revenue.json');
+const revenueDataPath = path.resolve(
+  __dirname,
+  '../owlban_repos/aggregated_revenue.json'
+);
 
 app.get('/api/earnings', async (req, res) => {
   try {
@@ -72,11 +81,11 @@ app.get('/', (req, res) => {
     fetchEarnings();`,
     '</script>',
     '</body>',
-    '</html>'
-  ].join("");
+    '</html>',
+  ].join('');
   res.send(html);
 });
 
 app.listen(PORT, () => {
-  console.log(`Earnings dashboard running at http://localhost:${PORT}`);
+  logger.info(`Earnings dashboard running at http://localhost:${PORT}`);
 });

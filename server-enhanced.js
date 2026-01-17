@@ -1,9 +1,16 @@
 #!/usr/bin/env node
 
 import dotenv from 'dotenv';
+import logger from './utils/loggerWrapper.js';
+
 dotenv.config();
 
 import express from 'express';
+import {
+  errorHandler,
+  notFoundHandler,
+  setupUnhandledRejectionHandlers,
+} from './middleware/errorHandler.js';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -39,7 +46,7 @@ const performanceMetrics = {
   averageResponseTime: 0,
   slowRequests: 0,
   errorCount: 0,
-  startTime: Date.now()
+  startTime: Date.now(),
 };
 
 // Create HTTP server
@@ -48,31 +55,45 @@ const server = createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000'],
-    methods: ['GET', 'POST']
-  }
+    origin: process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(',')
+      : ['http://localhost:3000'],
+    methods: ['GET', 'POST'],
+  },
 });
 
 // Initialize database connection with enhanced retry logic
+logger.info(`SKIP_DATABASE value: "${process.env.SKIP_DATABASE}"`);
 if (process.env.SKIP_DATABASE === 'true') {
-  console.log('⚠️ Skipping database connection as SKIP_DATABASE=true');
+  logger.info('⚠️ Skipping database connection as SKIP_DATABASE=true');
+  logger.info('💡 Enhanced database features available:');
+  logger.info('   - Automatic retry with exponential backoff');
+  logger.info('   - Connection pooling optimizations');
+  logger.info('   - Health monitoring and metrics');
+  logger.info('   - Query performance monitoring');
+  logger.info('   - Backup and restore capabilities');
+  logger.info('   - Multi-database support');
+  logger.info('   - Transaction support');
+  logger.info('   - SSL/TLS encryption support');
+  logger.info('   - Replica set support');
+  logger.info('   - Connection monitoring and alerting');
 } else {
   try {
     await database.connect();
-    console.log('✅ Database connected successfully');
+    logger.info('✅ Database connected successfully');
   } catch (error) {
-    console.error('❌ Database connection failed:', error.message);
-    console.log('💡 Enhanced database features available:');
-    console.log('   - Automatic retry with exponential backoff');
-    console.log('   - Connection pooling optimizations');
-    console.log('   - Health monitoring and metrics');
-    console.log('   - Query performance monitoring');
-    console.log('   - Backup and restore capabilities');
-    console.log('   - Multi-database support');
-    console.log('   - Transaction support');
-    console.log('   - SSL/TLS encryption support');
-    console.log('   - Replica set support');
-    console.log('   - Connection monitoring and alerting');
+    logger.error('❌ Database connection failed:', error.message);
+    logger.info('💡 Enhanced database features available:');
+    logger.info('   - Automatic retry with exponential backoff');
+    logger.info('   - Connection pooling optimizations');
+    logger.info('   - Health monitoring and metrics');
+    logger.info('   - Query performance monitoring');
+    logger.info('   - Backup and restore capabilities');
+    logger.info('   - Multi-database support');
+    logger.info('   - Transaction support');
+    logger.info('   - SSL/TLS encryption support');
+    logger.info('   - Replica set support');
+    logger.info('   - Connection monitoring and alerting');
     // Don't exit - continue with graceful degradation
   }
 }
@@ -80,9 +101,12 @@ if (process.env.SKIP_DATABASE === 'true') {
 // Initialize cache service
 try {
   await cacheService.connect();
-  console.log('✅ Cache service initialized');
+  logger.info('✅ Cache service initialized');
 } catch (error) {
-  console.warn('⚠️ Cache service initialization failed, falling back to memory cache:', error.message);
+  logger.warn(
+    '⚠️ Cache service initialization failed, falling back to memory cache:',
+    error.message
+  );
 }
 
 // Initialize notification service
@@ -91,22 +115,24 @@ const notificationService = new NotificationService(io);
 // Import merchant bill pay system
 let merchantBillPay;
 try {
-  const merchantModule = await import('./earnings_dashboard/merchant_bill_pay.js');
+  const merchantModule =
+    await import('./earnings_dashboard/merchant_bill_pay.js');
   merchantBillPay = merchantModule.default || merchantModule;
-  console.log('✅ Merchant bill pay system loaded successfully');
+  logger.info('✅ Merchant bill pay system loaded successfully');
 } catch (error) {
-  console.error('❌ Failed to load merchant bill pay system:', error.message);
+  logger.error('❌ Failed to load merchant bill pay system:', error.message);
   process.exit(1);
 }
 
 // Import JPMorgan payment system
 let jpmorganRouter;
 try {
-  const jpmorganModule = await import('./earnings_dashboard/jpmorgan_payment.js');
+  const jpmorganModule =
+    await import('./earnings_dashboard/jpmorgan_payment.js');
   jpmorganRouter = jpmorganModule.default || jpmorganModule;
-  console.log('✅ JPMorgan payment system loaded successfully');
+  logger.info('✅ JPMorgan payment system loaded successfully');
 } catch (error) {
-  console.error('❌ Failed to load JPMorgan payment system:', error.message);
+  logger.error('❌ Failed to load JPMorgan payment system:', error.message);
   process.exit(1);
 }
 
@@ -115,91 +141,220 @@ let payrollRouter;
 try {
   const payrollModule = await import('./earnings_dashboard/payroll_router.js');
   payrollRouter = payrollModule.default || payrollModule;
-  console.log('✅ Payroll system loaded successfully');
+  logger.info('✅ Payroll system loaded successfully');
 } catch (error) {
-  console.error('❌ Failed to load payroll system:', error.message);
-  process.exit(1);
+  logger.warn('⚠️ Payroll system not loaded (TypeScript module issue):', error.message);
+  logger.info('   Server will continue without payroll routes');
+  // Don't exit - continue without payroll system
 }
 
 // Import analytics system
 let analyticsRouter;
 try {
-  const analyticsModule = await import('./earnings_dashboard/analytics_router.js');
+  const analyticsModule =
+    await import('./earnings_dashboard/analytics_router.js');
   analyticsRouter = analyticsModule.default || analyticsModule;
-  console.log('✅ Analytics system loaded successfully');
+  logger.info('✅ Analytics system loaded successfully');
 } catch (error) {
-  console.error('❌ Failed to load analytics system:', error.message);
+  logger.error('❌ Failed to load analytics system:', error.message);
   process.exit(1);
 }
 
 // Import notification system
 let notificationRouter;
 try {
-  const { default: createNotificationRouter } = await import('./earnings_dashboard/notification_router.js');
+  const { default: createNotificationRouter } =
+    await import('./earnings_dashboard/notification_router.js');
   notificationRouter = createNotificationRouter(notificationService);
-  console.log('✅ Notification system loaded successfully');
+  logger.info('✅ Notification system loaded successfully');
 } catch (error) {
-  console.error('❌ Failed to load notification system:', error.message);
+  logger.error('❌ Failed to load notification system:', error.message);
   process.exit(1);
 }
 
+// Import Haiti strategic routes
+let haitiStrategicRouter;
+try {
+  const haitiModule = await import('./routes/haitiStrategicRoutes.js');
+  haitiStrategicRouter = haitiModule.default || haitiModule;
+  logger.info('✅ Haiti strategic acquisition system loaded successfully');
+} catch (error) {
+  logger.warn('⚠️ Haiti strategic system not loaded (module issue):', error.message);
+  logger.info('   Server will continue without Haiti strategic routes');
+  // Don't exit - continue without Haiti strategic system
+}
+
+// Import UBI (Universal Basic Income) routes - HEAVEN ON EARTH
+let ubiRouter;
+try {
+  const ubiModule = await import('./routes/ubiRoutes.js');
+  ubiRouter = ubiModule.default || ubiModule;
+  logger.info('✅ Universal Basic Income system loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load UBI system:', error.message);
+  logger.info('   Server will continue without UBI system routes');
+}
+
+// Import Education routes - HEAVEN ON EARTH
+let educationRouter;
+try {
+  const educationModule = await import('./routes/educationRoutes.js');
+  educationRouter = educationModule.default || educationModule;
+  logger.info('✅ Education system loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load Education system:', error.message);
+  logger.info('   Server will continue without Education system routes');
+}
+
+// Import Partner routes - PHASE 2
+let partnerRouter;
+try {
+  const partnerModule = await import('./routes/partnerRoutes.js');
+  partnerRouter = partnerModule.default || partnerModule;
+  logger.info('✅ Partner coordination system loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load Partner system:', error.message);
+  logger.info('   Server will continue without Partner system routes');
+}
+
+// Import Citizen Portal routes - PHASE 2
+let citizenPortalRouter;
+try {
+  const citizenModule = await import('./routes/citizenPortalRoutes.js');
+  citizenPortalRouter = citizenModule.default || citizenModule;
+  logger.info('✅ Citizen portal system loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load Citizen portal:', error.message);
+  logger.info('   Server will continue without Citizen portal routes');
+}
+
+// Import UBI Payment routes - PHASE 2
+let ubiPaymentRouter;
+try {
+  const ubiPaymentModule = await import('./routes/ubiPaymentRoutes.js');
+  ubiPaymentRouter = ubiPaymentModule.default || ubiPaymentModule;
+  logger.info('✅ UBI payment system loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load UBI payment system:', error.message);
+  logger.info('   Server will continue without UBI payment system routes');
+}
+
+// Import Notification routes - PHASE 2
+let notificationRoutesPhase2;
+try {
+  const notifModule = await import('./routes/notificationRoutes.js');
+  notificationRoutesPhase2 = notifModule.default || notifModule;
+  logger.info('✅ Multi-channel notification routes loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load notification routes:', error.message);
+  logger.info('   Server will continue without notification routes routes');
+}
+
+// Import ITG (Integrated Technology Growth) routes - KING SACHEM YOCHANAN
+let itgRouter;
+try {
+  const itgModule = await import('./routes/itgRoutes.js');
+  itgRouter = itgModule.default || itgModule;
+  logger.info('✅ King Sachem Yochanan ITG Algorithm loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load ITG system:', error.message);
+  logger.info('   Server will continue without ITG routes');
+}
+
+// Import Divine AI routes - PRIVATE PERSONAL AI
+let divineAIRouter;
+try {
+  const divineAIModule = await import('./routes/divineAIRoutes.js');
+  divineAIRouter = divineAIModule.default || divineAIModule;
+  logger.info('✅ Divine AI system loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load Divine AI system:', error.message);
+  logger.info('   Server will continue without Divine AI routes');
+}
+
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https:"],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+      },
     },
-  },
-}));
+  })
+);
 
 // CORS configuration
-app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000'],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(',')
+      : ['http://localhost:3000'],
+    credentials: true,
+  })
+);
 
 // Response time monitoring
-app.use(responseTime((req, res, time) => {
-  performanceMetrics.requestCount++;
-  performanceMetrics.totalResponseTime += time;
-  performanceMetrics.averageResponseTime = performanceMetrics.totalResponseTime / performanceMetrics.requestCount;
+app.use(
+  responseTime((req, res, time) => {
+    performanceMetrics.requestCount++;
+    performanceMetrics.totalResponseTime += time;
+    performanceMetrics.averageResponseTime =
+      performanceMetrics.totalResponseTime / performanceMetrics.requestCount;
 
-  // Track slow requests (>500ms)
-  if (time > 500) {
-    performanceMetrics.slowRequests++;
-  }
+    // Track slow requests (>500ms)
+    if (time > 500) {
+      performanceMetrics.slowRequests++;
+    }
 
-  // Add performance headers
-  res.set('X-Response-Time', `${Math.round(time)}ms`);
-}));
+    // Add performance headers
+    res.set('X-Response-Time', `${Math.round(time)}ms`);
+  })
+);
 
 // Rate limiting with different tiers
-const createRateLimit = (windowMs, max, message) => rateLimit({
-  windowMs,
-  max,
-  message: { error: message },
-  standardHeaders: true,
-  legacyHeaders: false,
-  handler: (req, res) => {
-    performanceMetrics.errorCount++;
-    res.status(429).json({ error: message });
-  }
-});
+const createRateLimit = (windowMs, max, message) =>
+  rateLimit({
+    windowMs,
+    max,
+    message: { error: message },
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (req, res) => {
+      performanceMetrics.errorCount++;
+      res.status(429).json({ error: message });
+    },
+  });
 
 // General API rate limiting
-app.use('/api/', createRateLimit(15 * 60 * 1000, 100, 'Too many requests from this IP, please try again later.'));
+app.use(
+  '/api/',
+  createRateLimit(
+    15 * 60 * 1000,
+    100,
+    'Too many requests from this IP, please try again later.'
+  )
+);
 
 // Stricter rate limiting for auth endpoints
-app.use('/api/auth/', createRateLimit(15 * 60 * 1000, 5, 'Too many authentication attempts, please try again later.'));
+app.use(
+  '/api/auth/',
+  createRateLimit(
+    15 * 60 * 1000,
+    5,
+    'Too many authentication attempts, please try again later.'
+  )
+);
 
 // Compression with custom settings
-app.use(compression({
-  level: 6, // Balanced compression level
-  threshold: 1024 // Only compress responses > 1KB
-}));
+app.use(
+  compression({
+    level: 6, // Balanced compression level
+    threshold: 1024, // Only compress responses > 1KB
+  })
+);
 
 // Logging
 if (NODE_ENV === 'production') {
@@ -210,7 +365,10 @@ if (NODE_ENV === 'production') {
   }
 
   // Write logs to file
-  const accessLogStream = fs.createWriteStream(path.join(logsDir, 'access.log'), { flags: 'a' });
+  const accessLogStream = fs.createWriteStream(
+    path.join(logsDir, 'access.log'),
+    { flags: 'a' }
+  );
   app.use(morgan('combined', { stream: accessLogStream }));
 } else {
   app.use(morgan('dev'));
@@ -236,22 +394,26 @@ app.get('/health', async (req, res) => {
       cache: cacheHealth,
       performance: {
         ...performanceMetrics,
-        uptime: Date.now() - performanceMetrics.startTime
-      }
+        uptime: Date.now() - performanceMetrics.startTime,
+      },
     };
 
     // Determine overall health status
-    if ((dbHealth.status !== 'connected' && process.env.SKIP_DATABASE !== 'true') || cacheHealth.status === 'error') {
+    if (
+      (dbHealth.status !== 'connected' &&
+        process.env.SKIP_DATABASE !== 'true') ||
+      cacheHealth.status === 'error'
+    ) {
       health.status = 'degraded';
     }
 
     res.json(health);
   } catch (error) {
-    console.error('Health check error:', error);
+    logger.error('Health check error:', error);
     res.status(503).json({
       status: 'unhealthy',
       error: error.message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 });
@@ -261,20 +423,20 @@ app.get('/metrics', (req, res) => {
   const metrics = {
     performance: {
       ...performanceMetrics,
-      uptime: Date.now() - performanceMetrics.startTime
+      uptime: Date.now() - performanceMetrics.startTime,
     },
     database: database.getPerformanceMetrics(),
     cache: cacheService.getMetrics(),
     memory: {
       usage: process.memoryUsage(),
-      uptime: process.uptime()
+      uptime: process.uptime(),
     },
     system: {
       platform: process.platform,
       arch: process.arch,
       nodeVersion: process.version,
-      pid: process.pid
-    }
+      pid: process.pid,
+    },
   };
 
   res.json(metrics);
@@ -297,26 +459,39 @@ app.get('/api/status', (req, res) => {
   const status = {
     merchantBillPay: {
       loaded: !!merchantBillPay,
-      functions: getFunctions(merchantBillPay)
+      functions: getFunctions(merchantBillPay),
     },
     jpmorganPayment: {
       loaded: !!jpmorganRouter,
-      functions: getFunctions(jpmorganRouter)
+      functions: getFunctions(jpmorganRouter),
     },
     environment: {
       nodeVersion: process.version,
       environment: NODE_ENV,
-      port: PORT
+      port: PORT,
     },
     services: {
       stripe: !!process.env.STRIPE_SECRET_KEY,
-      smtp: !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS),
-      twilio: !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER),
-      jpmorgan: !!(process.env.JPMORGAN_CLIENT_ID && process.env.JPMORGAN_CLIENT_SECRET && process.env.JPMORGAN_MERCHANT_ID && process.env.JPMORGAN_TERMINAL_ID),
+      smtp: !!(
+        process.env.SMTP_HOST &&
+        process.env.SMTP_USER &&
+        process.env.SMTP_PASS
+      ),
+      twilio: !!(
+        process.env.TWILIO_ACCOUNT_SID &&
+        process.env.TWILIO_AUTH_TOKEN &&
+        process.env.TWILIO_PHONE_NUMBER
+      ),
+      jpmorgan: !!(
+        process.env.JPMORGAN_CLIENT_ID &&
+        process.env.JPMORGAN_CLIENT_SECRET &&
+        process.env.JPMORGAN_MERCHANT_ID &&
+        process.env.JPMORGAN_TERMINAL_ID
+      ),
       redis: cacheService.isConnected,
-      database: database.isConnected
+      database: database.isConnected,
     },
-    performance: performanceMetrics
+    performance: performanceMetrics,
   };
 
   res.json(status);
@@ -325,120 +500,175 @@ app.get('/api/status', (req, res) => {
 // Merchant Bill Pay API Routes
 if (merchantBillPay && merchantBillPay.router) {
   app.use('/api/merchant', merchantBillPay.router);
-  console.log('✅ Merchant bill pay routes mounted at /api/merchant');
+  logger.info('✅ Merchant bill pay routes mounted at /api/merchant');
 }
 
 // JPMorgan Payment API Routes
 if (jpmorganRouter) {
   app.use('/jpmorgan', jpmorganRouter);
-  console.log('✅ JPMorgan payment routes mounted at /jpmorgan');
+  logger.info('✅ JPMorgan payment routes mounted at /jpmorgan');
 }
 
 // Payroll API Routes
 if (payrollRouter) {
   app.use('/api/payroll', payrollRouter);
-  console.log('✅ Payroll routes mounted at /api/payroll');
+  logger.info('✅ Payroll routes mounted at /api/payroll');
 }
 
 // Analytics API Routes
 if (analyticsRouter) {
   app.use('/api/analytics', analyticsRouter);
-  console.log('✅ Analytics routes mounted at /api/analytics');
+  logger.info('✅ Analytics routes mounted at /api/analytics');
 }
 
 // Notification API Routes
 if (notificationRouter) {
   app.use('/api/notifications', notificationRouter);
-  console.log('✅ Notification routes mounted at /api/notifications');
+  logger.info('✅ Notification routes mounted at /api/notifications');
 }
 
 // Authentication API Routes
 app.use('/api/auth', authRoutes);
-console.log('✅ Authentication routes mounted at /api/auth');
+logger.info('✅ Authentication routes mounted at /api/auth');
 
 // Transaction Override API Routes
 app.use('/api/transactions', transactionRoutes);
-console.log('✅ Transaction routes mounted at /api/transactions');
+logger.info('✅ Transaction routes mounted at /api/transactions');
+
+// Haiti Strategic Acquisition API Routes
+if (haitiStrategicRouter) {
+  app.use('/api/haiti', haitiStrategicRouter);
+  logger.info('✅ Haiti strategic routes mounted at /api/haiti');
+}
+
+// Universal Basic Income API Routes - HEAVEN ON EARTH
+if (ubiRouter) {
+  app.use('/api/ubi', ubiRouter);
+  logger.info('✅ UBI routes mounted at /api/ubi');
+  logger.info('   💰 $33,000/year per citizen system active');
+}
+
+// Education API Routes - HEAVEN ON EARTH
+if (educationRouter) {
+  app.use('/api/education', educationRouter);
+  logger.info('✅ Education routes mounted at /api/education');
+  logger.info('   🎓 Mandatory training: Military, Law, Tech, Agriculture');
+}
+
+// ITG API Routes - KING SACHEM YOCHANAN
+if (itgRouter) {
+  app.use('/api/itg', itgRouter);
+  logger.info('✅ ITG routes mounted at /api/itg');
+  logger.info('   👑 King Sachem Yochanan ITG Algorithm active');
+  logger.info('   ✨ Sacred Geometry + Divine Wisdom + Quantum Enhancement');
+}
+
+// Divine AI API Routes - PRIVATE PERSONAL AI
+if (divineAIRouter) {
+  app.use('/api/divine-ai', divineAIRouter);
+  logger.info('✅ Divine AI routes mounted at /api/divine-ai');
+  logger.info('   🤖 Divine AI active - Personal benefit only');
+  logger.info('   🔐 Private access - King Sachem Yochanan exclusive');
+}
+
+// Partner API Routes - PHASE 2
+if (partnerRouter) {
+  app.use('/api/partners', partnerRouter);
+  logger.info('✅ Partner routes mounted at /api/partners');
+  logger.info('   🤝 Partner coordination & PMC integration active');
+}
+
+// Citizen Portal API Routes - PHASE 2
+if (citizenPortalRouter) {
+  app.use('/api/citizen-portal', citizenPortalRouter);
+  logger.info('✅ Citizen portal routes mounted at /api/citizen-portal');
+  logger.info('   👥 Citizen registration & services active');
+}
+
+// UBI Payment API Routes - PHASE 2
+if (ubiPaymentRouter) {
+  app.use('/api/ubi-payments', ubiPaymentRouter);
+  logger.info('✅ UBI payment routes mounted at /api/ubi-payments');
+  logger.info('   💵 UBI payment processing active');
+}
+
+// Multi-Channel Notification API Routes - PHASE 2
+if (notificationRoutesPhase2) {
+  app.use('/api/notifications-v2', notificationRoutesPhase2);
+  logger.info('✅ Multi-channel notification routes mounted at /api/notifications-v2');
+  logger.info('   📧 Email, SMS, Push, In-App notifications active');
+}
 
 // Webhook endpoint for Stripe
-app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
-  try {
-    if (!merchantBillPay || !merchantBillPay.handleMerchantWebhook) {
-      return res.status(500).json({ error: 'Webhook handler not available' });
+app.post(
+  '/api/webhooks/stripe',
+  express.raw({ type: 'application/json' }),
+  async (req, res, next) => {
+    try {
+      if (!merchantBillPay || !merchantBillPay.handleMerchantWebhook) {
+        return res.status(500).json({ error: 'Webhook handler not available' });
+      }
+
+      await merchantBillPay.handleMerchantWebhook(req, res);
+    } catch (error) {
+      next(error);
     }
-
-    await merchantBillPay.handleMerchantWebhook(req, res);
-  } catch (error) {
-    console.error('Webhook processing error:', error);
-    performanceMetrics.errorCount++;
-    res.status(500).json({ error: 'Webhook processing failed' });
   }
-});
-
-
+);
 
 // Static file serving with caching headers
-app.use(express.static(path.join(__dirname, 'public'), {
-  maxAge: '1d', // Cache static files for 1 day
-  setHeaders: (res, path) => {
-    if (path.endsWith('.css') || path.endsWith('.js')) {
-      res.set('Cache-Control', 'public, max-age=86400'); // 1 day
-    }
-  }
-}));
+app.use(
+  express.static(path.join(__dirname, 'public'), {
+    maxAge: '1d', // Cache static files for 1 day
+    setHeaders: (res, path) => {
+      if (path.endsWith('.css') || path.endsWith('.js')) {
+        res.set('Cache-Control', 'public, max-age=86400'); // 1 day
+      }
+    },
+  })
+);
 
-// Catch-all handler for SPA
-app.get('*', (req, res) => {
+// Catch-all handler for SPA (must be before 404 handler)
+app.get('*', (req, res, next) => {
+  // Only serve SPA for non-API routes and exclude health/metrics endpoints
+  if (req.path.startsWith('/api/') || req.path.startsWith('/jpmorgan/') || req.path === '/health' || req.path === '/metrics' || req.path === '/api/status') {
+    return next();
+  }
   // Serve override-dashboard.html instead of missing index.html
   res.sendFile(path.join(__dirname, 'public', 'override-dashboard.html'));
 });
 
-// Error handling middleware
+// 404 handler for API routes (must be before error handler)
+app.use(notFoundHandler);
+
+// Enterprise error handling middleware (must be last)
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
   performanceMetrics.errorCount++;
-
-  // Don't leak error details in production
-  const errorResponse = {
-    error: NODE_ENV === 'production' ? 'Internal server error' : err.message,
-    timestamp: new Date().toISOString(),
-    path: req.path
-  };
-
-  res.status(err.status || 500).json(errorResponse);
-});
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    error: 'Not found',
-    path: req.path,
-    timestamp: new Date().toISOString()
-  });
+  errorHandler(err, req, res, next);
 });
 
 // Graceful shutdown
 const gracefulShutdown = () => {
-  console.log('Graceful shutdown initiated...');
+  logger.info('Graceful shutdown initiated...');
 
   server.close(async () => {
-    console.log('HTTP server closed');
+    logger.info('HTTP server closed');
 
     try {
       await database.disconnect();
       await cacheService.disconnect();
-      console.log('Database and cache connections closed');
+      logger.info('Database and cache connections closed');
     } catch (error) {
-      console.error('Error during shutdown:', error);
+      logger.error('Error during shutdown:', error);
     }
 
-    console.log('Process terminated');
+    logger.info('Process terminated');
     process.exit(0);
   });
 
   // Force shutdown after 10 seconds
   setTimeout(() => {
-    console.error('Forced shutdown after timeout');
+    logger.error('Forced shutdown after timeout');
     process.exit(1);
   }, 10000);
 };
@@ -446,70 +676,76 @@ const gracefulShutdown = () => {
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
 
-// Unhandled promise rejection handler
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+// Setup unhandled rejection and exception handlers
+setupUnhandledRejectionHandlers((error) => {
   performanceMetrics.errorCount++;
-  // Don't exit in production, just log
-  if (NODE_ENV !== 'production') {
-    process.exit(1);
-  }
-});
-
-// Uncaught exception handler
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  performanceMetrics.errorCount++;
-  // Don't exit in production, just log
-  if (NODE_ENV !== 'production') {
-    process.exit(1);
-  }
 });
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
-  console.log('🔌 Client connected:', socket.id);
+  logger.info('🔌 Client connected:', socket.id);
 
   socket.on('disconnect', () => {
-    console.log('🔌 Client disconnected:', socket.id);
+    logger.info('🔌 Client disconnected:', socket.id);
   });
 
   socket.on('subscribe-notifications', (userId) => {
     socket.join(`user-${userId}`);
-    console.log(`📡 User ${userId} subscribed to notifications`);
+    logger.info(`📡 User ${userId} subscribed to notifications`);
   });
 
   socket.on('unsubscribe-notifications', (userId) => {
     socket.leave(`user-${userId}`);
-    console.log(`📡 User ${userId} unsubscribed from notifications`);
+    logger.info(`📡 User ${userId} unsubscribed from notifications`);
   });
 });
 
 // Start server
 server.listen(PORT, () => {
-  console.log('🚀 OSCAR BROOME REVENUE - Performance Optimized Server');
-  console.log('====================================================');
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`✅ Environment: ${NODE_ENV}`);
-  console.log(`✅ Health check: http://localhost:${PORT}/health`);
-  console.log(`✅ Performance metrics: http://localhost:${PORT}/metrics`);
-  console.log(`✅ API status: http://localhost:${PORT}/api/status`);
-  console.log(`✅ WebSocket notifications enabled`);
-  console.log(`✅ Started at: ${new Date().toISOString()}`);
-  console.log('');
+  logger.info('🚀 OSCAR BROOME REVENUE - Performance Optimized Server');
+  logger.info('====================================================');
+  logger.info(`✅ Server running on port ${PORT}`);
+  logger.info(`✅ Environment: ${NODE_ENV}`);
+  logger.info(`✅ Health check: http://localhost:${PORT}/health`);
+  logger.info(`✅ Performance metrics: http://localhost:${PORT}/metrics`);
+  logger.info(`✅ API status: http://localhost:${PORT}/api/status`);
+  logger.info(`✅ WebSocket notifications enabled`);
+  logger.info(`✅ Started at: ${new Date().toISOString()}`);
+  logger.info('');
+  logger.info('✨ HEAVEN ON EARTH - OWLBAN GROUP SYSTEMS ACTIVE ✨');
+  logger.info('====================================================');
+  logger.info(
+    '💰 Universal Basic Income: http://localhost:${PORT}/api/ubi/welcome'
+  );
+  logger.info(
+    '🎓 Education System: http://localhost:${PORT}/api/education/welcome'
+  );
+  logger.info('🌍 Mission: $33,000/year + Mandatory Education for All');
+  logger.info('');
+  logger.info('👑 KING SACHEM YOCHANAN ITG ALGORITHM ACTIVE 👑');
+  logger.info('====================================================');
+  logger.info(
+    '📊 ITG Dashboard: http://localhost:${PORT}/api/itg/dashboard-data'
+  );
+  logger.info(
+    '⚡ Quick Assessment: http://localhost:${PORT}/api/itg/quick-assessment'
+  );
+  logger.info('✨ Sacred Geometry + Divine Wisdom + Quantum Computing');
+  logger.info('🔐 Blockchain-Verified Sovereignty Tracking');
+  logger.info('');
 
   if (NODE_ENV === 'production') {
-    console.log('📊 Production Features:');
-    console.log('   - Security headers enabled');
-    console.log('   - Rate limiting active');
-    console.log('   - Response compression enabled');
-    console.log('   - Request logging to file');
-    console.log('   - Performance monitoring');
-    console.log('   - Graceful error handling');
-    console.log('   - Real-time notifications');
-    console.log('   - Redis caching layer');
-    console.log('   - Database connection pooling');
-    console.log('');
+    logger.info('📊 Production Features:');
+    logger.info('   - Security headers enabled');
+    logger.info('   - Rate limiting active');
+    logger.info('   - Response compression enabled');
+    logger.info('   - Request logging to file');
+    logger.info('   - Performance monitoring');
+    logger.info('   - Graceful error handling');
+    logger.info('   - Real-time notifications');
+    logger.info('   - Redis caching layer');
+    logger.info('   - Database connection pooling');
+    logger.info('');
   }
 });
 

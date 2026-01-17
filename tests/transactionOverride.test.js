@@ -1,7 +1,8 @@
 import request from 'supertest';
 import app from '../server-enhanced';
 
-const authHeader = 'Basic ' + Buffer.from('admin:securepassword').toString('base64');
+const authHeader =
+  'Basic ' + Buffer.from('admin:securepassword').toString('base64');
 
 describe('Transaction Override API', () => {
   let createdOverrideId = null;
@@ -22,7 +23,7 @@ describe('Transaction Override API', () => {
       overrideType: 'amount',
       originalValue: 100,
       newValue: 90,
-      reason: 'Discount applied'
+      reason: 'Discount applied',
     };
 
     const res = await request(app)

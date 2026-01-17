@@ -36,12 +36,7 @@
     "tests/**/*.ts",
     "types/**/*.d.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.js",
-    "**/*.spec.js"
-  ],
+  "exclude": ["node_modules", "dist", "**/*.test.js", "**/*.spec.js"],
   "ts-node": {
     "esm": false
   }

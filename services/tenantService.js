@@ -10,14 +10,19 @@ const logger = winston.createLogger({
   defaultMeta: { service: 'tenant-service' },
   transports: [
     new winston.transports.File({ filename: 'logs/tenant-service.log' }),
-    new winston.transports.File({ filename: 'logs/tenant-service-error.log', level: 'error' })
-  ]
+    new winston.transports.File({
+      filename: 'logs/tenant-service-error.log',
+      level: 'error',
+    }),
+  ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 class TenantService {
@@ -33,7 +38,7 @@ class TenantService {
       const cacheKey = `tenant_${tenantId}`;
       const cached = this.cache.get(cacheKey);
 
-      if (cached && (Date.now() - cached.timestamp) < this.cacheExpiry) {
+      if (cached && Date.now() - cached.timestamp < this.cacheExpiry) {
         return cached.data;
       }
 
@@ -43,13 +48,16 @@ class TenantService {
         // Cache the result
         this.cache.set(cacheKey, {
           data: tenant,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
 
       return tenant;
     } catch (error) {
-      logger.error('Error getting tenant by ID', { tenantId, error: error.message });
+      logger.error('Error getting tenant by ID', {
+        tenantId,
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -60,7 +68,7 @@ class TenantService {
       const cacheKey = `domain_${domain}`;
       const cached = this.cache.get(cacheKey);
 
-      if (cached && (Date.now() - cached.timestamp) < this.cacheExpiry) {
+      if (cached && Date.now() - cached.timestamp < this.cacheExpiry) {
         return cached.data;
       }
 
@@ -69,13 +77,16 @@ class TenantService {
       if (tenant) {
         this.cache.set(cacheKey, {
           data: tenant,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
 
       return tenant;
     } catch (error) {
-      logger.error('Error getting tenant by domain', { domain, error: error.message });
+      logger.error('Error getting tenant by domain', {
+        domain,
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -87,8 +98,8 @@ class TenantService {
         ...tenantData,
         audit: {
           ...tenantData.audit,
-          createdBy: tenantData.audit?.createdBy || 'system'
-        }
+          createdBy: tenantData.audit?.createdBy || 'system',
+        },
       });
 
       await tenant.save();
@@ -96,7 +107,7 @@ class TenantService {
       logger.info('Tenant created successfully', {
         tenantId: tenant.tenantId,
         name: tenant.name,
-        domain: tenant.domain
+        domain: tenant.domain,
       });
 
       // Clear cache
@@ -104,7 +115,10 @@ class TenantService {
 
       return tenant;
     } catch (error) {
-      logger.error('Error creating tenant', { error: error.message, tenantData });
+      logger.error('Error creating tenant', {
+        error: error.message,
+        tenantData,
+      });
       throw error;
     }
   }
@@ -117,7 +131,7 @@ class TenantService {
         {
           ...updateData,
           'audit.updatedBy': updatedBy,
-          'audit.updatedAt': new Date()
+          'audit.updatedAt': new Date(),
         },
         { new: true, runValidators: true }
       );
@@ -129,7 +143,7 @@ class TenantService {
       logger.info('Tenant updated successfully', {
         tenantId,
         updatedBy,
-        changes: Object.keys(updateData)
+        changes: Object.keys(updateData),
       });
 
       // Clear cache
@@ -147,7 +161,7 @@ class TenantService {
     try {
       const tenant = await this.updateTenant(tenantId, {
         status: 'inactive',
-        'audit.updatedBy': deletedBy
+        'audit.updatedBy': deletedBy,
       });
 
       logger.info('Tenant deleted (soft)', { tenantId, deletedBy });
@@ -169,7 +183,11 @@ class TenantService {
 
       return await tenant.checkLimits(type);
     } catch (error) {
-      logger.error('Error checking tenant limits', { tenantId, type, error: error.message });
+      logger.error('Error checking tenant limits', {
+        tenantId,
+        type,
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -184,7 +202,10 @@ class TenantService {
 
       return await tenant.getUsageStats();
     } catch (error) {
-      logger.error('Error getting tenant usage', { tenantId, error: error.message });
+      logger.error('Error getting tenant usage', {
+        tenantId,
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -200,7 +221,10 @@ class TenantService {
       const result = await tenant.verifyApiKey(apiKey);
       return result;
     } catch (error) {
-      logger.error('Error verifying API key', { tenantId, error: error.message });
+      logger.error('Error verifying API key', {
+        tenantId,
+        error: error.message,
+      });
       return { valid: false, reason: 'Verification failed' };
     }
   }
@@ -215,7 +239,11 @@ class TenantService {
 
       return tenant.hasFeature(feature);
     } catch (error) {
-      logger.error('Error checking feature access', { tenantId, feature, error: error.message });
+      logger.error('Error checking feature access', {
+        tenantId,
+        feature,
+        error: error.message,
+      });
       return false;
     }
   }
@@ -223,7 +251,9 @@ class TenantService {
   // Get all active tenants
   async getActiveTenants() {
     try {
-      return await Tenant.find({ status: 'active' }).select('tenantId name domain subscription.plan');
+      return await Tenant.find({ status: 'active' }).select(
+        'tenantId name domain subscription.plan'
+      );
     } catch (error) {
       logger.error('Error getting active tenants', { error: error.message });
       throw error;
@@ -239,13 +269,15 @@ class TenantService {
         logger.info('Processing expired subscription', {
           tenantId: tenant.tenantId,
           plan: tenant.subscription.plan,
-          endDate: tenant.subscription.endDate
+          endDate: tenant.subscription.endDate,
         });
 
         // Suspend tenant if auto-renew is disabled
         if (!tenant.subscription.autoRenew) {
           await tenant.suspend('Subscription expired');
-          logger.info('Tenant suspended due to expired subscription', { tenantId: tenant.tenantId });
+          logger.info('Tenant suspended due to expired subscription', {
+            tenantId: tenant.tenantId,
+          });
         } else {
           // Implement auto-renewal logic
           try {
@@ -253,19 +285,19 @@ class TenantService {
             if (renewalResult.success) {
               logger.info('Auto-renewal processed successfully', {
                 tenantId: tenant.tenantId,
-                newEndDate: renewalResult.newEndDate
+                newEndDate: renewalResult.newEndDate,
               });
             } else {
               logger.warn('Auto-renewal failed, suspending tenant', {
                 tenantId: tenant.tenantId,
-                reason: renewalResult.reason
+                reason: renewalResult.reason,
               });
               await tenant.suspend('Auto-renewal failed');
             }
           } catch (renewalError) {
             logger.error('Error during auto-renewal', {
               tenantId: tenant.tenantId,
-              error: renewalError.message
+              error: renewalError.message,
             });
             await tenant.suspend('Auto-renewal error');
           }
@@ -274,7 +306,9 @@ class TenantService {
 
       return expiredTenants.length;
     } catch (error) {
-      logger.error('Error processing expired subscriptions', { error: error.message });
+      logger.error('Error processing expired subscriptions', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -290,7 +324,7 @@ class TenantService {
       const planDurations = {
         starter: 30, // 30 days
         professional: 365, // 1 year
-        enterprise: 365 // 1 year
+        enterprise: 365, // 1 year
       };
 
       const extensionDays = planDurations[currentPlan] || 365;
@@ -309,23 +343,23 @@ class TenantService {
         tenantId: tenant.tenantId,
         plan: currentPlan,
         oldEndDate: currentEndDate,
-        newEndDate: newEndDate
+        newEndDate: newEndDate,
       });
 
       return {
         success: true,
         newEndDate: newEndDate,
-        plan: currentPlan
+        plan: currentPlan,
       };
     } catch (error) {
       logger.error('Auto-renewal processing failed', {
         tenantId: tenant.tenantId,
-        error: error.message
+        error: error.message,
       });
 
       return {
         success: false,
-        reason: error.message
+        reason: error.message,
       };
     }
   }
@@ -348,7 +382,7 @@ class TenantService {
   getCacheStats() {
     return {
       size: this.cache.size,
-      keys: Array.from(this.cache.keys())
+      keys: Array.from(this.cache.keys()),
     };
   }
 
@@ -359,13 +393,15 @@ class TenantService {
       return {
         status: 'healthy',
         activeTenants: tenantCount,
-        cacheSize: this.cache.size
+        cacheSize: this.cache.size,
       };
     } catch (error) {
-      logger.error('Tenant service health check failed', { error: error.message });
+      logger.error('Tenant service health check failed', {
+        error: error.message,
+      });
       return {
         status: 'unhealthy',
-        error: error.message
+        error: error.message,
       };
     }
   }

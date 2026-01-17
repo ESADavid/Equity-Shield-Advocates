@@ -2,11 +2,11 @@
   "suite": "Payroll Integration Tests",
   "summary": {
     "total": 5,
-    "passed": 5,
-    "failed": 0,
+    "passed": 1,
+    "failed": 4,
     "skipped": 0,
-    "successRate": "100.00%",
-    "duration": 2262
+    "successRate": "20.00%",
+    "duration": 2266
   },
   "tests": [
     {
@@ -14,36 +14,36 @@
       "result": "passed",
       "message": "Server is degraded and running",
       "duration": 0,
-      "timestamp": "2025-10-16T05:55:23.641Z"
+      "timestamp": "2026-01-13T03:39:16.051Z"
     },
     {
       "name": "Get Employees",
-      "result": "passed",
-      "message": "Retrieved 0 employees",
+      "result": "failed",
+      "message": "Request failed: Request failed with status code 404",
       "duration": 0,
-      "timestamp": "2025-10-16T05:55:23.661Z"
+      "timestamp": "2026-01-13T03:39:16.073Z"
     },
     {
       "name": "Add Employee",
-      "result": "passed",
-      "message": "Employee added successfully",
+      "result": "failed",
+      "message": "Request failed: Request failed with status code 404",
       "duration": 0,
-      "timestamp": "2025-10-16T05:55:23.685Z"
+      "timestamp": "2026-01-13T03:39:16.088Z"
     },
     {
       "name": "Calculate Payroll",
-      "result": "passed",
-      "message": "Payroll calculated correctly",
+      "result": "failed",
+      "message": "Request failed: Request failed with status code 404",
       "duration": 0,
-      "timestamp": "2025-10-16T05:55:23.708Z"
+      "timestamp": "2026-01-13T03:39:16.107Z"
     },
     {
       "name": "Process Payroll",
-      "result": "passed",
-      "message": "Processed payroll for 1 employees",
+      "result": "failed",
+      "message": "Request failed: Request failed with status code 404",
       "duration": 0,
-      "timestamp": "2025-10-16T05:55:23.727Z"
+      "timestamp": "2026-01-13T03:39:16.131Z"
     }
   ],
-  "timestamp": "2025-10-16T05:55:23.749Z"
+  "timestamp": "2026-01-13T03:39:16.135Z"
 }

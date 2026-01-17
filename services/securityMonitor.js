@@ -12,7 +12,7 @@ const SECURITY_EVENTS = {
   XSS_ATTEMPT: 'xss_attempt',
   RATE_LIMIT_EXCEEDED: 'rate_limit_exceeded',
   SUSPICIOUS_IP: 'suspicious_ip',
-  ANOMALOUS_REQUEST: 'anomalous_request'
+  ANOMALOUS_REQUEST: 'anomalous_request',
 };
 
 // Risk levels
@@ -20,7 +20,7 @@ const RISK_LEVELS = {
   LOW: 'low',
   MEDIUM: 'medium',
   HIGH: 'high',
-  CRITICAL: 'critical'
+  CRITICAL: 'critical',
 };
 
 class SecurityMonitor {
@@ -36,15 +36,17 @@ class SecurityMonitor {
         new winston.transports.File({ filename: 'logs/security.log' }),
         new winston.transports.File({
           filename: 'logs/security-error.log',
-          level: 'error'
-        })
-      ]
+          level: 'error',
+        }),
+      ],
     });
 
     if (process.env.NODE_ENV !== 'production') {
-      this.logger.add(new winston.transports.Console({
-        format: winston.format.simple()
-      }));
+      this.logger.add(
+        new winston.transports.Console({
+          format: winston.format.simple(),
+        })
+      );
     }
 
     // Initialize email transporter for alerts
@@ -54,8 +56,8 @@ class SecurityMonitor {
       secure: false,
       auth: {
         user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
+        pass: process.env.SMTP_PASS,
+      },
     });
 
     // Security metrics storage
@@ -63,7 +65,7 @@ class SecurityMonitor {
       failedLogins: new Map(),
       suspiciousIPs: new Set(),
       blockedIPs: new Set(),
-      alertsSent: 0
+      alertsSent: 0,
     };
 
     // Configuration
@@ -76,8 +78,8 @@ class SecurityMonitor {
         /script.*alert/i,
         /\b(or|and)\b.*(=|>|<)/i,
         /eval\(/i,
-        /base64_decode/i
-      ]
+        /base64_decode/i,
+      ],
     };
   }
 
@@ -93,7 +95,7 @@ class SecurityMonitor {
       tenantId: details.tenantId,
       endpoint: details.endpoint,
       method: details.method,
-      details: details.additionalInfo || {}
+      details: details.additionalInfo || {},
     };
 
     // Hash sensitive data for privacy
@@ -149,7 +151,7 @@ class SecurityMonitor {
     const highRiskTypes = [
       SECURITY_EVENTS.BRUTE_FORCE,
       SECURITY_EVENTS.SQL_INJECTION,
-      SECURITY_EVENTS.UNAUTHORIZED_ACCESS
+      SECURITY_EVENTS.UNAUTHORIZED_ACCESS,
     ];
 
     return highRiskTypes.includes(type);
@@ -161,17 +163,25 @@ class SecurityMonitor {
       const alertData = {
         subject: `🚨 Security Alert: ${event.type.toUpperCase()}`,
         html: this.generateAlertEmail(event),
-        to: process.env.SECURITY_ALERT_EMAILS?.split(',') || ['security@oscar-broome.com']
+        to: process.env.SECURITY_ALERT_EMAILS?.split(',') || [
+          'security@oscar-broome.com',
+        ],
       };
 
       await this.emailTransporter.sendMail({
         from: process.env.SMTP_USER,
-        ...alertData
+        ...alertData,
       });
 
-      this.logger.info('Security alert sent', { eventType: event.type, recipients: alertData.to });
+      this.logger.info('Security alert sent', {
+        eventType: event.type,
+        recipients: alertData.to,
+      });
     } catch (error) {
-      this.logger.error('Failed to send security alert', { error: error.message, event });
+      this.logger.error('Failed to send security alert', {
+        error: error.message,
+        event,
+      });
     }
   }
 
@@ -195,10 +205,14 @@ class SecurityMonitor {
             ${event.tenantId ? `<li><strong>Tenant ID:</strong> ${event.tenantId}</li>` : ''}
           </ul>
 
-          ${Object.keys(event.details).length > 0 ? `
+          ${
+            Object.keys(event.details).length > 0
+              ? `
             <h3>Additional Details:</h3>
             <pre style="background: white; padding: 10px; border-radius: 3px;">${JSON.stringify(event.details, null, 2)}</pre>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
 
         <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
@@ -225,7 +239,7 @@ class SecurityMonitor {
       [RISK_LEVELS.LOW]: '#28a745',
       [RISK_LEVELS.MEDIUM]: '#ffc107',
       [RISK_LEVELS.HIGH]: '#fd7e14',
-      [RISK_LEVELS.CRITICAL]: '#dc3545'
+      [RISK_LEVELS.CRITICAL]: '#dc3545',
     };
     return colors[riskLevel] || '#6c757d';
   }
@@ -246,7 +260,11 @@ class SecurityMonitor {
     }
 
     // Track suspicious IPs
-    if ([SECURITY_EVENTS.SUSPICIOUS_IP, SECURITY_EVENTS.BRUTE_FORCE].includes(type)) {
+    if (
+      [SECURITY_EVENTS.SUSPICIOUS_IP, SECURITY_EVENTS.BRUTE_FORCE].includes(
+        type
+      )
+    ) {
       this.metrics.suspiciousIPs.add(ip);
     }
   }
@@ -260,7 +278,7 @@ class SecurityMonitor {
       if (pattern.test(textToCheck)) {
         return {
           detected: true,
-          pattern: pattern.toString()
+          pattern: pattern.toString(),
         };
       }
     }
@@ -269,7 +287,8 @@ class SecurityMonitor {
   }
 
   // Check rate limiting violations
-  checkRateLimit(ip, endpoint, timeWindow = 60000) { // 1 minute
+  checkRateLimit(ip, endpoint, timeWindow = 60000) {
+    // 1 minute
     // This would integrate with your rate limiting middleware
     // For now, return false (not implemented)
     return false;
@@ -290,7 +309,8 @@ class SecurityMonitor {
   }
 
   // Get recent events from IP
-  getRecentEventsFromIP(ip, timeWindow = 300000) { // 5 minutes
+  getRecentEventsFromIP(ip, timeWindow = 300000) {
+    // 5 minutes
     // This would query the security logs for recent events
     // For now, return empty array
     return [];
@@ -304,7 +324,7 @@ class SecurityMonitor {
       blockedIPsCount: this.metrics.blockedIPs.size,
       alertsSent: this.metrics.alertsSent,
       suspiciousIPs: Array.from(this.metrics.suspiciousIPs),
-      blockedIPs: Array.from(this.metrics.blockedIPs)
+      blockedIPs: Array.from(this.metrics.blockedIPs),
     };
   }
 
@@ -316,50 +336,62 @@ class SecurityMonitor {
 
       // Check if IP is blocked
       if (this.isBlocked(clientIP)) {
-        await this.logSecurityEvent(SECURITY_EVENTS.UNAUTHORIZED_ACCESS, {
-          ip: clientIP,
-          userAgent,
-          endpoint: req.path,
-          method: req.method,
-          additionalInfo: { reason: 'IP blocked' }
-        }, RISK_LEVELS.HIGH);
+        await this.logSecurityEvent(
+          SECURITY_EVENTS.UNAUTHORIZED_ACCESS,
+          {
+            ip: clientIP,
+            userAgent,
+            endpoint: req.path,
+            method: req.method,
+            additionalInfo: { reason: 'IP blocked' },
+          },
+          RISK_LEVELS.HIGH
+        );
 
         return res.status(403).json({
           error: 'Access denied',
-          message: 'Your IP address has been blocked due to security policy'
+          message: 'Your IP address has been blocked due to security policy',
         });
       }
 
       // Check for suspicious patterns in request
       const suspiciousCheck = this.detectSuspiciousPatterns(req.body);
       if (suspiciousCheck.detected) {
-        await this.logSecurityEvent(SECURITY_EVENTS.SUSPICIOUS_ACTIVITY, {
-          ip: clientIP,
-          userAgent,
-          endpoint: req.path,
-          method: req.method,
-          additionalInfo: {
-            pattern: suspiciousCheck.pattern,
-            requestBody: req.body
-          }
-        }, RISK_LEVELS.HIGH);
+        await this.logSecurityEvent(
+          SECURITY_EVENTS.SUSPICIOUS_ACTIVITY,
+          {
+            ip: clientIP,
+            userAgent,
+            endpoint: req.path,
+            method: req.method,
+            additionalInfo: {
+              pattern: suspiciousCheck.pattern,
+              requestBody: req.body,
+            },
+          },
+          RISK_LEVELS.HIGH
+        );
       }
 
       // Check rate limiting
       if (this.checkRateLimit(clientIP, req.path)) {
-        await this.logSecurityEvent(SECURITY_EVENTS.RATE_LIMIT_EXCEEDED, {
-          ip: clientIP,
-          userAgent,
-          endpoint: req.path,
-          method: req.method
-        }, RISK_LEVELS.MEDIUM);
+        await this.logSecurityEvent(
+          SECURITY_EVENTS.RATE_LIMIT_EXCEEDED,
+          {
+            ip: clientIP,
+            userAgent,
+            endpoint: req.path,
+            method: req.method,
+          },
+          RISK_LEVELS.MEDIUM
+        );
       }
 
       // Store security context for later use
       req.securityContext = {
         ip: clientIP,
         userAgent,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       next();

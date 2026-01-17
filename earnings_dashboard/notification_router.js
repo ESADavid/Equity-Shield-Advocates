@@ -7,7 +7,7 @@ export default function createNotificationRouter(notificationService) {
   router.get('/', (req, res) => {
     res.json({
       notifications: [],
-      message: 'Notification system operational'
+      message: 'Notification system operational',
     });
   });
 
@@ -16,7 +16,7 @@ export default function createNotificationRouter(notificationService) {
     const { message } = req.body;
     notificationService.sendWebSocketNotification('test-notification', {
       message: message || 'Test notification',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
     res.json({ success: true, message: 'Test notification sent' });
   });

@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   const spendSection = document.querySelector('.spend-section');
   const summarySection = document.querySelector('.summary-section');
@@ -16,17 +18,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchEarningsFromBackend() {
     try {
-      console.log('Fetching earnings from backend...');
+      logger.info('Fetching earnings from backend...');
       const response = await fetch('/api/earnings', {
-        headers: { 'Authorization': authHeader },
-        credentials: 'include'
+        headers: { Authorization: authHeader },
+        credentials: 'include',
       });
-      console.log('Fetch response status:', response.status);
+      logger.info('Fetch response status:', response.status);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log('Earnings data received:', data);
+      logger.info('Earnings data received:', data);
       balance = data.totalAnnualRevenue;
       transactions = []; // Backend does not provide generic transactions, so keep empty or could be enhanced
       purchasedCars = data.purchases.autoFleetDetails || [];
@@ -36,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
       summarySection.style.display = 'block';
       fleetSection.style.display = 'block';
     } catch (error) {
-      console.error('Failed to fetch earnings from backend:', error);
+      logger.error('Failed to fetch earnings from backend:', error);
       alert('Failed to load earnings data. Please try again later.');
     }
   }
@@ -73,11 +75,11 @@ document.addEventListener('DOMContentLoaded', () => {
     cars = [
       { model: 'Tesla Model S', price: 79999 },
       { model: 'BMW X5', price: 60999 },
-      { model: 'Audi Q7', price: 54999 }
+      { model: 'Audi Q7', price: 54999 },
     ];
     // Remove cars already purchased by VIN or model if VIN not available
-    const purchasedModels = new Set(purchasedCars.map(car => car.model));
-    cars = cars.filter(car => !purchasedModels.has(car.model));
+    const purchasedModels = new Set(purchasedCars.map((car) => car.model));
+    cars = cars.filter((car) => !purchasedModels.has(car.model));
     renderCarList();
   }
 
@@ -108,14 +110,14 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': authHeader
+              Authorization: authHeader,
             },
             body: JSON.stringify({
               cost: car.price,
               model: car.model,
               vin,
-              dealership
-            })
+              dealership,
+            }),
           });
           const result = await response.json();
           if (response.ok) {
@@ -129,9 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
               purchaseDate: new Date().toISOString(),
               deliveryStatus: 'pending',
               deliveryDate: null,
-              deliveryAddress: null
+              deliveryAddress: null,
             });
-            cars = cars.filter(c => c.model !== car.model);
+            cars = cars.filter((c) => c.model !== car.model);
             renderBalance();
             renderCarList();
             renderPurchasedCars();

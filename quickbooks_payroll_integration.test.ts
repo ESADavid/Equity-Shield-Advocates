@@ -34,12 +34,16 @@ describe('QuickBooksPayrollIntegration', () => {
         },
       })
     );
-    jest.spyOn(axios, 'get').mockImplementationOnce(() =>
-      Promise.reject(new Error('401 Unauthorized'))
-    );
-    jest.spyOn(axios, 'get').mockImplementationOnce(() =>
-      Promise.reject(new Error('401 Unauthorized'))
-    );
+    jest
+      .spyOn(axios, 'get')
+      .mockImplementationOnce(() =>
+        Promise.reject(new Error('401 Unauthorized'))
+      );
+    jest
+      .spyOn(axios, 'get')
+      .mockImplementationOnce(() =>
+        Promise.reject(new Error('401 Unauthorized'))
+      );
     jest.spyOn(axios, 'get').mockImplementationOnce(() =>
       Promise.resolve({
         data: {

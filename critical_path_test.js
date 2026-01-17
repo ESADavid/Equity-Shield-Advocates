@@ -12,18 +12,22 @@ async function runCriticalPathTests() {
     // CRITICAL PATH 1: Payment Creation Flow
     // ==========================================
     console.log('1️⃣  CRITICAL PATH: Payment Creation Flow');
-    console.log('   Testing payment intent creation with various scenarios...\n');
+    console.log(
+      '   Testing payment intent creation with various scenarios...\n'
+    );
 
     // Test 1.1: Valid payment creation (should fail gracefully without credentials)
     try {
       const result = await merchantBillPay.createMerchantPaymentIntent({
         amount: 1000,
         merchantId: 'merchant_001',
-        description: 'Test payment'
+        description: 'Test payment',
       });
       console.log('   ❌ Expected error but got success');
     } catch (error) {
-      console.log('   ✅ Payment creation handles missing credentials correctly');
+      console.log(
+        '   ✅ Payment creation handles missing credentials correctly'
+      );
       console.log(`      Error: ${error.message}`);
     }
 
@@ -32,7 +36,7 @@ async function runCriticalPathTests() {
       await merchantBillPay.createMerchantPaymentIntent({
         amount: 1000,
         merchantId: 'invalid_merchant',
-        description: 'Test payment'
+        description: 'Test payment',
       });
       console.log('   ❌ Should have failed for invalid merchant');
     } catch (error) {
@@ -58,7 +62,7 @@ async function runCriticalPathTests() {
     try {
       await merchantBillPay.sendMerchantPaymentSuccessNotification(
         'merchant_001',
-        10.00,
+        10.0,
         'pi_test_123'
       );
       console.log('   ✅ Success notification sent (mock)');
@@ -70,7 +74,7 @@ async function runCriticalPathTests() {
     try {
       await merchantBillPay.sendMerchantPaymentFailureNotification(
         'merchant_001',
-        10.00,
+        10.0,
         'pi_test_123',
         'Card declined'
       );
@@ -109,10 +113,10 @@ async function runCriticalPathTests() {
             amount: 1000,
             metadata: { merchantId: 'merchant_001' },
             description: 'Test payment',
-            last_payment_error: null
-          }
-        }
-      }
+            last_payment_error: null,
+          },
+        },
+      },
     };
 
     const failureWebhook = {
@@ -127,18 +131,19 @@ async function runCriticalPathTests() {
             amount: 1000,
             metadata: { merchantId: 'merchant_001' },
             description: 'Test payment',
-            last_payment_error: { message: 'Card declined' }
-          }
-        }
-      }
+            last_payment_error: { message: 'Card declined' },
+          },
+        },
+      },
     };
 
     // Mock response objects
     const mockRes = {
-      json: (data) => console.log(`   📨 Webhook response: ${JSON.stringify(data)}`),
+      json: (data) =>
+        console.log(`   📨 Webhook response: ${JSON.stringify(data)}`),
       status: (code) => ({
-        send: (msg) => console.log(`   📨 Webhook error ${code}: ${msg}`)
-      })
+        send: (msg) => console.log(`   📨 Webhook error ${code}: ${msg}`),
+      }),
     };
 
     // Test 3.1: Success webhook
@@ -165,7 +170,7 @@ async function runCriticalPathTests() {
 
     const testMerchants = ['merchant_001', 'merchant_002', 'unknown_merchant'];
 
-    testMerchants.forEach(merchantId => {
+    testMerchants.forEach((merchantId) => {
       const email = merchantBillPay.getMerchantEmail(merchantId);
       const phone = merchantBillPay.getMerchantPhone(merchantId);
 
@@ -186,7 +191,7 @@ async function runCriticalPathTests() {
     try {
       await merchantBillPay.sendMerchantPaymentSuccessNotification(
         'nonexistent_merchant',
-        10.00,
+        10.0,
         'pi_test_123'
       );
       console.log('   ❌ Should have failed for nonexistent merchant');
@@ -220,17 +225,19 @@ async function runCriticalPathTests() {
       'sendSMSNotification',
       'getMerchantEmail',
       'getMerchantPhone',
-      'router'
+      'router',
     ];
 
     let exportCount = 0;
-    requiredExports.forEach(exportName => {
+    requiredExports.forEach((exportName) => {
       if (merchantBillPay[exportName]) {
         exportCount++;
       }
     });
 
-    console.log(`   ✅ Module exports: ${exportCount}/${requiredExports.length} functions available`);
+    console.log(
+      `   ✅ Module exports: ${exportCount}/${requiredExports.length} functions available`
+    );
 
     // Test 6.2: Router exists
     if (merchantBillPay.router) {
@@ -246,7 +253,9 @@ async function runCriticalPathTests() {
     console.log('=====================================\n');
 
     console.log('📊 Test Results Summary:');
-    console.log('✅ Payment creation flow - Handles missing credentials gracefully');
+    console.log(
+      '✅ Payment creation flow - Handles missing credentials gracefully'
+    );
     console.log('✅ Notification delivery - Email/SMS systems functional');
     console.log('✅ Webhook processing - Success/failure events handled');
     console.log('✅ Merchant data handling - Lookup and validation working');
@@ -264,7 +273,6 @@ async function runCriticalPathTests() {
     console.log('2. Test with live payment processing');
     console.log('3. Configure webhook endpoints in Stripe dashboard');
     console.log('4. Set up monitoring and alerting');
-
   } catch (error) {
     console.error('\n💥 Critical testing failed:', error.message);
     console.error('Stack trace:', error.stack);

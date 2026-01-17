@@ -4,7 +4,7 @@ const merchantBillPay = require('./earnings_dashboard/merchant_bill_pay');
 
 async function runManualTests() {
   console.log('🧪 Manual Testing of Merchant Notification System\n');
-  console.log('=' .repeat(60));
+  console.log('='.repeat(60));
 
   let testCount = 0;
   let passedTests = 0;
@@ -18,13 +18,21 @@ async function runManualTests() {
     const email2 = merchantBillPay.getMerchantEmail('merchant_002');
     const email3 = merchantBillPay.getMerchantEmail('unknown_merchant');
 
-    if (email1 === 'merchant1@example.com' && email2 === 'merchant2@example.com' && email3 === null) {
+    if (
+      email1 === 'merchant1@example.com' &&
+      email2 === 'merchant2@example.com' &&
+      email3 === null
+    ) {
       console.log('✅ PASSED: Email lookup working correctly');
       passedTests++;
     } else {
       console.log('❌ FAILED: Email lookup returned incorrect values');
-      console.log(`   merchant_001: ${email1}, expected: merchant1@example.com`);
-      console.log(`   merchant_002: ${email2}, expected: merchant2@example.com`);
+      console.log(
+        `   merchant_001: ${email1}, expected: merchant1@example.com`
+      );
+      console.log(
+        `   merchant_002: ${email2}, expected: merchant2@example.com`
+      );
       console.log(`   unknown_merchant: ${email3}, expected: null`);
       failedTests++;
     }
@@ -41,7 +49,11 @@ async function runManualTests() {
     const phone2 = merchantBillPay.getMerchantPhone('merchant_002');
     const phone3 = merchantBillPay.getMerchantPhone('unknown_merchant');
 
-    if (phone1 === '+1234567890' && phone2 === '+0987654321' && phone3 === null) {
+    if (
+      phone1 === '+1234567890' &&
+      phone2 === '+0987654321' &&
+      phone3 === null
+    ) {
       console.log('✅ PASSED: Phone lookup working correctly');
       passedTests++;
     } else {
@@ -60,9 +72,13 @@ async function runManualTests() {
   testCount++;
   console.log(`\nTest ${testCount}: Notification Functions Existence`);
   try {
-    if (typeof merchantBillPay.sendMerchantPaymentSuccessNotification === 'function' &&
-        typeof merchantBillPay.sendMerchantPaymentFailureNotification === 'function' &&
-        typeof merchantBillPay.sendSMSNotification === 'function') {
+    if (
+      typeof merchantBillPay.sendMerchantPaymentSuccessNotification ===
+        'function' &&
+      typeof merchantBillPay.sendMerchantPaymentFailureNotification ===
+        'function' &&
+      typeof merchantBillPay.sendSMSNotification === 'function'
+    ) {
       console.log('✅ PASSED: All notification functions are defined');
       passedTests++;
     } else {
@@ -70,7 +86,10 @@ async function runManualTests() {
       failedTests++;
     }
   } catch (error) {
-    console.log('❌ FAILED: Exception checking function existence:', error.message);
+    console.log(
+      '❌ FAILED: Exception checking function existence:',
+      error.message
+    );
     failedTests++;
   }
 
@@ -86,7 +105,10 @@ async function runManualTests() {
       failedTests++;
     }
   } catch (error) {
-    console.log('❌ FAILED: Exception checking webhook handler:', error.message);
+    console.log(
+      '❌ FAILED: Exception checking webhook handler:',
+      error.message
+    );
     failedTests++;
   }
 
@@ -102,7 +124,10 @@ async function runManualTests() {
       failedTests++;
     }
   } catch (error) {
-    console.log('❌ FAILED: Exception checking payment intent function:', error.message);
+    console.log(
+      '❌ FAILED: Exception checking payment intent function:',
+      error.message
+    );
     failedTests++;
   }
 
@@ -110,10 +135,16 @@ async function runManualTests() {
   testCount++;
   console.log(`\nTest ${testCount}: Module Exports`);
   try {
-    const expectedExports = ['router', 'createMerchantPaymentIntent', 'handleMerchantWebhook'];
+    const expectedExports = [
+      'router',
+      'createMerchantPaymentIntent',
+      'handleMerchantWebhook',
+    ];
     const actualExports = Object.keys(merchantBillPay);
 
-    const hasAllExports = expectedExports.every(exp => actualExports.includes(exp));
+    const hasAllExports = expectedExports.every((exp) =>
+      actualExports.includes(exp)
+    );
 
     if (hasAllExports) {
       console.log('✅ PASSED: All expected module exports are present');
@@ -135,18 +166,24 @@ async function runManualTests() {
   console.log(`\nTest ${testCount}: Environment Variables Configuration`);
   try {
     const requiredEnvVars = ['STRIPE_SECRET_KEY'];
-    const optionalEnvVars = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'TWILIO_SID', 'TWILIO_AUTH_TOKEN'];
+    const optionalEnvVars = [
+      'SMTP_HOST',
+      'SMTP_USER',
+      'SMTP_PASS',
+      'TWILIO_SID',
+      'TWILIO_AUTH_TOKEN',
+    ];
 
     const missingRequired = [];
     const presentOptional = [];
 
-    requiredEnvVars.forEach(varName => {
+    requiredEnvVars.forEach((varName) => {
       if (!process.env[varName]) {
         missingRequired.push(varName);
       }
     });
 
-    optionalEnvVars.forEach(varName => {
+    optionalEnvVars.forEach((varName) => {
       if (process.env[varName]) {
         presentOptional.push(varName);
       }
@@ -155,9 +192,13 @@ async function runManualTests() {
     if (missingRequired.length === 0) {
       console.log('✅ PASSED: All required environment variables are set');
       if (presentOptional.length > 0) {
-        console.log(`   Optional variables configured: ${presentOptional.join(', ')}`);
+        console.log(
+          `   Optional variables configured: ${presentOptional.join(', ')}`
+        );
       } else {
-        console.log('   Note: Optional email/SMS variables not configured (expected for testing)');
+        console.log(
+          '   Note: Optional email/SMS variables not configured (expected for testing)'
+        );
       }
       passedTests++;
     } else {
@@ -166,7 +207,10 @@ async function runManualTests() {
       failedTests++;
     }
   } catch (error) {
-    console.log('❌ FAILED: Exception checking environment variables:', error.message);
+    console.log(
+      '❌ FAILED: Exception checking environment variables:',
+      error.message
+    );
     failedTests++;
   }
 
@@ -179,12 +223,12 @@ async function runManualTests() {
 
     const requiredFiles = [
       './earnings_dashboard/merchant_bill_pay.js',
-      './earnings_report_updated.json'
+      './earnings_report_updated.json',
     ];
 
     const missingFiles = [];
 
-    requiredFiles.forEach(filePath => {
+    requiredFiles.forEach((filePath) => {
       const fullPath = path.resolve(__dirname, filePath);
       if (!fs.existsSync(fullPath)) {
         missingFiles.push(filePath);
@@ -200,24 +244,33 @@ async function runManualTests() {
       failedTests++;
     }
   } catch (error) {
-    console.log('❌ FAILED: Exception checking file dependencies:', error.message);
+    console.log(
+      '❌ FAILED: Exception checking file dependencies:',
+      error.message
+    );
     failedTests++;
   }
 
   // Summary
-  console.log('\n' + '=' .repeat(60));
+  console.log('\n' + '='.repeat(60));
   console.log('📊 TEST SUMMARY');
-  console.log('=' .repeat(60));
+  console.log('='.repeat(60));
   console.log(`Total Tests: ${testCount}`);
   console.log(`Passed: ${passedTests}`);
   console.log(`Failed: ${failedTests}`);
   console.log(`Success Rate: ${((passedTests / testCount) * 100).toFixed(1)}%`);
 
   if (failedTests === 0) {
-    console.log('\n🎉 ALL TESTS PASSED! The notification system is ready for use.');
+    console.log(
+      '\n🎉 ALL TESTS PASSED! The notification system is ready for use.'
+    );
     console.log('\n📋 Next Steps:');
-    console.log('1. Configure SMTP environment variables for email notifications');
-    console.log('2. Configure Twilio environment variables for SMS notifications');
+    console.log(
+      '1. Configure SMTP environment variables for email notifications'
+    );
+    console.log(
+      '2. Configure Twilio environment variables for SMS notifications'
+    );
     console.log('3. Test with real Stripe webhooks in a staging environment');
     console.log('4. Update merchant contact information in the database');
   } else {
@@ -228,7 +281,7 @@ async function runManualTests() {
 }
 
 // Run the tests
-runManualTests().catch(error => {
+runManualTests().catch((error) => {
   console.error('\n💥 Unexpected error during testing:', error);
   process.exit(1);
 });

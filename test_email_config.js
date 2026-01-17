@@ -26,7 +26,7 @@ console.log();
 // Test 3: Template Loading
 console.log('3. Testing Email Templates:');
 const templates = ['password-reset', 'welcome'];
-templates.forEach(template => {
+templates.forEach((template) => {
   const templateData = emailService.templates.get(template);
   if (templateData) {
     console.log(`   ✅ Template '${template}' loaded:`, templateData.subject);
@@ -40,7 +40,10 @@ console.log();
 console.log('4. Testing Environment Variables:');
 console.log('   EMAIL_PROVIDER:', process.env.EMAIL_PROVIDER || 'not set');
 console.log('   EMAIL_FROM:', process.env.EMAIL_FROM || 'not set');
-console.log('   SENDGRID_API_KEY:', process.env.SENDGRID_API_KEY ? 'set (hidden)' : 'not set');
+console.log(
+  '   SENDGRID_API_KEY:',
+  process.env.SENDGRID_API_KEY ? 'set (hidden)' : 'not set'
+);
 console.log('   SMTP_HOST:', process.env.SMTP_HOST || 'not set');
 console.log('   SMTP_USER:', process.env.SMTP_USER || 'not set');
 console.log();
@@ -48,16 +51,22 @@ console.log();
 // Test 5: Connection Test (if enabled)
 console.log('5. Testing Email Connection:');
 if (emailConfig.emailEnabled && emailService.transporter) {
-  emailService.testConnection().then(result => {
-    console.log('   Connection Test:', result.success ? '✅ SUCCESS' : '❌ FAILED');
-    if (!result.success) {
-      console.log('   Error:', result.error);
-    }
-    console.log('\n🎯 Email Configuration Test Complete!');
-  }).catch(error => {
-    console.log('   Connection Test: ❌ ERROR -', error.message);
-    console.log('\n🎯 Email Configuration Test Complete!');
-  });
+  emailService
+    .testConnection()
+    .then((result) => {
+      console.log(
+        '   Connection Test:',
+        result.success ? '✅ SUCCESS' : '❌ FAILED'
+      );
+      if (!result.success) {
+        console.log('   Error:', result.error);
+      }
+      console.log('\n🎯 Email Configuration Test Complete!');
+    })
+    .catch((error) => {
+      console.log('   Connection Test: ❌ ERROR -', error.message);
+      console.log('\n🎯 Email Configuration Test Complete!');
+    });
 } else {
   console.log('   Connection Test: ⏭️  SKIPPED (Email service disabled)');
   console.log('\n🎯 Email Configuration Test Complete!');

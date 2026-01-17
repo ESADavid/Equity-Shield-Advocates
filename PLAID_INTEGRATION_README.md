@@ -100,12 +100,12 @@ const linkHandler = Plaid.create({
     fetch('/api/plaid/exchange-public-token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ publicToken })
+      body: JSON.stringify({ publicToken }),
     });
   },
   onExit: (err, metadata) => {
     console.log('Plaid Link exited:', err, metadata);
-  }
+  },
 });
 ```
 
@@ -159,7 +159,7 @@ Use Plaid's sandbox environment for testing:
 // Test credentials
 const testCredentials = {
   username: 'user_good',
-  password: 'pass_good'
+  password: 'pass_good',
 };
 ```
 
@@ -280,4 +280,4 @@ process.env.PLAID_DEBUG = 'true';
 
 ---
 
-*This integration provides secure, compliant access to financial data while maintaining the highest standards of data protection and regulatory compliance.*
+_This integration provides secure, compliant access to financial data while maintaining the highest standards of data protection and regulatory compliance._

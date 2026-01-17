@@ -13,7 +13,7 @@ class WebUITestSuite {
     this.testResults = {
       passed: 0,
       failed: 0,
-      errors: []
+      errors: [],
     };
   }
 
@@ -21,7 +21,7 @@ class WebUITestSuite {
     console.log('🚀 Initializing Web UI Test Suite...');
     this.browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     this.page = await this.browser.newPage();
     await this.page.setViewport({ width: 1200, height: 800 });
@@ -47,13 +47,16 @@ class WebUITestSuite {
   async testExecutivePortalLogin() {
     const testName = 'Executive Portal Login';
     try {
-      await this.page.goto('file://' + path.resolve(__dirname, 'executive-portal/override-dashboard.html'));
+      await this.page.goto(
+        'file://' +
+          path.resolve(__dirname, 'executive-portal/override-dashboard.html')
+      );
       await this.page.waitForSelector('#loginForm', { timeout: 5000 });
       await this.page.type('#username', 'admin');
       await this.page.type('#password', 'admin123');
       await this.page.click('#loginBtn');
       await this.page.waitForTimeout(2000);
-      const dashboardVisible = await this.page.$('#dashboard') !== null;
+      const dashboardVisible = (await this.page.$('#dashboard')) !== null;
       if (dashboardVisible) {
         this.logPass(testName);
       } else {
@@ -89,13 +92,19 @@ class WebUITestSuite {
   async testPayrollCalculator() {
     const testName = 'Payroll Calculator';
     try {
-      await this.page.goto('file://' + path.resolve(__dirname, 'executive-portal/payroll_calculator_section_fixed.html'));
+      await this.page.goto(
+        'file://' +
+          path.resolve(
+            __dirname,
+            'executive-portal/payroll_calculator_section_fixed.html'
+          )
+      );
       await this.page.waitForSelector('#payrollCalculator', { timeout: 5000 });
       await this.page.type('#salary', '75000');
       await this.page.type('#hours', '40');
       await this.page.click('#calculateBtn');
       await this.page.waitForTimeout(1000);
-      const resultsVisible = await this.page.$('#results') !== null;
+      const resultsVisible = (await this.page.$('#results')) !== null;
       if (resultsVisible) {
         this.logPass(testName);
       } else {
@@ -109,7 +118,10 @@ class WebUITestSuite {
   async testWalletFrontend() {
     const testName = 'Wallet Frontend';
     try {
-      await this.page.goto('file://' + path.resolve(__dirname, 'earnings_dashboard/wallet_frontend.html'));
+      await this.page.goto(
+        'file://' +
+          path.resolve(__dirname, 'earnings_dashboard/wallet_frontend.html')
+      );
       await this.page.waitForSelector('#walletContainer', { timeout: 5000 });
       const balanceElement = await this.page.$('#balance');
       if (balanceElement) {
@@ -131,7 +143,10 @@ class WebUITestSuite {
   async testMerchantBillPay() {
     const testName = 'Merchant Bill Pay';
     try {
-      await this.page.goto('file://' + path.resolve(__dirname, 'earnings_dashboard/merchant_bill_pay.html'));
+      await this.page.goto(
+        'file://' +
+          path.resolve(__dirname, 'earnings_dashboard/merchant_bill_pay.html')
+      );
       await this.page.waitForSelector('#billPayForm', { timeout: 5000 });
       await this.page.type('#merchantName', 'Chase Auto Finance');
       await this.page.type('#amount', '450.00');
@@ -152,8 +167,13 @@ class WebUITestSuite {
   async testChaseAutoFinance() {
     const testName = 'Chase Auto Finance Integration';
     try {
-      await this.page.goto('file://' + path.resolve(__dirname, 'earnings_dashboard/chase_auto_finance.html'));
-      await this.page.waitForSelector('#autoFinanceContainer', { timeout: 5000 });
+      await this.page.goto(
+        'file://' +
+          path.resolve(__dirname, 'earnings_dashboard/chase_auto_finance.html')
+      );
+      await this.page.waitForSelector('#autoFinanceContainer', {
+        timeout: 5000,
+      });
       await this.page.type('#loanAmount', '25000');
       await this.page.type('#interestRate', '4.5');
       await this.page.type('#loanTerm', '60');
@@ -173,7 +193,10 @@ class WebUITestSuite {
   async testChaseMortgage() {
     const testName = 'Chase Mortgage Integration';
     try {
-      await this.page.goto('file://' + path.resolve(__dirname, 'earnings_dashboard/chase_mortgage.html'));
+      await this.page.goto(
+        'file://' +
+          path.resolve(__dirname, 'earnings_dashboard/chase_mortgage.html')
+      );
       await this.page.waitForSelector('#mortgageContainer', { timeout: 5000 });
       await this.page.type('#homePrice', '350000');
       await this.page.type('#downPayment', '70000');
@@ -194,7 +217,13 @@ class WebUITestSuite {
   async testJPMorganPayment() {
     const testName = 'JPMorgan Payment Integration';
     try {
-      await this.page.goto('file://' + path.resolve(__dirname, 'earnings_dashboard/jpmorgan_payment_perfect.html'));
+      await this.page.goto(
+        'file://' +
+          path.resolve(
+            __dirname,
+            'earnings_dashboard/jpmorgan_payment_perfect.html'
+          )
+      );
       await this.page.waitForSelector('#paymentContainer', { timeout: 5000 });
       await this.page.type('#recipient', 'Auto Finance Dept');
       await this.page.type('#paymentAmount', '1250.00');
@@ -242,13 +271,17 @@ class WebUITestSuite {
     try {
       await this.page.keyboard.press('Tab');
       await this.page.waitForTimeout(500);
-      const focusedElement = await this.page.evaluate(() => document.activeElement.tagName);
+      const focusedElement = await this.page.evaluate(
+        () => document.activeElement.tagName
+      );
       if (focusedElement) {
         this.logPass(testName + ' - Keyboard Navigation');
       } else {
         throw new Error('Keyboard navigation not working');
       }
-      const ariaElements = await this.page.$$('[aria-label], [aria-describedby]');
+      const ariaElements = await this.page.$$(
+        '[aria-label], [aria-describedby]'
+      );
       if (ariaElements.length > 0) {
         this.logPass(testName + ' - ARIA Labels');
       } else {
@@ -321,8 +354,12 @@ class WebUITestSuite {
     console.log('📊 Web UI Test Summary:');
     console.log(`✅ Passed: ${this.testResults.passed}`);
     console.log(`❌ Failed: ${this.testResults.failed}`);
-    console.log(`📈 Total: ${this.testResults.passed + this.testResults.failed}`);
-    console.log(`📊 Success Rate: ${((this.testResults.passed / (this.testResults.passed + this.testResults.failed)) * 100).toFixed(2)}%`);
+    console.log(
+      `📈 Total: ${this.testResults.passed + this.testResults.failed}`
+    );
+    console.log(
+      `📊 Success Rate: ${((this.testResults.passed / (this.testResults.passed + this.testResults.failed)) * 100).toFixed(2)}%`
+    );
     if (this.testResults.errors.length > 0) {
       console.log('\n🔍 Failed Tests:');
       this.testResults.errors.forEach((err, index) => {

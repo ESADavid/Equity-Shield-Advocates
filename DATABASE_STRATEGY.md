@@ -7,6 +7,7 @@ The OSCAR-BROOME-REVENUE project currently uses MongoDB as its primary database 
 ## Current Database Architecture
 
 ### Primary Database: MongoDB
+
 - **Driver**: Mongoose ODM (v8.18.3)
 - **Connection**: Single MongoDB instance with connection pooling
 - **Configuration**: Advanced connection settings with performance optimizations
@@ -20,6 +21,7 @@ The OSCAR-BROOME-REVENUE project currently uses MongoDB as its primary database 
 ### Models Using MongoDB
 
 #### Core Business Models
+
 1. **User Model** (`models/User.js`)
    - Stores user accounts, authentication data, profiles
    - Multi-tenant architecture with `tenantId` indexing
@@ -49,6 +51,7 @@ The OSCAR-BROOME-REVENUE project currently uses MongoDB as its primary database 
 ### Unused Dependencies
 
 #### MySQL Dependencies (Present but Unused)
+
 - **Package**: mysql2 (^3.6.0)
 - **Status**: Listed in package.json but not imported/used in any source files
 - **Documentation**: README.md references MySQL setup scripts that don't exist
@@ -57,12 +60,14 @@ The OSCAR-BROOME-REVENUE project currently uses MongoDB as its primary database 
 ## Data Storage Patterns
 
 ### JSON File Storage
+
 - **Location**: `/data/` directory
 - **Files**: employees.json, payroll_records.json, users.json
 - **Purpose**: Likely used for seeding, testing, or legacy data import
 - **Status**: Static files, not dynamically updated by application
 
 ### Performance Optimizations
+
 - **Indexing Strategy**: Comprehensive indexing on tenantId and common query fields
 - **Connection Pooling**: Configured for high availability
 - **Query Monitoring**: Built-in slow query detection
@@ -71,6 +76,7 @@ The OSCAR-BROOME-REVENUE project currently uses MongoDB as its primary database 
 ## Architecture Analysis
 
 ### Strengths
+
 1. **Document-Oriented Design**: MongoDB's flexible schema supports complex nested data structures
 2. **Multi-Tenant Ready**: All models include tenantId with proper indexing
 3. **Performance Monitoring**: Built-in query performance tracking
@@ -80,21 +86,25 @@ The OSCAR-BROOME-REVENUE project currently uses MongoDB as its primary database 
 ### Issues Identified
 
 #### 1. Dependency Bloat
+
 - **Problem**: mysql2 dependency included but unused
 - **Impact**: Increases bundle size, potential security surface
 - **Recommendation**: Remove mysql2 from package.json
 
 #### 2. Incomplete MySQL Documentation
+
 - **Problem**: README references non-existent MySQL setup scripts
 - **Impact**: Confusing for new developers
 - **Recommendation**: Update README to reflect actual database usage
 
 #### 3. Mixed Data Storage
+
 - **Problem**: JSON files used alongside MongoDB
 - **Impact**: Data consistency and maintenance complexity
 - **Recommendation**: Migrate static data to MongoDB collections or document purpose
 
 #### 4. Database Connection Configuration
+
 - **Problem**: Hard-coded connection settings in config/database.js
 - **Impact**: Limited environment flexibility
 - **Recommendation**: Make all connection parameters environment-configurable
@@ -104,17 +114,21 @@ The OSCAR-BROOME-REVENUE project currently uses MongoDB as its primary database 
 ### Phase 1: Cleanup and Optimization (Immediate)
 
 #### Remove Unused Dependencies
+
 ```bash
 npm uninstall mysql2
 ```
 
 #### Update Documentation
+
 - Remove MySQL references from README.md
 - Document MongoDB as the sole database technology
 - Update Docker configurations to remove MySQL containers
 
 #### Environment Configuration
+
 Add to `.env`:
+
 ```env
 # MongoDB Configuration
 MONGODB_URI=mongodb://localhost:27017/oscar-broome-revenue
@@ -127,16 +141,19 @@ MONGODB_HEARTBEAT=10000
 ### Phase 2: Database Optimization (Short-term)
 
 #### Index Optimization
+
 - Analyze query patterns and add missing indexes
 - Implement index usage monitoring
 - Add compound indexes for common query combinations
 
 #### Connection Management
+
 - Implement connection health checks
 - Add graceful shutdown handling
 - Configure replica set support for production
 
 #### Data Migration Strategy
+
 - Migrate JSON file data to MongoDB collections
 - Create data migration scripts
 - Implement backup/restore procedures
@@ -144,16 +161,19 @@ MONGODB_HEARTBEAT=10000
 ### Phase 3: Advanced Features (Medium-term)
 
 #### Database Sharding Strategy
+
 - Plan for horizontal scaling with sharding
 - Implement tenant-based sharding for multi-tenant isolation
 - Add shard key optimization
 
 #### Read/Write Separation
+
 - Implement read replicas for analytics queries
 - Configure write concerns for financial data integrity
 - Add database failover procedures
 
 #### Performance Monitoring
+
 - Implement detailed query profiling
 - Add database metrics to monitoring dashboard
 - Set up alerting for performance degradation
@@ -161,22 +181,26 @@ MONGODB_HEARTBEAT=10000
 ## Migration Plan
 
 ### Step 1: Dependency Cleanup
+
 - [ ] Remove mysql2 from package.json
 - [ ] Update README.md to remove MySQL references
 - [ ] Clean up Docker configurations
 
 ### Step 2: Configuration Enhancement
+
 - [ ] Make all database connection parameters environment-configurable
 - [ ] Add database health check endpoints
 - [ ] Implement connection pool monitoring
 
 ### Step 3: Data Consolidation
+
 - [ ] Analyze JSON file usage and purpose
 - [ ] Create MongoDB collections for static data
 - [ ] Implement data migration scripts
 - [ ] Update application code to use MongoDB consistently
 
 ### Step 4: Performance Optimization
+
 - [ ] Conduct index usage analysis
 - [ ] Add missing indexes based on query patterns
 - [ ] Implement query optimization
@@ -185,16 +209,19 @@ MONGODB_HEARTBEAT=10000
 ## Alternative Database Strategies
 
 ### Option 1: MongoDB Only (Recommended)
+
 - **Pros**: Simplifies architecture, leverages existing expertise
 - **Cons**: Potential scaling challenges for complex analytics
 - **Fit**: Excellent for current use case
 
 ### Option 2: PostgreSQL Migration
+
 - **Pros**: ACID compliance, complex queries, JSON support
 - **Cons**: Schema migration complexity, learning curve
 - **Fit**: Good for future regulatory compliance needs
 
 ### Option 3: Hybrid Approach
+
 - **Pros**: Best of both worlds for different data types
 - **Cons**: Increased complexity and maintenance
 - **Fit**: Overkill for current requirements

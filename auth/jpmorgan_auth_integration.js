@@ -12,18 +12,20 @@ const winston = require('winston');
 const config = {
   jwt: {
     secret: process.env.JWT_SECRET || crypto.randomBytes(64).toString('hex'),
-    refreshSecret: process.env.JWT_REFRESH_SECRET || crypto.randomBytes(64).toString('hex'),
+    refreshSecret:
+      process.env.JWT_REFRESH_SECRET || crypto.randomBytes(64).toString('hex'),
     expiresIn: '15m',
-    refreshExpiresIn: '7d'
+    refreshExpiresIn: '7d',
   },
   mfa: {
-    secret: process.env.MFA_SECRET || crypto.randomBytes(32).toString('hex')
+    secret: process.env.MFA_SECRET || crypto.randomBytes(32).toString('hex'),
   },
   security: {
     maxLoginAttempts: 5,
     lockoutTime: 15 * 60 * 1000, // 15 minutes
-    adminOverrideCode: process.env.ADMIN_OVERRIDE_CODE || 'OSCAR_BROOME_EMERGENCY_2024'
-  }
+    adminOverrideCode:
+      process.env.ADMIN_OVERRIDE_CODE || 'OSCAR_BROOME_EMERGENCY_2024',
+  },
 };
 
 // In-memory stores (use database in production)
@@ -41,8 +43,8 @@ const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.Console(),
-    new winston.transports.File({ filename: 'auth.log' })
-  ]
+    new winston.transports.File({ filename: 'auth.log' }),
+  ],
 });
 
 class JPMorganAuthManager {
@@ -69,7 +71,10 @@ class JPMorganAuthManager {
   // Password validation
   validatePassword(password) {
     if (!password || password.length < 8 || password.length > 128) {
-      return { valid: false, message: 'Password must be 8-128 characters long' };
+      return {
+        valid: false,
+        message: 'Password must be 8-128 characters long',
+      };
     }
 
     const hasUpper = /[A-Z]/.test(password);
@@ -80,7 +85,8 @@ class JPMorganAuthManager {
     if (!(hasUpper && hasLower && hasDigit && hasSpecial)) {
       return {
         valid: false,
-        message: 'Password must contain uppercase, lowercase, digit, and special character'
+        message:
+          'Password must contain uppercase, lowercase, digit, and special character',
       };
     }
 
@@ -104,7 +110,7 @@ class JPMorganAuthManager {
         locked: false,
         lockedUntil: null,
         permissions: ['read', 'write', 'delete', 'admin', 'jpmorgan_payments'],
-        department: 'JPMorgan Integration'
+        department: 'JPMorgan Integration',
       });
 
       // Executive user
@@ -121,7 +127,7 @@ class JPMorganAuthManager {
         locked: false,
         lockedUntil: null,
         permissions: ['read', 'write', 'jpmorgan_payments'],
-        department: 'JPMorgan Integration'
+        department: 'JPMorgan Integration',
       });
 
       logger.info('JPMorgan authentication users initialized');
@@ -137,7 +143,8 @@ class JPMorganAuthManager {
       logger.warning(`Login attempt for locked account: ${email}`);
       return {
         success: false,
-        message: 'Account is temporarily locked due to too many failed attempts'
+        message:
+          'Account is temporarily locked due to too many failed attempts',
       };
     }
 
@@ -162,7 +169,7 @@ class JPMorganAuthManager {
         return {
           success: false,
           message: 'MFA code required',
-          requiresMfa: true
+          requiresMfa: true,
         };
       }
 
@@ -188,7 +195,7 @@ class JPMorganAuthManager {
       role: user.role,
       permissions: user.permissions,
       department: user.department,
-      expiresAt: Date.now() + (15 * 60 * 1000) // 15 minutes
+      expiresAt: Date.now() + 15 * 60 * 1000, // 15 minutes
     });
 
     logger.info(`Successful login for JPMorgan user: ${email}`);
@@ -200,9 +207,9 @@ class JPMorganAuthManager {
         email: user.email,
         role: user.role,
         permissions: user.permissions,
-        department: user.department
+        department: user.department,
       },
-      tokens
+      tokens,
     };
   }
 
@@ -235,7 +242,7 @@ class JPMorganAuthManager {
         department: user.department,
         override: true,
         emergency: true,
-        exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour
+        exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour
       },
       config.jwt.secret
     );
@@ -249,8 +256,8 @@ class JPMorganAuthManager {
         id: user.id,
         email: user.email,
         role: user.role,
-        department: user.department
-      }
+        department: user.department,
+      },
     };
   }
 
@@ -263,7 +270,7 @@ class JPMorganAuthManager {
         role: user.role,
         permissions: user.permissions,
         department: user.department,
-        exp: Math.floor(Date.now() / 1000) + (15 * 60) // 15 minutes
+        exp: Math.floor(Date.now() / 1000) + 15 * 60, // 15 minutes
       },
       config.jwt.secret
     );
@@ -273,7 +280,7 @@ class JPMorganAuthManager {
         userId: user.id,
         email: user.email,
         type: 'refresh',
-        exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60) // 7 days
+        exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 7 days
       },
       config.jwt.refreshSecret
     );
@@ -306,7 +313,10 @@ class JPMorganAuthManager {
 
   // Rate limiting
   recordFailedAttempt(email) {
-    const attempts = loginAttempts.get(email) || { count: 0, lastAttempt: Date.now() };
+    const attempts = loginAttempts.get(email) || {
+      count: 0,
+      lastAttempt: Date.now(),
+    };
     attempts.count += 1;
     attempts.lastAttempt = Date.now();
 
@@ -377,7 +387,7 @@ class JPMorganAuthManager {
       permissions: user.permissions,
       department: user.department,
       lastLogin: user.lastLogin,
-      mfaEnabled: user.mfaEnabled
+      mfaEnabled: user.mfaEnabled,
     };
   }
 
@@ -408,7 +418,7 @@ class JPMorganAuthManager {
       }
     }
 
-    expiredTokens.forEach(token => sessions.delete(token));
+    expiredTokens.forEach((token) => sessions.delete(token));
     return { success: true, loggedOut: expiredTokens.length };
   }
 }
@@ -435,7 +445,9 @@ const jpmorganAuthMiddleware = (requiredPermissions = []) => {
       // Check permissions
       if (requiredPermissions.length > 0) {
         const userPermissions = decoded.permissions || [];
-        const hasPermission = requiredPermissions.every(perm => userPermissions.includes(perm));
+        const hasPermission = requiredPermissions.every((perm) =>
+          userPermissions.includes(perm)
+        );
 
         if (!hasPermission) {
           return res.status(403).json({ error: 'Insufficient permissions' });
@@ -465,10 +477,12 @@ module.exports = {
   jpmorganAuthManager,
   jpmorganAuthMiddleware,
   jpmorganAdminMiddleware,
-  authenticateUser: (email, password, mfaCode) => jpmorganAuthManager.authenticateUser(email, password, mfaCode),
-  adminOverride: (code, email) => jpmorganAuthManager.adminOverride(code, email),
+  authenticateUser: (email, password, mfaCode) =>
+    jpmorganAuthManager.authenticateUser(email, password, mfaCode),
+  adminOverride: (code, email) =>
+    jpmorganAuthManager.adminOverride(code, email),
   verifyToken: (token) => jpmorganAuthManager.verifyToken(token),
   refreshToken: (token) => jpmorganAuthManager.refreshToken(token),
   logout: (token) => jpmorganAuthManager.logout(token),
-  getUserProfile: (email) => jpmorganAuthManager.getUserProfile(email)
+  getUserProfile: (email) => jpmorganAuthManager.getUserProfile(email),
 };

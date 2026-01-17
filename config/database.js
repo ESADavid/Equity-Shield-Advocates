@@ -11,15 +11,20 @@ const logger = winston.createLogger({
   ),
   defaultMeta: { service: 'database' },
   transports: [
-    new winston.transports.File({ filename: 'logs/database-error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/database.log' })
-  ]
+    new winston.transports.File({
+      filename: 'logs/database-error.log',
+      level: 'error',
+    }),
+    new winston.transports.File({ filename: 'logs/database.log' }),
+  ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 class Database {
@@ -30,7 +35,7 @@ class Database {
       queryCount: 0,
       slowQueries: 0,
       connectionPoolSize: 0,
-      averageQueryTime: 0
+      averageQueryTime: 0,
     };
   }
 
@@ -38,16 +43,18 @@ class Database {
     try {
       // Skip database connection if explicitly disabled
       if (process.env.SKIP_DATABASE === 'true') {
-        console.log('⚠️ Database connection skipped (SKIP_DATABASE=true)');
+        logger.info('⚠️ Database connection skipped (SKIP_DATABASE=true)');
         this.isConnected = false;
         return null;
       }
 
-      const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/oscar-broome-revenue';
+      const mongoURI =
+        process.env.MONGODB_URI ||
+        'mongodb://localhost:27017/oscar-broome-revenue';
 
       const options = {
         maxPoolSize: 20, // Increased for better performance
-        minPoolSize: 5,  // Minimum connections to maintain
+        minPoolSize: 5, // Minimum connections to maintain
         maxIdleTimeMS: 30000,
         serverSelectionTimeoutMS: 5000,
         socketTimeoutMS: 45000,
@@ -60,7 +67,7 @@ class Database {
         // Connection monitoring
         heartbeatFrequencyMS: 10000,
         // Compression
-        compressors: ['zlib']
+        compressors: ['zlib'],
       };
 
       this.connection = await mongoose.connect(mongoURI, options);
@@ -72,7 +79,7 @@ class Database {
         port: this.connection.connection.port,
         name: this.connection.connection.name,
         maxPoolSize: options.maxPoolSize,
-        minPoolSize: options.minPoolSize
+        minPoolSize: options.minPoolSize,
       });
 
       // Set up connection event listeners
@@ -116,7 +123,7 @@ class Database {
             collection: collectionName,
             method: methodName,
             duration,
-            args: args.length > 0 ? args[0] : null
+            args: args.length > 0 ? args[0] : null,
           });
         }
 
@@ -155,13 +162,18 @@ class Database {
         status: 'connected',
         latency,
         database: mongoose.connection.db.databaseName,
-        collections: await mongoose.connection.db.listCollections().toArray().then(cols => cols.length),
+        collections: await mongoose.connection.db
+          .listCollections()
+          .toArray()
+          .then((cols) => cols.length),
         performance: {
           queryCount: this.performanceMetrics.queryCount,
           slowQueries: this.performanceMetrics.slowQueries,
-          averageQueryTime: Math.round(this.performanceMetrics.averageQueryTime),
-          connectionPool: poolStats
-        }
+          averageQueryTime: Math.round(
+            this.performanceMetrics.averageQueryTime
+          ),
+          connectionPool: poolStats,
+        },
       };
     } catch (error) {
       logger.error('Database health check failed', { error: error.message });
@@ -175,7 +187,7 @@ class Database {
       return {
         poolSize: stats.connections?.current || 0,
         available: stats.connections?.available || 0,
-        created: stats.connections?.totalCreated || 0
+        created: stats.connections?.totalCreated || 0,
       };
     } catch (error) {
       return { poolSize: 0, available: 0, created: 0 };

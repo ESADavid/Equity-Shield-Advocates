@@ -22,8 +22,16 @@ export declare class QuickBooksPayrollIntegration {
     clientSecret: string,
     refreshToken: string
   );
-  getAuthHeaders(): { Authorization: string; 'Content-Type': string; Accept: string };
-  retryRequest<T>(fn: () => Promise<T>, retries?: number, delayMs?: number): Promise<T>;
+  getAuthHeaders(): {
+    Authorization: string;
+    'Content-Type': string;
+    Accept: string;
+  };
+  retryRequest<T>(
+    fn: () => Promise<T>,
+    retries?: number,
+    delayMs?: number
+  ): Promise<T>;
   refreshAccessToken(): Promise<void>;
   addOrUpdateEmployeePayroll(employee: Employee): Promise<PayrollResponse>;
   getEmployeePayroll(employeeId: string): Promise<PayrollResponse>;

@@ -6,6 +6,7 @@
 
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import logger from '../utils/loggerWrapper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -74,7 +75,7 @@ const PERFORMANCE_CONSTANTS = {
   TARGET_CASH_ALLOCATION: 5e-2,
 
   // Default allocation fallback
-  DEFAULT_ALLOCATION_DEFAULT: 0.1
+  DEFAULT_ALLOCATION_DEFAULT: 0.1,
 };
 
 class AssetManagementService {
@@ -106,17 +107,17 @@ class AssetManagementService {
         holdings: [
           { symbol: 'AAPL', shares: 50000, price: 150, value: 7500000 },
           { symbol: 'MSFT', shares: 30000, price: 200, value: 6000000 },
-          { symbol: 'GOOGL', shares: 15000, price: 200, value: 3000000 }
+          { symbol: 'GOOGL', shares: 15000, price: 200, value: 3000000 },
         ],
         performance: {
-          daily: PERFORMANCE_CONSTANTS.US_EQUITIES_DAILY,
-          weekly: PERFORMANCE_CONSTANTS.US_EQUITIES_WEEKLY,
-          monthly: PERFORMANCE_CONSTANTS.US_EQUITIES_MONTHLY,
-          quarterly: PERFORMANCE_CONSTANTS.US_EQUITIES_QUARTERLY,
-          yearly: PERFORMANCE_CONSTANTS.US_EQUITIES_YEARLY,
-          volatility: PERFORMANCE_CONSTANTS.US_EQUITIES_VOLATILITY,
-          sharpeRatio: PERFORMANCE_CONSTANTS.US_EQUITIES_SHARPE
-        }
+          daily: 0.012,
+          weekly: 0.034,
+          monthly: 0.045,
+          quarterly: 0.089,
+          yearly: 0.128,
+          volatility: 0.18,
+          sharpeRatio: 0.71,
+        },
       },
       {
         id: 'international-equities',
@@ -125,21 +126,21 @@ class AssetManagementService {
         region: 'International',
         value: 15000000,
         currency: 'USD',
-        allocation: PERFORMANCE_CONSTANTS.DEFAULT_INTL_EQUITIES_ALLOCATION,
+        allocation: 0.2,
         benchmark: 'MSCI World ex-US',
         holdings: [
           { symbol: 'TSM', shares: 20000, price: 80, value: 1600000 },
-          { symbol: 'ASML.AS', shares: 5000, price: 400, value: 2000000 }
+          { symbol: 'ASML.AS', shares: 5000, price: 400, value: 2000000 },
         ],
         performance: {
-          daily: PERFORMANCE_CONSTANTS.INTL_EQUITIES_DAILY,
-          weekly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_WEEKLY,
-          monthly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_MONTHLY,
-          quarterly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_QUARTERLY,
-          yearly: PERFORMANCE_CONSTANTS.INTL_EQUITIES_YEARLY,
-          volatility: PERFORMANCE_CONSTANTS.INTL_EQUITIES_VOLATILITY,
-          sharpeRatio: PERFORMANCE_CONSTANTS.INTL_EQUITIES_SHARPE
-        }
+          daily: 0.008,
+          weekly: 0.022,
+          monthly: 0.031,
+          quarterly: 0.065,
+          yearly: 0.095,
+          volatility: 0.22,
+          sharpeRatio: 0.43,
+        },
       },
       {
         id: 'fixed-income',
@@ -148,22 +149,37 @@ class AssetManagementService {
         region: 'Global',
         value: 20000000,
         currency: 'USD',
-        allocation: PERFORMANCE_CONSTANTS.DEFAULT_FIXED_INCOME_ALLOCATION,
+        allocation: 0.25,
         benchmark: 'Bloomberg Barclays Global Aggregate',
         holdings: [
-          { name: 'US Treasury 10Y', value: 10000000, yield: 0.045, duration: 8.5 },
-          { name: 'US Treasury 30Y', value: 5000000, yield: 0.048, duration: 18.2 },
-          { name: 'Corporate Bonds', value: 5000000, yield: 0.038, duration: 6.8 }
+          {
+            name: 'US Treasury 10Y',
+            value: 10000000,
+            yield: 0.045,
+            duration: 8.5,
+          },
+          {
+            name: 'US Treasury 30Y',
+            value: 5000000,
+            yield: 0.048,
+            duration: 18.2,
+          },
+          {
+            name: 'Corporate Bonds',
+            value: 5000000,
+            yield: 0.038,
+            duration: 6.8,
+          },
         ],
         performance: {
-          daily: PERFORMANCE_CONSTANTS.FIXED_INCOME_DAILY,
-          weekly: PERFORMANCE_CONSTANTS.FIXED_INCOME_WEEKLY,
-          monthly: PERFORMANCE_CONSTANTS.FIXED_INCOME_MONTHLY,
-          quarterly: PERFORMANCE_CONSTANTS.FIXED_INCOME_QUARTERLY,
-          yearly: PERFORMANCE_CONSTANTS.FIXED_INCOME_YEARLY,
-          volatility: PERFORMANCE_CONSTANTS.FIXED_INCOME_VOLATILITY,
-          sharpeRatio: PERFORMANCE_CONSTANTS.FIXED_INCOME_SHARPE
-        }
+          daily: 0.003,
+          weekly: 0.008,
+          monthly: 0.012,
+          quarterly: 0.028,
+          yearly: 0.042,
+          volatility: 0.08,
+          sharpeRatio: 0.53,
+        },
       },
       {
         id: 'alternative-investments',
@@ -172,22 +188,22 @@ class AssetManagementService {
         region: 'Global',
         value: 10000000,
         currency: 'USD',
-        allocation: PERFORMANCE_CONSTANTS.DEFAULT_ALTERNATIVE_ALLOCATION,
+        allocation: 0.12,
         benchmark: 'HFRX Global Hedge Fund Index',
         holdings: [
           { name: 'Private Equity Fund A', value: 4000000, vintage: 2020 },
           { name: 'Real Estate Fund', value: 3000000, vintage: 2021 },
-          { name: 'Infrastructure Fund', value: 3000000, vintage: 2019 }
+          { name: 'Infrastructure Fund', value: 3000000, vintage: 2019 },
         ],
         performance: {
-          daily: PERFORMANCE_CONSTANTS.ALTERNATIVE_DAILY,
-          weekly: PERFORMANCE_CONSTANTS.ALTERNATIVE_WEEKLY,
-          monthly: PERFORMANCE_CONSTANTS.ALTERNATIVE_MONTHLY,
-          quarterly: PERFORMANCE_CONSTANTS.ALTERNATIVE_QUARTERLY,
-          yearly: PERFORMANCE_CONSTANTS.ALTERNATIVE_YEARLY,
-          volatility: PERFORMANCE_CONSTANTS.ALTERNATIVE_VOLATILITY,
-          sharpeRatio: PERFORMANCE_CONSTANTS.ALTERNATIVE_SHARPE
-        }
+          daily: 0.005,
+          weekly: 0.015,
+          monthly: 0.025,
+          quarterly: 0.045,
+          yearly: 0.089,
+          volatility: 0.15,
+          sharpeRatio: 0.59,
+        },
       },
       {
         id: 'cash-equivalents',
@@ -196,38 +212,41 @@ class AssetManagementService {
         region: 'US',
         value: 5000000,
         currency: 'USD',
-        allocation: PERFORMANCE_CONSTANTS.DEFAULT_CASH_ALLOCATION,
+        allocation: 0.08,
         benchmark: '3-Month T-Bill',
         holdings: [
           { name: 'Money Market Fund', value: 3000000, yield: 0.052 },
-          { name: 'Commercial Paper', value: 2000000, yield: 0.048 }
+          { name: 'Commercial Paper', value: 2000000, yield: 0.048 },
         ],
         performance: {
-          daily: PERFORMANCE_CONSTANTS.CASH_DAILY,
-          weekly: PERFORMANCE_CONSTANTS.CASH_WEEKLY,
-          monthly: PERFORMANCE_CONSTANTS.CASH_MONTHLY,
-          quarterly: PERFORMANCE_CONSTANTS.CASH_QUARTERLY,
-          yearly: PERFORMANCE_CONSTANTS.CASH_YEARLY,
-          volatility: PERFORMANCE_CONSTANTS.CASH_VOLATILITY,
-          sharpeRatio: PERFORMANCE_CONSTANTS.CASH_SHARPE
-        }
-      }
+          daily: 0.001,
+          weekly: 0.003,
+          monthly: 0.005,
+          quarterly: 0.012,
+          yearly: 0.025,
+          volatility: 0.02,
+          sharpeRatio: 1.25,
+        },
+      },
     ];
 
-    const portfolioToInitialize = portfolioData.length > 0 ? portfolioData : defaultPortfolio;
+    const portfolioToInitialize =
+      portfolioData.length > 0 ? portfolioData : defaultPortfolio;
 
     for (const asset of portfolioToInitialize) {
       this.portfolio.set(asset.id, {
         ...asset,
         lastUpdated: new Date().toISOString(),
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       });
 
       // Initialize performance history
       this.performanceHistory.set(asset.id, []);
     }
 
-    console.log(`Initialized portfolio with ${portfolioToInitialize.length} asset classes`);
+    logger.info(
+      `Initialized portfolio with ${portfolioToInitialize.length} asset classes`
+    );
   }
 
   /**
@@ -235,10 +254,10 @@ class AssetManagementService {
    * @returns {Array} Array of portfolio assets
    */
   getPortfolio() {
-    return Array.from(this.portfolio.values()).map(asset => ({
+    return Array.from(this.portfolio.values()).map((asset) => ({
       ...asset,
       value: this.formatCurrency(asset.value, asset.currency),
-      allocation: (asset.allocation * 100).toFixed(2) + '%'
+      allocation: (asset.allocation * 100).toFixed(2) + '%',
     }));
   }
 
@@ -254,7 +273,7 @@ class AssetManagementService {
     return {
       ...asset,
       value: this.formatCurrency(asset.value, asset.currency),
-      allocation: (asset.allocation * 100).toFixed(2) + '%'
+      allocation: (asset.allocation * 100).toFixed(2) + '%',
     };
   }
 
@@ -289,14 +308,18 @@ class AssetManagementService {
       value: newValue,
       change: change,
       changePercent: changePercent,
-      performance: { ...asset.performance }
+      performance: { ...asset.performance },
     };
 
     const history = this.performanceHistory.get(assetId) || [];
     history.push(historyEntry);
 
-    // Keep only last PERFORMANCE_HISTORY_LIMIT entries
-    this.performanceHistory.set(assetId, history.slice(-PERFORMANCE_CONSTANTS.PERFORMANCE_HISTORY_LIMIT));
+    // Keep only last 1000 entries
+    if (history.length > 1000) {
+      this.performanceHistory.set(assetId, history.slice(-1000));
+    } else {
+      this.performanceHistory.set(assetId, history);
+    }
 
     return {
       success: true,
@@ -304,7 +327,7 @@ class AssetManagementService {
       oldValue: this.formatCurrency(oldValue, asset.currency),
       newValue: this.formatCurrency(newValue, asset.currency),
       change: this.formatCurrency(change, asset.currency),
-      changePercent: changePercent.toFixed(2) + '%'
+      changePercent: changePercent.toFixed(2) + '%',
     };
   }
 
@@ -357,23 +380,23 @@ class AssetManagementService {
       sharpeRatio: weightedSharpe.toFixed(2),
       diversificationRatio: this.calculateDiversificationRatio(assets),
       maxDrawdown: this.calculateMaxDrawdown(),
-      valueAtRisk: this.calculateVaR(assets)
+      valueAtRisk: this.calculateVaR(assets),
     };
 
     return {
       summary: riskMetrics,
       allocationByType,
       allocationByRegion,
-      assets: assets.map(asset => ({
+      assets: assets.map((asset) => ({
         id: asset.id,
         name: asset.name,
         type: asset.type,
         region: asset.region,
         value: this.formatCurrency(asset.value, 'USD'),
         allocation: (asset.allocation * 100).toFixed(2) + '%',
-        performance: asset.performance
+        performance: asset.performance,
       })),
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
   }
 
@@ -386,8 +409,11 @@ class AssetManagementService {
     if (assets.length === 0) return 0;
 
     const totalValue = assets.reduce((sum, asset) => sum + asset.value, 0);
-    const weights = assets.map(asset => asset.value / totalValue);
-    const herfindahlIndex = weights.reduce((sum, weight) => sum + weight * weight, 0);
+    const weights = assets.map((asset) => asset.value / totalValue);
+    const herfindahlIndex = weights.reduce(
+      (sum, weight) => sum + weight * weight,
+      0
+    );
 
     // Diversification ratio = 1 / sqrt(Herfindahl Index)
     return (1 / Math.sqrt(herfindahlIndex)).toFixed(2);
@@ -415,7 +441,10 @@ class AssetManagementService {
     }, 0);
 
     // Simplified VaR calculation (95% confidence, 1-day)
-    const var95 = totalValue * portfolioVolatility * PERFORMANCE_CONSTANTS.VAR_CONFIDENCE_Z_SCORE;
+    const var95 =
+      totalValue *
+      portfolioVolatility *
+      PERFORMANCE_CONSTANTS.VAR_CONFIDENCE_Z_SCORE;
     return this.formatCurrency(var95, 'USD');
   }
 
@@ -431,12 +460,12 @@ class AssetManagementService {
     cutoffDate.setDate(cutoffDate.getDate() - days);
 
     return history
-      .filter(entry => new Date(entry.timestamp) >= cutoffDate)
-      .map(entry => ({
+      .filter((entry) => new Date(entry.timestamp) >= cutoffDate)
+      .map((entry) => ({
         ...entry,
         value: this.formatCurrency(entry.value, 'USD'),
         change: this.formatCurrency(entry.change, 'USD'),
-        changePercent: entry.changePercent.toFixed(2) + '%'
+        changePercent: entry.changePercent.toFixed(2) + '%',
       }));
   }
 
@@ -458,14 +487,18 @@ class AssetManagementService {
       const currentValue = asset.value;
       const adjustment = targetValue - currentValue;
 
-      if (Math.abs(adjustment) > PERFORMANCE_CONSTANTS.MIN_REBALANCE_DIFFERENCE) { // Only rebalance if difference > $1000
+      if (
+        Math.abs(adjustment) > PERFORMANCE_CONSTANTS.MIN_REBALANCE_DIFFERENCE
+      ) {
+        // Only rebalance if difference > $1000
         rebalancingActions.push({
           assetId: asset.id,
           assetName: asset.name,
           currentValue: this.formatCurrency(currentValue, 'USD'),
           targetValue: this.formatCurrency(targetValue, 'USD'),
           adjustment: this.formatCurrency(adjustment, 'USD'),
-          adjustmentPercent: ((adjustment / currentValue) * 100).toFixed(2) + '%'
+          adjustmentPercent:
+            ((adjustment / currentValue) * 100).toFixed(2) + '%',
         });
 
         totalAdjustment += Math.abs(adjustment);
@@ -477,7 +510,7 @@ class AssetManagementService {
       totalValue: this.formatCurrency(totalValue, 'USD'),
       rebalancingActions,
       totalAdjustment: this.formatCurrency(totalAdjustment, 'USD'),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -493,26 +526,34 @@ class AssetManagementService {
       const performance = asset.performance || {};
 
       // Check if asset is underperforming
-      if (performance.yearly < PERFORMANCE_CONSTANTS.UNDERPERFORMANCE_THRESHOLD) { // Less than 5% annual return
+      if (
+        performance.yearly < PERFORMANCE_CONSTANTS.UNDERPERFORMANCE_THRESHOLD
+      ) {
+        // Less than 5% annual return
         recommendations.push({
           type: 'underperforming',
           assetId: asset.id,
           assetName: asset.name,
           currentReturn: (performance.yearly * 100).toFixed(2) + '%',
-          recommendation: 'Consider reducing allocation or replacing with better performing asset',
-          priority: 'medium'
+          recommendation:
+            'Consider reducing allocation or replacing with better performing asset',
+          priority: 'medium',
         });
       }
 
       // Check volatility
-      if (performance.volatility > PERFORMANCE_CONSTANTS.HIGH_VOLATILITY_THRESHOLD) { // High volatility
+      if (
+        performance.volatility > PERFORMANCE_CONSTANTS.HIGH_VOLATILITY_THRESHOLD
+      ) {
+        // High volatility
         recommendations.push({
           type: 'high_volatility',
           assetId: asset.id,
           assetName: asset.name,
           volatility: (performance.volatility * 100).toFixed(2) + '%',
-          recommendation: 'Consider hedging or reducing exposure to reduce portfolio risk',
-          priority: 'high'
+          recommendation:
+            'Consider hedging or reducing exposure to reduce portfolio risk',
+          priority: 'high',
         });
       }
 
@@ -520,7 +561,10 @@ class AssetManagementService {
       const targetAllocation = this.getTargetAllocation(asset.type);
       const allocationDiff = Math.abs(asset.allocation - targetAllocation);
 
-      if (allocationDiff > PERFORMANCE_CONSTANTS.ALLOCATION_DEVIATION_THRESHOLD) { // More than 5% deviation
+      if (
+        allocationDiff > PERFORMANCE_CONSTANTS.ALLOCATION_DEVIATION_THRESHOLD
+      ) {
+        // More than 5% deviation
         recommendations.push({
           type: 'allocation_drift',
           assetId: asset.id,
@@ -528,7 +572,7 @@ class AssetManagementService {
           currentAllocation: (asset.allocation * 100).toFixed(2) + '%',
           targetAllocation: (targetAllocation * 100).toFixed(2) + '%',
           recommendation: 'Rebalance to maintain target allocation',
-          priority: 'low'
+          priority: 'low',
         });
       }
     }
@@ -543,13 +587,15 @@ class AssetManagementService {
    */
   getTargetAllocation(assetType) {
     const targets = {
-      'equity': PERFORMANCE_CONSTANTS.TARGET_EQUITY_ALLOCATION,
-      'fixed_income': PERFORMANCE_CONSTANTS.TARGET_FIXED_INCOME_ALLOCATION,
-      'alternative': PERFORMANCE_CONSTANTS.TARGET_ALTERNATIVE_ALLOCATION,
-      'cash': PERFORMANCE_CONSTANTS.TARGET_CASH_ALLOCATION
+      equity: 0.55,
+      fixed_income: 0.3,
+      alternative: 0.1,
+      cash: 0.05,
     };
 
-    return targets[assetType] || PERFORMANCE_CONSTANTS.DEFAULT_ALLOCATION_DEFAULT;
+    return (
+      targets[assetType] || PERFORMANCE_CONSTANTS.DEFAULT_ALLOCATION_DEFAULT
+    );
   }
 
   /**
@@ -560,7 +606,7 @@ class AssetManagementService {
     for (const [symbol, data] of Object.entries(marketData)) {
       this.marketData.set(symbol, {
         ...data,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       });
     }
   }
@@ -583,7 +629,7 @@ class AssetManagementService {
   formatCurrency(value, currency = 'USD') {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: currency
+      currency: currency,
     }).format(value);
   }
 
@@ -598,7 +644,7 @@ class AssetManagementService {
       analytics: this.getPortfolioAnalytics(),
       recommendations: this.generateRecommendations(),
       marketData: Object.fromEntries(this.marketData),
-      exportTimestamp: new Date().toISOString()
+      exportTimestamp: new Date().toISOString(),
     };
   }
 
@@ -630,7 +676,7 @@ class AssetManagementService {
       totalReturn: (weightedReturn * 100).toFixed(2),
       volatility: (weightedVolatility * 100).toFixed(2),
       sharpeRatio: weightedSharpe.toFixed(2),
-      diversificationScore: Math.round(diversificationRatio * 25) // Scale to 0-100
+      diversificationScore: Math.round(diversificationRatio * 25), // Scale to 0-100
     };
   }
 
@@ -646,20 +692,24 @@ class AssetManagementService {
       const performance = asset.performance || {};
 
       // Check for high volatility
-      if (performance.volatility > PERFORMANCE_CONSTANTS.HIGH_VOLATILITY_THRESHOLD) {
+      if (
+        performance.volatility > PERFORMANCE_CONSTANTS.HIGH_VOLATILITY_THRESHOLD
+      ) {
         alerts.push({
           message: `${asset.name} shows high volatility (${(performance.volatility * 100).toFixed(1)}%)`,
           timestamp: new Date().toISOString(),
-          severity: 'warning'
+          severity: 'warning',
         });
       }
 
       // Check for underperformance
-      if (performance.yearly < PERFORMANCE_CONSTANTS.UNDERPERFORMANCE_THRESHOLD) {
+      if (
+        performance.yearly < PERFORMANCE_CONSTANTS.UNDERPERFORMANCE_THRESHOLD
+      ) {
         alerts.push({
           message: `${asset.name} is underperforming with ${(performance.yearly * 100).toFixed(1)}% annual return`,
           timestamp: new Date().toISOString(),
-          severity: 'warning'
+          severity: 'warning',
         });
       }
     }
@@ -679,13 +729,18 @@ class AssetManagementService {
       const targetAllocation = this.getTargetAllocation(asset.type);
       const allocationDiff = Math.abs(asset.allocation - targetAllocation);
 
-      if (allocationDiff > PERFORMANCE_CONSTANTS.ALLOCATION_DEVIATION_THRESHOLD) {
-        const action = asset.allocation > targetAllocation ? 'Reduce allocation' : 'Increase allocation';
+      if (
+        allocationDiff > PERFORMANCE_CONSTANTS.ALLOCATION_DEVIATION_THRESHOLD
+      ) {
+        const action =
+          asset.allocation > targetAllocation
+            ? 'Reduce allocation'
+            : 'Increase allocation';
         recommendations.push({
-          action: `${action} for ${asset.name} by ${((allocationDiff) * 100).toFixed(1)}%`,
+          action: `${action} for ${asset.name} by ${(allocationDiff * 100).toFixed(1)}%`,
           assetId: asset.id,
           currentAllocation: (asset.allocation * 100).toFixed(1) + '%',
-          targetAllocation: (targetAllocation * 100).toFixed(1) + '%'
+          targetAllocation: (targetAllocation * 100).toFixed(1) + '%',
         });
       }
     }
@@ -717,7 +772,7 @@ class AssetManagementService {
 
       performanceData.push({
         date: date.toISOString().split('T')[0],
-        value: totalValue
+        value: totalValue,
       });
     }
 
@@ -732,10 +787,12 @@ class AssetManagementService {
     return {
       status: 'healthy',
       portfolioAssets: this.portfolio.size,
-      performanceRecords: Array.from(this.performanceHistory.values())
-        .reduce((sum, history) => sum + history.length, 0),
+      performanceRecords: Array.from(this.performanceHistory.values()).reduce(
+        (sum, history) => sum + history.length,
+        0
+      ),
       marketDataPoints: this.marketData.size,
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
     };
   }
 }

@@ -14,6 +14,5 @@ exports.PAYROLL_CONSTANTS = {
     MIN_TAX_RATE: 0.0,
     MAX_DEDUCTIONS: 10000,
     MAX_BONUSES: 50000,
-    OVERTIME_MULTIPLIER: 1.5
+    OVERTIME_MULTIPLIER: 1.5,
 };
-//# sourceMappingURL=payroll.js.map

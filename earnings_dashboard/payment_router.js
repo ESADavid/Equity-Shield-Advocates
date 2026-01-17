@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 const express = require('express');
 const router = express.Router();
 
@@ -25,7 +27,7 @@ class PaymentOrchestrator {
         },
         refundPayment: async (paymentId, amount) => {
           return await this._refundJPMorganPayment(paymentId, amount);
-        }
+        },
       },
       microsoft: {
         type: 'nodejs',
@@ -38,7 +40,7 @@ class PaymentOrchestrator {
         },
         refundPayment: async (paymentId, amount) => {
           return await this._refundMicrosoftPayment(paymentId, amount);
-        }
+        },
       },
       nvidia: {
         type: 'nodejs',
@@ -51,21 +53,33 @@ class PaymentOrchestrator {
         },
         refundPayment: async (paymentId, amount) => {
           return await this._refundNvidiaPayment(paymentId, amount);
-        }
+        },
       },
       chase: {
         type: 'python',
-        baseUrl: process.env.CHASE_PAYMENT_SERVICE_URL || 'http://localhost:5001',
+        baseUrl:
+          process.env.CHASE_PAYMENT_SERVICE_URL || 'http://localhost:5001',
         processPayment: async (data) => {
-          return await this._proxyToPythonService('chase', 'process-payment', data);
+          return await this._proxyToPythonService(
+            'chase',
+            'process-payment',
+            data
+          );
         },
         getPaymentStatus: async (paymentId) => {
-          return await this._proxyToPythonService('chase', `payment-status/${paymentId}`);
+          return await this._proxyToPythonService(
+            'chase',
+            `payment-status/${paymentId}`
+          );
         },
         refundPayment: async (paymentId, amount) => {
-          return await this._proxyToPythonService('chase', `refund/${paymentId}`, { amount });
-        }
-      }
+          return await this._proxyToPythonService(
+            'chase',
+            `refund/${paymentId}`,
+            { amount }
+          );
+        },
+      },
     };
   }
 
@@ -78,7 +92,7 @@ class PaymentOrchestrator {
     try {
       return await paymentProvider.processPayment(paymentData);
     } catch (error) {
-      console.error(`Payment processing error for ${provider}:`, error);
+      logger.error(`Payment processing error for ${provider}:`, error);
       throw error;
     }
   }
@@ -92,7 +106,7 @@ class PaymentOrchestrator {
     try {
       return await paymentProvider.getPaymentStatus(paymentId);
     } catch (error) {
-      console.error(`Payment status error for ${provider}:`, error);
+      logger.error(`Payment status error for ${provider}:`, error);
       throw error;
     }
   }
@@ -106,7 +120,7 @@ class PaymentOrchestrator {
     try {
       return await paymentProvider.refundPayment(paymentId, amount);
     } catch (error) {
-      console.error(`Payment refund error for ${provider}:`, error);
+      logger.error(`Payment refund error for ${provider}:`, error);
       throw error;
     }
   }
@@ -121,7 +135,7 @@ class PaymentOrchestrator {
       status: 'processed',
       amount: data.amount,
       currency: data.currency || 'USD',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -130,7 +144,7 @@ class PaymentOrchestrator {
       success: true,
       paymentId,
       status: 'completed',
-      details: { processedAt: new Date().toISOString() }
+      details: { processedAt: new Date().toISOString() },
     };
   }
 
@@ -140,7 +154,7 @@ class PaymentOrchestrator {
       refundId: `refund_${Date.now()}`,
       originalPaymentId: paymentId,
       amount,
-      status: 'processed'
+      status: 'processed',
     };
   }
 
@@ -152,7 +166,7 @@ class PaymentOrchestrator {
       status: 'processed',
       amount: data.amount,
       currency: data.currency || 'USD',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -161,7 +175,7 @@ class PaymentOrchestrator {
       success: true,
       paymentId,
       status: 'completed',
-      details: { processedAt: new Date().toISOString() }
+      details: { processedAt: new Date().toISOString() },
     };
   }
 
@@ -171,7 +185,7 @@ class PaymentOrchestrator {
       refundId: `ms_refund_${Date.now()}`,
       originalPaymentId: paymentId,
       amount,
-      status: 'processed'
+      status: 'processed',
     };
   }
 
@@ -183,7 +197,7 @@ class PaymentOrchestrator {
       status: 'processed',
       amount: data.amount,
       currency: data.currency || 'USD',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -192,7 +206,7 @@ class PaymentOrchestrator {
       success: true,
       paymentId,
       status: 'completed',
-      details: { processedAt: new Date().toISOString() }
+      details: { processedAt: new Date().toISOString() },
     };
   }
 
@@ -202,7 +216,7 @@ class PaymentOrchestrator {
       refundId: `nv_refund_${Date.now()}`,
       originalPaymentId: paymentId,
       amount,
-      status: 'processed'
+      status: 'processed',
     };
   }
 
@@ -217,8 +231,8 @@ class PaymentOrchestrator {
         method: data ? 'POST' : 'GET',
         url,
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       };
 
       if (data) {
@@ -228,7 +242,10 @@ class PaymentOrchestrator {
       const response = await axios(config);
       return response.data;
     } catch (error) {
-      console.error(`Python service proxy error for ${provider}:`, error.message);
+      logger.error(
+        `Python service proxy error for ${provider}:`,
+        error.message
+      );
       throw new Error(`Failed to communicate with ${provider} payment service`);
     }
   }
@@ -244,18 +261,18 @@ router.post('/create-payment', async (req, res) => {
     if (!provider) {
       return res.status(400).json({
         success: false,
-        message: 'Payment provider is required'
+        message: 'Payment provider is required',
       });
     }
 
     const result = await orchestrator.processPayment(provider, paymentData);
     res.json(result);
   } catch (error) {
-    console.error('Payment creation error:', error);
+    logger.error('Payment creation error:', error);
     res.status(500).json({
       success: false,
       message: 'Payment processing failed',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -266,11 +283,11 @@ router.get('/payment-status/:provider/:paymentId', async (req, res) => {
     const result = await orchestrator.getPaymentStatus(provider, paymentId);
     res.json(result);
   } catch (error) {
-    console.error('Payment status error:', error);
+    logger.error('Payment status error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get payment status',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -280,14 +297,18 @@ router.post('/refund/:provider/:paymentId', async (req, res) => {
     const { provider, paymentId } = req.params;
     const { amount } = req.body;
 
-    const result = await orchestrator.refundPayment(provider, paymentId, amount);
+    const result = await orchestrator.refundPayment(
+      provider,
+      paymentId,
+      amount
+    );
     res.json(result);
   } catch (error) {
-    console.error('Payment refund error:', error);
+    logger.error('Payment refund error:', error);
     res.status(500).json({
       success: false,
       message: 'Refund processing failed',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -301,13 +322,17 @@ router.use('/nvidia', nvidiaPayment.router);
 router.post('/chase/:endpoint(*)', async (req, res) => {
   try {
     const endpoint = req.params.endpoint;
-    const result = await orchestrator._proxyToPythonService('chase', endpoint, req.body);
+    const result = await orchestrator._proxyToPythonService(
+      'chase',
+      endpoint,
+      req.body
+    );
     res.json(result);
   } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Chase payment service error',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -321,7 +346,7 @@ router.get('/chase/:endpoint(*)', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Chase payment service error',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -332,7 +357,7 @@ router.get('/health', (req, res) => {
     success: true,
     message: 'Payment service is healthy',
     providers: Object.keys(orchestrator.providers),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 

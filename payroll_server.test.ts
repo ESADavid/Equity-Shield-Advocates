@@ -31,9 +31,7 @@ describe('Payroll Server API', () => {
 
   it('should get all employees', async () => {
     // First add an employee for this test
-    await request(app)
-      .post('/api/payroll/employees')
-      .send(testEmployee);
+    await request(app).post('/api/payroll/employees').send(testEmployee);
 
     const res = await request(app).get('/api/payroll/employees');
     expect(res.statusCode).toEqual(200);
@@ -43,9 +41,7 @@ describe('Payroll Server API', () => {
 
   it('should update an existing employee', async () => {
     // First add an employee
-    await request(app)
-      .post('/api/payroll/employees')
-      .send(testEmployee);
+    await request(app).post('/api/payroll/employees').send(testEmployee);
 
     // Now update it
     const res = await request(app)
@@ -64,27 +60,27 @@ describe('Payroll Server API', () => {
 
   it('should delete an employee', async () => {
     // First add an employee
-    await request(app)
-      .post('/api/payroll/employees')
-      .send(testEmployee);
+    await request(app).post('/api/payroll/employees').send(testEmployee);
 
     // Now delete it
-    const res = await request(app).delete(`/api/payroll/employees/${employeeId}`);
+    const res = await request(app).delete(
+      `/api/payroll/employees/${employeeId}`
+    );
     expect(res.statusCode).toEqual(200);
     expect(res.body.message).toBe('Employee deleted successfully');
   });
 
   it('should process payroll', async () => {
     // Add employee first
-    await request(app)
-      .post('/api/payroll/employees')
-      .send(testEmployee);
+    await request(app).post('/api/payroll/employees').send(testEmployee);
 
     const res = await request(app).post('/api/payroll/process');
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBeGreaterThan(0);
-    const payrollRecord = res.body.find((p: any) => p.employeeId === employeeId);
+    const payrollRecord = res.body.find(
+      (p: any) => p.employeeId === employeeId
+    );
     expect(payrollRecord).toBeDefined();
     // Calculation: 50000 + 500 - (50500 * 0.2) - 1000 = 50500 - 10100 - 1000 = 39400
     expect(payrollRecord.netPay).toBeCloseTo(39400, 2);
@@ -102,15 +98,13 @@ describe('Payroll Server API', () => {
   });
 
   it('should handle validation errors for invalid employee data', async () => {
-    const res = await request(app)
-      .post('/api/payroll/employees')
-      .send({
-        id: 'invalid-emp',
-        name: '', // Invalid: empty name
-        taxRate: 1.5, // Invalid: tax rate > 1.0
-        deductions: -100, // Invalid: negative deductions
-        bonuses: 500,
-      });
+    const res = await request(app).post('/api/payroll/employees').send({
+      id: 'invalid-emp',
+      name: '', // Invalid: empty name
+      taxRate: 1.5, // Invalid: tax rate > 1.0
+      deductions: -100, // Invalid: negative deductions
+      bonuses: 500,
+    });
     expect(res.statusCode).toEqual(400);
     expect(res.body.error).toBeDefined();
   });
@@ -129,13 +123,13 @@ describe('Payroll Server API', () => {
     };
 
     // Add hourly employee
-    await request(app)
-      .post('/api/payroll/employees')
-      .send(hourlyEmployee);
+    await request(app).post('/api/payroll/employees').send(hourlyEmployee);
 
     const res = await request(app).post('/api/payroll/process');
     expect(res.statusCode).toEqual(200);
-    const payrollRecord = res.body.find((p: any) => p.employeeId === hourlyEmployeeId);
+    const payrollRecord = res.body.find(
+      (p: any) => p.employeeId === hourlyEmployeeId
+    );
     expect(payrollRecord).toBeDefined();
     // Regular pay: 40 * 25 = 1000
     // Overtime pay: 5 * 25 * 1.5 = 187.5

@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 const express = require('express');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -40,13 +42,13 @@ app.get('/', (req, res) => {
     'fetchEarnings();',
     '</script>',
     '</body>',
-    '</html>'
-  ].join("");
+    '</html>',
+  ].join('');
   res.send(html);
 });
 
 const server = app.listen(PORT, () => {
-  console.log(`Earnings dashboard running at http://localhost:${PORT}`);
+  logger.info(`Earnings dashboard running at http://localhost:${PORT}`);
 });
 
 module.exports = { app, server };

@@ -15,7 +15,7 @@ import {
   validateToken,
   getUserById,
   OVERRIDE_TYPES,
-  OVERRIDE_REASONS
+  OVERRIDE_REASONS,
 } from './auth/login_override.js';
 
 // Mock Account Management System
@@ -34,7 +34,7 @@ class AccountManager {
       balance: initialBalance,
       status: 'active',
       createdAt: new Date(),
-      lastActivity: new Date()
+      lastActivity: new Date(),
     };
     this.accounts.set(accountId, account);
     this.transactions.set(accountId, []);
@@ -46,7 +46,9 @@ class AccountManager {
   }
 
   getUserAccounts(userId) {
-    return Array.from(this.accounts.values()).filter(acc => acc.userId === userId);
+    return Array.from(this.accounts.values()).filter(
+      (acc) => acc.userId === userId
+    );
   }
 
   updateBalance(accountId, amount) {
@@ -67,7 +69,7 @@ class AccountManager {
       amount,
       type,
       description,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
     if (this.transactions.has(accountId)) {
       this.transactions.get(accountId).push(transaction);
@@ -128,7 +130,9 @@ class TestResults {
     console.log(`✅ Passed: ${this.passed}`);
     console.log(`❌ Failed: ${this.failed}`);
     console.log(`📈 Total: ${this.passed + this.failed}`);
-    console.log(`📊 Success Rate: ${((this.passed / (this.passed + this.failed)) * 100).toFixed(2)}%`);
+    console.log(
+      `📊 Success Rate: ${((this.passed / (this.passed + this.failed)) * 100).toFixed(2)}%`
+    );
 
     if (this.errors.length > 0) {
       console.log(`\n🔍 Failed Tests:`);
@@ -149,13 +153,21 @@ async function testAPIEndpoints() {
     const timestamp = Date.now();
     // Test 1: User Registration API
     console.log('1️⃣ Testing User Registration API...');
-    const registerResult = await registerUser(`apiuser${timestamp}`, `api${timestamp}@example.com`, 'ApiPass123!', 'user');
+    const registerResult = await registerUser(
+      `apiuser${timestamp}`,
+      `api${timestamp}@example.com`,
+      'ApiPass123!',
+      'user'
+    );
     testResults.logPass('User Registration API');
     console.log('   User registered:', registerResult);
 
     // Test 2: User Authentication API
     console.log('\n2️⃣ Testing User Authentication API...');
-    const authResult = await authenticateUser(`apiuser${timestamp}`, 'ApiPass123!');
+    const authResult = await authenticateUser(
+      `apiuser${timestamp}`,
+      'ApiPass123!'
+    );
     testResults.logPass('User Authentication API');
     console.log('   User authenticated:', authResult);
 
@@ -167,7 +179,11 @@ async function testAPIEndpoints() {
 
     // Test 4: Password Change API
     console.log('\n4️⃣ Testing Password Change API...');
-    const passwordChange = await changePassword(registerResult.userId, 'ApiPass123!', 'NewApiPass456!');
+    const passwordChange = await changePassword(
+      registerResult.userId,
+      'ApiPass123!',
+      'NewApiPass456!'
+    );
     testResults.logPass('Password Change API');
     console.log('   Password changed:', passwordChange);
 
@@ -179,10 +195,12 @@ async function testAPIEndpoints() {
 
     // Test 6: User Deactivation API
     console.log('\n6️⃣ Testing User Deactivation API...');
-    const deactivation = await deactivateUser(registerResult.userId, 'admin@oscarsystem.com');
+    const deactivation = await deactivateUser(
+      registerResult.userId,
+      'admin@oscarsystem.com'
+    );
     testResults.logPass('User Deactivation API');
     console.log('   User deactivated:', deactivation);
-
   } catch (error) {
     testResults.logFail('API Endpoints Test', error);
   }
@@ -197,8 +215,16 @@ async function testEdgeCases() {
     // Test 1: Invalid Email Format
     console.log('1️⃣ Testing Invalid Email Format...');
     try {
-      await registerUser(`edgeuser${timestamp}`, 'invalid-email', 'Pass123!', 'user');
-      testResults.logFail('Invalid Email Format', new Error('Should have thrown error for invalid email'));
+      await registerUser(
+        `edgeuser${timestamp}`,
+        'invalid-email',
+        'Pass123!',
+        'user'
+      );
+      testResults.logFail(
+        'Invalid Email Format',
+        new Error('Should have thrown error for invalid email')
+      );
     } catch (error) {
       testResults.logPass('Invalid Email Format');
       console.log('   Correctly rejected invalid email');
@@ -207,8 +233,16 @@ async function testEdgeCases() {
     // Test 2: Weak Password
     console.log('\n2️⃣ Testing Weak Password...');
     try {
-      await registerUser(`weakpass${timestamp}`, 'weak@example.com', '123', 'user');
-      testResults.logFail('Weak Password', new Error('Should have thrown error for weak password'));
+      await registerUser(
+        `weakpass${timestamp}`,
+        'weak@example.com',
+        '123',
+        'user'
+      );
+      testResults.logFail(
+        'Weak Password',
+        new Error('Should have thrown error for weak password')
+      );
     } catch (error) {
       testResults.logPass('Weak Password');
       console.log('   Correctly rejected weak password');
@@ -217,8 +251,16 @@ async function testEdgeCases() {
     // Test 3: Duplicate Username
     console.log('\n3️⃣ Testing Duplicate Username...');
     try {
-      await registerUser(`apiuser${timestamp}`, 'duplicate@example.com', 'Pass123!', 'user');
-      testResults.logFail('Duplicate Username', new Error('Should have thrown error for duplicate username'));
+      await registerUser(
+        `apiuser${timestamp}`,
+        'duplicate@example.com',
+        'Pass123!',
+        'user'
+      );
+      testResults.logFail(
+        'Duplicate Username',
+        new Error('Should have thrown error for duplicate username')
+      );
     } catch (error) {
       testResults.logPass('Duplicate Username');
       console.log('   Correctly rejected duplicate username');
@@ -231,19 +273,24 @@ async function testEdgeCases() {
       testResults.logPass('Invalid Token');
       console.log('   Correctly rejected invalid token');
     } else {
-      testResults.logFail('Invalid Token', new Error('Should have returned invalid for invalid token'));
+      testResults.logFail(
+        'Invalid Token',
+        new Error('Should have returned invalid for invalid token')
+      );
     }
 
     // Test 5: Non-existent User
     console.log('\n5️⃣ Testing Non-existent User...');
     try {
       await authenticateUser('nonexistent', 'password');
-      testResults.logFail('Non-existent User', new Error('Should have thrown error for non-existent user'));
+      testResults.logFail(
+        'Non-existent User',
+        new Error('Should have thrown error for non-existent user')
+      );
     } catch (error) {
       testResults.logPass('Non-existent User');
       console.log('   Correctly rejected non-existent user');
     }
-
   } catch (error) {
     testResults.logFail('Edge Cases Test', error);
   }
@@ -256,70 +303,113 @@ async function testAccountManagementAPI() {
   try {
     const timestamp = Date.now();
     // Register finance user
-    const financeUser = await registerUser(`accountapi${timestamp}`, `accountapi${timestamp}@example.com`, 'AccountPass123!', 'finance');
+    const financeUser = await registerUser(
+      `accountapi${timestamp}`,
+      `accountapi${timestamp}@example.com`,
+      'AccountPass123!',
+      'finance'
+    );
 
     // Test 1: Account Creation API
     console.log('1️⃣ Testing Account Creation API...');
-    const savingsAccount = accountManager.createAccount(financeUser.userId, 'savings', 1000.00);
+    const savingsAccount = accountManager.createAccount(
+      financeUser.userId,
+      'savings',
+      1000.0
+    );
     testResults.logPass('Account Creation API');
     console.log('   Savings account created:', savingsAccount.accountId);
 
     // Test 2: Account Retrieval API
     console.log('\n2️⃣ Testing Account Retrieval API...');
-    const retrievedAccount = accountManager.getAccount(savingsAccount.accountId);
-    if (retrievedAccount && retrievedAccount.accountId === savingsAccount.accountId) {
+    const retrievedAccount = accountManager.getAccount(
+      savingsAccount.accountId
+    );
+    if (
+      retrievedAccount &&
+      retrievedAccount.accountId === savingsAccount.accountId
+    ) {
       testResults.logPass('Account Retrieval API');
       console.log('   Account retrieved successfully');
     } else {
-      testResults.logFail('Account Retrieval API', new Error('Failed to retrieve account'));
+      testResults.logFail(
+        'Account Retrieval API',
+        new Error('Failed to retrieve account')
+      );
     }
 
     // Test 3: Balance Update API
     console.log('\n3️⃣ Testing Balance Update API...');
-    const updatedAccount = accountManager.updateBalance(savingsAccount.accountId, 250.00);
-    if (updatedAccount && updatedAccount.balance === 1250.00) {
+    const updatedAccount = accountManager.updateBalance(
+      savingsAccount.accountId,
+      250.0
+    );
+    if (updatedAccount && updatedAccount.balance === 1250.0) {
       testResults.logPass('Balance Update API');
       console.log('   Balance updated to:', updatedAccount.balance);
     } else {
-      testResults.logFail('Balance Update API', new Error('Failed to update balance'));
+      testResults.logFail(
+        'Balance Update API',
+        new Error('Failed to update balance')
+      );
     }
 
     // Test 4: Transaction Recording API
     console.log('\n4️⃣ Testing Transaction Recording API...');
-    const transaction = accountManager.recordTransaction(savingsAccount.accountId, -50.00, 'withdrawal', 'ATM withdrawal');
+    const transaction = accountManager.recordTransaction(
+      savingsAccount.accountId,
+      -50.0,
+      'withdrawal',
+      'ATM withdrawal'
+    );
     testResults.logPass('Transaction Recording API');
     console.log('   Transaction recorded:', transaction.transactionId);
 
     // Test 5: Transaction History API
     console.log('\n5️⃣ Testing Transaction History API...');
-    const transactions = accountManager.getTransactionHistory(savingsAccount.accountId);
+    const transactions = accountManager.getTransactionHistory(
+      savingsAccount.accountId
+    );
     if (transactions.length > 0) {
       testResults.logPass('Transaction History API');
       console.log('   Found', transactions.length, 'transactions');
     } else {
-      testResults.logFail('Transaction History API', new Error('No transactions found'));
+      testResults.logFail(
+        'Transaction History API',
+        new Error('No transactions found')
+      );
     }
 
     // Test 6: Account Freeze API
     console.log('\n6️⃣ Testing Account Freeze API...');
-    const frozenAccount = accountManager.freezeAccount(savingsAccount.accountId, 'Suspicious activity');
+    const frozenAccount = accountManager.freezeAccount(
+      savingsAccount.accountId,
+      'Suspicious activity'
+    );
     if (frozenAccount && frozenAccount.status === 'frozen') {
       testResults.logPass('Account Freeze API');
       console.log('   Account frozen successfully');
     } else {
-      testResults.logFail('Account Freeze API', new Error('Failed to freeze account'));
+      testResults.logFail(
+        'Account Freeze API',
+        new Error('Failed to freeze account')
+      );
     }
 
     // Test 7: Account Unfreeze API
     console.log('\n7️⃣ Testing Account Unfreeze API...');
-    const unfrozenAccount = accountManager.unfreezeAccount(savingsAccount.accountId);
+    const unfrozenAccount = accountManager.unfreezeAccount(
+      savingsAccount.accountId
+    );
     if (unfrozenAccount && unfrozenAccount.status === 'active') {
       testResults.logPass('Account Unfreeze API');
       console.log('   Account unfrozen successfully');
     } else {
-      testResults.logFail('Account Unfreeze API', new Error('Failed to unfreeze account'));
+      testResults.logFail(
+        'Account Unfreeze API',
+        new Error('Failed to unfreeze account')
+      );
     }
-
   } catch (error) {
     testResults.logFail('Account Management API Test', error);
   }
@@ -332,39 +422,65 @@ async function testAutoFinanceIntegration() {
   try {
     const timestamp = Date.now();
     // Register auto finance user
-    const autoUser = await registerUser(`autofinance${timestamp}`, `autofinance${timestamp}@example.com`, 'AutoPass123!', 'finance');
+    const autoUser = await registerUser(
+      `autofinance${timestamp}`,
+      `autofinance${timestamp}@example.com`,
+      'AutoPass123!',
+      'finance'
+    );
 
     // Test 1: Auto Loan Account Creation
     console.log('1️⃣ Testing Auto Loan Account Creation...');
-    const autoLoanAccount = accountManager.createAccount(autoUser.userId, 'auto_loan', 25000.00);
+    const autoLoanAccount = accountManager.createAccount(
+      autoUser.userId,
+      'auto_loan',
+      25000.0
+    );
     testResults.logPass('Auto Loan Account Creation');
     console.log('   Auto loan account created:', autoLoanAccount.accountId);
 
     // Test 2: Loan Payment Processing
     console.log('\n2️⃣ Testing Loan Payment Processing...');
-    const payment = accountManager.updateBalance(autoLoanAccount.accountId, -450.00);
+    const payment = accountManager.updateBalance(
+      autoLoanAccount.accountId,
+      -450.0
+    );
     testResults.logPass('Loan Payment Processing');
     console.log('   Payment processed, balance updated');
 
     // Test 3: Account Balance After Payment
     console.log('\n3️⃣ Testing Account Balance After Payment...');
-    const updatedLoanAccount = accountManager.getAccount(autoLoanAccount.accountId);
-    if (updatedLoanAccount && updatedLoanAccount.balance === 24550.00) {
+    const updatedLoanAccount = accountManager.getAccount(
+      autoLoanAccount.accountId
+    );
+    if (updatedLoanAccount && updatedLoanAccount.balance === 24550.0) {
       testResults.logPass('Account Balance After Payment');
       console.log('   Balance updated to:', updatedLoanAccount.balance);
     } else {
-      testResults.logFail('Account Balance After Payment', new Error('Balance not updated correctly'));
+      testResults.logFail(
+        'Account Balance After Payment',
+        new Error('Balance not updated correctly')
+      );
     }
 
     // Test 4: Finance Portal Access
     console.log('\n4️⃣ Testing Finance Portal Access...');
-    const auth = await authenticateUser(`autofinance${timestamp}`, 'AutoPass123!');
-    const portalAccess = testSecureAccountAccess(auth.token, autoLoanAccount.accountId);
+    const auth = await authenticateUser(
+      `autofinance${timestamp}`,
+      'AutoPass123!'
+    );
+    const portalAccess = testSecureAccountAccess(
+      auth.token,
+      autoLoanAccount.accountId
+    );
     if (portalAccess) {
       testResults.logPass('Finance Portal Access');
       console.log('   Portal access granted');
     } else {
-      testResults.logFail('Finance Portal Access', new Error('Portal access denied'));
+      testResults.logFail(
+        'Finance Portal Access',
+        new Error('Portal access denied')
+      );
     }
 
     // Test 5: Override for Account Access
@@ -376,7 +492,6 @@ async function testAutoFinanceIntegration() {
     );
     testResults.logPass('Override for Account Access');
     console.log('   Override activated:', override);
-
   } catch (error) {
     testResults.logFail('Auto Finance Integration Test', error);
   }
@@ -390,10 +505,16 @@ async function testSecurityFeatures() {
     const timestamp = Date.now();
     // Test 1: MFA Token Verification
     console.log('1️⃣ Testing MFA Token Verification...');
-    const user = await registerUser(`securityuser${timestamp}`, `security${timestamp}@example.com`, 'SecurityPass123!', 'user');
+    const user = await registerUser(
+      `securityuser${timestamp}`,
+      `security${timestamp}@example.com`,
+      'SecurityPass123!',
+      'user'
+    );
     const mfaResult = await enableMFA(user.userId);
 
-    const testToken = crypto.createHmac('sha256', mfaResult.mfaSecret)
+    const testToken = crypto
+      .createHmac('sha256', mfaResult.mfaSecret)
       .update(Math.floor(Date.now() / 30000).toString())
       .digest('hex')
       .substring(0, 6);
@@ -420,15 +541,21 @@ async function testSecurityFeatures() {
 
     // Test 4: Account Security Validation
     console.log('\n4️⃣ Testing Account Security Validation...');
-    const account = accountManager.createAccount(user.userId, 'checking', 1000.00);
+    const account = accountManager.createAccount(
+      user.userId,
+      'checking',
+      1000.0
+    );
     const securityTest = testAccountSecurity(account.accountId, user.userId);
     if (securityTest) {
       testResults.logPass('Account Security Validation');
       console.log('   Account security validated');
     } else {
-      testResults.logFail('Account Security Validation', new Error('Account security validation failed'));
+      testResults.logFail(
+        'Account Security Validation',
+        new Error('Account security validation failed')
+      );
     }
-
   } catch (error) {
     testResults.logFail('Security Features Test', error);
   }
@@ -445,7 +572,14 @@ async function testPerformance() {
     const startTime = Date.now();
     const promises = [];
     for (let i = 0; i < 10; i++) {
-      promises.push(registerUser(`perfuser${timestamp}_${i}`, `perf${timestamp}_${i}@example.com`, 'PerfPass123!', 'user'));
+      promises.push(
+        registerUser(
+          `perfuser${timestamp}_${i}`,
+          `perf${timestamp}_${i}@example.com`,
+          'PerfPass123!',
+          'user'
+        )
+      );
     }
     await Promise.all(promises);
     const endTime = Date.now();
@@ -455,12 +589,28 @@ async function testPerformance() {
 
     // Test 2: Concurrent Account Operations
     console.log('\n2️⃣ Testing Concurrent Account Operations...');
-    const user = await registerUser(`concurrentuser${timestamp}`, `concurrent${timestamp}@example.com`, 'ConcurrentPass123!', 'finance');
-    const account = accountManager.createAccount(user.userId, 'checking', 1000.00);
+    const user = await registerUser(
+      `concurrentuser${timestamp}`,
+      `concurrent${timestamp}@example.com`,
+      'ConcurrentPass123!',
+      'finance'
+    );
+    const account = accountManager.createAccount(
+      user.userId,
+      'checking',
+      1000.0
+    );
 
     const accountPromises = [];
     for (let i = 0; i < 20; i++) {
-      accountPromises.push(accountManager.recordTransaction(account.accountId, -10.00, 'withdrawal', `Test transaction ${i}`));
+      accountPromises.push(
+        accountManager.recordTransaction(
+          account.accountId,
+          -10.0,
+          'withdrawal',
+          `Test transaction ${i}`
+        )
+      );
     }
     await Promise.all(accountPromises);
     testResults.logPass('Concurrent Account Operations');
@@ -470,12 +620,13 @@ async function testPerformance() {
     console.log('\n3️⃣ Testing Authentication Load Test...');
     const authPromises = [];
     for (let i = 0; i < 50; i++) {
-      authPromises.push(authenticateUser(`concurrentuser${timestamp}`, 'ConcurrentPass123!'));
+      authPromises.push(
+        authenticateUser(`concurrentuser${timestamp}`, 'ConcurrentPass123!')
+      );
     }
     await Promise.all(authPromises);
     testResults.logPass('Authentication Load Test');
     console.log('   50 concurrent authentications processed');
-
   } catch (error) {
     testResults.logFail('Performance Test', error);
   }
@@ -506,7 +657,7 @@ function testAccountSecurity(accountId, userId) {
 // Run all comprehensive tests
 async function runComprehensiveTests() {
   console.log('🧪 Starting Comprehensive Integration Test Suite\n');
-  console.log('=' .repeat(60));
+  console.log('='.repeat(60));
 
   await testAPIEndpoints();
   await testEdgeCases();
@@ -515,7 +666,7 @@ async function runComprehensiveTests() {
   await testSecurityFeatures();
   await testPerformance();
 
-  console.log('\n' + '=' .repeat(60));
+  console.log('\n' + '='.repeat(60));
   testResults.summary();
 
   console.log('\n🏁 Comprehensive Integration Testing Completed!');

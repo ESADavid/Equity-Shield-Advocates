@@ -1,4 +1,3 @@
-
 import * as fs from 'fs';
 import * as path from 'path';
 import { fetchEmployeeIds } from './fetch_employee_ids.js';
@@ -47,7 +46,10 @@ interface PayrollData {
   source?: string; // 'dynamics365' or 'quickbooks'
 }
 
-const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+const revenueDataPath = path.resolve(
+  __dirname,
+  '../owlban_repos/sample_repo/revenue.json'
+);
 
 async function fetchAndSyncPayroll(): Promise<void> {
   // Load payroll integrations dynamically
@@ -64,7 +66,9 @@ async function fetchAndSyncPayroll(): Promise<void> {
     const fileContent = fs.readFileSync(revenueDataPath, 'utf-8');
     revenueData = JSON.parse(fileContent);
   } catch (error) {
-    console.warn('Failed to read existing revenue data, starting with empty object.');
+    console.warn(
+      'Failed to read existing revenue data, starting with empty object.'
+    );
   }
 
   // Check for Dynamics 365 configuration
@@ -73,14 +77,20 @@ async function fetchAndSyncPayroll(): Promise<void> {
   let dynamicsIntegration: PayrollIntegration | null = null;
 
   if (dynamicsBaseUrl && dynamicsAccessToken) {
-    dynamicsIntegration = new PayrollIntegration(dynamicsBaseUrl, dynamicsAccessToken);
+    dynamicsIntegration = new PayrollIntegration(
+      dynamicsBaseUrl,
+      dynamicsAccessToken
+    );
     console.log('Dynamics 365 payroll integration configured.');
   } else {
-    console.warn('Dynamics 365 configuration not found, skipping Dynamics 365 payroll sync.');
+    console.warn(
+      'Dynamics 365 configuration not found, skipping Dynamics 365 payroll sync.'
+    );
   }
 
   // Check for QuickBooks configuration
-  const qbBaseUrl = process.env.QUICKBOOKS_BASE_URL || 'https://quickbooks.api.intuit.com';
+  const qbBaseUrl =
+    process.env.QUICKBOOKS_BASE_URL || 'https://quickbooks.api.intuit.com';
   const qbAccessToken = process.env.QUICKBOOKS_ACCESS_TOKEN;
   const qbCompanyId = process.env.QUICKBOOKS_COMPANY_ID;
   const qbClientId = process.env.QUICKBOOKS_CLIENT_ID;
@@ -88,7 +98,13 @@ async function fetchAndSyncPayroll(): Promise<void> {
   const qbRefreshToken = process.env.QUICKBOOKS_REFRESH_TOKEN;
   let quickbooksIntegration: QuickBooksPayrollIntegration | null = null;
 
-  if (qbAccessToken && qbCompanyId && qbClientId && qbClientSecret && qbRefreshToken) {
+  if (
+    qbAccessToken &&
+    qbCompanyId &&
+    qbClientId &&
+    qbClientSecret &&
+    qbRefreshToken
+  ) {
     quickbooksIntegration = new QuickBooksPayrollIntegration(
       qbBaseUrl,
       qbAccessToken,
@@ -99,11 +115,15 @@ async function fetchAndSyncPayroll(): Promise<void> {
     );
     console.log('QuickBooks payroll integration configured.');
   } else {
-    console.warn('QuickBooks configuration not complete, skipping QuickBooks payroll sync.');
+    console.warn(
+      'QuickBooks configuration not complete, skipping QuickBooks payroll sync.'
+    );
   }
 
   if (!dynamicsIntegration && !quickbooksIntegration) {
-    console.error('No payroll integrations configured. Please set environment variables for Dynamics 365 or QuickBooks.');
+    console.error(
+      'No payroll integrations configured. Please set environment variables for Dynamics 365 or QuickBooks.'
+    );
     process.exit(1);
   }
 
@@ -112,10 +132,14 @@ async function fetchAndSyncPayroll(): Promise<void> {
     // Try Dynamics 365 first
     if (dynamicsIntegration) {
       try {
-        const response = await dynamicsIntegration.getEmployeePayroll(employeeId);
+        const response =
+          await dynamicsIntegration.getEmployeePayroll(employeeId);
         if (response.success && response.data) {
           const existingEntry = (revenueData.payroll || []).find(
-            (entry: any) => entry.employeeId === employeeId && entry.date === new Date().toISOString().split('T')[0] && entry.source === 'dynamics365'
+            (entry: any) =>
+              entry.employeeId === employeeId &&
+              entry.date === new Date().toISOString().split('T')[0] &&
+              entry.source === 'dynamics365'
           );
           if (!existingEntry) {
             payrollDataList.push({
@@ -130,17 +154,23 @@ async function fetchAndSyncPayroll(): Promise<void> {
           }
         }
       } catch (error) {
-        console.warn(`Dynamics 365 payroll data for employee ${employeeId} could not be fetched: ${error}`);
+        console.warn(
+          `Dynamics 365 payroll data for employee ${employeeId} could not be fetched: ${error}`
+        );
       }
     }
 
     // Try QuickBooks
     if (quickbooksIntegration) {
       try {
-        const response = await quickbooksIntegration.getEmployeePayroll(employeeId);
+        const response =
+          await quickbooksIntegration.getEmployeePayroll(employeeId);
         if (response.success && response.data) {
           const existingEntry = (revenueData.payroll || []).find(
-            (entry: any) => entry.employeeId === employeeId && entry.date === new Date().toISOString().split('T')[0] && entry.source === 'quickbooks'
+            (entry: any) =>
+              entry.employeeId === employeeId &&
+              entry.date === new Date().toISOString().split('T')[0] &&
+              entry.source === 'quickbooks'
           );
           if (!existingEntry) {
             payrollDataList.push({
@@ -155,13 +185,17 @@ async function fetchAndSyncPayroll(): Promise<void> {
           }
         }
       } catch (error) {
-        console.warn(`QuickBooks payroll data for employee ${employeeId} could not be fetched: ${error}`);
+        console.warn(
+          `QuickBooks payroll data for employee ${employeeId} could not be fetched: ${error}`
+        );
       }
     }
   }
 
   if (payrollDataList.length === 0) {
-    console.warn('No new payroll data was fetched. Revenue data will not be updated.');
+    console.warn(
+      'No new payroll data was fetched. Revenue data will not be updated.'
+    );
     return;
   }
 
@@ -170,7 +204,11 @@ async function fetchAndSyncPayroll(): Promise<void> {
 
   // Write updated revenue data back to file
   try {
-    fs.writeFileSync(revenueDataPath, JSON.stringify(revenueData, null, 2), 'utf-8');
+    fs.writeFileSync(
+      revenueDataPath,
+      JSON.stringify(revenueData, null, 2),
+      'utf-8'
+    );
     console.log('Revenue data updated successfully with payroll data.');
   } catch (error) {
     console.error('Failed to write updated revenue data:', error);

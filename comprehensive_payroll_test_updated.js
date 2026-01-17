@@ -10,11 +10,11 @@ const __dirname = path.dirname(__filename);
 const TEST_CONFIG = {
   SERVER: {
     PORT: 3000,
-    BASE_URL: 'http://localhost:3000'
+    BASE_URL: 'http://localhost:3000',
   },
   PAYROLL: {
-    BASE_URL: 'http://localhost:3000/api/payroll'
-  }
+    BASE_URL: 'http://localhost:3000/api/payroll',
+  },
 };
 
 // Test tracking
@@ -31,17 +31,18 @@ class TestSuite {
       result,
       message,
       duration,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
   getResults() {
     const endTime = Date.now();
     const total = this.tests.length;
-    const passed = this.tests.filter(t => t.result === 'passed').length;
-    const failed = this.tests.filter(t => t.result === 'failed').length;
-    const skipped = this.tests.filter(t => t.result === 'skipped').length;
-    const successRate = total > 0 ? ((passed / total) * 100).toFixed(2) : '0.00';
+    const passed = this.tests.filter((t) => t.result === 'passed').length;
+    const failed = this.tests.filter((t) => t.result === 'failed').length;
+    const skipped = this.tests.filter((t) => t.result === 'skipped').length;
+    const successRate =
+      total > 0 ? ((passed / total) * 100).toFixed(2) : '0.00';
 
     return {
       suite: this.name,
@@ -51,10 +52,10 @@ class TestSuite {
         failed,
         skipped,
         successRate: `${successRate}%`,
-        duration: endTime - this.startTime
+        duration: endTime - this.startTime,
       },
       tests: this.tests,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -76,101 +77,167 @@ class PayrollEndpointTests {
   }
 
   async testEnvironmentConfiguration() {
-    console.log('[2025-09-29T18:00:25.923Z] ℹ️ Testing environment configuration...');
+    console.log(
+      '[2025-09-29T18:00:25.923Z] ℹ️ Testing environment configuration...'
+    );
 
     // Wait a moment for server to be fully ready
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     try {
       // Test server health
-      const healthResponse = await axios.get(`${TEST_CONFIG.SERVER.BASE_URL}/health`);
-      console.log(`Health response status: ${healthResponse.status}, data status: ${healthResponse.data.status}`);
-      if (healthResponse.status === 200 && (healthResponse.data.status === 'healthy' || healthResponse.data.status === 'degraded')) {
-        this.testSuite.addTest('Environment Config', 'passed', `Server is ${healthResponse.data.status} and running`);
+      const healthResponse = await axios.get(
+        `${TEST_CONFIG.SERVER.BASE_URL}/health`
+      );
+      console.log(
+        `Health response status: ${healthResponse.status}, data status: ${healthResponse.data.status}`
+      );
+      if (
+        healthResponse.status === 200 &&
+        (healthResponse.data.status === 'healthy' ||
+          healthResponse.data.status === 'degraded')
+      ) {
+        this.testSuite.addTest(
+          'Environment Config',
+          'passed',
+          `Server is ${healthResponse.data.status} and running`
+        );
         console.log('[2025-09-29T18:00:25.923Z] ✅ Environment Config: PASSED');
         return true;
       } else {
-        this.testSuite.addTest('Environment Config', 'failed', `Server health check failed - status: ${healthResponse.data.status}`);
+        this.testSuite.addTest(
+          'Environment Config',
+          'failed',
+          `Server health check failed - status: ${healthResponse.data.status}`
+        );
         console.log('[2025-09-29T18:00:25.923Z] ❌ Environment Config: FAILED');
         return false;
       }
     } catch (error) {
-      this.testSuite.addTest('Environment Config', 'failed', `Health check error: ${error.message}`);
+      this.testSuite.addTest(
+        'Environment Config',
+        'failed',
+        `Health check error: ${error.message}`
+      );
       console.log('[2025-09-29T18:00:25.923Z] ❌ Environment Config: FAILED');
       return false;
     }
   }
 
   async testGetEmployees() {
-    console.log('[2025-09-29T18:00:25.970Z] ℹ️ Testing get employees endpoint...');
+    console.log(
+      '[2025-09-29T18:00:25.970Z] ℹ️ Testing get employees endpoint...'
+    );
 
     try {
       const response = await axios.get(`${this.baseUrl}/employees`);
-      if (response.status === 200 && response.data.success && Array.isArray(response.data.data)) {
-        this.testSuite.addTest('Get Employees', 'passed', `Retrieved ${response.data.data.length} employees`);
+      if (
+        response.status === 200 &&
+        response.data.success &&
+        Array.isArray(response.data.data)
+      ) {
+        this.testSuite.addTest(
+          'Get Employees',
+          'passed',
+          `Retrieved ${response.data.data.length} employees`
+        );
         console.log('[2025-09-29T18:00:25.970Z] ✅ Get Employees: PASSED');
         return true;
       } else {
-        this.testSuite.addTest('Get Employees', 'failed', 'Invalid response format');
+        this.testSuite.addTest(
+          'Get Employees',
+          'failed',
+          'Invalid response format'
+        );
         console.log('[2025-09-29T18:00:25.970Z] ❌ Get Employees: FAILED');
         return false;
       }
     } catch (error) {
-      this.testSuite.addTest('Get Employees', 'failed', `Request failed: ${error.message}`);
+      this.testSuite.addTest(
+        'Get Employees',
+        'failed',
+        `Request failed: ${error.message}`
+      );
       console.log('[2025-09-29T18:00:25.970Z] ❌ Get Employees: FAILED');
       return false;
     }
   }
 
   async testAddEmployee() {
-    console.log('[2025-09-29T18:00:26.033Z] ℹ️ Testing add employee endpoint...');
+    console.log(
+      '[2025-09-29T18:00:26.033Z] ℹ️ Testing add employee endpoint...'
+    );
 
     const testEmployee = {
       id: `test-emp-${Date.now()}`,
       name: 'Test Employee',
       position: 'Test Position',
-      hourlyRate: 25.00,
+      hourlyRate: 25.0,
       hoursWorked: 40,
       overtimeHours: 5,
       taxRate: 0.2,
       deductions: 50,
-      bonuses: 100
+      bonuses: 100,
     };
 
     try {
-      const response = await axios.post(`${this.baseUrl}/employees`, testEmployee);
+      const response = await axios.post(
+        `${this.baseUrl}/employees`,
+        testEmployee
+      );
       if (response.status === 200 && response.data.success) {
-        this.testSuite.addTest('Add Employee', 'passed', 'Employee added successfully');
+        this.testSuite.addTest(
+          'Add Employee',
+          'passed',
+          'Employee added successfully'
+        );
         console.log('[2025-09-29T18:00:26.033Z] ✅ Add Employee: PASSED');
         return testEmployee.id; // Return employee ID for cleanup
       } else {
-        this.testSuite.addTest('Add Employee', 'failed', 'Failed to add employee');
+        this.testSuite.addTest(
+          'Add Employee',
+          'failed',
+          'Failed to add employee'
+        );
         console.log('[2025-09-29T18:00:26.033Z] ❌ Add Employee: FAILED');
         return null;
       }
     } catch (error) {
-      this.testSuite.addTest('Add Employee', 'failed', `Request failed: ${error.message}`);
+      this.testSuite.addTest(
+        'Add Employee',
+        'failed',
+        `Request failed: ${error.message}`
+      );
       console.log('[2025-09-29T18:00:26.033Z] ❌ Add Employee: FAILED');
       return null;
     }
   }
 
   async testCalculatePayroll() {
-    console.log('[2025-09-29T18:00:26.037Z] ℹ️ Testing calculate payroll endpoint...');
+    console.log(
+      '[2025-09-29T18:00:26.037Z] ℹ️ Testing calculate payroll endpoint...'
+    );
 
     const payrollData = {
       employeeId: 'test-calc',
       hoursWorked: 40,
-      hourlyRate: 25.00,
+      hourlyRate: 25.0,
       overtimeHours: 5,
       taxRate: 0.2,
       deductions: 50,
-      bonuses: 100
+      bonuses: 100,
     };
 
     try {
-      const response = await axios.post(`${this.baseUrl}/calculate`, payrollData);
-      if (response.status === 200 && response.data.success && response.data.data) {
+      const response = await axios.post(
+        `${this.baseUrl}/calculate`,
+        payrollData
+      );
+      if (
+        response.status === 200 &&
+        response.data.success &&
+        response.data.data
+      ) {
         const result = response.data.data;
         // Verify calculations
         const expectedRegularPay = 40 * 25;
@@ -179,45 +246,85 @@ class PayrollEndpointTests {
         const expectedTaxAmount = expectedGrossPay * 0.2;
         const expectedNetPay = expectedGrossPay - expectedTaxAmount - 50;
 
-        if (Math.abs(result.grossPay - expectedGrossPay) < 0.01 &&
-            Math.abs(result.taxAmount - expectedTaxAmount) < 0.01 &&
-            Math.abs(result.netPay - expectedNetPay) < 0.01) {
-          this.testSuite.addTest('Calculate Payroll', 'passed', 'Payroll calculated correctly');
-          console.log('[2025-09-29T18:00:26.037Z] ✅ Calculate Payroll: PASSED');
+        if (
+          Math.abs(result.grossPay - expectedGrossPay) < 0.01 &&
+          Math.abs(result.taxAmount - expectedTaxAmount) < 0.01 &&
+          Math.abs(result.netPay - expectedNetPay) < 0.01
+        ) {
+          this.testSuite.addTest(
+            'Calculate Payroll',
+            'passed',
+            'Payroll calculated correctly'
+          );
+          console.log(
+            '[2025-09-29T18:00:26.037Z] ✅ Calculate Payroll: PASSED'
+          );
           return true;
         } else {
-          this.testSuite.addTest('Calculate Payroll', 'failed', 'Incorrect calculations');
-          console.log('[2025-09-29T18:00:26.037Z] ❌ Calculate Payroll: FAILED');
+          this.testSuite.addTest(
+            'Calculate Payroll',
+            'failed',
+            'Incorrect calculations'
+          );
+          console.log(
+            '[2025-09-29T18:00:26.037Z] ❌ Calculate Payroll: FAILED'
+          );
           return false;
         }
       } else {
-        this.testSuite.addTest('Calculate Payroll', 'failed', 'Invalid response format');
+        this.testSuite.addTest(
+          'Calculate Payroll',
+          'failed',
+          'Invalid response format'
+        );
         console.log('[2025-09-29T18:00:26.037Z] ❌ Calculate Payroll: FAILED');
         return false;
       }
     } catch (error) {
-      this.testSuite.addTest('Calculate Payroll', 'failed', `Request failed: ${error.message}`);
+      this.testSuite.addTest(
+        'Calculate Payroll',
+        'failed',
+        `Request failed: ${error.message}`
+      );
       console.log('[2025-09-29T18:00:26.037Z] ❌ Calculate Payroll: FAILED');
       return false;
     }
   }
 
   async testProcessPayroll() {
-    console.log('[2025-09-29T18:00:26.040Z] ℹ️ Testing process payroll endpoint...');
+    console.log(
+      '[2025-09-29T18:00:26.040Z] ℹ️ Testing process payroll endpoint...'
+    );
 
     try {
       const response = await axios.post(`${this.baseUrl}/process`);
-      if (response.status === 200 && response.data.success && Array.isArray(response.data.data)) {
-        this.testSuite.addTest('Process Payroll', 'passed', `Processed payroll for ${response.data.data.length} employees`);
+      if (
+        response.status === 200 &&
+        response.data.success &&
+        Array.isArray(response.data.data)
+      ) {
+        this.testSuite.addTest(
+          'Process Payroll',
+          'passed',
+          `Processed payroll for ${response.data.data.length} employees`
+        );
         console.log('[2025-09-29T18:00:26.040Z] ✅ Process Payroll: PASSED');
         return true;
       } else {
-        this.testSuite.addTest('Process Payroll', 'failed', 'Failed to process payroll');
+        this.testSuite.addTest(
+          'Process Payroll',
+          'failed',
+          'Failed to process payroll'
+        );
         console.log('[2025-09-29T18:00:26.040Z] ❌ Process Payroll: FAILED');
         return false;
       }
     } catch (error) {
-      this.testSuite.addTest('Process Payroll', 'failed', `Request failed: ${error.message}`);
+      this.testSuite.addTest(
+        'Process Payroll',
+        'failed',
+        `Request failed: ${error.message}`
+      );
       console.log('[2025-09-29T18:00:26.040Z] ❌ Process Payroll: FAILED');
       return false;
     }
@@ -225,9 +332,13 @@ class PayrollEndpointTests {
 
   async runAllTests() {
     console.log('🧪 Starting Comprehensive Payroll Integration Tests');
-    console.log('======================================================================');
+    console.log(
+      '======================================================================'
+    );
     console.log(`Server URL: ${TEST_CONFIG.SERVER.BASE_URL}`);
-    console.log('======================================================================');
+    console.log(
+      '======================================================================'
+    );
 
     // Run all tests
     await this.testEnvironmentConfiguration();

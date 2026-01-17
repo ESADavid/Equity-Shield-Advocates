@@ -1,6 +1,15 @@
-global.setImmediate = global.setImmediate || function (fn) {
-  return setTimeout(fn, 0);
-};
+import '@testing-library/jest-dom';
+
+global.setImmediate =
+  global.setImmediate ||
+  function (fn) {
+    return setTimeout(fn, 0);
+  };
+
+// Polyfills for Node.js environment
+const { TextEncoder, TextDecoder } = require('util');
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 
 // Set NODE_ENV to test for test environment detection
 process.env.NODE_ENV = 'test';

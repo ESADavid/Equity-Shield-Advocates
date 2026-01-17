@@ -7,7 +7,8 @@ router.get('/chase-mortgage', (req, res) => {
   // Note: Embedding external pages via iframe may be blocked by X-Frame-Options
   // So fallback to providing a direct link if embedding is not allowed
 
-  const chaseMortgageUrl = 'https://www.chase.com/personal/mortgage/my-mortgage/home';
+  const chaseMortgageUrl =
+    'https://www.chase.com/personal/mortgage/my-mortgage/home';
 
   res.send(`
     <html>

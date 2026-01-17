@@ -16,13 +16,13 @@ function makeRequest(options, data = null) {
   return new Promise((resolve, reject) => {
     const req = http.request(options, (res) => {
       let body = '';
-      res.on('data', chunk => body += chunk);
+      res.on('data', (chunk) => (body += chunk));
       res.on('end', () => {
         try {
           const response = {
             statusCode: res.statusCode,
             headers: res.headers,
-            body: body ? JSON.parse(body) : null
+            body: body ? JSON.parse(body) : null,
           };
           resolve(response);
         } catch (e) {
@@ -52,11 +52,14 @@ async function runE2EPerfectionTest() {
       hostname: 'localhost',
       port: 3000,
       path: '/health',
-      method: 'GET'
+      method: 'GET',
     });
 
     testResults.total++;
-    if (healthResponse.statusCode === 200 && healthResponse.body?.status === 'healthy') {
+    if (
+      healthResponse.statusCode === 200 &&
+      healthResponse.body?.status === 'healthy'
+    ) {
       testResults.passed++;
       log('Health check passed');
     } else {
@@ -70,7 +73,7 @@ async function runE2EPerfectionTest() {
       hostname: 'localhost',
       port: 3000,
       path: '/api/status',
-      method: 'GET'
+      method: 'GET',
     });
 
     testResults.total++;
@@ -88,7 +91,7 @@ async function runE2EPerfectionTest() {
       hostname: 'localhost',
       port: 3000,
       path: '/nonexistent-endpoint',
-      method: 'GET'
+      method: 'GET',
     });
 
     testResults.total++;
@@ -104,16 +107,18 @@ async function runE2EPerfectionTest() {
     log('Testing Rate Limiting...');
     const rateLimitPromises = [];
     for (let i = 0; i < 15; i++) {
-      rateLimitPromises.push(makeRequest({
-        hostname: 'localhost',
-        port: 3000,
-        path: '/api/status',
-        method: 'GET'
-      }));
+      rateLimitPromises.push(
+        makeRequest({
+          hostname: 'localhost',
+          port: 3000,
+          path: '/api/status',
+          method: 'GET',
+        })
+      );
     }
 
     const rateLimitResults = await Promise.all(rateLimitPromises);
-    const rateLimited = rateLimitResults.some(res => res.statusCode === 429);
+    const rateLimited = rateLimitResults.some((res) => res.statusCode === 429);
 
     testResults.total++;
     if (rateLimited) {
@@ -130,12 +135,13 @@ async function runE2EPerfectionTest() {
       hostname: 'localhost',
       port: 3000,
       path: '/health',
-      method: 'GET'
+      method: 'GET',
     });
 
     testResults.total++;
-    const hasSecurityHeaders = securityResponse.headers['content-security-policy'] &&
-                              securityResponse.headers['x-frame-options'];
+    const hasSecurityHeaders =
+      securityResponse.headers['content-security-policy'] &&
+      securityResponse.headers['x-frame-options'];
 
     if (hasSecurityHeaders) {
       testResults.passed++;
@@ -152,7 +158,7 @@ async function runE2EPerfectionTest() {
       port: 3000,
       path: '/health',
       method: 'GET',
-      headers: { 'Origin': 'http://localhost:3000' }
+      headers: { Origin: 'http://localhost:3000' },
     });
 
     testResults.total++;
@@ -172,7 +178,7 @@ async function runE2EPerfectionTest() {
       hostname: 'localhost',
       port: 3000,
       path: '/',
-      method: 'GET'
+      method: 'GET',
     });
 
     testResults.total++;
@@ -190,7 +196,7 @@ async function runE2EPerfectionTest() {
       hostname: 'localhost',
       port: 3000,
       path: '/api/payroll/invalid-endpoint',
-      method: 'GET'
+      method: 'GET',
     });
 
     testResults.total++;
@@ -202,7 +208,6 @@ async function runE2EPerfectionTest() {
       testResults.failed++;
       log('Error handling may not be working', 'error');
     }
-
   } catch (error) {
     log(`Test suite failed with error: ${error.message}`, 'error');
     testResults.failed++;
@@ -215,8 +220,14 @@ async function runE2EPerfectionTest() {
   log('================================', 'info');
   log(`Total Tests: ${testResults.total}`, 'info');
   log(`✅ Passed: ${testResults.passed}`, 'success');
-  log(`❌ Failed: ${testResults.failed}`, testResults.failed > 0 ? 'error' : 'info');
-  log(`📊 Success Rate: ${((testResults.passed / testResults.total) * 100).toFixed(1)}%`, 'info');
+  log(
+    `❌ Failed: ${testResults.failed}`,
+    testResults.failed > 0 ? 'error' : 'info'
+  );
+  log(
+    `📊 Success Rate: ${((testResults.passed / testResults.total) * 100).toFixed(1)}%`,
+    'info'
+  );
 
   if (testResults.failed === 0) {
     log('', 'info');
@@ -224,13 +235,16 @@ async function runE2EPerfectionTest() {
     log('✅ Oscar Broome Revenue System is production-ready', 'success');
   } else {
     log('', 'info');
-    log('⚠️ Some tests failed. Please review the system configuration.', 'error');
+    log(
+      '⚠️ Some tests failed. Please review the system configuration.',
+      'error'
+    );
   }
 
   process.exit(testResults.failed === 0 ? 0 : 1);
 }
 
-runE2EPerfectionTest().catch(error => {
+runE2EPerfectionTest().catch((error) => {
   log(`Fatal error: ${error.message}`, 'error');
   process.exit(1);
 });

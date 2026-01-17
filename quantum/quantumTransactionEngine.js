@@ -36,7 +36,7 @@ class QuantumTransactionEngine extends EventEmitter {
       STAKE: 'stake',
       UNSTAKE: 'unstake',
       REWARD: 'reward',
-      FEE: 'fee'
+      FEE: 'fee',
     };
 
     // Transaction status
@@ -47,7 +47,7 @@ class QuantumTransactionEngine extends EventEmitter {
       COMPLETED: 'completed',
       FAILED: 'failed',
       CANCELLED: 'cancelled',
-      EXPIRED: 'expired'
+      EXPIRED: 'expired',
     };
 
     // Initialize transaction engine
@@ -60,7 +60,7 @@ class QuantumTransactionEngine extends EventEmitter {
       engineId: this.generateEngineId(),
       initializedAt: new Date().toISOString(),
       quantumHash: this.generateQuantumHash(),
-      capabilities: Object.values(this.transactionTypes)
+      capabilities: Object.values(this.transactionTypes),
     };
 
     this.quantumEngine.setQuantumState('transaction_engine', engineState);
@@ -75,7 +75,7 @@ class QuantumTransactionEngine extends EventEmitter {
   generateQuantumHash() {
     const data = JSON.stringify({
       timestamp: Date.now(),
-      engine: 'quantum-transaction-engine'
+      engine: 'quantum-transaction-engine',
     });
     return crypto.createHash('sha3-512').update(data).digest('hex');
   }
@@ -84,8 +84,6 @@ class QuantumTransactionEngine extends EventEmitter {
   async processTransaction(transactionData) {
     const transactionId = this.generateTransactionId();
     try {
-      
-
       // Create quantum transaction
       const quantumTransaction = {
         id: transactionId,
@@ -93,11 +91,14 @@ class QuantumTransactionEngine extends EventEmitter {
         status: this.transactionStatus.PENDING,
         createdAt: new Date().toISOString(),
         quantumHash: this.generateTransactionHash(transactionData),
-        securityLevel: 'quantum-maximum'
+        securityLevel: 'quantum-maximum',
       };
 
       // Store in quantum state
-      this.quantumEngine.setQuantumState(`transaction_${transactionId}`, quantumTransaction);
+      this.quantumEngine.setQuantumState(
+        `transaction_${transactionId}`,
+        quantumTransaction
+      );
       this.activeTransactions.set(transactionId, quantumTransaction);
       this.pendingTransactions.add(transactionId);
 
@@ -124,7 +125,10 @@ class QuantumTransactionEngine extends EventEmitter {
       quantumTransaction.result = result;
 
       // Update quantum state
-      this.quantumEngine.setQuantumState(`transaction_${transactionId}`, quantumTransaction);
+      this.quantumEngine.setQuantumState(
+        `transaction_${transactionId}`,
+        quantumTransaction
+      );
 
       // Move to history
       this.transactionHistory.set(transactionId, quantumTransaction);
@@ -136,21 +140,20 @@ class QuantumTransactionEngine extends EventEmitter {
         transactionId,
         type: quantumTransaction.type,
         amount: quantumTransaction.amount,
-        success: result.success
+        success: result.success,
       });
 
       return {
         success: result.success,
         transactionId,
         result,
-        quantumVerified: true
+        quantumVerified: true,
       };
-
     } catch (error) {
       this.emit('transaction-failed', {
         transactionId: transactionId || 'unknown',
         error: error.message,
-        type: transactionData.type
+        type: transactionData.type,
       });
       throw error;
     }
@@ -164,7 +167,7 @@ class QuantumTransactionEngine extends EventEmitter {
     const data = JSON.stringify({
       ...transactionData,
       timestamp: Date.now(),
-      nonce: crypto.randomBytes(16).toString('hex')
+      nonce: crypto.randomBytes(16).toString('hex'),
     });
     return crypto.createHash('sha3-512').update(data).digest('hex');
   }
@@ -176,23 +179,29 @@ class QuantumTransactionEngine extends EventEmitter {
       type: this.validateTransactionType(transaction.type),
       security: await this.validateSecurity(transaction),
       compliance: await this.validateCompliance(transaction),
-      quantumIntegrity: this.validateQuantumIntegrity(transaction)
+      quantumIntegrity: this.validateQuantumIntegrity(transaction),
     };
 
-    const allValid = Object.values(checks).every(check => check.valid !== false);
+    const allValid = Object.values(checks).every(
+      (check) => check.valid !== false
+    );
 
     return {
       valid: allValid,
       checks,
-      reason: allValid ? null : 'Validation failed'
+      reason: allValid ? null : 'Validation failed',
     };
   }
 
   validateAmount(amount) {
     return {
       valid: typeof amount === 'number' && amount > 0 && amount <= 10000000, // Max 10M
-      reason: amount <= 0 ? 'Amount must be positive' :
-              amount > 10000000 ? 'Amount exceeds maximum limit' : null
+      reason:
+        amount <= 0
+          ? 'Amount must be positive'
+          : amount > 10000000
+            ? 'Amount exceeds maximum limit'
+            : null,
     };
   }
 
@@ -200,7 +209,9 @@ class QuantumTransactionEngine extends EventEmitter {
     const validTypes = Object.values(this.transactionTypes);
     return {
       valid: validTypes.includes(type),
-      reason: validTypes.includes(type) ? null : `Invalid transaction type: ${type}`
+      reason: validTypes.includes(type)
+        ? null
+        : `Invalid transaction type: ${type}`,
     };
   }
 
@@ -210,12 +221,12 @@ class QuantumTransactionEngine extends EventEmitter {
       encryption: true,
       authentication: true,
       authorization: true,
-      quantumSafe: true
+      quantumSafe: true,
     };
 
     return {
-      valid: Object.values(securityCheck).every(v => v === true),
-      checks: securityCheck
+      valid: Object.values(securityCheck).every((v) => v === true),
+      checks: securityCheck,
     };
   }
 
@@ -225,12 +236,12 @@ class QuantumTransactionEngine extends EventEmitter {
       kyc: true, // Know Your Customer
       aml: true, // Anti-Money Laundering
       sanctions: true, // Sanctions screening
-      quantumCompliance: true
+      quantumCompliance: true,
     };
 
     return {
-      valid: Object.values(complianceChecks).every(v => v === true),
-      checks: complianceChecks
+      valid: Object.values(complianceChecks).every((v) => v === true),
+      checks: complianceChecks,
     };
   }
 
@@ -240,13 +251,13 @@ class QuantumTransactionEngine extends EventEmitter {
       type: transaction.type,
       amount: transaction.amount,
       from: transaction.from,
-      to: transaction.to
+      to: transaction.to,
     });
 
     return {
       valid: transaction.quantumHash === expectedHash,
       expected: expectedHash,
-      actual: transaction.quantumHash
+      actual: transaction.quantumHash,
     };
   }
 
@@ -278,7 +289,7 @@ class QuantumTransactionEngine extends EventEmitter {
       transactionId: _transaction.id,
       processingTime: performance.now(),
       quantumVerified: true,
-      details: paymentResult
+      details: paymentResult,
     };
   }
 
@@ -291,7 +302,7 @@ class QuantumTransactionEngine extends EventEmitter {
       transactionId: _transaction.id,
       processingTime: performance.now(),
       quantumVerified: true,
-      details: transferResult
+      details: transferResult,
     };
   }
 
@@ -304,7 +315,7 @@ class QuantumTransactionEngine extends EventEmitter {
       transactionId: _transaction.id,
       processingTime: performance.now(),
       quantumVerified: true,
-      details: withdrawalResult
+      details: withdrawalResult,
     };
   }
 
@@ -317,7 +328,7 @@ class QuantumTransactionEngine extends EventEmitter {
       transactionId: _transaction.id,
       processingTime: performance.now(),
       quantumVerified: true,
-      details: depositResult
+      details: depositResult,
     };
   }
 
@@ -330,7 +341,7 @@ class QuantumTransactionEngine extends EventEmitter {
       transactionId: transaction.id,
       processingTime: performance.now(),
       quantumVerified: true,
-      details: refundResult
+      details: refundResult,
     };
   }
 
@@ -343,75 +354,75 @@ class QuantumTransactionEngine extends EventEmitter {
       transactionId: transaction.id,
       processingTime: performance.now(),
       quantumVerified: true,
-      details: exchangeResult
+      details: exchangeResult,
     };
   }
 
   // Quantum Execution Methods
   async executeQuantumPayment(transaction) {
     // Simulate quantum payment processing
-    await new Promise(resolve => setTimeout(resolve, 5)); // 5ms quantum processing
+    await new Promise((resolve) => setTimeout(resolve, 5)); // 5ms quantum processing
 
     return {
       success: true,
       paymentId: `PAY_${crypto.randomBytes(8).toString('hex').toUpperCase()}`,
       processor: 'quantum-payment-processor',
-      confirmation: crypto.randomBytes(16).toString('hex')
+      confirmation: crypto.randomBytes(16).toString('hex'),
     };
   }
 
   async executeQuantumTransfer(transaction) {
     // Simulate quantum transfer processing
-    await new Promise(resolve => setTimeout(resolve, 3)); // 3ms quantum transfer
+    await new Promise((resolve) => setTimeout(resolve, 3)); // 3ms quantum transfer
 
     return {
       success: true,
       transferId: `TRF_${crypto.randomBytes(8).toString('hex').toUpperCase()}`,
       fromAccount: transaction.from,
       toAccount: transaction.to,
-      confirmation: crypto.randomBytes(16).toString('hex')
+      confirmation: crypto.randomBytes(16).toString('hex'),
     };
   }
 
   async executeQuantumWithdrawal(_transaction) {
     // Simulate quantum withdrawal processing
-    await new Promise(resolve => setTimeout(resolve, 10)); // 10ms quantum withdrawal
+    await new Promise((resolve) => setTimeout(resolve, 10)); // 10ms quantum withdrawal
 
     return {
       success: true,
       withdrawalId: `WD_${crypto.randomBytes(8).toString('hex').toUpperCase()}`,
       destination: _transaction.destination,
-      confirmation: crypto.randomBytes(16).toString('hex')
+      confirmation: crypto.randomBytes(16).toString('hex'),
     };
   }
 
   async executeQuantumDeposit(_transaction) {
     // Simulate quantum deposit processing
-    await new Promise(resolve => setTimeout(resolve, 8)); // 8ms quantum deposit
+    await new Promise((resolve) => setTimeout(resolve, 8)); // 8ms quantum deposit
 
     return {
       success: true,
       depositId: `DEP_${crypto.randomBytes(8).toString('hex').toUpperCase()}`,
       source: _transaction.source,
-      confirmation: crypto.randomBytes(16).toString('hex')
+      confirmation: crypto.randomBytes(16).toString('hex'),
     };
   }
 
   async executeQuantumRefund(_transaction) {
     // Simulate quantum refund processing
-    await new Promise(resolve => setTimeout(resolve, 6)); // 6ms quantum refund
+    await new Promise((resolve) => setTimeout(resolve, 6)); // 6ms quantum refund
 
     return {
       success: true,
       refundId: `REF_${crypto.randomBytes(8).toString('hex').toUpperCase()}`,
       originalTransaction: _transaction.originalTransactionId,
-      confirmation: crypto.randomBytes(16).toString('hex')
+      confirmation: crypto.randomBytes(16).toString('hex'),
     };
   }
 
   async executeQuantumExchange(_transaction) {
     // Simulate quantum exchange processing
-    await new Promise(resolve => setTimeout(resolve, 12)); // 12ms quantum exchange
+    await new Promise((resolve) => setTimeout(resolve, 12)); // 12ms quantum exchange
 
     return {
       success: true,
@@ -419,14 +430,16 @@ class QuantumTransactionEngine extends EventEmitter {
       fromCurrency: _transaction.fromCurrency,
       toCurrency: _transaction.toCurrency,
       rate: _transaction.exchangeRate,
-      confirmation: crypto.randomBytes(16).toString('hex')
+      confirmation: crypto.randomBytes(16).toString('hex'),
     };
   }
 
   // Transaction Management
   getTransaction(transactionId) {
-    return this.activeTransactions.get(transactionId) ||
-           this.transactionHistory.get(transactionId);
+    return (
+      this.activeTransactions.get(transactionId) ||
+      this.transactionHistory.get(transactionId)
+    );
   }
 
   getActiveTransactions() {
@@ -434,7 +447,9 @@ class QuantumTransactionEngine extends EventEmitter {
   }
 
   getPendingTransactions() {
-    return Array.from(this.pendingTransactions).map(id => this.activeTransactions.get(id));
+    return Array.from(this.pendingTransactions).map((id) =>
+      this.activeTransactions.get(id)
+    );
   }
 
   getTransactionHistory(limit = 100) {
@@ -449,7 +464,10 @@ class QuantumTransactionEngine extends EventEmitter {
       transaction.status = this.transactionStatus.CANCELLED;
       transaction.cancelledAt = new Date().toISOString();
 
-      this.quantumEngine.setQuantumState(`transaction_${transactionId}`, transaction);
+      this.quantumEngine.setQuantumState(
+        `transaction_${transactionId}`,
+        transaction
+      );
       this.transactionHistory.set(transactionId, transaction);
       this.activeTransactions.delete(transactionId);
       this.pendingTransactions.delete(transactionId);
@@ -463,26 +481,36 @@ class QuantumTransactionEngine extends EventEmitter {
   // Real-time Monitoring
   getTransactionMetrics() {
     const now = Date.now();
-    const last24h = now - (24 * 60 * 60 * 1000);
+    const last24h = now - 24 * 60 * 60 * 1000;
 
     const transactions = Array.from(this.transactionHistory.values());
-    const recentTransactions = transactions.filter(t => new Date(t.createdAt) > last24h);
+    const recentTransactions = transactions.filter(
+      (t) => new Date(t.createdAt) > last24h
+    );
 
     return {
       totalTransactions: this.transactionHistory.size,
       activeTransactions: this.activeTransactions.size,
       pendingTransactions: this.pendingTransactions.size,
-      completedToday: recentTransactions.filter(t => t.status === this.transactionStatus.COMPLETED).length,
-      failedToday: recentTransactions.filter(t => t.status === this.transactionStatus.FAILED).length,
+      completedToday: recentTransactions.filter(
+        (t) => t.status === this.transactionStatus.COMPLETED
+      ).length,
+      failedToday: recentTransactions.filter(
+        (t) => t.status === this.transactionStatus.FAILED
+      ).length,
       totalVolume: transactions.reduce((sum, t) => sum + (t.amount || 0), 0),
-      averageProcessingTime: this.calculateAverageProcessingTime(recentTransactions),
-      successRate: this.calculateSuccessRate(recentTransactions)
+      averageProcessingTime:
+        this.calculateAverageProcessingTime(recentTransactions),
+      successRate: this.calculateSuccessRate(recentTransactions),
     };
   }
 
   calculateAverageProcessingTime(transactions) {
-    const completedTransactions = transactions.filter(t =>
-      t.completedAt && t.createdAt && t.status === this.transactionStatus.COMPLETED
+    const completedTransactions = transactions.filter(
+      (t) =>
+        t.completedAt &&
+        t.createdAt &&
+        t.status === this.transactionStatus.COMPLETED
     );
 
     if (completedTransactions.length === 0) return 0;
@@ -497,21 +525,24 @@ class QuantumTransactionEngine extends EventEmitter {
   calculateSuccessRate(transactions) {
     if (transactions.length === 0) return 100;
 
-    const successful = transactions.filter(t => t.status === this.transactionStatus.COMPLETED).length;
+    const successful = transactions.filter(
+      (t) => t.status === this.transactionStatus.COMPLETED
+    ).length;
     return (successful / transactions.length) * 100;
   }
 
   // Quantum Engine Status
   getEngineStatus() {
     return {
-      engineId: this.quantumEngine.getQuantumState('transaction_engine')?.engineId,
+      engineId:
+        this.quantumEngine.getQuantumState('transaction_engine')?.engineId,
       activeTransactions: this.activeTransactions.size,
       pendingTransactions: this.pendingTransactions.size,
       totalProcessed: this.transactionHistory.size,
       quantumSecurity: this.quantumSecurity.verifySecurity(),
       performance: this.quantumOptimizer.getRealTimeMetrics(),
       uptime: performance.now(),
-      memory: process.memoryUsage()
+      memory: process.memoryUsage(),
     };
   }
 }

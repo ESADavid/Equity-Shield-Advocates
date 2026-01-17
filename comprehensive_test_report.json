@@ -1,66 +1,66 @@
 {
   "summary": {
     "total": 9,
-    "passed": 9,
-    "failed": 0,
-    "skipped": 0,
-    "successRate": "100.00"
+    "passed": 3,
+    "failed": 2,
+    "skipped": 4,
+    "successRate": "33.33"
   },
   "tests": [
     {
       "name": "Environment Config",
       "result": "passed",
-      "message": "Mock mode active - environment config not required",
-      "timestamp": "2025-10-16T05:53:43.865Z"
+      "message": "All required environment variables are set",
+      "timestamp": "2026-01-15T23:03:56.515Z"
     },
     {
       "name": "Health Endpoint",
       "result": "passed",
       "message": "Health check successful",
-      "timestamp": "2025-10-16T05:53:44.305Z"
+      "timestamp": "2026-01-15T23:03:56.665Z"
     },
     {
       "name": "Create Payment",
-      "result": "passed",
-      "message": "Payment created: mock-payment-1760594024397-jb12mafqw (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.402Z"
+      "result": "failed",
+      "message": "Payment creation failed: Request failed with status code 400",
+      "timestamp": "2026-01-15T23:03:56.760Z"
     },
     {
       "name": "Payment Status",
-      "result": "passed",
-      "message": "Status: AUTHORIZED (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.415Z"
+      "result": "skipped",
+      "message": "Payment creation failed",
+      "timestamp": "2026-01-15T23:03:56.761Z"
     },
     {
       "name": "Refund Payment",
-      "result": "passed",
-      "message": "Refund created: mock-txn-1760594024433-r9ewvo445 (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.441Z"
+      "result": "skipped",
+      "message": "Payment creation failed",
+      "timestamp": "2026-01-15T23:03:56.761Z"
     },
     {
       "name": "Capture Payment",
-      "result": "passed",
-      "message": "Payment captured: mock-txn-1760594024457-32jx2kzbw (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.463Z"
+      "result": "skipped",
+      "message": "Payment creation failed",
+      "timestamp": "2026-01-15T23:03:56.761Z"
     },
     {
       "name": "Void Payment",
-      "result": "passed",
-      "message": "Payment voided: mock-txn-1760594024477-gbgdf9z9g (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.483Z"
+      "result": "skipped",
+      "message": "Payment creation failed",
+      "timestamp": "2026-01-15T23:03:56.761Z"
     },
     {
       "name": "Get Transactions",
-      "result": "passed",
-      "message": "Retrieved 10 transactions (Mock: true)",
-      "timestamp": "2025-10-16T05:53:44.548Z"
+      "result": "failed",
+      "message": "Transactions fetch failed: timeout of 10000ms exceeded",
+      "timestamp": "2026-01-15T23:04:06.780Z"
     },
     {
       "name": "Webhook Endpoint",
       "result": "passed",
-      "message": "Webhook processed successfully (Mock: ${isMockMode})",
-      "timestamp": "2025-10-16T05:53:44.567Z"
+      "message": "Webhook signature validation working (expected 401 for test signature)",
+      "timestamp": "2026-01-15T23:04:06.837Z"
     }
   ],
-  "timestamp": "2025-10-16T05:53:44.570Z"
+  "timestamp": "2026-01-15T23:04:06.846Z"
 }

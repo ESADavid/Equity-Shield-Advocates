@@ -6,7 +6,7 @@
 const { QuantumAIWallet } = require('./quantum/quantumAIWallet.js');
 
 async function demonstrateOscarBroomeQuantumWallet() {
-  console.log('🚀 Initializing Oscar Broome\'s Quantum AI Wallet...');
+  console.log("🚀 Initializing Oscar Broome's Quantum AI Wallet...");
 
   // Create Oscar Broome's quantum AI wallet
   const oscarWallet = new QuantumAIWallet(
@@ -19,18 +19,27 @@ async function demonstrateOscarBroomeQuantumWallet() {
   console.log('User ID:', oscarWallet.userId);
   console.log('Email:', oscarWallet.userEmail);
   console.log('Initial Balance:', oscarWallet.balance);
-  console.log('AI Engine Status:', JSON.stringify(oscarWallet.aiEngine.getStatus(), null, 2));
+  console.log(
+    'AI Engine Status:',
+    JSON.stringify(oscarWallet.aiEngine.getStatus(), null, 2)
+  );
   console.log('');
 
   try {
     // 1. AI-Powered Instant Withdrawal
     console.log('💰 Testing AI-Powered Instant Withdrawal...');
-    const withdrawalResult = await oscarWallet.instantWithdrawal(5000, 'jpmorgan_investment_account');
+    const withdrawalResult = await oscarWallet.instantWithdrawal(
+      5000,
+      'jpmorgan_investment_account'
+    );
     console.log('✅ Instant Withdrawal Successful:');
     console.log('   Transaction ID:', withdrawalResult.transactionId);
     console.log('   Amount:', withdrawalResult.amount);
     console.log('   Balance:', withdrawalResult.balance);
-    console.log('   AI Insights:', JSON.stringify(withdrawalResult.aiInsights, null, 2));
+    console.log(
+      '   AI Insights:',
+      JSON.stringify(withdrawalResult.aiInsights, null, 2)
+    );
     console.log('');
 
     // 2. Digital Tap to Pay
@@ -38,7 +47,7 @@ async function demonstrateOscarBroomeQuantumWallet() {
     const tapResult = await oscarWallet.tapToPay('quantum_coffee_shop', 12.99, {
       nfcId: 'nfc_oscar_device_001',
       deviceId: 'iphone_15_pro_max',
-      location: 'quantum_cafe_downtown'
+      location: 'quantum_cafe_downtown',
     });
     console.log('✅ Tap Payment Successful:');
     console.log('   Transaction ID:', tapResult.transactionId);
@@ -49,12 +58,18 @@ async function demonstrateOscarBroomeQuantumWallet() {
 
     // 3. AI-Powered Deposit
     console.log('🤖 Testing AI-Powered Deposit...');
-    const depositResult = await oscarWallet.aiDeposit(25000, 'jpmorgan_salary_deposit');
+    const depositResult = await oscarWallet.aiDeposit(
+      25000,
+      'jpmorgan_salary_deposit'
+    );
     console.log('✅ AI-Optimized Deposit Successful:');
     console.log('   Transaction ID:', depositResult.transactionId);
     console.log('   Amount:', depositResult.amount);
     console.log('   Balance:', depositResult.balance);
-    console.log('   AI Optimization:', JSON.stringify(depositResult.aiOptimization, null, 2));
+    console.log(
+      '   AI Optimization:',
+      JSON.stringify(depositResult.aiOptimization, null, 2)
+    );
     console.log('');
 
     // 4. AI Finance Sync
@@ -63,7 +78,10 @@ async function demonstrateOscarBroomeQuantumWallet() {
     console.log('✅ Finance Sync Successful:');
     console.log('   Synced Accounts:', syncResult.syncedData.accounts.length);
     console.log('   Total Synced Balance:', syncResult.syncedData.totalSynced);
-    console.log('   AI Predictions:', JSON.stringify(syncResult.predictions, null, 2));
+    console.log(
+      '   AI Predictions:',
+      JSON.stringify(syncResult.predictions, null, 2)
+    );
     console.log('');
 
     // 5. Wallet Status
@@ -76,7 +94,9 @@ async function demonstrateOscarBroomeQuantumWallet() {
     console.log('📈 Recent Transaction History:');
     const history = oscarWallet.getTransactionHistory(5);
     history.forEach((txn, index) => {
-      console.log(`${index + 1}. ${txn.type.toUpperCase()}: $${txn.amount} - ${txn.description}`);
+      console.log(
+        `${index + 1}. ${txn.type.toUpperCase()}: $${txn.amount} - ${txn.description}`
+      );
       console.log(`   ID: ${txn.id} | Time: ${txn.timestamp}`);
       if (txn.aiApproval) {
         console.log(`   AI Risk Score: ${txn.aiApproval.riskScore}`);
@@ -95,7 +115,7 @@ async function demonstrateOscarBroomeQuantumWallet() {
     }
     console.log('');
 
-    console.log('🎉 Oscar Broome\'s Quantum AI Wallet Demo Complete!');
+    console.log("🎉 Oscar Broome's Quantum AI Wallet Demo Complete!");
     console.log('✨ Features Demonstrated:');
     console.log('   • AI-powered instant withdrawals');
     console.log('   • Digital tap-to-pay with quantum security');
@@ -103,7 +123,6 @@ async function demonstrateOscarBroomeQuantumWallet() {
     console.log('   • Real-time finance synchronization');
     console.log('   • Quantum-level security and risk assessment');
     console.log('   • Predictive financial intelligence');
-
   } catch (error) {
     console.error('❌ Demo failed:', error.message);
     console.error(error.stack);

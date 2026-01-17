@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+
 /**
  * JPMorgan Credentials Setup Script
  *
@@ -17,7 +19,7 @@ const readline = require('readline');
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 function askQuestion(question) {
@@ -29,34 +31,52 @@ function askQuestion(question) {
 }
 
 async function setupCredentials() {
-  console.log('🚀 JPMorgan & QuickBooks Credentials Setup');
-  console.log('==========================================\n');
+  logger.info('🚀 JPMorgan & QuickBooks Credentials Setup');
+  logger.info('==========================================\n');
 
-  console.log('📋 Prerequisites:');
-  console.log('1. JPMorgan Developer Account: https://developer.jpmorgan.com/');
-  console.log('2. QuickBooks Developer Account: https://developer.intuit.com/');
-  console.log('3. Your project ID: DK2MQSR1FS7V (already configured)\n');
+  logger.info('📋 Prerequisites:');
+  logger.info('1. JPMorgan Developer Account: https://developer.jpmorgan.com/');
+  logger.info('2. QuickBooks Developer Account: https://developer.intuit.com/');
+  logger.info('3. Your project ID: DK2MQSR1FS7V (already configured)\n');
 
   const credentials = {};
 
   // JPMorgan Configuration
-  console.log('🏦 JPMorgan Payments API Configuration:');
-  console.log('---------------------------------------');
+  logger.info('🏦 JPMorgan Payments API Configuration:');
+  logger.info('---------------------------------------');
 
-  credentials.JPMORGAN_CLIENT_ID = await askQuestion('Enter your JPMorgan Client ID: ');
-  credentials.JPMORGAN_CLIENT_SECRET = await askQuestion('Enter your JPMorgan Client Secret: ');
-  credentials.JPMORGAN_MERCHANT_ID = await askQuestion('Enter your JPMorgan Merchant ID: ');
-  credentials.JPMORGAN_TERMINAL_ID = await askQuestion('Enter your JPMorgan Terminal ID: ');
+  credentials.JPMORGAN_CLIENT_ID = await askQuestion(
+    'Enter your JPMorgan Client ID: '
+  );
+  credentials.JPMORGAN_CLIENT_SECRET = await askQuestion(
+    'Enter your JPMorgan Client Secret: '
+  );
+  credentials.JPMORGAN_MERCHANT_ID = await askQuestion(
+    'Enter your JPMorgan Merchant ID: '
+  );
+  credentials.JPMORGAN_TERMINAL_ID = await askQuestion(
+    'Enter your JPMorgan Terminal ID: '
+  );
 
   // QuickBooks Configuration
-  console.log('\n📊 QuickBooks API Configuration:');
-  console.log('--------------------------------');
+  logger.info('\n📊 QuickBooks API Configuration:');
+  logger.info('--------------------------------');
 
-  credentials.QUICKBOOKS_ACCESS_TOKEN = await askQuestion('Enter your QuickBooks Access Token: ');
-  credentials.QUICKBOOKS_COMPANY_ID = await askQuestion('Enter your QuickBooks Company ID: ');
-  credentials.QUICKBOOKS_CLIENT_ID = await askQuestion('Enter your QuickBooks Client ID: ');
-  credentials.QUICKBOOKS_CLIENT_SECRET = await askQuestion('Enter your QuickBooks Client Secret: ');
-  credentials.QUICKBOOKS_REFRESH_TOKEN = await askQuestion('Enter your QuickBooks Refresh Token: ');
+  credentials.QUICKBOOKS_ACCESS_TOKEN = await askQuestion(
+    'Enter your QuickBooks Access Token: '
+  );
+  credentials.QUICKBOOKS_COMPANY_ID = await askQuestion(
+    'Enter your QuickBooks Company ID: '
+  );
+  credentials.QUICKBOOKS_CLIENT_ID = await askQuestion(
+    'Enter your QuickBooks Client ID: '
+  );
+  credentials.QUICKBOOKS_CLIENT_SECRET = await askQuestion(
+    'Enter your QuickBooks Client Secret: '
+  );
+  credentials.QUICKBOOKS_REFRESH_TOKEN = await askQuestion(
+    'Enter your QuickBooks Refresh Token: '
+  );
 
   // Fixed values
   credentials.JPMORGAN_BASE_URL = 'https://api.payments.jpmorgan.com';
@@ -68,7 +88,7 @@ async function setupCredentials() {
   const envPath = path.join(__dirname, '.env');
   let envContent = '# JPMorgan Payments API Configuration\n';
 
-  Object.keys(credentials).forEach(key => {
+  Object.keys(credentials).forEach((key) => {
     if (key.startsWith('JPMORGAN_') || key.startsWith('QUICKBOOKS_')) {
       envContent += `${key}=${credentials[key]}\n`;
     }
@@ -81,12 +101,14 @@ async function setupCredentials() {
 
   fs.writeFileSync(envPath, envContent);
 
-  console.log('\n✅ Credentials configured successfully!');
-  console.log(`📄 .env file created at: ${envPath}`);
-  console.log('\n🔧 Next Steps:');
-  console.log('1. Review the .env file to ensure all credentials are correct');
-  console.log('2. Run the integration test: node test_jpmorgan_quickbooks_integration.js');
-  console.log('3. Test individual payment endpoints if needed');
+  logger.info('\n✅ Credentials configured successfully!');
+  logger.info(`📄 .env file created at: ${envPath}`);
+  logger.info('\n🔧 Next Steps:');
+  logger.info('1. Review the .env file to ensure all credentials are correct');
+  logger.info(
+    '2. Run the integration test: node test_jpmorgan_quickbooks_integration.js'
+  );
+  logger.info('3. Test individual payment endpoints if needed');
 
   rl.close();
 }

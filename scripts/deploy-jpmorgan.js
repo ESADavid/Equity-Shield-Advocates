@@ -25,7 +25,7 @@ class JPMorganDeployer {
 
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
+    logger.info(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
   }
 
   loadConfig() {
@@ -38,19 +38,22 @@ class JPMorganDeployer {
     // Default configuration
     return {
       staging: {
-        host: process.env.JPMORGAN_STAGING_HOST || 'staging.jpmorgan.oscarbroome.com',
+        host:
+          process.env.JPMORGAN_STAGING_HOST ||
+          'staging.jpmorgan.oscarbroome.com',
         user: process.env.JPMORGAN_STAGING_USER || 'deploy',
         path: '/var/www/jpmorgan-staging',
         port: 22,
-        environment: 'staging'
+        environment: 'staging',
       },
       production: {
-        host: process.env.JPMORGAN_PRODUCTION_HOST || 'jpmorgan.oscarbroome.com',
+        host:
+          process.env.JPMORGAN_PRODUCTION_HOST || 'jpmorgan.oscarbroome.com',
         user: process.env.JPMORGAN_PRODUCTION_USER || 'deploy',
         path: '/var/www/jpmorgan-production',
         port: 22,
-        environment: 'production'
-      }
+        environment: 'production',
+      },
     };
   }
 
@@ -63,14 +66,16 @@ class JPMorganDeployer {
 
     const envConfig = this.config[this.environment];
     if (!envConfig) {
-      throw new Error(`No configuration found for environment: ${this.environment}`);
+      throw new Error(
+        `No configuration found for environment: ${this.environment}`
+      );
     }
 
     // Validate required environment variables
     const requiredVars = [
       'JPMORGAN_CLIENT_ID',
       'JPMORGAN_CLIENT_SECRET',
-      'JPMORGAN_MERCHANT_ID'
+      'JPMORGAN_MERCHANT_ID',
     ];
 
     for (const varName of requiredVars) {
@@ -143,7 +148,7 @@ class JPMorganDeployer {
       'dist',
       'package.json',
       'ecosystem.config.js',
-      'config'
+      'config',
     ];
 
     for (const file of currentFiles) {
@@ -190,11 +195,7 @@ class JPMorganDeployer {
     }
 
     // Copy built files
-    const builtFiles = [
-      'dist',
-      'package.json',
-      'ecosystem.config.js'
-    ];
+    const builtFiles = ['dist', 'package.json', 'ecosystem.config.js'];
 
     for (const file of builtFiles) {
       const srcPath = path.join(rootDir, file);
@@ -225,10 +226,12 @@ class JPMorganDeployer {
       QUICKBOOKS_COMPANY_ID: process.env.QUICKBOOKS_COMPANY_ID,
       QUICKBOOKS_CLIENT_ID: process.env.QUICKBOOKS_CLIENT_ID,
       QUICKBOOKS_CLIENT_SECRET: process.env.QUICKBOOKS_CLIENT_SECRET,
-      MONGODB_URI: process.env.MONGODB_URI || `mongodb://localhost:27017/jpmorgan-${this.environment}`,
+      MONGODB_URI:
+        process.env.MONGODB_URI ||
+        `mongodb://localhost:27017/jpmorgan-${this.environment}`,
       REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
       JWT_SECRET: process.env.JWT_SECRET || this.generateSecureSecret(),
-      ENCRYPTION_KEY: process.env.ENCRYPTION_KEY || this.generateSecureSecret()
+      ENCRYPTION_KEY: process.env.ENCRYPTION_KEY || this.generateSecureSecret(),
     };
 
     let envContent = '# JPMorgan Deployment Environment\n';
@@ -270,11 +273,14 @@ class JPMorganDeployer {
       environment: this.environment,
       timestamp: new Date().toISOString(),
       status: 'success',
-      version: process.env.npm_package_version || '1.0.0'
+      version: process.env.npm_package_version || '1.0.0',
     };
 
     // In a real scenario, send to Slack, email, or monitoring system
-    console.log('Deployment Notification:', JSON.stringify(notification, null, 2));
+    logger.info(
+      'Deployment Notification:',
+      JSON.stringify(notification, null, 2)
+    );
   }
 
   async runDeployment() {
@@ -289,8 +295,9 @@ class JPMorganDeployer {
       this.runPostDeploymentTests();
       this.sendNotification();
 
-      this.log(`✅ JPMorgan ${this.environment} deployment completed successfully`);
-
+      this.log(
+        `✅ JPMorgan ${this.environment} deployment completed successfully`
+      );
     } catch (error) {
       this.log(`❌ Deployment failed: ${error.message}`, 'error');
 
@@ -309,8 +316,8 @@ class JPMorganDeployer {
 // Run deployment if this script is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   const deployer = new JPMorganDeployer();
-  deployer.runDeployment().catch(error => {
-    console.error('Deployment failed:', error);
+  deployer.runDeployment().catch((error) => {
+    logger.error('Deployment failed:', error);
     process.exit(1);
   });
 }

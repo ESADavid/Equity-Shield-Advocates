@@ -4,16 +4,18 @@ const twilio = require('twilio');
 // Mock nodemailer
 jest.mock('nodemailer', () => ({
   createTransporter: jest.fn(() => ({
-    sendMail: jest.fn()
-  }))
+    sendMail: jest.fn(),
+  })),
 }));
 
 // Mock twilio
-jest.mock('twilio', () => jest.fn(() => ({
-  messages: {
-    create: jest.fn()
-  }
-})));
+jest.mock('twilio', () =>
+  jest.fn(() => ({
+    messages: {
+      create: jest.fn(),
+    },
+  }))
+);
 
 // Import the module after mocking
 const merchantBillPay = require('./earnings_dashboard/merchant_bill_pay');
@@ -28,15 +30,15 @@ describe('Merchant Notification System', () => {
 
     // Setup mock transporter
     mockTransporter = {
-      sendMail: jest.fn().mockResolvedValue({ messageId: 'test-message-id' })
+      sendMail: jest.fn().mockResolvedValue({ messageId: 'test-message-id' }),
     };
     nodemailer.createTransporter.mockReturnValue(mockTransporter);
 
     // Setup mock Twilio client
     mockTwilioClient = {
       messages: {
-        create: jest.fn().mockResolvedValue({ sid: 'test-sms-sid' })
-      }
+        create: jest.fn().mockResolvedValue({ sid: 'test-sms-sid' }),
+      },
     };
     twilio.mockReturnValue(mockTwilioClient);
 
@@ -73,8 +75,8 @@ describe('Merchant Notification System', () => {
         secure: false,
         auth: {
           user: 'test@test.com',
-          pass: 'testpass'
-        }
+          pass: 'testpass',
+        },
       });
     });
 
@@ -94,8 +96,8 @@ describe('Merchant Notification System', () => {
         secure: false,
         auth: {
           user: undefined,
-          pass: undefined
-        }
+          pass: undefined,
+        },
       });
     });
   });
@@ -103,31 +105,39 @@ describe('Merchant Notification System', () => {
   describe('sendMerchantPaymentSuccessNotification', () => {
     test('should send success email notification', async () => {
       const merchantId = 'merchant_001';
-      const amount = 150.00;
+      const amount = 150.0;
       const paymentIntentId = 'pi_test_123';
 
       // Mock the helper functions
       const originalGetMerchantEmail = merchantBillPay.getMerchantEmail;
       const originalGetMerchantPhone = merchantBillPay.getMerchantPhone;
-      merchantBillPay.getMerchantEmail = jest.fn().mockReturnValue('merchant1@example.com');
-      merchantBillPay.getMerchantPhone = jest.fn().mockReturnValue('+1234567890');
+      merchantBillPay.getMerchantEmail = jest
+        .fn()
+        .mockReturnValue('merchant1@example.com');
+      merchantBillPay.getMerchantPhone = jest
+        .fn()
+        .mockReturnValue('+1234567890');
 
       // Call the notification function
-      await merchantBillPay.sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntentId);
+      await merchantBillPay.sendMerchantPaymentSuccessNotification(
+        merchantId,
+        amount,
+        paymentIntentId
+      );
 
       // Verify email was sent
       expect(mockTransporter.sendMail).toHaveBeenCalledWith({
         from: 'test@test.com',
         to: 'merchant1@example.com',
         subject: 'Payment Received - Oscar Broome Revenue System',
-        html: expect.stringContaining('Payment Successfully Processed')
+        html: expect.stringContaining('Payment Successfully Processed'),
       });
 
       // Verify SMS was sent
       expect(mockTwilioClient.messages.create).toHaveBeenCalledWith({
         body: `Payment of $${amount.toFixed(2)} received. Payment ID: ${paymentIntentId}`,
         from: '+1234567890',
-        to: '+1234567890'
+        to: '+1234567890',
       });
 
       // Restore original functions
@@ -137,17 +147,23 @@ describe('Merchant Notification System', () => {
 
     test('should not send email if merchant email is not found', async () => {
       const merchantId = 'unknown_merchant';
-      const amount = 100.00;
+      const amount = 100.0;
       const paymentIntentId = 'pi_test_456';
 
       // Mock the helper functions
       const originalGetMerchantEmail = merchantBillPay.getMerchantEmail;
       const originalGetMerchantPhone = merchantBillPay.getMerchantPhone;
       merchantBillPay.getMerchantEmail = jest.fn().mockReturnValue(null);
-      merchantBillPay.getMerchantPhone = jest.fn().mockReturnValue('+1234567890');
+      merchantBillPay.getMerchantPhone = jest
+        .fn()
+        .mockReturnValue('+1234567890');
 
       // Call the notification function
-      await merchantBillPay.sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntentId);
+      await merchantBillPay.sendMerchantPaymentSuccessNotification(
+        merchantId,
+        amount,
+        paymentIntentId
+      );
 
       // Verify email was not sent
       expect(mockTransporter.sendMail).not.toHaveBeenCalled();
@@ -162,24 +178,37 @@ describe('Merchant Notification System', () => {
 
     test('should handle email sending errors gracefully', async () => {
       const merchantId = 'merchant_001';
-      const amount = 200.00;
+      const amount = 200.0;
       const paymentIntentId = 'pi_test_789';
 
       // Mock email sending to throw error
-      mockTransporter.sendMail.mockRejectedValue(new Error('SMTP connection failed'));
+      mockTransporter.sendMail.mockRejectedValue(
+        new Error('SMTP connection failed')
+      );
 
       // Mock the helper functions
       const originalGetMerchantEmail = merchantBillPay.getMerchantEmail;
-      merchantBillPay.getMerchantEmail = jest.fn().mockReturnValue('merchant1@example.com');
+      merchantBillPay.getMerchantEmail = jest
+        .fn()
+        .mockReturnValue('merchant1@example.com');
 
       // Spy on console.error
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
       // Call the notification function
-      await merchantBillPay.sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntentId);
+      await merchantBillPay.sendMerchantPaymentSuccessNotification(
+        merchantId,
+        amount,
+        paymentIntentId
+      );
 
       // Verify error was logged
-      expect(consoleSpy).toHaveBeenCalledWith('Error sending payment success notification:', expect.any(Error));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Error sending payment success notification:',
+        expect.any(Error)
+      );
 
       // Restore
       merchantBillPay.getMerchantEmail = originalGetMerchantEmail;
@@ -190,32 +219,41 @@ describe('Merchant Notification System', () => {
   describe('sendMerchantPaymentFailureNotification', () => {
     test('should send failure email notification', async () => {
       const merchantId = 'merchant_002';
-      const amount = 75.50;
+      const amount = 75.5;
       const paymentIntentId = 'pi_test_failed';
       const errorMessage = 'Card declined';
 
       // Mock the helper functions
       const originalGetMerchantEmail = merchantBillPay.getMerchantEmail;
       const originalGetMerchantPhone = merchantBillPay.getMerchantPhone;
-      merchantBillPay.getMerchantEmail = jest.fn().mockReturnValue('merchant2@example.com');
-      merchantBillPay.getMerchantPhone = jest.fn().mockReturnValue('+0987654321');
+      merchantBillPay.getMerchantEmail = jest
+        .fn()
+        .mockReturnValue('merchant2@example.com');
+      merchantBillPay.getMerchantPhone = jest
+        .fn()
+        .mockReturnValue('+0987654321');
 
       // Call the notification function
-      await merchantBillPay.sendMerchantPaymentFailureNotification(merchantId, amount, paymentIntentId, errorMessage);
+      await merchantBillPay.sendMerchantPaymentFailureNotification(
+        merchantId,
+        amount,
+        paymentIntentId,
+        errorMessage
+      );
 
       // Verify email was sent with failure content
       expect(mockTransporter.sendMail).toHaveBeenCalledWith({
         from: 'test@test.com',
         to: 'merchant2@example.com',
         subject: 'Payment Failed - Oscar Broome Revenue System',
-        html: expect.stringContaining('Payment Processing Failed')
+        html: expect.stringContaining('Payment Processing Failed'),
       });
 
       // Verify SMS was sent with failure message
       expect(mockTwilioClient.messages.create).toHaveBeenCalledWith({
         body: `Payment of $${amount.toFixed(2)} failed. Error: ${errorMessage}`,
         from: '+1234567890',
-        to: '+0987654321'
+        to: '+0987654321',
       });
 
       // Restore original functions
@@ -231,17 +269,25 @@ describe('Merchant Notification System', () => {
       delete process.env.TWILIO_AUTH_TOKEN;
 
       const merchantId = 'merchant_001';
-      const amount = 100.00;
+      const amount = 100.0;
       const paymentIntentId = 'pi_test_123';
 
       // Mock the helper functions
       const originalGetMerchantEmail = merchantBillPay.getMerchantEmail;
       const originalGetMerchantPhone = merchantBillPay.getMerchantPhone;
-      merchantBillPay.getMerchantEmail = jest.fn().mockReturnValue('merchant1@example.com');
-      merchantBillPay.getMerchantPhone = jest.fn().mockReturnValue('+1234567890');
+      merchantBillPay.getMerchantEmail = jest
+        .fn()
+        .mockReturnValue('merchant1@example.com');
+      merchantBillPay.getMerchantPhone = jest
+        .fn()
+        .mockReturnValue('+1234567890');
 
       // Call the notification function
-      await merchantBillPay.sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntentId);
+      await merchantBillPay.sendMerchantPaymentSuccessNotification(
+        merchantId,
+        amount,
+        paymentIntentId
+      );
 
       // Verify SMS was not sent
       expect(mockTwilioClient.messages.create).not.toHaveBeenCalled();
@@ -253,26 +299,41 @@ describe('Merchant Notification System', () => {
 
     test('should handle SMS sending errors gracefully', async () => {
       const merchantId = 'merchant_001';
-      const amount = 100.00;
+      const amount = 100.0;
       const paymentIntentId = 'pi_test_123';
 
       // Mock SMS sending to throw error
-      mockTwilioClient.messages.create.mockRejectedValue(new Error('Twilio API error'));
+      mockTwilioClient.messages.create.mockRejectedValue(
+        new Error('Twilio API error')
+      );
 
       // Mock the helper functions
       const originalGetMerchantEmail = merchantBillPay.getMerchantEmail;
       const originalGetMerchantPhone = merchantBillPay.getMerchantPhone;
-      merchantBillPay.getMerchantEmail = jest.fn().mockReturnValue('merchant1@example.com');
-      merchantBillPay.getMerchantPhone = jest.fn().mockReturnValue('+1234567890');
+      merchantBillPay.getMerchantEmail = jest
+        .fn()
+        .mockReturnValue('merchant1@example.com');
+      merchantBillPay.getMerchantPhone = jest
+        .fn()
+        .mockReturnValue('+1234567890');
 
       // Spy on console.error
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
       // Call the notification function
-      await merchantBillPay.sendMerchantPaymentSuccessNotification(merchantId, amount, paymentIntentId);
+      await merchantBillPay.sendMerchantPaymentSuccessNotification(
+        merchantId,
+        amount,
+        paymentIntentId
+      );
 
       // Verify error was logged
-      expect(consoleSpy).toHaveBeenCalledWith('Error sending SMS notification:', expect.any(Error));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Error sending SMS notification:',
+        expect.any(Error)
+      );
 
       // Restore
       merchantBillPay.getMerchantEmail = originalGetMerchantEmail;
@@ -283,8 +344,12 @@ describe('Merchant Notification System', () => {
 
   describe('Merchant Contact Lookup', () => {
     test('getMerchantEmail should return correct email for known merchant', () => {
-      expect(merchantBillPay.getMerchantEmail('merchant_001')).toBe('merchant1@example.com');
-      expect(merchantBillPay.getMerchantEmail('merchant_002')).toBe('merchant2@example.com');
+      expect(merchantBillPay.getMerchantEmail('merchant_001')).toBe(
+        'merchant1@example.com'
+      );
+      expect(merchantBillPay.getMerchantEmail('merchant_002')).toBe(
+        'merchant2@example.com'
+      );
     });
 
     test('getMerchantEmail should return null for unknown merchant', () => {
@@ -292,8 +357,12 @@ describe('Merchant Notification System', () => {
     });
 
     test('getMerchantPhone should return correct phone for known merchant', () => {
-      expect(merchantBillPay.getMerchantPhone('merchant_001')).toBe('+1234567890');
-      expect(merchantBillPay.getMerchantPhone('merchant_002')).toBe('+0987654321');
+      expect(merchantBillPay.getMerchantPhone('merchant_001')).toBe(
+        '+1234567890'
+      );
+      expect(merchantBillPay.getMerchantPhone('merchant_002')).toBe(
+        '+0987654321'
+      );
     });
 
     test('getMerchantPhone should return null for unknown merchant', () => {
@@ -305,11 +374,11 @@ describe('Merchant Notification System', () => {
     test('should call success notification on payment_intent.succeeded', async () => {
       const mockReq = {
         headers: { 'stripe-signature': 'test-signature' },
-        body: 'test-body'
+        body: 'test-body',
       };
       const mockRes = {
         json: jest.fn(),
-        status: jest.fn().mockReturnThis()
+        status: jest.fn().mockReturnThis(),
       };
 
       // Mock Stripe webhook construction
@@ -322,40 +391,49 @@ describe('Merchant Notification System', () => {
                 id: 'pi_test_123',
                 amount: 10000, // $100.00 in cents
                 metadata: { merchantId: 'merchant_001' },
-                description: 'Test payment'
-              }
-            }
-          })
-        }
+                description: 'Test payment',
+              },
+            },
+          }),
+        },
       };
 
       // Mock the notification function
-      const notificationSpy = jest.spyOn(merchantBillPay, 'sendMerchantPaymentSuccessNotification').mockResolvedValue();
+      const notificationSpy = jest
+        .spyOn(merchantBillPay, 'sendMerchantPaymentSuccessNotification')
+        .mockResolvedValue();
 
       // Mock readRevenueData and writeRevenueData
       const originalReadRevenueData = merchantBillPay.readRevenueData;
       const originalWriteRevenueData = merchantBillPay.writeRevenueData;
       merchantBillPay.readRevenueData = jest.fn().mockReturnValue({
         merchants: {},
-        purchases: { corporateHomes: 0, autoFleet: 0, autoFleetDetails: [] }
+        purchases: { corporateHomes: 0, autoFleet: 0, autoFleetDetails: [] },
       });
       merchantBillPay.writeRevenueData = jest.fn();
 
       // Temporarily replace stripe import
       const originalStripe = require.cache[require.resolve('stripe')];
-      require.cache[require.resolve('stripe')] = { exports: jest.fn(() => mockStripe) };
+      require.cache[require.resolve('stripe')] = {
+        exports: jest.fn(() => mockStripe),
+      };
 
       try {
         await merchantBillPay.handleMerchantWebhook(mockReq, mockRes);
 
         // Verify notification was called
-        expect(notificationSpy).toHaveBeenCalledWith('merchant_001', 100.00, 'pi_test_123');
+        expect(notificationSpy).toHaveBeenCalledWith(
+          'merchant_001',
+          100.0,
+          'pi_test_123'
+        );
 
         // Verify response
         expect(mockRes.json).toHaveBeenCalledWith({ received: true });
       } finally {
         // Restore original functions
-        merchantBillPay.sendMerchantPaymentSuccessNotification = notificationSpy.mockRestore();
+        merchantBillPay.sendMerchantPaymentSuccessNotification =
+          notificationSpy.mockRestore();
         merchantBillPay.readRevenueData = originalReadRevenueData;
         merchantBillPay.writeRevenueData = originalWriteRevenueData;
         if (originalStripe) {
@@ -367,11 +445,11 @@ describe('Merchant Notification System', () => {
     test('should call failure notification on payment_intent.payment_failed', async () => {
       const mockReq = {
         headers: { 'stripe-signature': 'test-signature' },
-        body: 'test-body'
+        body: 'test-body',
       };
       const mockRes = {
         json: jest.fn(),
-        status: jest.fn().mockReturnThis()
+        status: jest.fn().mockReturnThis(),
       };
 
       // Mock Stripe webhook construction
@@ -384,40 +462,50 @@ describe('Merchant Notification System', () => {
                 id: 'pi_test_failed',
                 amount: 5000, // $50.00 in cents
                 metadata: { merchantId: 'merchant_002' },
-                last_payment_error: { message: 'Card declined' }
-              }
-            }
-          })
-        }
+                last_payment_error: { message: 'Card declined' },
+              },
+            },
+          }),
+        },
       };
 
       // Mock the notification function
-      const notificationSpy = jest.spyOn(merchantBillPay, 'sendMerchantPaymentFailureNotification').mockResolvedValue();
+      const notificationSpy = jest
+        .spyOn(merchantBillPay, 'sendMerchantPaymentFailureNotification')
+        .mockResolvedValue();
 
       // Mock readRevenueData and writeRevenueData
       const originalReadRevenueData = merchantBillPay.readRevenueData;
       const originalWriteRevenueData = merchantBillPay.writeRevenueData;
       merchantBillPay.readRevenueData = jest.fn().mockReturnValue({
         merchants: {},
-        purchases: { corporateHomes: 0, autoFleet: 0, autoFleetDetails: [] }
+        purchases: { corporateHomes: 0, autoFleet: 0, autoFleetDetails: [] },
       });
       merchantBillPay.writeRevenueData = jest.fn();
 
       // Temporarily replace stripe import
       const originalStripe = require.cache[require.resolve('stripe')];
-      require.cache[require.resolve('stripe')] = { exports: jest.fn(() => mockStripe) };
+      require.cache[require.resolve('stripe')] = {
+        exports: jest.fn(() => mockStripe),
+      };
 
       try {
         await merchantBillPay.handleMerchantWebhook(mockReq, mockRes);
 
         // Verify notification was called
-        expect(notificationSpy).toHaveBeenCalledWith('merchant_002', 50.00, 'pi_test_failed', 'Card declined');
+        expect(notificationSpy).toHaveBeenCalledWith(
+          'merchant_002',
+          50.0,
+          'pi_test_failed',
+          'Card declined'
+        );
 
         // Verify response
         expect(mockRes.json).toHaveBeenCalledWith({ received: true });
       } finally {
         // Restore original functions
-        merchantBillPay.sendMerchantPaymentFailureNotification = notificationSpy.mockRestore();
+        merchantBillPay.sendMerchantPaymentFailureNotification =
+          notificationSpy.mockRestore();
         merchantBillPay.readRevenueData = originalReadRevenueData;
         merchantBillPay.writeRevenueData = originalWriteRevenueData;
         if (originalStripe) {

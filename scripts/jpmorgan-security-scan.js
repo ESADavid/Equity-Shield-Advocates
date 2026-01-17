@@ -26,11 +26,18 @@ class JPMorganSecurityScanner {
 
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
+    logger.info(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
   }
 
   addVulnerability(severity, message, file = null, line = null, cve = null) {
-    const vuln = { severity, message, file, line, cve, timestamp: new Date().toISOString() };
+    const vuln = {
+      severity,
+      message,
+      file,
+      line,
+      cve,
+      timestamp: new Date().toISOString(),
+    };
     this.vulnerabilities.push(vuln);
 
     const riskPoints = { critical: 10, high: 7, medium: 4, low: 2, info: 1 };
@@ -40,7 +47,12 @@ class JPMorganSecurityScanner {
   }
 
   addWarning(message, file = null, line = null) {
-    this.warnings.push({ message, file, line, timestamp: new Date().toISOString() });
+    this.warnings.push({
+      message,
+      file,
+      line,
+      timestamp: new Date().toISOString(),
+    });
     this.log(`WARNING: ${message}`, 'warn');
   }
 
@@ -54,16 +66,52 @@ class JPMorganSecurityScanner {
     this.log('Scanning for financial data exposure...');
 
     const financialPatterns = [
-      { pattern: /credit.*card|card.*number/i, severity: 'critical', description: 'Credit card number exposure' },
-      { pattern: /cvv|cvc|security.*code/i, severity: 'critical', description: 'CVV/security code exposure' },
-      { pattern: /social.*security|ssn/i, severity: 'high', description: 'SSN exposure' },
-      { pattern: /bank.*account|routing.*number/i, severity: 'high', description: 'Bank account exposure' },
-      { pattern: /api.*key.*jpmorgan|jpmorgan.*secret/i, severity: 'critical', description: 'JPMorgan API credentials' },
-      { pattern: /password.*jpmorgan|jpmorgan.*password/i, severity: 'high', description: 'JPMorgan password exposure' }
+      {
+        pattern: /credit.*card|card.*number/i,
+        severity: 'critical',
+        description: 'Credit card number exposure',
+      },
+      {
+        pattern: /cvv|cvc|security.*code/i,
+        severity: 'critical',
+        description: 'CVV/security code exposure',
+      },
+      {
+        pattern: /social.*security|ssn/i,
+        severity: 'high',
+        description: 'SSN exposure',
+      },
+      {
+        pattern: /bank.*account|routing.*number/i,
+        severity: 'high',
+        description: 'Bank account exposure',
+      },
+      {
+        pattern: /api.*key.*jpmorgan|jpmorgan.*secret/i,
+        severity: 'critical',
+        description: 'JPMorgan API credentials',
+      },
+      {
+        pattern: /password.*jpmorgan|jpmorgan.*password/i,
+        severity: 'high',
+        description: 'JPMorgan password exposure',
+      },
     ];
 
-    const excludeDirs = ['node_modules', '.git', 'logs', 'dist', 'coverage', 'test'];
-    const excludeFiles = ['package-lock.json', '.env*', 'secrets.json', '*.log'];
+    const excludeDirs = [
+      'node_modules',
+      '.git',
+      'logs',
+      'dist',
+      'coverage',
+      'test',
+    ];
+    const excludeFiles = [
+      'package-lock.json',
+      '.env*',
+      'secrets.json',
+      '*.log',
+    ];
 
     this.scanForPatterns(rootDir, financialPatterns, excludeDirs, excludeFiles);
   }
@@ -72,25 +120,38 @@ class JPMorganSecurityScanner {
   checkLoggingSecurity() {
     this.log('Checking logging security practices...');
 
-    const logFiles = this.findFiles(rootDir, (file) =>
-      file.includes('log') || file.includes('logger') || file.includes('winston')
+    const logFiles = this.findFiles(
+      rootDir,
+      (file) =>
+        file.includes('log') ||
+        file.includes('logger') ||
+        file.includes('winston')
     );
 
     for (const file of logFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
       // Check for sensitive data logging
-      if (content.includes('console.log') && (
-        content.includes('password') ||
-        content.includes('card') ||
-        content.includes('secret') ||
-        content.includes('key')
-      )) {
-        this.addVulnerability('medium', 'Potential sensitive data logging in console.log', file);
+      if (
+        content.includes('console.log') &&
+        (content.includes('password') ||
+          content.includes('card') ||
+          content.includes('secret') ||
+          content.includes('key'))
+      ) {
+        this.addVulnerability(
+          'medium',
+          'Potential sensitive data logging in console.log',
+          file
+        );
       }
 
       // Check for proper log sanitization
-      if (!content.includes('sanitize') && !content.includes('mask') && !content.includes('redact')) {
+      if (
+        !content.includes('sanitize') &&
+        !content.includes('mask') &&
+        !content.includes('redact')
+      ) {
         this.addWarning('No log sanitization found', file);
       } else {
         this.addSecure('Log sanitization implemented', file);
@@ -102,8 +163,12 @@ class JPMorganSecurityScanner {
   checkAPICommunication() {
     this.log('Checking API communication security...');
 
-    const apiFiles = this.findFiles(rootDir, (file) =>
-      file.includes('jpmorgan') || file.includes('payment') || file.includes('api')
+    const apiFiles = this.findFiles(
+      rootDir,
+      (file) =>
+        file.includes('jpmorgan') ||
+        file.includes('payment') ||
+        file.includes('api')
     );
 
     for (const file of apiFiles) {
@@ -111,16 +176,27 @@ class JPMorganSecurityScanner {
 
       // Check for HTTPS usage
       if (content.includes('http://') && !content.includes('localhost')) {
-        this.addVulnerability('high', 'Insecure HTTP communication found', file);
+        this.addVulnerability(
+          'high',
+          'Insecure HTTP communication found',
+          file
+        );
       }
 
       // Check for certificate validation
-      if (content.includes('https') && !content.includes('rejectUnauthorized') && !content.includes('checkServerIdentity')) {
+      if (
+        content.includes('https') &&
+        !content.includes('rejectUnauthorized') &&
+        !content.includes('checkServerIdentity')
+      ) {
         this.addWarning('No explicit certificate validation found', file);
       }
 
       // Check for proper timeout settings
-      if (!content.includes('timeout') && content.includes('axios') || content.includes('fetch')) {
+      if (
+        (!content.includes('timeout') && content.includes('axios')) ||
+        content.includes('fetch')
+      ) {
         this.addWarning('No timeout settings found for API calls', file);
       }
     }
@@ -130,8 +206,12 @@ class JPMorganSecurityScanner {
   checkEncryptionImplementation() {
     this.log('Checking encryption implementation...');
 
-    const paymentFiles = this.findFiles(rootDir, (file) =>
-      file.includes('payment') || file.includes('jpmorgan') || file.includes('crypto')
+    const paymentFiles = this.findFiles(
+      rootDir,
+      (file) =>
+        file.includes('payment') ||
+        file.includes('jpmorgan') ||
+        file.includes('crypto')
     );
 
     let hasEncryption = false;
@@ -140,17 +220,28 @@ class JPMorganSecurityScanner {
     for (const file of paymentFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
-      if (content.includes('crypto.') || content.includes('bcrypt') || content.includes('encrypt')) {
+      if (
+        content.includes('crypto.') ||
+        content.includes('bcrypt') ||
+        content.includes('encrypt')
+      ) {
         hasEncryption = true;
 
-        if (content.includes('AES') || content.includes('RSA') || content.includes('bcrypt')) {
+        if (
+          content.includes('AES') ||
+          content.includes('RSA') ||
+          content.includes('bcrypt')
+        ) {
           hasProperEncryption = true;
         }
       }
     }
 
     if (!hasEncryption) {
-      this.addVulnerability('high', 'No encryption found in payment processing');
+      this.addVulnerability(
+        'high',
+        'No encryption found in payment processing'
+      );
     } else if (!hasProperEncryption) {
       this.addWarning('Basic encryption found, consider stronger algorithms');
     } else {
@@ -162,8 +253,12 @@ class JPMorganSecurityScanner {
   checkRateLimiting() {
     this.log('Checking rate limiting implementation...');
 
-    const serverFiles = this.findFiles(rootDir, (file) =>
-      file.includes('server') || file.includes('app') || file.includes('middleware')
+    const serverFiles = this.findFiles(
+      rootDir,
+      (file) =>
+        file.includes('server') ||
+        file.includes('app') ||
+        file.includes('middleware')
     );
 
     let hasRateLimiting = false;
@@ -171,8 +266,12 @@ class JPMorganSecurityScanner {
     for (const file of serverFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
-      if (content.includes('rate-limit') || content.includes('express-rate-limit') ||
-          content.includes('limiter') || content.includes('throttle')) {
+      if (
+        content.includes('rate-limit') ||
+        content.includes('express-rate-limit') ||
+        content.includes('limiter') ||
+        content.includes('throttle')
+      ) {
         hasRateLimiting = true;
         break;
       }
@@ -189,8 +288,12 @@ class JPMorganSecurityScanner {
   checkInputValidation() {
     this.log('Checking input validation...');
 
-    const routeFiles = this.findFiles(rootDir, (file) =>
-      file.includes('route') || file.includes('controller') || file.includes('api')
+    const routeFiles = this.findFiles(
+      rootDir,
+      (file) =>
+        file.includes('route') ||
+        file.includes('controller') ||
+        file.includes('api')
     );
 
     let hasValidation = false;
@@ -198,9 +301,13 @@ class JPMorganSecurityScanner {
     for (const file of routeFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
-      if (content.includes('validator') || content.includes('validate') ||
-          content.includes('joi') || content.includes('yup') ||
-          content.includes('express-validator')) {
+      if (
+        content.includes('validator') ||
+        content.includes('validate') ||
+        content.includes('joi') ||
+        content.includes('yup') ||
+        content.includes('express-validator')
+      ) {
         hasValidation = true;
         break;
       }
@@ -218,12 +325,21 @@ class JPMorganSecurityScanner {
     this.log('Checking for dependency vulnerabilities...');
 
     try {
-      const packageJson = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-      const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
+      const packageJson = JSON.parse(
+        fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8')
+      );
+      const dependencies = {
+        ...packageJson.dependencies,
+        ...packageJson.devDependencies,
+      };
 
       // Check for known vulnerable packages
       const vulnerablePackages = [
-        'lodash', 'underscore', 'minimist', 'axios', 'request'
+        'lodash',
+        'underscore',
+        'minimist',
+        'axios',
+        'request',
       ];
 
       for (const [pkg, version] of Object.entries(dependencies)) {
@@ -242,8 +358,12 @@ class JPMorganSecurityScanner {
   checkErrorHandling() {
     this.log('Checking error handling...');
 
-    const apiFiles = this.findFiles(rootDir, (file) =>
-      file.includes('route') || file.includes('controller') || file.includes('api')
+    const apiFiles = this.findFiles(
+      rootDir,
+      (file) =>
+        file.includes('route') ||
+        file.includes('controller') ||
+        file.includes('api')
     );
 
     let hasErrorHandling = false;
@@ -251,8 +371,11 @@ class JPMorganSecurityScanner {
     for (const file of apiFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
-      if (content.includes('try') && content.includes('catch') &&
-          (content.includes('error') || content.includes('err'))) {
+      if (
+        content.includes('try') &&
+        content.includes('catch') &&
+        (content.includes('error') || content.includes('err'))
+      ) {
         hasErrorHandling = true;
       }
     }
@@ -277,7 +400,7 @@ class JPMorganSecurityScanner {
           this.scanForPatterns(filePath, patterns, excludeDirs, excludeFiles);
         }
       } else {
-        if (!excludeFiles.some(pattern => file.match(pattern))) {
+        if (!excludeFiles.some((pattern) => file.match(pattern))) {
           try {
             const content = fs.readFileSync(filePath, 'utf8');
             const lines = content.split('\n');
@@ -311,7 +434,10 @@ class JPMorganSecurityScanner {
 
         if (stat.isFile() && filterFn(itemPath)) {
           files.push(itemPath);
-        } else if (stat.isDirectory() && !['node_modules', '.git'].includes(item)) {
+        } else if (
+          stat.isDirectory() &&
+          !['node_modules', '.git'].includes(item)
+        ) {
           traverse(itemPath);
         }
       }
@@ -340,11 +466,15 @@ class JPMorganSecurityScanner {
         totalSecure: this.secure.length,
         riskScore: this.riskScore,
         riskLevel: this.getRiskLevel(),
-        scanStatus: this.vulnerabilities.filter(v => v.severity === 'critical').length === 0 ? 'PASSED' : 'FAILED'
+        scanStatus:
+          this.vulnerabilities.filter((v) => v.severity === 'critical')
+            .length === 0
+            ? 'PASSED'
+            : 'FAILED',
       },
       vulnerabilities: this.vulnerabilities,
       warnings: this.warnings,
-      secure: this.secure
+      secure: this.secure,
     };
 
     return report;
@@ -353,7 +483,11 @@ class JPMorganSecurityScanner {
   // Save report to file
   saveReport() {
     const report = this.generateReport();
-    const reportPath = path.join(rootDir, 'logs', 'jpmorgan-security-scan-report.json');
+    const reportPath = path.join(
+      rootDir,
+      'logs',
+      'jpmorgan-security-scan-report.json'
+    );
 
     // Ensure logs directory exists
     const logsDir = path.dirname(reportPath);
@@ -381,28 +515,30 @@ class JPMorganSecurityScanner {
     this.saveReport();
 
     // Summary
-    console.log('\n' + '='.repeat(60));
-    console.log('JPMorgan Security Scan Summary');
-    console.log('='.repeat(60));
-    console.log(`Vulnerabilities: ${this.vulnerabilities.length}`);
-    console.log(`Warnings: ${this.warnings.length}`);
-    console.log(`Secure Items: ${this.secure.length}`);
-    console.log(`Risk Score: ${this.riskScore}`);
-    console.log(`Risk Level: ${this.getRiskLevel()}`);
+    logger.info('\n' + '='.repeat(60));
+    logger.info('JPMorgan Security Scan Summary');
+    logger.info('='.repeat(60));
+    logger.info(`Vulnerabilities: ${this.vulnerabilities.length}`);
+    logger.info(`Warnings: ${this.warnings.length}`);
+    logger.info(`Secure Items: ${this.secure.length}`);
+    logger.info(`Risk Score: ${this.riskScore}`);
+    logger.info(`Risk Level: ${this.getRiskLevel()}`);
 
-    const criticalVulns = this.vulnerabilities.filter(v => v.severity === 'critical');
+    const criticalVulns = this.vulnerabilities.filter(
+      (v) => v.severity === 'critical'
+    );
     if (criticalVulns.length === 0) {
-      console.log('\n✅ Security scan PASSED');
+      logger.info('\n✅ Security scan PASSED');
       process.exit(0);
     } else {
-      console.log('\n❌ Security scan FAILED');
-      console.log('\nCritical vulnerabilities found:');
+      logger.info('\n❌ Security scan FAILED');
+      logger.info('\nCritical vulnerabilities found:');
       criticalVulns.forEach((vuln, index) => {
-        console.log(`${index + 1}. ${vuln.message}`);
+        logger.info(`${index + 1}. ${vuln.message}`);
         if (vuln.file) {
-          console.log(`   File: ${vuln.file}`);
+          logger.info(`   File: ${vuln.file}`);
           if (vuln.line) {
-            console.log(`   Line: ${vuln.line}`);
+            logger.info(`   Line: ${vuln.line}`);
           }
         }
       });
@@ -414,8 +550,8 @@ class JPMorganSecurityScanner {
 // Run security scan if this script is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   const scanner = new JPMorganSecurityScanner();
-  scanner.runSecurityScan().catch(error => {
-    console.error('Security scan failed:', error);
+  scanner.runSecurityScan().catch((error) => {
+    logger.error('Security scan failed:', error);
     process.exit(1);
   });
 }

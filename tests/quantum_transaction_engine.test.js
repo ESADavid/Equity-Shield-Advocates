@@ -1,13 +1,13 @@
-// Use ES module syntax compatible with "type": "module" in package.json
-import { QuantumTransactionEngine } from '../quantum/quantumTransactionEngine.js';
-import { expect } from 'chai';
+// Use CommonJS syntax compatible with Jest configuration
+const { QuantumTransactionEngine } = require('../quantum/quantumTransactionEngine.js');
+const { expect } = require('chai');
 
 describe('Quantum Transaction Engine', () => {
   it('should process transactions correctly', async () => {
     const engine = new QuantumTransactionEngine();
     const transactions = [
       { type: 'payment', amount: 100, from: 'A', to: 'B' },
-      { type: 'transfer', amount: 200, from: 'B', to: 'C' }
+      { type: 'transfer', amount: 200, from: 'B', to: 'C' },
     ];
     const results = [];
     for (const tx of transactions) {

@@ -11,15 +11,20 @@ const logger = winston.createLogger({
   ),
   defaultMeta: { service: 'email-service' },
   transports: [
-    new winston.transports.File({ filename: 'logs/email-service-error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/email-service.log' })
-  ]
+    new winston.transports.File({
+      filename: 'logs/email-service-error.log',
+      level: 'error',
+    }),
+    new winston.transports.File({ filename: 'logs/email-service.log' }),
+  ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 class EmailService {
@@ -44,14 +49,17 @@ class EmailService {
       // Verify connection
       this.transporter.verify((error, success) => {
         if (error) {
-          logger.error('Email transporter verification failed', { error: error.message });
+          logger.error('Email transporter verification failed', {
+            error: error.message,
+          });
         } else {
           logger.info('Email transporter verified successfully');
         }
       });
-
     } catch (error) {
-      logger.error('Failed to initialize email transporter', { error: error.message });
+      logger.error('Failed to initialize email transporter', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -98,7 +106,7 @@ class EmailService {
           </div>
         </body>
         </html>
-      `
+      `,
     });
 
     this.templates.set('welcome', {
@@ -134,7 +142,7 @@ class EmailService {
           </div>
         </body>
         </html>
-      `
+      `,
     });
 
     logger.info('Email templates loaded', { count: this.templates.size });
@@ -151,7 +159,7 @@ class EmailService {
       let subject = template.subject;
       let html = template.html;
 
-      Object.keys(templateData).forEach(key => {
+      Object.keys(templateData).forEach((key) => {
         const regex = new RegExp(`{{${key}}}`, 'g');
         subject = subject.replace(regex, templateData[key] || '');
         html = html.replace(regex, templateData[key] || '');
@@ -161,7 +169,7 @@ class EmailService {
         from: `"${emailConfig.fromName}" <${emailConfig.fromEmail}>`,
         to,
         subject,
-        html
+        html,
       };
 
       const info = await this.transporter.sendMail(mailOptions);
@@ -170,20 +178,19 @@ class EmailService {
         to,
         template: templateName,
         messageId: info.messageId,
-        response: info.response
+        response: info.response,
       });
 
       return {
         success: true,
         messageId: info.messageId,
-        template: templateName
+        template: templateName,
       };
-
     } catch (error) {
       logger.error('Failed to send email', {
         to,
         template: templateName,
-        error: error.message
+        error: error.message,
       });
       throw error;
     }
@@ -194,13 +201,13 @@ class EmailService {
 
     return this.sendEmail(email, 'password-reset', {
       firstName,
-      resetLink
+      resetLink,
     });
   }
 
   async sendWelcomeEmail(email, firstName) {
     return this.sendEmail(email, 'welcome', {
-      firstName
+      firstName,
     });
   }
 
@@ -210,7 +217,7 @@ class EmailService {
         from: `"${emailConfig.fromName}" <${emailConfig.fromEmail}>`,
         to,
         subject,
-        html: htmlContent
+        html: htmlContent,
       };
 
       const info = await this.transporter.sendMail(mailOptions);
@@ -218,19 +225,18 @@ class EmailService {
       logger.info('Custom email sent successfully', {
         to,
         subject,
-        messageId: info.messageId
+        messageId: info.messageId,
       });
 
       return {
         success: true,
-        messageId: info.messageId
+        messageId: info.messageId,
       };
-
     } catch (error) {
       logger.error('Failed to send custom email', {
         to,
         subject,
-        error: error.message
+        error: error.message,
       });
       throw error;
     }
@@ -250,7 +256,7 @@ class EmailService {
       service: 'email',
       transporter: this.transporter ? 'initialized' : 'not initialized',
       templates: this.templates.size,
-      config: emailConfig.getHealthStatus()
+      config: emailConfig.getHealthStatus(),
     };
   }
 

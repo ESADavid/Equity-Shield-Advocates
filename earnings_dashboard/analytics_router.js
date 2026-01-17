@@ -1,6 +1,11 @@
 import express from 'express';
+import { error as logError } from '../utils/loggerWrapper.js';
 import { getAnalytics } from './ai_analytics.js';
-import { getTranscendenceAnalytics, initializeTranscendence, optimizeRevenueAutonomously } from './ai_transcendence.js';
+import {
+  getTranscendenceAnalytics,
+  initializeTranscendence,
+  optimizeRevenueAutonomously,
+} from './ai_transcendence.js';
 
 const router = express.Router();
 
@@ -12,11 +17,11 @@ router.get('/', (req, res) => {
     const response = {
       predictions: analytics.predictions,
       anomalies: analytics.anomalies,
-      riskAssessment: analytics.riskAssessment
+      riskAssessment: analytics.riskAssessment,
     };
     res.json(response);
   } catch (error) {
-    console.error('Analytics error:', error);
+    logError('Analytics error:', error);
     res.status(500).json({ error: 'Failed to retrieve analytics' });
   }
 });
@@ -29,12 +34,14 @@ router.get('/transcendence', async (req, res) => {
     const response = {
       deepLearning: analytics.deepLearning,
       quantumOptimization: analytics.quantumOptimization,
-      autonomousDecisions: analytics.autonomousDecisions
+      autonomousDecisions: analytics.autonomousDecisions,
     };
     res.json(response);
   } catch (error) {
-    console.error('Transcendence analytics error:', error);
-    res.status(500).json({ error: 'Failed to retrieve transcendence analytics' });
+    logError('Transcendence analytics error:', error);
+    res
+      .status(500)
+      .json({ error: 'Failed to retrieve transcendence analytics' });
   }
 });
 
@@ -45,26 +52,29 @@ router.post('/optimize', async (req, res) => {
     if (typeof currentRevenue !== 'number' || !marketConditions) {
       return res.status(400).json({ error: 'Invalid input data' });
     }
-    const result = await optimizeRevenueAutonomously(currentRevenue, marketConditions);
+    const result = await optimizeRevenueAutonomously(
+      currentRevenue,
+      marketConditions
+    );
     // Transform to match test expectations
     const response = {
       optimized: {
-        projectedRevenue: result.optimized.projectedRevenue
+        projectedRevenue: result.optimized.projectedRevenue,
       },
       decisions: {
-        actions: result.decisions.actions
-      }
+        actions: result.decisions.actions,
+      },
     };
     res.json(response);
   } catch (error) {
-    console.error('Optimization error:', error);
+    logError('Optimization error:', error);
     res.status(500).json({ error: 'Failed to optimize revenue' });
   }
 });
 
 // Initialize transcendence engine on router load
-initializeTranscendence().catch(err => {
-  console.error('Failed to initialize AI transcendence engine:', err);
+initializeTranscendence().catch((err) => {
+  logError('Failed to initialize AI transcendence engine:', err);
 });
 
 export default router;

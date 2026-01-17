@@ -15,9 +15,12 @@ const __dirname = path.dirname(__filename);
 
 // Configuration
 const TEST_CONFIG = {
-  baseURL: process.env.NODE_ENV === 'staging' ? 'http://localhost:3001' : 'http://localhost:3000',
+  baseURL:
+    process.env.NODE_ENV === 'staging'
+      ? 'http://localhost:3001'
+      : 'http://localhost:3000',
   timeout: 10000,
-  retries: 3
+  retries: 3,
 };
 
 // Test results tracking
@@ -25,13 +28,18 @@ const testResults = {
   total: 0,
   passed: 0,
   failed: 0,
-  errors: []
+  errors: [],
 };
 
 /**
  * Utility function to make HTTP requests with retry logic
  */
-async function makeRequest(method, url, data = null, retries = TEST_CONFIG.retries) {
+async function makeRequest(
+  method,
+  url,
+  data = null,
+  retries = TEST_CONFIG.retries
+) {
   for (let i = 0; i < retries; i++) {
     try {
       const config = {
@@ -39,8 +47,8 @@ async function makeRequest(method, url, data = null, retries = TEST_CONFIG.retri
         url: `${TEST_CONFIG.baseURL}${url}`,
         timeout: TEST_CONFIG.timeout,
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       };
 
       if (data && (method === 'POST' || method === 'PUT')) {
@@ -54,7 +62,7 @@ async function makeRequest(method, url, data = null, retries = TEST_CONFIG.retri
         throw error;
       }
       console.log(`Request failed, retrying... (${i + 1}/${retries})`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 }
@@ -67,7 +75,10 @@ async function testCashPositions() {
   testResults.total++;
 
   try {
-    const response = await makeRequest('GET', '/jpmorgan/treasury/cash-positions');
+    const response = await makeRequest(
+      'GET',
+      '/jpmorgan/treasury/cash-positions'
+    );
 
     if (response.status === 200 && response.data) {
       console.log('✅ Cash positions test passed');
@@ -81,7 +92,7 @@ async function testCashPositions() {
     testResults.failed++;
     testResults.errors.push({
       test: 'Cash Positions',
-      error: error.message
+      error: error.message,
     });
     return false;
   }
@@ -109,7 +120,7 @@ async function testFXRates() {
     testResults.failed++;
     testResults.errors.push({
       test: 'FX Rates',
-      error: error.message
+      error: error.message,
     });
     return false;
   }
@@ -123,7 +134,10 @@ async function testLiquidityForecast() {
   testResults.total++;
 
   try {
-    const response = await makeRequest('GET', '/jpmorgan/treasury/liquidity-forecast');
+    const response = await makeRequest(
+      'GET',
+      '/jpmorgan/treasury/liquidity-forecast'
+    );
 
     if (response.status === 200 && response.data) {
       console.log('✅ Liquidity forecast test passed');
@@ -137,7 +151,7 @@ async function testLiquidityForecast() {
     testResults.failed++;
     testResults.errors.push({
       test: 'Liquidity Forecast',
-      error: error.message
+      error: error.message,
     });
     return false;
   }
@@ -151,7 +165,10 @@ async function testRiskExposure() {
   testResults.total++;
 
   try {
-    const response = await makeRequest('GET', '/jpmorgan/treasury/risk-exposure');
+    const response = await makeRequest(
+      'GET',
+      '/jpmorgan/treasury/risk-exposure'
+    );
 
     if (response.status === 200 && response.data) {
       console.log('✅ Risk exposure test passed');
@@ -165,7 +182,7 @@ async function testRiskExposure() {
     testResults.failed++;
     testResults.errors.push({
       test: 'Risk Exposure',
-      error: error.message
+      error: error.message,
     });
     return false;
   }
@@ -184,10 +201,14 @@ async function testInvestmentInstruction() {
       amount: 1000000,
       currency: 'USD',
       maturityDate: '2025-12-31',
-      strategy: 'conservative'
+      strategy: 'conservative',
     };
 
-    const response = await makeRequest('POST', '/jpmorgan/treasury/investment-instruction', instructionData);
+    const response = await makeRequest(
+      'POST',
+      '/jpmorgan/treasury/investment-instruction',
+      instructionData
+    );
 
     if (response.status === 200 && response.data) {
       console.log('✅ Investment instruction test passed');
@@ -201,7 +222,7 @@ async function testInvestmentInstruction() {
     testResults.failed++;
     testResults.errors.push({
       test: 'Investment Instruction',
-      error: error.message
+      error: error.message,
     });
     return false;
   }
@@ -215,7 +236,10 @@ async function testPortfolioPerformance() {
   testResults.total++;
 
   try {
-    const response = await makeRequest('GET', '/jpmorgan/treasury/portfolio-performance');
+    const response = await makeRequest(
+      'GET',
+      '/jpmorgan/treasury/portfolio-performance'
+    );
 
     if (response.status === 200 && response.data) {
       console.log('✅ Portfolio performance test passed');
@@ -229,7 +253,7 @@ async function testPortfolioPerformance() {
     testResults.failed++;
     testResults.errors.push({
       test: 'Portfolio Performance',
-      error: error.message
+      error: error.message,
     });
     return false;
   }
@@ -243,7 +267,10 @@ async function testCashFlowAnalytics() {
   testResults.total++;
 
   try {
-    const response = await makeRequest('GET', '/jpmorgan/treasury/cash-flow-analytics');
+    const response = await makeRequest(
+      'GET',
+      '/jpmorgan/treasury/cash-flow-analytics'
+    );
 
     if (response.status === 200 && response.data) {
       console.log('✅ Cash flow analytics test passed');
@@ -257,7 +284,7 @@ async function testCashFlowAnalytics() {
     testResults.failed++;
     testResults.errors.push({
       test: 'Cash Flow Analytics',
-      error: error.message
+      error: error.message,
     });
     return false;
   }
@@ -273,7 +300,11 @@ async function testTreasuryHealth() {
   try {
     const response = await makeRequest('GET', '/jpmorgan/treasury/health');
 
-    if (response.status === 200 && response.data && response.data.status === 'healthy') {
+    if (
+      response.status === 200 &&
+      response.data &&
+      response.data.status === 'healthy'
+    ) {
       console.log('✅ Treasury health test passed');
       testResults.passed++;
       return true;
@@ -285,7 +316,7 @@ async function testTreasuryHealth() {
     testResults.failed++;
     testResults.errors.push({
       test: 'Treasury Health',
-      error: error.message
+      error: error.message,
     });
     return false;
   }
@@ -305,14 +336,19 @@ async function testConcurrentOperations() {
       makeRequest('GET', '/jpmorgan/treasury/liquidity-forecast'),
       makeRequest('GET', '/jpmorgan/treasury/risk-exposure'),
       makeRequest('GET', '/jpmorgan/treasury/portfolio-performance'),
-      makeRequest('GET', '/jpmorgan/treasury/cash-flow-analytics')
+      makeRequest('GET', '/jpmorgan/treasury/cash-flow-analytics'),
     ];
 
     const results = await Promise.allSettled(operations);
-    const successful = results.filter(result => result.status === 'fulfilled').length;
+    const successful = results.filter(
+      (result) => result.status === 'fulfilled'
+    ).length;
 
-    if (successful >= 4) { // At least 4 out of 6 should succeed
-      console.log(`✅ Concurrent operations test passed (${successful}/6 successful)`);
+    if (successful >= 4) {
+      // At least 4 out of 6 should succeed
+      console.log(
+        `✅ Concurrent operations test passed (${successful}/6 successful)`
+      );
       testResults.passed++;
       return true;
     } else {
@@ -323,7 +359,7 @@ async function testConcurrentOperations() {
     testResults.failed++;
     testResults.errors.push({
       test: 'Concurrent Operations',
-      error: error.message
+      error: error.message,
     });
     return false;
   }
@@ -340,21 +376,27 @@ function generateReport() {
       total: testResults.total,
       passed: testResults.passed,
       failed: testResults.failed,
-      successRate: `${((testResults.passed / testResults.total) * 100).toFixed(2)}%`
+      successRate: `${((testResults.passed / testResults.total) * 100).toFixed(2)}%`,
     },
     errors: testResults.errors,
-    recommendations: []
+    recommendations: [],
   };
 
   // Add recommendations based on failures
   if (testResults.failed > 0) {
-    report.recommendations.push('Review failed tests and fix underlying issues');
-    report.recommendations.push('Check JPMorgan API connectivity and credentials');
+    report.recommendations.push(
+      'Review failed tests and fix underlying issues'
+    );
+    report.recommendations.push(
+      'Check JPMorgan API connectivity and credentials'
+    );
     report.recommendations.push('Verify database connections and schema');
   }
 
   if (testResults.passed === testResults.total) {
-    report.recommendations.push('All treasury tests passed - system is ready for production');
+    report.recommendations.push(
+      'All treasury tests passed - system is ready for production'
+    );
   }
 
   return report;
@@ -364,7 +406,10 @@ function generateReport() {
  * Save test report to file
  */
 function saveReport(report) {
-  const reportPath = path.join(__dirname, 'comprehensive_treasury_test_report.json');
+  const reportPath = path.join(
+    __dirname,
+    'comprehensive_treasury_test_report.json'
+  );
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
   console.log(`\n📄 Test report saved to: ${reportPath}`);
 }
@@ -374,10 +419,10 @@ function saveReport(report) {
  */
 async function runComprehensiveTreasuryTests() {
   console.log('🚀 Starting Comprehensive Treasury Management Test Suite');
-  console.log('=' .repeat(60));
+  console.log('='.repeat(60));
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Base URL: ${TEST_CONFIG.baseURL}`);
-  console.log('=' .repeat(60));
+  console.log('='.repeat(60));
 
   try {
     // Test individual endpoints
@@ -398,13 +443,15 @@ async function runComprehensiveTreasuryTests() {
     saveReport(report);
 
     // Display final results
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('📊 FINAL TEST RESULTS');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log(`Total Tests: ${testResults.total}`);
     console.log(`Passed: ${testResults.passed}`);
     console.log(`Failed: ${testResults.failed}`);
-    console.log(`Success Rate: ${((testResults.passed / testResults.total) * 100).toFixed(2)}%`);
+    console.log(
+      `Success Rate: ${((testResults.passed / testResults.total) * 100).toFixed(2)}%`
+    );
 
     if (testResults.failed > 0) {
       console.log('\n❌ FAILED TESTS:');
@@ -419,10 +466,11 @@ async function runComprehensiveTreasuryTests() {
       process.exit(0);
     } else {
       console.log('\n⚠️  SOME TESTS FAILED');
-      console.log('Please review the errors and fix the issues before proceeding.');
+      console.log(
+        'Please review the errors and fix the issues before proceeding.'
+      );
       process.exit(1);
     }
-
   } catch (error) {
     console.error('\n💥 CRITICAL ERROR during testing:', error.message);
     console.error('Stack trace:', error.stack);
@@ -457,5 +505,5 @@ export {
   testPortfolioPerformance,
   testCashFlowAnalytics,
   testTreasuryHealth,
-  testConcurrentOperations
+  testConcurrentOperations,
 };

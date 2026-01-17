@@ -9,86 +9,87 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import logger from './utils/loggerWrapper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 class StagingDeployment {
-    constructor() {
-        this.projectRoot = path.resolve(__dirname);
-        this.stagingConfig = {
-            environment: 'staging',
-            port: 3001,
-            database: 'staging_oscar_broome_revenue',
-            redis: 'redis://localhost:6379/1',
-            jpmorgan: {
-                baseUrl: 'https://api-staging.jpmorgan.com',
-                timeout: 30000
-            }
-        };
+  constructor() {
+    this.projectRoot = path.resolve(__dirname);
+    this.stagingConfig = {
+      environment: 'staging',
+      port: 3001,
+      database: 'staging_oscar_broome_revenue',
+      redis: 'redis://localhost:6379/1',
+      jpmorgan: {
+        baseUrl: 'https://api-staging.jpmorgan.com',
+        timeout: 30000,
+      },
+    };
+  }
+
+  log(message, type = 'info') {
+    const timestamp = new Date().toISOString();
+    const colors = {
+      info: '\x1b[36m',
+      success: '\x1b[32m',
+      warning: '\x1b[33m',
+      error: '\x1b[31m',
+      reset: '\x1b[0m',
+    };
+    logger.info(`${colors[type]}[${timestamp}] ${message}${colors.reset}`);
+  }
+
+  async run() {
+    try {
+      this.log('🚀 Starting OSCAR-BROOME-REVENUE Staging Deployment', 'info');
+
+      await this.checkPrerequisites();
+      await this.setupEnvironment();
+      await this.installDependencies();
+      await this.setupDatabase();
+      await this.runMigrations();
+      await this.buildApplication();
+      await this.configureServices();
+      await this.runTests();
+      await this.startServices();
+      await this.runHealthChecks();
+      await this.generateDeploymentReport();
+
+      this.log('✅ Staging deployment completed successfully!', 'success');
+    } catch (error) {
+      this.log(`❌ Deployment failed: ${error.message}`, 'error');
+      await this.rollback();
+      process.exit(1);
     }
+  }
 
-    log(message, type = 'info') {
-        const timestamp = new Date().toISOString();
-        const colors = {
-            info: '\x1b[36m',
-            success: '\x1b[32m',
-            warning: '\x1b[33m',
-            error: '\x1b[31m',
-            reset: '\x1b[0m'
-        };
-        console.log(`${colors[type]}[${timestamp}] ${message}${colors.reset}`);
+  async checkPrerequisites() {
+    this.log('🔍 Checking prerequisites...', 'info');
+
+    const prerequisites = [
+      { command: 'node --version', name: 'Node.js' },
+      { command: 'npm --version', name: 'npm' },
+      { command: 'docker --version', name: 'Docker' },
+      { command: 'docker-compose --version', name: 'Docker Compose' },
+    ];
+
+    for (const prereq of prerequisites) {
+      try {
+        execSync(prereq.command, { stdio: 'pipe' });
+        this.log(`✅ ${prereq.name} is installed`, 'success');
+      } catch (error) {
+        throw new Error(`${prereq.name} is not installed or not accessible`);
+      }
     }
+  }
 
-    async run() {
-        try {
-            this.log('🚀 Starting OSCAR-BROOME-REVENUE Staging Deployment', 'info');
+  async setupEnvironment() {
+    this.log('🔧 Setting up staging environment...', 'info');
 
-            await this.checkPrerequisites();
-            await this.setupEnvironment();
-            await this.installDependencies();
-            await this.setupDatabase();
-            await this.runMigrations();
-            await this.buildApplication();
-            await this.configureServices();
-            await this.runTests();
-            await this.startServices();
-            await this.runHealthChecks();
-            await this.generateDeploymentReport();
-
-            this.log('✅ Staging deployment completed successfully!', 'success');
-        } catch (error) {
-            this.log(`❌ Deployment failed: ${error.message}`, 'error');
-            await this.rollback();
-            process.exit(1);
-        }
-    }
-
-    async checkPrerequisites() {
-        this.log('🔍 Checking prerequisites...', 'info');
-
-        const prerequisites = [
-            { command: 'node --version', name: 'Node.js' },
-            { command: 'npm --version', name: 'npm' },
-            { command: 'docker --version', name: 'Docker' },
-            { command: 'docker-compose --version', name: 'Docker Compose' }
-        ];
-
-        for (const prereq of prerequisites) {
-            try {
-                execSync(prereq.command, { stdio: 'pipe' });
-                this.log(`✅ ${prereq.name} is installed`, 'success');
-            } catch (error) {
-                throw new Error(`${prereq.name} is not installed or not accessible`);
-            }
-        }
-    }
-
-    async setupEnvironment() {
-        this.log('🔧 Setting up staging environment...', 'info');
-
-        // Create staging environment file
-        const envContent = `# Staging Environment Configuration
+    // Create staging environment file
+    const envContent = `# Staging Environment Configuration
 NODE_ENV=staging
 PORT=${this.stagingConfig.port}
 DATABASE_URL=${this.stagingConfig.database}
@@ -113,26 +114,26 @@ LOG_LEVEL=debug
 LOG_FILE=logs/staging.log
 `;
 
-        fs.writeFileSync(path.join(this.projectRoot, '.env.staging'), envContent);
-        this.log('✅ Staging environment configuration created', 'success');
-    }
+    fs.writeFileSync(path.join(this.projectRoot, '.env.staging'), envContent);
+    this.log('✅ Staging environment configuration created', 'success');
+  }
 
-    async installDependencies() {
-        this.log('📦 Installing dependencies...', 'info');
+  async installDependencies() {
+    this.log('📦 Installing dependencies...', 'info');
 
-        execSync('npm ci', {
-            cwd: this.projectRoot,
-            stdio: 'inherit'
-        });
+    execSync('npm ci', {
+      cwd: this.projectRoot,
+      stdio: 'inherit',
+    });
 
-        this.log('✅ Dependencies installed successfully', 'success');
-    }
+    this.log('✅ Dependencies installed successfully', 'success');
+  }
 
-    async setupDatabase() {
-        this.log('🗄️ Setting up staging database...', 'info');
+  async setupDatabase() {
+    this.log('🗄️ Setting up staging database...', 'info');
 
-        // Create database setup script
-        const dbSetupScript = `
+    // Create database setup script
+    const dbSetupScript = `
 -- Staging Database Setup
 CREATE DATABASE IF NOT EXISTS ${this.stagingConfig.database};
 USE ${this.stagingConfig.database};
@@ -168,38 +169,41 @@ CREATE TABLE IF NOT EXISTS treasury_portfolio_performance (
 );
 `;
 
-        fs.writeFileSync(path.join(this.projectRoot, 'staging_db_setup.sql'), dbSetupScript);
-        this.log('✅ Database setup script created', 'success');
-    }
+    fs.writeFileSync(
+      path.join(this.projectRoot, 'staging_db_setup.sql'),
+      dbSetupScript
+    );
+    this.log('✅ Database setup script created', 'success');
+  }
 
-    async runMigrations() {
-        this.log('🔄 Running database migrations...', 'info');
+  async runMigrations() {
+    this.log('🔄 Running database migrations...', 'info');
 
-        // Run database migrations
-        execSync('npm run migrate:staging', {
-            cwd: this.projectRoot,
-            stdio: 'inherit'
-        });
+    // Run database migrations
+    execSync('npm run migrate:staging', {
+      cwd: this.projectRoot,
+      stdio: 'inherit',
+    });
 
-        this.log('✅ Database migrations completed', 'success');
-    }
+    this.log('✅ Database migrations completed', 'success');
+  }
 
-    async buildApplication() {
-        this.log('🔨 Building application...', 'info');
+  async buildApplication() {
+    this.log('🔨 Building application...', 'info');
 
-        execSync('npm run build:staging', {
-            cwd: this.projectRoot,
-            stdio: 'inherit'
-        });
+    execSync('npm run build:staging', {
+      cwd: this.projectRoot,
+      stdio: 'inherit',
+    });
 
-        this.log('✅ Application built successfully', 'success');
-    }
+    this.log('✅ Application built successfully', 'success');
+  }
 
-    async configureServices() {
-        this.log('⚙️ Configuring services...', 'info');
+  async configureServices() {
+    this.log('⚙️ Configuring services...', 'info');
 
-        // Create docker-compose.staging.yml
-        const dockerCompose = `
+    // Create docker-compose.staging.yml
+    const dockerCompose = `
 version: '3.8'
 
 services:
@@ -262,160 +266,172 @@ volumes:
   staging_grafana_data:
 `;
 
-        fs.writeFileSync(path.join(this.projectRoot, 'docker-compose.staging.yml'), dockerCompose);
-        this.log('✅ Services configured', 'success');
-    }
+    fs.writeFileSync(
+      path.join(this.projectRoot, 'docker-compose.staging.yml'),
+      dockerCompose
+    );
+    this.log('✅ Services configured', 'success');
+  }
 
-    async runTests() {
-        this.log('🧪 Running staging tests...', 'info');
+  async runTests() {
+    this.log('🧪 Running staging tests...', 'info');
 
-        // Run comprehensive treasury tests
-        execSync('node comprehensive_treasury_test.js', {
-            cwd: this.projectRoot,
-            stdio: 'inherit'
-        });
+    // Run comprehensive treasury tests
+    execSync('node comprehensive_treasury_test.js', {
+      cwd: this.projectRoot,
+      stdio: 'inherit',
+    });
 
-        // Run comprehensive integration tests
-        execSync('node comprehensive_integration_test.js', {
-            cwd: this.projectRoot,
-            stdio: 'inherit'
-        });
+    // Run comprehensive integration tests
+    execSync('node comprehensive_integration_test.js', {
+      cwd: this.projectRoot,
+      stdio: 'inherit',
+    });
 
-        // Run comprehensive JPMorgan tests
-        execSync('node comprehensive_jpmorgan_test.js', {
-            cwd: this.projectRoot,
-            stdio: 'inherit'
-        });
+    // Run comprehensive JPMorgan tests
+    execSync('node comprehensive_jpmorgan_test.js', {
+      cwd: this.projectRoot,
+      stdio: 'inherit',
+    });
 
-        // Run comprehensive merchant tests
-        execSync('node comprehensive_merchant_test.js', {
-            cwd: this.projectRoot,
-            stdio: 'inherit'
-        });
+    // Run comprehensive merchant tests
+    execSync('node comprehensive_merchant_test.js', {
+      cwd: this.projectRoot,
+      stdio: 'inherit',
+    });
 
-        // Run comprehensive payroll tests
-        execSync('node comprehensive_payroll_test.js', {
-            cwd: this.projectRoot,
-            stdio: 'inherit'
-        });
+    // Run comprehensive payroll tests
+    execSync('node comprehensive_payroll_test.js', {
+      cwd: this.projectRoot,
+      stdio: 'inherit',
+    });
 
-        this.log('✅ Staging tests passed', 'success');
-    }
+    this.log('✅ Staging tests passed', 'success');
+  }
 
-    async startServices() {
-        this.log('🚀 Starting staging services...', 'info');
+  async startServices() {
+    this.log('🚀 Starting staging services...', 'info');
 
-        execSync('docker-compose -f docker-compose.staging.yml up -d', {
-            cwd: this.projectRoot,
-            stdio: 'inherit'
-        });
+    execSync('docker-compose -f docker-compose.staging.yml up -d', {
+      cwd: this.projectRoot,
+      stdio: 'inherit',
+    });
 
-        // Wait for services to be ready
-        await this.waitForServices();
+    // Wait for services to be ready
+    await this.waitForServices();
 
-        this.log('✅ Staging services started', 'success');
-    }
+    this.log('✅ Staging services started', 'success');
+  }
 
-    async waitForServices() {
-        this.log('⏳ Waiting for services to be ready...', 'info');
+  async waitForServices() {
+    this.log('⏳ Waiting for services to be ready...', 'info');
 
-        const services = ['app', 'db', 'redis'];
-        for (const service of services) {
-            let retries = 30;
-            while (retries > 0) {
-                try {
-                    execSync(`docker-compose -f docker-compose.staging.yml ps ${service}`, {
-                        cwd: this.projectRoot,
-                        stdio: 'pipe'
-                    });
-                    this.log(`✅ ${service} is ready`, 'success');
-                    break;
-                } catch (error) {
-                    retries--;
-                    if (retries === 0) {
-                        throw new Error(`${service} failed to start`);
-                    }
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                }
-            }
-        }
-    }
-
-    async runHealthChecks() {
-        this.log('🏥 Running health checks...', 'info');
-
-        const healthChecks = [
-            { url: `http://localhost:${this.stagingConfig.port}/health`, name: 'Application Health' },
-            { url: `http://localhost:${this.stagingConfig.port}/jpmorgan/treasury/health`, name: 'Treasury Health' },
-            { url: `http://localhost:3307`, name: 'Database Connection' },
-            { url: `http://localhost:6379`, name: 'Redis Connection' }
-        ];
-
-        for (const check of healthChecks) {
-            try {
-                // Simple health check - in production, use proper HTTP client
-                execSync(`curl -f ${check.url}`, { stdio: 'pipe' });
-                this.log(`✅ ${check.name} check passed`, 'success');
-            } catch (error) {
-                this.log(`⚠️ ${check.name} check failed, but continuing...`, 'warning');
-            }
-        }
-    }
-
-    async generateDeploymentReport() {
-        this.log('📊 Generating deployment report...', 'info');
-
-        const report = {
-            deploymentTime: new Date().toISOString(),
-            environment: 'staging',
-            version: '1.0.0',
-            services: {
-                app: `http://localhost:${this.stagingConfig.port}`,
-                database: 'localhost:3307',
-                redis: 'localhost:6379',
-                prometheus: `http://localhost:${this.stagingConfig.prometheusPort}`,
-                grafana: `http://localhost:${this.stagingConfig.grafanaPort}`
-            },
-            treasuryEndpoints: [
-                '/jpmorgan/treasury/health',
-                '/jpmorgan/treasury/cash-positions',
-                '/jpmorgan/treasury/fx-rates',
-                '/jpmorgan/treasury/liquidity-forecast',
-                '/jpmorgan/treasury/risk-exposure',
-                '/jpmorgan/treasury/investment-instruction',
-                '/jpmorgan/treasury/portfolio-performance',
-                '/jpmorgan/treasury/cash-flow-analytics'
-            ],
-            status: 'deployed'
-        };
-
-        fs.writeFileSync(
-            path.join(this.projectRoot, 'staging_deployment_report.json'),
-            JSON.stringify(report, null, 2)
-        );
-
-        this.log('✅ Deployment report generated', 'success');
-    }
-
-    async rollback() {
-        this.log('🔄 Rolling back deployment...', 'warning');
-
+    const services = ['app', 'db', 'redis'];
+    for (const service of services) {
+      let retries = 30;
+      while (retries > 0) {
         try {
-            execSync('docker-compose -f docker-compose.staging.yml down -v', {
-                cwd: this.projectRoot,
-                stdio: 'inherit'
-            });
-            this.log('✅ Rollback completed', 'success');
+          execSync(
+            `docker-compose -f docker-compose.staging.yml ps ${service}`,
+            {
+              cwd: this.projectRoot,
+              stdio: 'pipe',
+            }
+          );
+          this.log(`✅ ${service} is ready`, 'success');
+          break;
         } catch (error) {
-            this.log(`❌ Rollback failed: ${error.message}`, 'error');
+          retries--;
+          if (retries === 0) {
+            throw new Error(`${service} failed to start`);
+          }
+          await new Promise((resolve) => setTimeout(resolve, 2000));
         }
+      }
     }
+  }
+
+  async runHealthChecks() {
+    this.log('🏥 Running health checks...', 'info');
+
+    const healthChecks = [
+      {
+        url: `http://localhost:${this.stagingConfig.port}/health`,
+        name: 'Application Health',
+      },
+      {
+        url: `http://localhost:${this.stagingConfig.port}/jpmorgan/treasury/health`,
+        name: 'Treasury Health',
+      },
+      { url: `http://localhost:3307`, name: 'Database Connection' },
+      { url: `http://localhost:6379`, name: 'Redis Connection' },
+    ];
+
+    for (const check of healthChecks) {
+      try {
+        // Simple health check - in production, use proper HTTP client
+        execSync(`curl -f ${check.url}`, { stdio: 'pipe' });
+        this.log(`✅ ${check.name} check passed`, 'success');
+      } catch (error) {
+        this.log(`⚠️ ${check.name} check failed, but continuing...`, 'warning');
+      }
+    }
+  }
+
+  async generateDeploymentReport() {
+    this.log('📊 Generating deployment report...', 'info');
+
+    const report = {
+      deploymentTime: new Date().toISOString(),
+      environment: 'staging',
+      version: '1.0.0',
+      services: {
+        app: `http://localhost:${this.stagingConfig.port}`,
+        database: 'localhost:3307',
+        redis: 'localhost:6379',
+        prometheus: `http://localhost:${this.stagingConfig.prometheusPort}`,
+        grafana: `http://localhost:${this.stagingConfig.grafanaPort}`,
+      },
+      treasuryEndpoints: [
+        '/jpmorgan/treasury/health',
+        '/jpmorgan/treasury/cash-positions',
+        '/jpmorgan/treasury/fx-rates',
+        '/jpmorgan/treasury/liquidity-forecast',
+        '/jpmorgan/treasury/risk-exposure',
+        '/jpmorgan/treasury/investment-instruction',
+        '/jpmorgan/treasury/portfolio-performance',
+        '/jpmorgan/treasury/cash-flow-analytics',
+      ],
+      status: 'deployed',
+    };
+
+    fs.writeFileSync(
+      path.join(this.projectRoot, 'staging_deployment_report.json'),
+      JSON.stringify(report, null, 2)
+    );
+
+    this.log('✅ Deployment report generated', 'success');
+  }
+
+  async rollback() {
+    this.log('🔄 Rolling back deployment...', 'warning');
+
+    try {
+      execSync('docker-compose -f docker-compose.staging.yml down -v', {
+        cwd: this.projectRoot,
+        stdio: 'inherit',
+      });
+      this.log('✅ Rollback completed', 'success');
+    } catch (error) {
+      this.log(`❌ Rollback failed: ${error.message}`, 'error');
+    }
+  }
 }
 
 // Run deployment if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-    const deployment = new StagingDeployment();
-    deployment.run().catch(console.error);
+  const deployment = new StagingDeployment();
+  deployment.run().catch(console.error);
 }
 
 export default StagingDeployment;

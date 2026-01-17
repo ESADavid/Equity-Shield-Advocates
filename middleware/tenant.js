@@ -10,14 +10,19 @@ const logger = winston.createLogger({
   defaultMeta: { service: 'tenant-middleware' },
   transports: [
     new winston.transports.File({ filename: 'logs/tenant-middleware.log' }),
-    new winston.transports.File({ filename: 'logs/tenant-middleware-error.log', level: 'error' })
-  ]
+    new winston.transports.File({
+      filename: 'logs/tenant-middleware-error.log',
+      level: 'error',
+    }),
+  ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 // Resolve tenant from request
@@ -35,7 +40,9 @@ export const resolveTenant = async (req, res, next) => {
     // Method 2: Check subdomain (e.g., tenant1.oscarbroome.com)
     if (!tenant && req.subdomains && req.subdomains.length > 0) {
       const subdomain = req.subdomains[0];
-      tenant = await tenantService.getTenantByDomain(`${subdomain}.${req.hostname}`);
+      tenant = await tenantService.getTenantByDomain(
+        `${subdomain}.${req.hostname}`
+      );
       if (tenant) {
         tenantId = tenant.tenantId;
       }
@@ -43,7 +50,8 @@ export const resolveTenant = async (req, res, next) => {
 
     // Method 3: Check custom header
     if (!tenant) {
-      const tenantHeader = req.headers['x-tenant-id'] || req.headers['tenant-id'];
+      const tenantHeader =
+        req.headers['x-tenant-id'] || req.headers['tenant-id'];
       if (tenantHeader) {
         tenant = await tenantService.getTenantById(tenantHeader);
         if (tenant) {
@@ -58,7 +66,9 @@ export const resolveTenant = async (req, res, next) => {
       if (apiKey) {
         // Try to find tenant by API key (this would need to be implemented more efficiently)
         // For now, skip this method
-        logger.debug('API key authentication not implemented for tenant resolution');
+        logger.debug(
+          'API key authentication not implemented for tenant resolution'
+        );
       }
     }
 
@@ -76,12 +86,12 @@ export const resolveTenant = async (req, res, next) => {
         path: req.path,
         hostname: req.hostname,
         subdomains: req.subdomains,
-        ip: req.ip
+        ip: req.ip,
       });
 
       return res.status(400).json({
         success: false,
-        message: 'Unable to determine tenant for this request'
+        message: 'Unable to determine tenant for this request',
       });
     }
 
@@ -90,12 +100,12 @@ export const resolveTenant = async (req, res, next) => {
       logger.warn('Inactive tenant access attempt', {
         tenantId: tenant.tenantId,
         status: tenant.status,
-        path: req.path
+        path: req.path,
       });
 
       return res.status(403).json({
         success: false,
-        message: 'Tenant is not active'
+        message: 'Tenant is not active',
       });
     }
 
@@ -104,12 +114,12 @@ export const resolveTenant = async (req, res, next) => {
       logger.warn('Expired subscription access attempt', {
         tenantId: tenant.tenantId,
         subscriptionStatus: tenant.subscription.status,
-        path: req.path
+        path: req.path,
       });
 
       return res.status(403).json({
         success: false,
-        message: 'Tenant subscription has expired'
+        message: 'Tenant subscription has expired',
       });
     }
 
@@ -120,7 +130,7 @@ export const resolveTenant = async (req, res, next) => {
     logger.debug('Tenant resolved successfully', {
       tenantId,
       tenantName: tenant.name,
-      path: req.path
+      path: req.path,
     });
 
     next();
@@ -128,12 +138,12 @@ export const resolveTenant = async (req, res, next) => {
     logger.error('Tenant resolution failed', {
       error: error.message,
       path: req.path,
-      ip: req.ip
+      ip: req.ip,
     });
 
     return res.status(500).json({
       success: false,
-      message: 'Tenant resolution failed'
+      message: 'Tenant resolution failed',
     });
   }
 };
@@ -145,29 +155,32 @@ export const requireFeature = (feature) => {
       if (!req.tenant) {
         return res.status(500).json({
           success: false,
-          message: 'Tenant not resolved'
+          message: 'Tenant not resolved',
         });
       }
 
-      const hasFeature = await tenantService.hasFeatureAccess(req.tenant.tenantId, feature);
+      const hasFeature = await tenantService.hasFeatureAccess(
+        req.tenant.tenantId,
+        feature
+      );
 
       if (!hasFeature) {
         logger.warn('Feature access denied', {
           tenantId: req.tenant.tenantId,
           feature,
-          path: req.path
+          path: req.path,
         });
 
         return res.status(403).json({
           success: false,
-          message: `Feature '${feature}' is not available for this tenant`
+          message: `Feature '${feature}' is not available for this tenant`,
         });
       }
 
       logger.debug('Feature access granted', {
         tenantId: req.tenant.tenantId,
         feature,
-        path: req.path
+        path: req.path,
       });
 
       next();
@@ -176,12 +189,12 @@ export const requireFeature = (feature) => {
         error: error.message,
         tenantId: req.tenant?.tenantId,
         feature,
-        path: req.path
+        path: req.path,
       });
 
       return res.status(500).json({
         success: false,
-        message: 'Feature check failed'
+        message: 'Feature check failed',
       });
     }
   };
@@ -194,11 +207,14 @@ export const checkLimits = (type) => {
       if (!req.tenant) {
         return res.status(500).json({
           success: false,
-          message: 'Tenant not resolved'
+          message: 'Tenant not resolved',
         });
       }
 
-      const limitCheck = await tenantService.checkTenantLimits(req.tenant.tenantId, type);
+      const limitCheck = await tenantService.checkTenantLimits(
+        req.tenant.tenantId,
+        type
+      );
 
       if (limitCheck.exceeded) {
         logger.warn('Tenant limit exceeded', {
@@ -206,12 +222,12 @@ export const checkLimits = (type) => {
           type,
           current: limitCheck.current,
           limit: limitCheck.limit,
-          path: req.path
+          path: req.path,
         });
 
         return res.status(429).json({
           success: false,
-          message: `Tenant ${type} limit exceeded (${limitCheck.current}/${limitCheck.limit})`
+          message: `Tenant ${type} limit exceeded (${limitCheck.current}/${limitCheck.limit})`,
         });
       }
 
@@ -223,7 +239,7 @@ export const checkLimits = (type) => {
         type,
         current: limitCheck.current,
         remaining: limitCheck.remaining,
-        path: req.path
+        path: req.path,
       });
 
       next();
@@ -232,12 +248,12 @@ export const checkLimits = (type) => {
         error: error.message,
         tenantId: req.tenant?.tenantId,
         type,
-        path: req.path
+        path: req.path,
       });
 
       return res.status(500).json({
         success: false,
-        message: 'Limit check failed'
+        message: 'Limit check failed',
       });
     }
   };
@@ -267,19 +283,19 @@ export const tenantRateLimit = (options = {}) => {
     const tenantRequests = requests.get(tenantId);
 
     // Remove old requests outside the window
-    const recentRequests = tenantRequests.filter(time => time > windowStart);
+    const recentRequests = tenantRequests.filter((time) => time > windowStart);
 
     if (recentRequests.length >= maxRequests) {
       logger.warn('Tenant rate limit exceeded', {
         tenantId,
         requestCount: recentRequests.length,
         maxRequests,
-        path: req.path
+        path: req.path,
       });
 
       return res.status(429).json({
         success: false,
-        message: 'Rate limit exceeded for this tenant'
+        message: 'Rate limit exceeded for this tenant',
       });
     }
 
@@ -316,18 +332,19 @@ export const tenantIsolation = (req, res, next) => {
   req.tenantContext = {
     tenantId: req.tenant.tenantId,
     tenant: req.tenant,
-    database: null // For future multi-database support
+    database: null, // For future multi-database support
   };
 
   // Set tenant context in async local storage for the request
   // This ensures all database operations within this request are tenant-scoped
-  const asyncLocalStorage = (global.asyncLocalStorage = global.asyncLocalStorage || new Map());
+  const asyncLocalStorage = (global.asyncLocalStorage =
+    global.asyncLocalStorage || new Map());
 
   asyncLocalStorage.set(Symbol.for('tenant-context'), req.tenantContext);
 
   logger.debug('Tenant isolation context set', {
     tenantId: req.tenant.tenantId,
-    path: req.path
+    path: req.path,
   });
 
   next();
@@ -351,7 +368,7 @@ export const logTenantActivity = (activityType) => {
         statusCode: res.statusCode,
         duration,
         ip: req.ip,
-        userAgent: req.get('User-Agent')
+        userAgent: req.get('User-Agent'),
       });
     });
 
@@ -366,7 +383,7 @@ export const validateTenantResource = (resourceType) => {
       if (!req.tenant) {
         return res.status(500).json({
           success: false,
-          message: 'Tenant context not available'
+          message: 'Tenant context not available',
         });
       }
 
@@ -378,19 +395,23 @@ export const validateTenantResource = (resourceType) => {
 
       // This would need to be implemented based on your resource models
       // For example, check if a Transaction belongs to the tenant
-      const isValid = await validateResourceOwnership(resourceType, resourceId, req.tenant.tenantId);
+      const isValid = await validateResourceOwnership(
+        resourceType,
+        resourceId,
+        req.tenant.tenantId
+      );
 
       if (!isValid) {
         logger.warn('Tenant resource access denied', {
           tenantId: req.tenant.tenantId,
           resourceType,
           resourceId,
-          path: req.path
+          path: req.path,
         });
 
         return res.status(403).json({
           success: false,
-          message: 'Access denied to this resource'
+          message: 'Access denied to this resource',
         });
       }
 
@@ -398,7 +419,7 @@ export const validateTenantResource = (resourceType) => {
         tenantId: req.tenant.tenantId,
         resourceType,
         resourceId,
-        path: req.path
+        path: req.path,
       });
 
       next();
@@ -407,12 +428,12 @@ export const validateTenantResource = (resourceType) => {
         error: error.message,
         tenantId: req.tenant?.tenantId,
         resourceType,
-        path: req.path
+        path: req.path,
       });
 
       return res.status(500).json({
         success: false,
-        message: 'Resource validation failed'
+        message: 'Resource validation failed',
       });
     }
   };
@@ -425,7 +446,10 @@ async function validateResourceOwnership(resourceType, resourceId, tenantId) {
     switch (resourceType) {
       case 'transaction':
         const Transaction = (await import('../models/Transaction.js')).default;
-        const transaction = await Transaction.findOne({ _id: resourceId, tenantId });
+        const transaction = await Transaction.findOne({
+          _id: resourceId,
+          tenantId,
+        });
         return !!transaction;
 
       case 'user':
@@ -435,7 +459,10 @@ async function validateResourceOwnership(resourceType, resourceId, tenantId) {
 
       case 'analytics':
         const Analytics = (await import('../models/Analytics.js')).default;
-        const analytics = await Analytics.findOne({ _id: resourceId, tenantId });
+        const analytics = await Analytics.findOne({
+          _id: resourceId,
+          tenantId,
+        });
         return !!analytics;
 
       default:
@@ -446,7 +473,7 @@ async function validateResourceOwnership(resourceType, resourceId, tenantId) {
       resourceType,
       resourceId,
       tenantId,
-      error: error.message
+      error: error.message,
     });
     return false;
   }
@@ -459,5 +486,5 @@ export default {
   tenantRateLimit,
   tenantIsolation,
   logTenantActivity,
-  validateTenantResource
+  validateTenantResource,
 };

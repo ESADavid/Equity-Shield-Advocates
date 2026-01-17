@@ -17,10 +17,10 @@ try {
     'handleMerchantWebhook',
     'createMerchantPaymentIntent',
     'getMerchantEmail',
-    'getMerchantPhone'
+    'getMerchantPhone',
   ];
 
-  functions.forEach(func => {
+  functions.forEach((func) => {
     if (typeof merchantBillPay[func] === 'function') {
       console.log(`✅ ${func} exists`);
     } else {
@@ -44,7 +44,6 @@ try {
   console.log(`Module exports: ${exports.join(', ')}`);
 
   console.log('\n🎉 Basic functionality check completed successfully!');
-
 } catch (error) {
   console.error('\n💥 Error during testing:', error.message);
   console.error('Stack trace:', error.stack);

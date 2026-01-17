@@ -12,7 +12,7 @@ router.post('/create-link-token', authenticateToken, async (req, res) => {
     if (!userId) {
       return res.status(400).json({
         success: false,
-        message: 'User ID is required'
+        message: 'User ID is required',
       });
     }
 
@@ -20,14 +20,14 @@ router.post('/create-link-token', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      data: linkTokenData
+      data: linkTokenData,
     });
   } catch (error) {
-    console.error('Error creating link token:', error);
+    logger.error('Error creating link token:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create link token',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -40,7 +40,7 @@ router.post('/exchange-public-token', authenticateToken, async (req, res) => {
     if (!publicToken) {
       return res.status(400).json({
         success: false,
-        message: 'Public token is required'
+        message: 'Public token is required',
       });
     }
 
@@ -48,14 +48,14 @@ router.post('/exchange-public-token', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      data: tokenData
+      data: tokenData,
     });
   } catch (error) {
-    console.error('Error exchanging public token:', error);
+    logger.error('Error exchanging public token:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to exchange public token',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -69,14 +69,14 @@ router.get('/accounts/:accessToken', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      data: accounts
+      data: accounts,
     });
   } catch (error) {
-    console.error('Error getting accounts:', error);
+    logger.error('Error getting accounts:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get accounts',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -90,14 +90,14 @@ router.get('/balances/:accessToken', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      data: balances
+      data: balances,
     });
   } catch (error) {
-    console.error('Error getting balances:', error);
+    logger.error('Error getting balances:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get balances',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -111,25 +111,30 @@ router.get('/transactions/:accessToken', authenticateToken, async (req, res) => 
     if (!startDate || !endDate) {
       return res.status(400).json({
         success: false,
-        message: 'Start date and end date are required'
+        message: 'Start date and end date are required',
       });
     }
 
-    const transactions = await plaidService.getTransactions(accessToken, startDate, endDate, {
-      count: Number.parseInt(count) || 100,
-      offset: Number.parseInt(offset) || 0
-    });
+    const transactions = await plaidService.getTransactions(
+      accessToken,
+      startDate,
+      endDate,
+      {
+        count: Number.parseInt(count) || 100,
+        offset: Number.parseInt(offset) || 0,
+      }
+    );
 
     res.json({
       success: true,
-      data: transactions
+      data: transactions,
     });
   } catch (error) {
-    console.error('Error getting transactions:', error);
+    logger.error('Error getting transactions:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get transactions',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -143,14 +148,14 @@ router.get('/income/:accessToken', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      data: income
+      data: income,
     });
   } catch (error) {
-    console.error('Error getting income:', error);
+    logger.error('Error getting income:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get income',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -164,22 +169,26 @@ router.post('/verify-ownership/:accessToken/:accountId', authenticateToken, asyn
     if (!amounts || !Array.isArray(amounts)) {
       return res.status(400).json({
         success: false,
-        message: 'Amounts array is required'
+        message: 'Amounts array is required',
       });
     }
 
-    const verification = await plaidService.verifyAccountOwnership(accessToken, accountId, amounts);
+    const verification = await plaidService.verifyAccountOwnership(
+      accessToken,
+      accountId,
+      amounts
+    );
 
     res.json({
       success: true,
-      data: verification
+      data: verification,
     });
   } catch (error) {
-    console.error('Error verifying account ownership:', error);
+    logger.error('Error verifying account ownership:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to verify account ownership',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -193,14 +202,14 @@ router.get('/identity/:accessToken', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      data: identity
+      data: identity,
     });
   } catch (error) {
-    console.error('Error getting identity:', error);
+    logger.error('Error getting identity:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get identity',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -214,35 +223,39 @@ router.delete('/item/:accessToken', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    console.error('Error removing item:', error);
+    logger.error('Error removing item:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to remove item',
-      error: error.message
+      error: error.message,
     });
   }
 });
 
 // Webhook endpoint
-router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  try {
-    // Verify webhook signature (in production, implement proper verification)
-    const event = JSON.parse(req.body);
+router.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  async (req, res) => {
+    try {
+      // Verify webhook signature (in production, implement proper verification)
+      const event = JSON.parse(req.body);
 
-    const result = await plaidService.handleWebhook(event);
+      const result = await plaidService.handleWebhook(event);
 
-    res.json(result);
-  } catch (error) {
-    console.error('Error handling webhook:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Webhook processing failed',
-      error: error.message
-    });
+      res.json(result);
+    } catch (error) {
+      logger.error('Error handling webhook:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Webhook processing failed',
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 export default router;

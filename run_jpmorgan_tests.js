@@ -29,7 +29,9 @@ async function main() {
     console.log('✅ Server is running and responding\n');
   } catch (error) {
     console.log('❌ Server is not responding. Please start your server first.');
-    console.log('   Make sure your Express server is running on the configured port.\n');
+    console.log(
+      '   Make sure your Express server is running on the configured port.\n'
+    );
     console.log('Example:');
     console.log('   cd OSCAR-BROOME-REVENUE');
     console.log('   node server.js  # or however you start your server\n');

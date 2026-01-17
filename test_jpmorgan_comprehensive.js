@@ -41,7 +41,7 @@ class JPMorganTestSuite {
       passed: 0,
       failed: 0,
       total: 0,
-      details: []
+      details: [],
     };
   }
 
@@ -60,7 +60,11 @@ class JPMorganTestSuite {
       this.log(`✓ ${testName} PASSED`, 'SUCCESS');
     } catch (error) {
       this.testResults.failed++;
-      this.testResults.details.push({ testName, status: 'FAILED', error: error.message });
+      this.testResults.details.push({
+        testName,
+        status: 'FAILED',
+        error: error.message,
+      });
       this.log(`✗ ${testName} FAILED: ${error.message}`, 'ERROR');
     }
   }
@@ -73,9 +77,11 @@ class JPMorganTestSuite {
 
     try {
       const response = await axios.get(`${baseURL}/health`);
-      if (response.data.status === 'healthy' &&
-          response.data.mode === 'test' &&
-          response.data.missingCredentials.includes('JPMORGAN_CLIENT_ID')) {
+      if (
+        response.data.status === 'healthy' &&
+        response.data.mode === 'test' &&
+        response.data.missingCredentials.includes('JPMORGAN_CLIENT_ID')
+      ) {
         return true;
       }
       throw new Error('Health check without credentials failed');
@@ -88,11 +94,14 @@ class JPMorganTestSuite {
   async testHealthCheckWithCredentials() {
     // Mock successful API response
     mockedAxios.get.mockResolvedValueOnce({
-      data: { status: 'healthy' }
+      data: { status: 'healthy' },
     });
 
     const response = await axios.get(`${baseURL}/health`);
-    if (response.data.status === 'healthy' && response.data.jpmorganStatus === 'healthy') {
+    if (
+      response.data.status === 'healthy' &&
+      response.data.jpmorganStatus === 'healthy'
+    ) {
       return true;
     }
     throw new Error('Health check with credentials failed');
@@ -100,24 +109,26 @@ class JPMorganTestSuite {
 
   async testCreatePayment() {
     const paymentData = {
-      amount: 100.00,
+      amount: 100.0,
       currency: 'USD',
       orderId: 'test-order-123',
-      description: 'Test payment'
+      description: 'Test payment',
     };
 
     mockedAxios.post.mockResolvedValueOnce({
       data: {
         id: 'payment-123',
         status: 'AUTHORIZED',
-        authorizationCode: 'AUTH123'
-      }
+        authorizationCode: 'AUTH123',
+      },
     });
 
     const response = await axios.post(`${baseURL}/create-payment`, paymentData);
-    if (response.data.success &&
-        response.data.paymentId === 'payment-123' &&
-        response.data.status === 'AUTHORIZED') {
+    if (
+      response.data.success &&
+      response.data.paymentId === 'payment-123' &&
+      response.data.status === 'AUTHORIZED'
+    ) {
       return true;
     }
     throw new Error('Create payment test failed');
@@ -130,8 +141,10 @@ class JPMorganTestSuite {
       await axios.post(`${baseURL}/create-payment`, invalidData);
       throw new Error('Should have failed validation');
     } catch (error) {
-      if (error.response?.status === 400 &&
-          error.response.data.error.includes('Amount and orderId are required')) {
+      if (
+        error.response?.status === 400 &&
+        error.response.data.error.includes('Amount and orderId are required')
+      ) {
         return true;
       }
       throw new Error('Validation test failed');
@@ -143,12 +156,15 @@ class JPMorganTestSuite {
       data: {
         id: 'payment-123',
         status: 'COMPLETED',
-        amount: { value: 100.00, currency: 'USD' }
-      }
+        amount: { value: 100.0, currency: 'USD' },
+      },
     });
 
     const response = await axios.get(`${baseURL}/payment-status/payment-123`);
-    if (response.data.success && response.data.paymentStatus.status === 'COMPLETED') {
+    if (
+      response.data.success &&
+      response.data.paymentStatus.status === 'COMPLETED'
+    ) {
       return true;
     }
     throw new Error('Get payment status test failed');
@@ -157,15 +173,15 @@ class JPMorganTestSuite {
   async testRefundPayment() {
     const refundData = {
       paymentId: 'payment-123',
-      amount: 50.00,
-      reason: 'Customer request'
+      amount: 50.0,
+      reason: 'Customer request',
     };
 
     mockedAxios.post.mockResolvedValueOnce({
       data: {
         id: 'refund-123',
-        status: 'COMPLETED'
-      }
+        status: 'COMPLETED',
+      },
     });
 
     const response = await axios.post(`${baseURL}/refund`, refundData);
@@ -178,14 +194,14 @@ class JPMorganTestSuite {
   async testCapturePayment() {
     const captureData = {
       paymentId: 'payment-123',
-      amount: 100.00
+      amount: 100.0,
     };
 
     mockedAxios.post.mockResolvedValueOnce({
       data: {
         id: 'capture-123',
-        status: 'COMPLETED'
-      }
+        status: 'COMPLETED',
+      },
     });
 
     const response = await axios.post(`${baseURL}/capture`, captureData);
@@ -198,14 +214,14 @@ class JPMorganTestSuite {
   async testVoidPayment() {
     const voidData = {
       paymentId: 'payment-123',
-      reason: 'Customer request'
+      reason: 'Customer request',
     };
 
     mockedAxios.post.mockResolvedValueOnce({
       data: {
         id: 'void-123',
-        status: 'COMPLETED'
-      }
+        status: 'COMPLETED',
+      },
     });
 
     const response = await axios.post(`${baseURL}/void`, voidData);
@@ -219,17 +235,19 @@ class JPMorganTestSuite {
     mockedAxios.get.mockResolvedValueOnce({
       data: {
         transactions: [
-          { id: 'tx-1', status: 'COMPLETED', amount: { value: 100.00 } },
-          { id: 'tx-2', status: 'PENDING', amount: { value: 50.00 } }
+          { id: 'tx-1', status: 'COMPLETED', amount: { value: 100.0 } },
+          { id: 'tx-2', status: 'PENDING', amount: { value: 50.0 } },
         ],
-        totalCount: 2
-      }
+        totalCount: 2,
+      },
     });
 
     const response = await axios.get(`${baseURL}/transactions?limit=10`);
-    if (response.data.success &&
-        response.data.transactions.length === 2 &&
-        response.data.totalCount === 2) {
+    if (
+      response.data.success &&
+      response.data.transactions.length === 2 &&
+      response.data.totalCount === 2
+    ) {
       return true;
     }
     throw new Error('Get transactions test failed');
@@ -239,12 +257,14 @@ class JPMorganTestSuite {
     mockedAxios.get.mockResolvedValueOnce({
       data: {
         positions: [
-          { currency: 'USD', amount: 1000000.00, accountType: 'CHECKING' }
-        ]
-      }
+          { currency: 'USD', amount: 1000000.0, accountType: 'CHECKING' },
+        ],
+      },
     });
 
-    const response = await axios.get(`${baseURL}/treasury/cash-positions?currency=USD`);
+    const response = await axios.get(
+      `${baseURL}/treasury/cash-positions?currency=USD`
+    );
     if (response.data.success && response.data.cashPositions.positions) {
       return true;
     }
@@ -255,12 +275,14 @@ class JPMorganTestSuite {
     mockedAxios.get.mockResolvedValueOnce({
       data: {
         rates: [
-          { pair: 'USD/EUR', rate: 0.85, timestamp: new Date().toISOString() }
-        ]
-      }
+          { pair: 'USD/EUR', rate: 0.85, timestamp: new Date().toISOString() },
+        ],
+      },
     });
 
-    const response = await axios.get(`${baseURL}/treasury/fx-rates?baseCurrency=USD&quoteCurrency=EUR`);
+    const response = await axios.get(
+      `${baseURL}/treasury/fx-rates?baseCurrency=USD&quoteCurrency=EUR`
+    );
     if (response.data.success && response.data.fxRates.rates) {
       return true;
     }
@@ -271,13 +293,15 @@ class JPMorganTestSuite {
     mockedAxios.get.mockResolvedValueOnce({
       data: {
         forecast: [
-          { date: '2024-01-01', amount: 950000.00 },
-          { date: '2024-01-02', amount: 960000.00 }
-        ]
-      }
+          { date: '2024-01-01', amount: 950000.0 },
+          { date: '2024-01-02', amount: 960000.0 },
+        ],
+      },
     });
 
-    const response = await axios.get(`${baseURL}/treasury/liquidity-forecast?days=30`);
+    const response = await axios.get(
+      `${baseURL}/treasury/liquidity-forecast?days=30`
+    );
     if (response.data.success && response.data.liquidityForecast.forecast) {
       return true;
     }
@@ -286,12 +310,14 @@ class JPMorganTestSuite {
 
   async testTreasuryHealth() {
     mockedAxios.get.mockResolvedValueOnce({
-      data: { status: 'healthy' }
+      data: { status: 'healthy' },
     });
 
     const response = await axios.get(`${baseURL}/treasury/health`);
-    if (response.data.status === 'healthy' &&
-        response.data.services.cashPositions === true) {
+    if (
+      response.data.status === 'healthy' &&
+      response.data.services.cashPositions === true
+    ) {
       return true;
     }
     throw new Error('Treasury health check test failed');
@@ -301,7 +327,7 @@ class JPMorganTestSuite {
     const webhookData = {
       type: 'payment.authorized',
       id: 'webhook-123',
-      data: { paymentId: 'payment-123' }
+      data: { paymentId: 'payment-123' },
     };
 
     // Mock webhook signature verification
@@ -309,8 +335,8 @@ class JPMorganTestSuite {
       headers: {
         'x-jpmorgan-signature': 'valid-signature',
         'x-jpmorgan-timestamp': Math.floor(Date.now() / 1000).toString(),
-        'x-jpmorgan-nonce': 'test-nonce'
-      }
+        'x-jpmorgan-nonce': 'test-nonce',
+      },
     });
 
     if (response.data.received === true) {
@@ -321,13 +347,13 @@ class JPMorganTestSuite {
 
   async testWalletDecryption() {
     const walletData = {
-      encryptedWalletData: 'encrypted-data-here'
+      encryptedWalletData: 'encrypted-data-here',
     };
 
     mockedAxios.post.mockResolvedValueOnce({
       data: {
-        decryptedData: 'decrypted-wallet-data'
-      }
+        decryptedData: 'decrypted-wallet-data',
+      },
     });
 
     const response = await axios.post(`${baseURL}/wallet-decrypt`, walletData);
@@ -341,12 +367,18 @@ class JPMorganTestSuite {
     this.log('Starting JPMorgan Payment Integration Test Suite', 'START');
 
     // Health Check Tests
-    await this.runTest('Health Check Without Credentials', () => this.testHealthCheckWithoutCredentials());
-    await this.runTest('Health Check With Credentials', () => this.testHealthCheckWithCredentials());
+    await this.runTest('Health Check Without Credentials', () =>
+      this.testHealthCheckWithoutCredentials()
+    );
+    await this.runTest('Health Check With Credentials', () =>
+      this.testHealthCheckWithCredentials()
+    );
 
     // Payment Tests
     await this.runTest('Create Payment', () => this.testCreatePayment());
-    await this.runTest('Create Payment Validation', () => this.testCreatePaymentValidation());
+    await this.runTest('Create Payment Validation', () =>
+      this.testCreatePaymentValidation()
+    );
     await this.runTest('Get Payment Status', () => this.testGetPaymentStatus());
     await this.runTest('Refund Payment', () => this.testRefundPayment());
     await this.runTest('Capture Payment', () => this.testCapturePayment());
@@ -354,13 +386,21 @@ class JPMorganTestSuite {
     await this.runTest('Get Transactions', () => this.testGetTransactions());
 
     // Treasury Tests
-    await this.runTest('Treasury Cash Positions', () => this.testTreasuryCashPositions());
+    await this.runTest('Treasury Cash Positions', () =>
+      this.testTreasuryCashPositions()
+    );
     await this.runTest('Treasury FX Rates', () => this.testTreasuryFxRates());
-    await this.runTest('Treasury Liquidity Forecast', () => this.testTreasuryLiquidityForecast());
-    await this.runTest('Treasury Health Check', () => this.testTreasuryHealth());
+    await this.runTest('Treasury Liquidity Forecast', () =>
+      this.testTreasuryLiquidityForecast()
+    );
+    await this.runTest('Treasury Health Check', () =>
+      this.testTreasuryHealth()
+    );
 
     // Other Tests
-    await this.runTest('Webhook Verification', () => this.testWebhookVerification());
+    await this.runTest('Webhook Verification', () =>
+      this.testWebhookVerification()
+    );
     await this.runTest('Wallet Decryption', () => this.testWalletDecryption());
 
     this.printResults();
@@ -372,13 +412,16 @@ class JPMorganTestSuite {
     this.log(`Total Tests: ${this.testResults.total}`, 'SUMMARY');
     this.log(`Passed: ${this.testResults.passed}`, 'SUCCESS');
     this.log(`Failed: ${this.testResults.failed}`, 'ERROR');
-    this.log(`Success Rate: ${((this.testResults.passed / this.testResults.total) * 100).toFixed(2)}%`, 'SUMMARY');
+    this.log(
+      `Success Rate: ${((this.testResults.passed / this.testResults.total) * 100).toFixed(2)}%`,
+      'SUMMARY'
+    );
 
     if (this.testResults.failed > 0) {
       this.log('\nFailed Tests:', 'ERROR');
       this.testResults.details
-        .filter(test => test.status === 'FAILED')
-        .forEach(test => {
+        .filter((test) => test.status === 'FAILED')
+        .forEach((test) => {
           this.log(`- ${test.testName}: ${test.error}`, 'ERROR');
         });
     }

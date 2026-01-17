@@ -15,7 +15,7 @@ describe('PayrollIntegration', () => {
       taxRate: 0.2,
       accountNumber: '111222333',
       routingNumber: '444555666',
-      benefits: {}
+      benefits: {},
     };
     expect(employee.accountNumber).toBe('111222333');
     expect(employee.routingNumber).toBe('444555666');
@@ -33,7 +33,7 @@ describe('PayrollIntegration', () => {
       taxRate: 0.2,
       accountNumber: '111222333',
       routingNumber: '444555666',
-      benefits: {}
+      benefits: {},
     };
 
     const response = await payroll.addOrUpdateEmployeePayroll(employee);

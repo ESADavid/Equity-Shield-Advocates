@@ -27,7 +27,7 @@ class SimpleJPMorganTest {
       passed: 0,
       failed: 0,
       total: 0,
-      tests: []
+      tests: [],
     };
   }
 
@@ -47,7 +47,11 @@ class SimpleJPMorganTest {
       return result;
     } catch (error) {
       this.results.failed++;
-      this.results.tests.push({ name: testName, status: 'FAILED', error: error.message });
+      this.results.tests.push({
+        name: testName,
+        status: 'FAILED',
+        error: error.message,
+      });
       this.log(`✗ ${testName} FAILED: ${error.message}`, 'ERROR');
       return null;
     }
@@ -77,7 +81,11 @@ class SimpleJPMorganTest {
   async testCreatePaymentValidation() {
     try {
       // Test missing required fields
-      const response = await axios.post(`${baseURL}/create-payment`, {}, { timeout: 5000 });
+      const response = await axios.post(
+        `${baseURL}/create-payment`,
+        {},
+        { timeout: 5000 }
+      );
       throw new Error('Should have failed with validation error');
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -90,7 +98,9 @@ class SimpleJPMorganTest {
 
   async testTreasuryHealthEndpoint() {
     try {
-      const response = await axios.get(`${baseURL}/treasury/health`, { timeout: 5000 });
+      const response = await axios.get(`${baseURL}/treasury/health`, {
+        timeout: 5000,
+      });
       console.log('Treasury health check response:', response.data);
 
       if (!response.data.status) {
@@ -110,16 +120,16 @@ class SimpleJPMorganTest {
       const testWebhook = {
         type: 'payment.authorized',
         id: 'test-webhook-123',
-        data: { paymentId: 'test-payment-123' }
+        data: { paymentId: 'test-payment-123' },
       };
 
       const response = await axios.post(`${baseURL}/webhook`, testWebhook, {
         headers: {
           'x-jpmorgan-signature': 'test-signature',
           'x-jpmorgan-timestamp': Math.floor(Date.now() / 1000).toString(),
-          'x-jpmorgan-nonce': 'test-nonce'
+          'x-jpmorgan-nonce': 'test-nonce',
         },
-        timeout: 5000
+        timeout: 5000,
       });
 
       console.log('Webhook response:', response.data);
@@ -150,7 +160,7 @@ class SimpleJPMorganTest {
       '/treasury/portfolio-performance',
       '/treasury/cash-flow-analytics',
       '/treasury/health',
-      '/sync-quickbooks'
+      '/sync-quickbooks',
     ];
 
     const results = [];
@@ -158,20 +168,37 @@ class SimpleJPMorganTest {
     for (const endpoint of endpoints) {
       try {
         // For GET endpoints, try a simple request
-        if (!endpoint.includes('payment-status/') && !endpoint.includes('sync-quickbooks')) {
-          const response = await axios.get(`${baseURL}${endpoint}`, { timeout: 2000 });
+        if (
+          !endpoint.includes('payment-status/') &&
+          !endpoint.includes('sync-quickbooks')
+        ) {
+          const response = await axios.get(`${baseURL}${endpoint}`, {
+            timeout: 2000,
+          });
           results.push({ endpoint, status: 'OK', response: response.status });
         } else if (endpoint === '/sync-quickbooks') {
           // POST endpoint
-          const response = await axios.post(`${baseURL}${endpoint}`, {}, { timeout: 2000 });
+          const response = await axios.post(
+            `${baseURL}${endpoint}`,
+            {},
+            { timeout: 2000 }
+          );
           results.push({ endpoint, status: 'OK', response: response.status });
         } else {
           // Skip parameterized endpoints for now
-          results.push({ endpoint, status: 'SKIP', reason: 'Parameterized endpoint' });
+          results.push({
+            endpoint,
+            status: 'SKIP',
+            reason: 'Parameterized endpoint',
+          });
         }
       } catch (error) {
         if (error.response) {
-          results.push({ endpoint, status: 'OK', response: error.response.status });
+          results.push({
+            endpoint,
+            status: 'OK',
+            response: error.response.status,
+          });
         } else {
           results.push({ endpoint, status: 'ERROR', error: error.message });
         }
@@ -188,19 +215,22 @@ class SimpleJPMorganTest {
     this.log(`Total Tests: ${this.results.total}`, 'SUMMARY');
     this.log(`Passed: ${this.results.passed}`, 'SUCCESS');
     this.log(`Failed: ${this.results.failed}`, 'ERROR');
-    this.log(`Success Rate: ${((this.results.passed / this.results.total) * 100).toFixed(2)}%`, 'SUMMARY');
+    this.log(
+      `Success Rate: ${((this.results.passed / this.results.total) * 100).toFixed(2)}%`,
+      'SUMMARY'
+    );
 
     if (this.results.failed > 0) {
       this.log('\nFailed Tests:', 'ERROR');
       this.results.tests
-        .filter(test => test.status === 'FAILED')
-        .forEach(test => {
+        .filter((test) => test.status === 'FAILED')
+        .forEach((test) => {
           this.log(`- ${test.name}: ${test.error}`, 'ERROR');
         });
     }
 
     this.log('\nTest Details:', 'INFO');
-    this.results.tests.forEach(test => {
+    this.results.tests.forEach((test) => {
       if (test.status === 'PASSED') {
         this.log(`✓ ${test.name}`, 'SUCCESS');
       } else {
@@ -216,10 +246,18 @@ class SimpleJPMorganTest {
 
     // Basic functionality tests
     await this.runTest('Health Endpoint', () => this.testHealthEndpoint());
-    await this.runTest('Create Payment Validation', () => this.testCreatePaymentValidation());
-    await this.runTest('Treasury Health Endpoint', () => this.testTreasuryHealthEndpoint());
-    await this.runTest('Webhook Endpoint Structure', () => this.testWebhookEndpointStructure());
-    await this.runTest('Router Endpoint Availability', () => this.testRouterExistence());
+    await this.runTest('Create Payment Validation', () =>
+      this.testCreatePaymentValidation()
+    );
+    await this.runTest('Treasury Health Endpoint', () =>
+      this.testTreasuryHealthEndpoint()
+    );
+    await this.runTest('Webhook Endpoint Structure', () =>
+      this.testWebhookEndpointStructure()
+    );
+    await this.runTest('Router Endpoint Availability', () =>
+      this.testRouterExistence()
+    );
 
     this.printResults();
   }

@@ -11,7 +11,7 @@ import { authenticateUser } from './auth/login_override.js';
 async function testOscarBroomeLogin() {
   try {
     console.log('🧪 Testing Oscar Broome Login');
-    console.log('=' .repeat(40));
+    console.log('='.repeat(40));
 
     const username = 'oscar.broome';
     const password = 'SecurePass2024!';
@@ -40,7 +40,6 @@ async function testOscarBroomeLogin() {
       console.log('❌ Login failed');
       process.exit(1);
     }
-
   } catch (error) {
     console.error('❌ Login test failed:', error.message);
     process.exit(1);

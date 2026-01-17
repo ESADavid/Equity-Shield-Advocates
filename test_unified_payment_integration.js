@@ -27,10 +27,10 @@ describe('Unified Payment Integration Tests', () => {
     test('should create JPMorgan payment successfully', async () => {
       const paymentData = {
         provider: 'jpmorgan',
-        amount: 100.00,
+        amount: 100.0,
         currency: 'USD',
         customerId: 'test-customer-123',
-        description: 'Test payment'
+        description: 'Test payment',
       };
 
       const response = await request(app)
@@ -41,17 +41,17 @@ describe('Unified Payment Integration Tests', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.paymentId).toMatch(/^jpm_/);
       expect(response.body.status).toBe('processed');
-      expect(response.body.amount).toBe(100.00);
+      expect(response.body.amount).toBe(100.0);
       expect(response.body.currency).toBe('USD');
     });
 
     test('should create Microsoft payment successfully', async () => {
       const paymentData = {
         provider: 'microsoft',
-        amount: 250.00,
+        amount: 250.0,
         currency: 'USD',
         customerId: 'test-customer-456',
-        description: 'Microsoft Dynamics payment'
+        description: 'Microsoft Dynamics payment',
       };
 
       const response = await request(app)
@@ -67,10 +67,10 @@ describe('Unified Payment Integration Tests', () => {
     test('should create NVIDIA payment successfully', async () => {
       const paymentData = {
         provider: 'nvidia',
-        amount: 500.00,
+        amount: 500.0,
         currency: 'USD',
         modelId: 'test-model-123',
-        inferenceType: 'text-generation'
+        inferenceType: 'text-generation',
       };
 
       const response = await request(app)
@@ -86,7 +86,7 @@ describe('Unified Payment Integration Tests', () => {
     test('should return error for invalid provider', async () => {
       const paymentData = {
         provider: 'invalid-provider',
-        amount: 100.00
+        amount: 100.0,
       };
 
       const response = await request(app)
@@ -101,8 +101,8 @@ describe('Unified Payment Integration Tests', () => {
 
     test('should return error when provider is missing', async () => {
       const paymentData = {
-        amount: 100.00,
-        currency: 'USD'
+        amount: 100.0,
+        currency: 'USD',
       };
 
       const response = await request(app)
@@ -161,7 +161,7 @@ describe('Unified Payment Integration Tests', () => {
   describe('Payment Refunds', () => {
     test('should process JPMorgan refund', async () => {
       const refundData = {
-        amount: 50.00
+        amount: 50.0,
       };
 
       const response = await request(app)
@@ -172,13 +172,13 @@ describe('Unified Payment Integration Tests', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.refundId).toBeDefined();
       expect(response.body.originalPaymentId).toBe('test-payment-123');
-      expect(response.body.amount).toBe(50.00);
+      expect(response.body.amount).toBe(50.0);
       expect(response.body.status).toBe('processed');
     });
 
     test('should process Microsoft refund', async () => {
       const refundData = {
-        amount: 100.00
+        amount: 100.0,
       };
 
       const response = await request(app)
@@ -193,7 +193,7 @@ describe('Unified Payment Integration Tests', () => {
 
     test('should process NVIDIA refund', async () => {
       const refundData = {
-        amount: 200.00
+        amount: 200.0,
       };
 
       const response = await request(app)
@@ -208,7 +208,7 @@ describe('Unified Payment Integration Tests', () => {
 
     test('should return error for invalid provider in refund', async () => {
       const refundData = {
-        amount: 50.00
+        amount: 50.0,
       };
 
       const response = await request(app)
@@ -254,8 +254,8 @@ describe('Unified Payment Integration Tests', () => {
       // Mock a scenario that would cause a network error
       const paymentData = {
         provider: 'jpmorgan',
-        amount: -100.00, // Invalid amount that might cause issues
-        currency: 'USD'
+        amount: -100.0, // Invalid amount that might cause issues
+        currency: 'USD',
       };
 
       const response = await request(app)
@@ -284,7 +284,7 @@ describe('Unified Payment Integration Tests', () => {
       const payments = [
         { provider: 'jpmorgan', amount: 100 },
         { provider: 'microsoft', amount: 200 },
-        { provider: 'nvidia', amount: 300 }
+        { provider: 'nvidia', amount: 300 },
       ];
 
       for (const payment of payments) {
@@ -293,7 +293,7 @@ describe('Unified Payment Integration Tests', () => {
           .send({
             provider: payment.provider,
             amount: payment.amount,
-            currency: 'USD'
+            currency: 'USD',
           })
           .expect(200);
 
@@ -310,9 +310,9 @@ describe('Unified Payment Integration Tests', () => {
           .post('/api/payments/create-payment')
           .send({
             provider: 'jpmorgan',
-            amount: 10.00,
+            amount: 10.0,
             currency: 'USD',
-            customerId: `concurrent-test-${i}`
+            customerId: `concurrent-test-${i}`,
           });
 
         paymentPromises.push(promise);
@@ -320,7 +320,7 @@ describe('Unified Payment Integration Tests', () => {
 
       const responses = await Promise.all(paymentPromises);
 
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
         expect(response.body.paymentId).toMatch(/^jpm_/);

@@ -13,7 +13,7 @@ function WebsiteManagement({ controlStatus, onStatusUpdate }) {
     try {
       const response = await fetch('/jpmorgan/control/websites', {
         headers: {
-          'Authorization': 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+          Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
         },
       });
       if (response.ok) {
@@ -33,7 +33,7 @@ function WebsiteManagement({ controlStatus, onStatusUpdate }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+          Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
         },
         body: JSON.stringify({ action, websiteId }),
       });
@@ -57,7 +57,7 @@ function WebsiteManagement({ controlStatus, onStatusUpdate }) {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+          Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
         },
         body: JSON.stringify({ websiteId, config }),
       });
@@ -82,20 +82,19 @@ function WebsiteManagement({ controlStatus, onStatusUpdate }) {
     <div className="website-management">
       <div className="management-header">
         <h2>JPMorgan Website Management</h2>
-        <button
-          className="refresh-btn"
-          onClick={fetchWebsites}
-        >
+        <button className="refresh-btn" onClick={fetchWebsites}>
           Refresh Status
         </button>
       </div>
 
       <div className="websites-grid">
-        {websites.map(website => (
+        {websites.map((website) => (
           <div key={website.id} className="website-card">
             <div className="website-header">
               <h3>{website.name}</h3>
-              <span className={`status ${website.status}`}>{website.status}</span>
+              <span className={`status ${website.status}`}>
+                {website.status}
+              </span>
             </div>
 
             <div className="website-info">
@@ -110,7 +109,9 @@ function WebsiteManagement({ controlStatus, onStatusUpdate }) {
               <div className="info-item">
                 <span className="label">Last Access:</span>
                 <span className="value">
-                  {website.lastAccess ? new Date(website.lastAccess).toLocaleString() : 'Never'}
+                  {website.lastAccess
+                    ? new Date(website.lastAccess).toLocaleString()
+                    : 'Never'}
                 </span>
               </div>
               <div className="info-item">
@@ -153,10 +154,12 @@ function WebsiteManagement({ controlStatus, onStatusUpdate }) {
                   <input
                     type="checkbox"
                     checked={website.config?.autoLogin || false}
-                    onChange={(e) => updateWebsiteConfig(website.id, {
-                      ...website.config,
-                      autoLogin: e.target.checked
-                    })}
+                    onChange={(e) =>
+                      updateWebsiteConfig(website.id, {
+                        ...website.config,
+                        autoLogin: e.target.checked,
+                      })
+                    }
                   />
                   Auto Login
                 </label>
@@ -164,10 +167,12 @@ function WebsiteManagement({ controlStatus, onStatusUpdate }) {
                   <input
                     type="checkbox"
                     checked={website.config?.sessionMonitoring || false}
-                    onChange={(e) => updateWebsiteConfig(website.id, {
-                      ...website.config,
-                      sessionMonitoring: e.target.checked
-                    })}
+                    onChange={(e) =>
+                      updateWebsiteConfig(website.id, {
+                        ...website.config,
+                        sessionMonitoring: e.target.checked,
+                      })
+                    }
                   />
                   Session Monitoring
                 </label>
@@ -175,10 +180,12 @@ function WebsiteManagement({ controlStatus, onStatusUpdate }) {
                   <input
                     type="checkbox"
                     checked={website.config?.activityLogging || false}
-                    onChange={(e) => updateWebsiteConfig(website.id, {
-                      ...website.config,
-                      activityLogging: e.target.checked
-                    })}
+                    onChange={(e) =>
+                      updateWebsiteConfig(website.id, {
+                        ...website.config,
+                        activityLogging: e.target.checked,
+                      })
+                    }
                   />
                   Activity Logging
                 </label>

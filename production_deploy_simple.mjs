@@ -16,18 +16,14 @@ const CONFIG = {
     'SMTP_PASS',
     'TWILIO_ACCOUNT_SID',
     'TWILIO_AUTH_TOKEN',
-    'TWILIO_PHONE_NUMBER'
+    'TWILIO_PHONE_NUMBER',
   ],
-  optionalEnvVars: [
-    'NODE_ENV',
-    'PORT',
-    'SMTP_PORT'
-  ],
+  optionalEnvVars: ['NODE_ENV', 'PORT', 'SMTP_PORT'],
   productionDefaults: {
     NODE_ENV: 'production',
     PORT: '3000',
-    SMTP_PORT: '587'
-  }
+    SMTP_PORT: '587',
+  },
 };
 
 class ProductionDeployer {
@@ -38,13 +34,14 @@ class ProductionDeployer {
 
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    const prefix = {
-      info: 'ℹ️ ',
-      success: '✅ ',
-      warning: '⚠️ ',
-      error: '❌ ',
-      step: '🔧 '
-    }[type] || '📝 ';
+    const prefix =
+      {
+        info: 'ℹ️ ',
+        success: '✅ ',
+        warning: '⚠️ ',
+        error: '❌ ',
+        step: '🔧 ',
+      }[type] || '📝 ';
 
     console.log(`[${timestamp}] ${prefix}${message}`);
   }
@@ -61,7 +58,6 @@ class ProductionDeployer {
       await this.startProductionServer();
 
       this.log('Production deployment completed successfully!', 'success');
-
     } catch (error) {
       this.log(`Deployment failed: ${error.message}`, 'error');
       this.errors.push(error.message);
@@ -76,18 +72,31 @@ class ProductionDeployer {
     const nodeVersion = process.version;
     this.log(`Node.js version: ${nodeVersion}`);
 
-    if (!nodeVersion.startsWith('v14.') && !nodeVersion.startsWith('v16.') && !nodeVersion.startsWith('v18.') && !nodeVersion.startsWith('v20.') && !nodeVersion.startsWith('v22.') && !nodeVersion.startsWith('v24.')) {
-      throw new Error(`Unsupported Node.js version: ${nodeVersion}. Please use Node.js 14, 16, 18, 20, 22, or 24.`);
+    if (
+      !nodeVersion.startsWith('v14.') &&
+      !nodeVersion.startsWith('v16.') &&
+      !nodeVersion.startsWith('v18.') &&
+      !nodeVersion.startsWith('v20.') &&
+      !nodeVersion.startsWith('v22.') &&
+      !nodeVersion.startsWith('v24.')
+    ) {
+      throw new Error(
+        `Unsupported Node.js version: ${nodeVersion}. Please use Node.js 14, 16, 18, 20, 22, or 24.`
+      );
     }
 
     // Check if we're in the right directory
     if (!fs.existsSync('package.json')) {
-      throw new Error('package.json not found. Please run this script from the project root directory.');
+      throw new Error(
+        'package.json not found. Please run this script from the project root directory.'
+      );
     }
 
     // Check if merchant_bill_pay.js exists
     if (!fs.existsSync('earnings_dashboard/merchant_bill_pay.js')) {
-      throw new Error('merchant_bill_pay.js not found. Please ensure the merchant bill pay system is properly installed.');
+      throw new Error(
+        'merchant_bill_pay.js not found. Please ensure the merchant bill pay system is properly installed.'
+      );
     }
 
     this.log('System environment check passed', 'success');
@@ -105,16 +114,23 @@ class ProductionDeployer {
 
       // Validate critical dependencies
       const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-      const requiredDeps = ['express', 'stripe', 'nodemailer', 'twilio', 'dotenv'];
+      const requiredDeps = [
+        'express',
+        'stripe',
+        'nodemailer',
+        'twilio',
+        'dotenv',
+      ];
 
       for (const dep of requiredDeps) {
         if (!packageJson.dependencies[dep]) {
-          throw new Error(`Required dependency '${dep}' not found in package.json`);
+          throw new Error(
+            `Required dependency '${dep}' not found in package.json`
+          );
         }
       }
 
       this.log('Dependencies validation passed', 'success');
-
     } catch (error) {
       throw new Error(`Dependency validation failed: ${error.message}`);
     }
@@ -143,7 +159,10 @@ class ProductionDeployer {
       }
 
       fs.writeFileSync('.env', envContent);
-      this.log('.env file created. Please configure your credentials.', 'warning');
+      this.log(
+        '.env file created. Please configure your credentials.',
+        'warning'
+      );
     }
 
     // Create logs directory
@@ -163,11 +182,14 @@ class ProductionDeployer {
       const dotenv = await import('dotenv');
       dotenv.config();
     } catch (error) {
-      this.log(`dotenv not available, skipping environment loading: ${error.message}`, 'warning');
+      this.log(
+        `dotenv not available, skipping environment loading: ${error.message}`,
+        'warning'
+      );
     }
 
-const missingRequired = [];
-const missingOptional = [];
+    const missingRequired = [];
+    const missingOptional = [];
 
     // Check required environment variables
     for (const varName of CONFIG.requiredEnvVars) {
@@ -184,13 +206,22 @@ const missingOptional = [];
     }
 
     if (missingRequired.length > 0) {
-      this.log(`Missing required environment variables: ${missingRequired.join(', ')}`, 'error');
+      this.log(
+        `Missing required environment variables: ${missingRequired.join(', ')}`,
+        'error'
+      );
       this.log('Please configure these variables in your .env file', 'warning');
-      this.log('You can use the setup_credentials.js script to configure them interactively', 'info');
+      this.log(
+        'You can use the setup_credentials.js script to configure them interactively',
+        'info'
+      );
     }
 
     if (missingOptional.length > 0) {
-      this.log(`Missing optional environment variables (using defaults): ${missingOptional.join(', ')}`, 'warning');
+      this.log(
+        `Missing optional environment variables (using defaults): ${missingOptional.join(', ')}`,
+        'warning'
+      );
     }
 
     if (missingRequired.length === 0) {
@@ -205,7 +236,8 @@ const missingOptional = [];
 
     try {
       // Test module imports
-      const { default: merchantBillPay } = await import('./earnings_dashboard/merchant_bill_pay.js');
+      const { default: merchantBillPay } =
+        await import('./earnings_dashboard/merchant_bill_pay.js');
       this.log('Merchant bill pay module loaded successfully');
 
       // Check if all required functions exist
@@ -216,7 +248,7 @@ const missingOptional = [];
         'sendMerchantPaymentFailureNotification',
         'sendSMSNotification',
         'getMerchantEmail',
-        'getMerchantPhone'
+        'getMerchantPhone',
       ];
 
       const missingFunctions = [];
@@ -227,7 +259,9 @@ const missingOptional = [];
       }
 
       if (missingFunctions.length > 0) {
-        throw new Error(`Missing required functions: ${missingFunctions.join(', ')}`);
+        throw new Error(
+          `Missing required functions: ${missingFunctions.join(', ')}`
+        );
       }
 
       this.log('All required functions are available', 'success');
@@ -239,7 +273,6 @@ const missingOptional = [];
       } else {
         this.log('Merchant data not found - using mock data', 'warning');
       }
-
     } catch (error) {
       throw new Error(`Pre-flight check failed: ${error.message}`);
     }
@@ -292,7 +325,9 @@ const missingOptional = [];
           } catch {
             // Process may not exist, continue
           }
-          execSync('pm2 start server-enhanced.js --name oscar-broome-revenue', { stdio: 'inherit' });
+          execSync('pm2 start server-enhanced.js --name oscar-broome-revenue', {
+            stdio: 'inherit',
+          });
           execSync('pm2 save', { stdio: 'pipe' });
 
           this.log('Server started with PM2 process manager', 'success');
@@ -301,7 +336,7 @@ const missingOptional = [];
         } else {
           const serverProcess = spawn('node', ['server-enhanced.js'], {
             detached: true,
-            stdio: 'ignore'
+            stdio: 'ignore',
           });
 
           serverProcess.unref();
@@ -311,10 +346,12 @@ const missingOptional = [];
 
         // Wait a moment for server to start
         setTimeout(() => {
-          this.log(`🚀 Server should be running at http://localhost:${port}`, 'success');
+          this.log(
+            `🚀 Server should be running at http://localhost:${port}`,
+            'success'
+          );
           resolve();
         }, 2000);
-
       });
     });
   }

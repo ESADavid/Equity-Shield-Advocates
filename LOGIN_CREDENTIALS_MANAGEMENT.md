@@ -85,7 +85,7 @@ const adminUser = {
   role: 'admin',
   mfaEnabled: true,
   accountStatus: 'active',
-  securityClearance: 'level_5'
+  securityClearance: 'level_5',
 };
 ```
 
@@ -107,7 +107,7 @@ const adminUser = {
 await userService.activateUser(userId, {
   activatedBy: adminUserId,
   activationReason: 'Administrative approval',
-  securityClearance: 'approved'
+  securityClearance: 'approved',
 });
 ```
 
@@ -240,14 +240,23 @@ function validatePasswordStrength(password) {
   const hasUppercase = /[A-Z]/.test(password);
   const hasLowercase = /[a-z]/.test(password);
   const hasNumbers = /\d/.test(password);
-  const hasSpecialChars = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+  const hasSpecialChars = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
+    password
+  );
 
   if (password.length < minLength) {
-    return { valid: false, reason: 'Password must be at least 12 characters long' };
+    return {
+      valid: false,
+      reason: 'Password must be at least 12 characters long',
+    };
   }
 
   if (!hasUppercase || !hasLowercase || !hasNumbers || !hasSpecialChars) {
-    return { valid: false, reason: 'Password must contain uppercase, lowercase, numbers, and special characters' };
+    return {
+      valid: false,
+      reason:
+        'Password must contain uppercase, lowercase, numbers, and special characters',
+    };
   }
 
   return { valid: true };
@@ -371,20 +380,31 @@ function validatePasswordStrength(password) {
 ```javascript
 const rolePermissions = {
   admin: [
-    'user.create', 'user.delete', 'user.update',
-    'system.config', 'system.backup', 'system.restore',
-    'financial.view', 'financial.modify', 'financial.approve',
-    'override.emergency', 'override.admin'
+    'user.create',
+    'user.delete',
+    'user.update',
+    'system.config',
+    'system.backup',
+    'system.restore',
+    'financial.view',
+    'financial.modify',
+    'financial.approve',
+    'override.emergency',
+    'override.admin',
   ],
   manager: [
-    'user.view', 'user.update.own',
-    'financial.view', 'financial.modify.own',
-    'report.generate'
+    'user.view',
+    'user.update.own',
+    'financial.view',
+    'financial.modify.own',
+    'report.generate',
   ],
   user: [
-    'user.view.self', 'user.update.self',
-    'financial.view.own', 'financial.modify.own'
-  ]
+    'user.view.self',
+    'user.update.self',
+    'financial.view.own',
+    'financial.modify.own',
+  ],
 };
 ```
 
@@ -398,7 +418,9 @@ const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
 
   if (!token) {
-    return res.status(401).json({ success: false, message: 'No token provided' });
+    return res
+      .status(401)
+      .json({ success: false, message: 'No token provided' });
   }
 
   try {
@@ -414,12 +436,14 @@ const authorize = (requiredPermissions) => {
   return (req, res, next) => {
     const userPermissions = getUserPermissions(req.user.role);
 
-    const hasPermission = requiredPermissions.every(permission =>
+    const hasPermission = requiredPermissions.every((permission) =>
       userPermissions.includes(permission)
     );
 
     if (!hasPermission) {
-      return res.status(403).json({ success: false, message: 'Insufficient permissions' });
+      return res
+        .status(403)
+        .json({ success: false, message: 'Insufficient permissions' });
     }
 
     next();
@@ -444,7 +468,7 @@ const logAuthEvent = (eventType) => {
       userAgent: req.get('User-Agent'),
       timestamp: new Date().toISOString(),
       endpoint: req.path,
-      method: req.method
+      method: req.method,
     };
 
     // Log to Winston
@@ -483,7 +507,7 @@ const recordFailedLogin = async (userId, reason) => {
         userId,
         attempts: user.loginAttempts,
         ipAddress: getClientIP(),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   }
@@ -502,7 +526,7 @@ const authRateLimit = rateLimit({
   message: {
     success: false,
     message: 'Too many authentication attempts, please try again later',
-    retryAfter: 900 // seconds
+    retryAfter: 900, // seconds
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -518,15 +542,15 @@ const authRateLimit = rateLimit({
       ipAddress: req.ip,
       endpoint: req.path,
       retryAfter,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     res.status(429).json({
       success: false,
       message: 'Too many requests, please try again later',
-      retryAfter
+      retryAfter,
     });
-  }
+  },
 });
 ```
 
@@ -565,14 +589,14 @@ const unlockAccount = async (userId, adminUserId, reason) => {
     userId,
     adminUserId,
     reason,
-    timestamp: user.unlockedAt
+    timestamp: user.unlockedAt,
   });
 
   // Send notification to user
   await emailService.sendAccountUnlockNotification(user.email, {
     unlockedBy: admin.username,
     reason,
-    timestamp: user.unlockedAt
+    timestamp: user.unlockedAt,
   });
 };
 ```
@@ -629,7 +653,7 @@ const performAuthAudit = async (timeRange) => {
     failedLoginAttempts: 0,
     successfulLogins: 0,
     passwordChanges: 0,
-    suspiciousActivities: []
+    suspiciousActivities: [],
   };
 
   // Analyze authentication logs
@@ -660,7 +684,7 @@ const performAuthAudit = async (timeRange) => {
   // Get user statistics
   const users = await getAllUsers();
   auditReport.totalUsers = users.length;
-  auditReport.activeUsers = users.filter(u => u.isActive).length;
+  auditReport.activeUsers = users.filter((u) => u.isActive).length;
 
   return auditReport;
 };

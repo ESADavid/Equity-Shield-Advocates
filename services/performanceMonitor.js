@@ -23,28 +23,28 @@ class PerformanceMonitor {
         completed: 0,
         failed: 0,
         averageResponseTime: 0,
-        responseTimes: []
+        responseTimes: [],
       },
       database: {
         connections: 0,
         queries: 0,
         slowQueries: 0,
-        connectionPool: {}
+        connectionPool: {},
       },
       cache: {
         hits: 0,
         misses: 0,
         hitRate: 0,
-        size: 0
+        size: 0,
       },
-      alerts: []
+      alerts: [],
     };
 
     this.alerts = options.alerts || {
       memoryUsage: 80, // percentage
       cpuUsage: 70, // percentage
       responseTime: 1000, // milliseconds
-      errorRate: 5 // percentage
+      errorRate: 5, // percentage
     };
 
     this.snapshots = [];
@@ -62,7 +62,7 @@ class PerformanceMonitor {
         this.metrics.gc.lastGC = {
           type: entry.kind,
           duration: entry.duration,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         };
       });
     });
@@ -119,7 +119,7 @@ class PerformanceMonitor {
       heapTotal: memUsage.heapTotal,
       heapUsed: memUsage.heapUsed,
       external: memUsage.external,
-      heapUsedPercentage: (memUsage.heapUsed / memUsage.heapTotal) * 100
+      heapUsedPercentage: (memUsage.heapUsed / memUsage.heapTotal) * 100,
     };
 
     // CPU usage
@@ -127,7 +127,7 @@ class PerformanceMonitor {
     this.metrics.cpu = {
       user: cpuUsage.user / 1000, // microseconds to milliseconds
       system: cpuUsage.system / 1000,
-      total: (cpuUsage.user + cpuUsage.system) / 1000
+      total: (cpuUsage.user + cpuUsage.system) / 1000,
     };
 
     // Event loop lag
@@ -143,7 +143,7 @@ class PerformanceMonitor {
         totalHeapSize: heapStats.total_heap_size,
         usedHeapSize: heapStats.used_heap_size,
         heapSizeLimit: heapStats.heap_size_limit,
-        totalAvailableSize: heapStats.total_available_size
+        totalAvailableSize: heapStats.total_available_size,
       };
     } catch (error) {
       // V8 stats might not be available
@@ -161,7 +161,7 @@ class PerformanceMonitor {
         message: `High memory usage: ${this.metrics.memory.heapUsedPercentage.toFixed(2)}%`,
         value: this.metrics.memory.heapUsedPercentage,
         threshold: this.alerts.memoryUsage,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -173,13 +173,15 @@ class PerformanceMonitor {
         message: `High average response time: ${this.metrics.requests.averageResponseTime.toFixed(2)}ms`,
         value: this.metrics.requests.averageResponseTime,
         threshold: this.alerts.responseTime,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
     // Error rate alert
-    const errorRate = this.metrics.requests.total > 0 ?
-      (this.metrics.requests.failed / this.metrics.requests.total) * 100 : 0;
+    const errorRate =
+      this.metrics.requests.total > 0
+        ? (this.metrics.requests.failed / this.metrics.requests.total) * 100
+        : 0;
 
     if (errorRate > this.alerts.errorRate) {
       alerts.push({
@@ -188,7 +190,7 @@ class PerformanceMonitor {
         message: `High error rate: ${errorRate.toFixed(2)}%`,
         value: errorRate,
         threshold: this.alerts.errorRate,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -210,7 +212,7 @@ class PerformanceMonitor {
       cpu: { ...this.metrics.cpu },
       requests: { ...this.metrics.requests },
       database: { ...this.metrics.database },
-      cache: { ...this.metrics.cache }
+      cache: { ...this.metrics.cache },
     };
 
     this.snapshots.push(snapshot);
@@ -258,7 +260,8 @@ class PerformanceMonitor {
     }
 
     const total = this.metrics.cache.hits + this.metrics.cache.misses;
-    this.metrics.cache.hitRate = total > 0 ? (this.metrics.cache.hits / total) * 100 : 0;
+    this.metrics.cache.hitRate =
+      total > 0 ? (this.metrics.cache.hits / total) * 100 : 0;
   }
 
   updateDatabaseConnections(active, pool = {}) {
@@ -279,7 +282,7 @@ class PerformanceMonitor {
   }
 
   getAlerts(since = 0) {
-    return this.metrics.alerts.filter(alert => alert.timestamp > since);
+    return this.metrics.alerts.filter((alert) => alert.timestamp > since);
   }
 
   generateReport() {
@@ -290,12 +293,14 @@ class PerformanceMonitor {
         totalRequests: this.metrics.requests.total,
         averageResponseTime: `${this.metrics.requests.averageResponseTime.toFixed(2)}ms`,
         memoryUsage: `${this.metrics.memory.heapUsedPercentage.toFixed(2)}%`,
-        errorRate: this.metrics.requests.total > 0 ?
-          `${((this.metrics.requests.failed / this.metrics.requests.total) * 100).toFixed(2)}%` : '0%',
-        cacheHitRate: `${this.metrics.cache.hitRate.toFixed(2)}%`
+        errorRate:
+          this.metrics.requests.total > 0
+            ? `${((this.metrics.requests.failed / this.metrics.requests.total) * 100).toFixed(2)}%`
+            : '0%',
+        cacheHitRate: `${this.metrics.cache.hitRate.toFixed(2)}%`,
       },
       alerts: this.metrics.alerts.slice(-10), // Last 10 alerts
-      recommendations: this.generateRecommendations()
+      recommendations: this.generateRecommendations(),
     };
 
     return report;
@@ -305,25 +310,36 @@ class PerformanceMonitor {
     const recommendations = [];
 
     if (this.metrics.memory.heapUsedPercentage > 75) {
-      recommendations.push('Consider increasing memory limits or optimizing memory usage');
+      recommendations.push(
+        'Consider increasing memory limits or optimizing memory usage'
+      );
     }
 
     if (this.metrics.requests.averageResponseTime > 500) {
-      recommendations.push('Consider optimizing slow endpoints or adding caching');
+      recommendations.push(
+        'Consider optimizing slow endpoints or adding caching'
+      );
     }
 
     if (this.metrics.cache.hitRate < 50) {
-      recommendations.push('Consider reviewing cache strategy to improve hit rate');
+      recommendations.push(
+        'Consider reviewing cache strategy to improve hit rate'
+      );
     }
 
-    const errorRate = this.metrics.requests.total > 0 ?
-      (this.metrics.requests.failed / this.metrics.requests.total) * 100 : 0;
+    const errorRate =
+      this.metrics.requests.total > 0
+        ? (this.metrics.requests.failed / this.metrics.requests.total) * 100
+        : 0;
 
     if (errorRate > 2) {
       recommendations.push('Investigate and fix high error rates');
     }
 
-    if (this.metrics.database.slowQueries > this.metrics.database.queries * 0.1) {
+    if (
+      this.metrics.database.slowQueries >
+      this.metrics.database.queries * 0.1
+    ) {
       recommendations.push('Optimize slow database queries');
     }
 

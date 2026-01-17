@@ -1,14 +1,14 @@
-import axios from "axios";
+import axios from 'axios';
 
-const baseURL = "http://localhost:3000/jpmorgan";
+const baseURL = 'http://localhost:3000/jpmorgan';
 
 async function testRevenueStatus() {
   try {
     const response = await axios.get(`${baseURL}/revenue-status`);
-    console.log("GET /revenue-status response:", response.data);
+    console.log('GET /revenue-status response:', response.data);
   } catch (error) {
     console.error(
-      "Error in GET /revenue-status:",
+      'Error in GET /revenue-status:',
       error.response ? error.response.data : error.message
     );
   }
@@ -17,10 +17,10 @@ async function testRevenueStatus() {
 async function testProcessRevenue() {
   try {
     const response = await axios.post(`${baseURL}/process-revenue`, {});
-    console.log("POST /process-revenue response:", response.data);
+    console.log('POST /process-revenue response:', response.data);
   } catch (error) {
     console.error(
-      "Error in POST /process-revenue:",
+      'Error in POST /process-revenue:',
       error.response ? error.response.data : error.message
     );
   }

@@ -18,8 +18,8 @@ dotenv.config();
 const TEST_CONFIG = {
   SERVER: {
     PORT: 3000,
-    HOST: 'http://localhost:3000'
-  }
+    HOST: 'http://localhost:3000',
+  },
 };
 
 // Check if credentials are configured
@@ -34,7 +34,7 @@ class TestSuite {
       passed: 0,
       failed: 0,
       skipped: 0,
-      tests: []
+      tests: [],
     };
   }
 
@@ -55,7 +55,12 @@ class TestSuite {
 
   addTest(name, result, message = '') {
     this.results.total++;
-    this.results.tests.push({ name, result, message, timestamp: new Date().toISOString() });
+    this.results.tests.push({
+      name,
+      result,
+      message,
+      timestamp: new Date().toISOString(),
+    });
 
     const logMessage = `${name}: ${result.toUpperCase()}`;
     let logType;
@@ -84,7 +89,10 @@ class TestSuite {
 
   generateReport() {
     const totalTests = this.results.total;
-    const successRate = totalTests > 0 ? (this.results.passed / totalTests * 100).toFixed(2) : 0;
+    const successRate =
+      totalTests > 0
+        ? ((this.results.passed / totalTests) * 100).toFixed(2)
+        : 0;
 
     const report = {
       summary: {
@@ -92,10 +100,10 @@ class TestSuite {
         passed: this.results.passed,
         failed: this.results.failed,
         skipped: this.results.skipped,
-        successRate
+        successRate,
       },
       tests: this.results.tests,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     console.log('\n' + '='.repeat(60));
@@ -108,7 +116,7 @@ class TestSuite {
     console.log(`📈 Success Rate: ${report.summary.successRate}%`);
     console.log('='.repeat(60));
 
-    const failedTests = this.results.tests.filter(t => t.result === 'failed');
+    const failedTests = this.results.tests.filter((t) => t.result === 'failed');
     if (failedTests.length > 0) {
       console.log('\n❌ FAILED TESTS:');
       for (const test of failedTests) {
@@ -135,7 +143,7 @@ class MerchantEndpointTests {
         amount: 1000, // $10.00 in cents
         currency: 'usd',
         merchantId: 'merchant_001',
-        description: 'Test merchant payment'
+        description: 'Test merchant payment',
       };
 
       const response = await axios.post(
@@ -144,15 +152,31 @@ class MerchantEndpointTests {
         { timeout: 15000 }
       );
 
-      if (response.status === 200 && response.data.success && response.data.clientSecret) {
-        this.testSuite.addTest('Create Merchant Payment Intent', 'passed', `Payment intent created: ${response.data.paymentIntent?.id} (Mock: ${isMockMode})`);
+      if (
+        response.status === 200 &&
+        response.data.success &&
+        response.data.clientSecret
+      ) {
+        this.testSuite.addTest(
+          'Create Merchant Payment Intent',
+          'passed',
+          `Payment intent created: ${response.data.paymentIntent?.id} (Mock: ${isMockMode})`
+        );
         return response.data.paymentIntent?.id;
       } else {
-        this.testSuite.addTest('Create Merchant Payment Intent', 'failed', `Unexpected response: ${JSON.stringify(response.data)}`);
+        this.testSuite.addTest(
+          'Create Merchant Payment Intent',
+          'failed',
+          `Unexpected response: ${JSON.stringify(response.data)}`
+        );
         return false;
       }
     } catch (error) {
-      this.testSuite.addTest('Create Merchant Payment Intent', 'failed', `Payment intent creation failed: ${error.message}`);
+      this.testSuite.addTest(
+        'Create Merchant Payment Intent',
+        'failed',
+        `Payment intent creation failed: ${error.message}`
+      );
       return false;
     }
   }
@@ -171,9 +195,9 @@ class MerchantEndpointTests {
             amount: 1000,
             metadata: { merchantId: 'merchant_001' },
             description: 'Test payment',
-            last_payment_error: null
-          }
-        }
+            last_payment_error: null,
+          },
+        },
       };
 
       const response = await axios.post(
@@ -181,21 +205,33 @@ class MerchantEndpointTests {
         webhookData,
         {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
-          timeout: 10000
+          timeout: 10000,
         }
       );
 
       if (response.status === 200 && response.data.received) {
-        this.testSuite.addTest('Merchant Webhook', 'passed', `Webhook processed successfully (Mock: ${isMockMode})`);
+        this.testSuite.addTest(
+          'Merchant Webhook',
+          'passed',
+          `Webhook processed successfully (Mock: ${isMockMode})`
+        );
         return true;
       } else {
-        this.testSuite.addTest('Merchant Webhook', 'failed', `Unexpected response: ${JSON.stringify(response.data)}`);
+        this.testSuite.addTest(
+          'Merchant Webhook',
+          'failed',
+          `Unexpected response: ${JSON.stringify(response.data)}`
+        );
         return false;
       }
     } catch (error) {
-      this.testSuite.addTest('Merchant Webhook', 'failed', `Webhook test failed: ${error.message}`);
+      this.testSuite.addTest(
+        'Merchant Webhook',
+        'failed',
+        `Webhook test failed: ${error.message}`
+      );
       return false;
     }
   }
@@ -206,25 +242,44 @@ class MerchantEndpointTests {
 
       // Test missing amount
       const testRequest = {
-        merchantId: 'merchant_001'
+        merchantId: 'merchant_001',
       };
 
       try {
-        await axios.post(`${this.baseURL}/api/merchant/create-merchant-payment-intent`, testRequest);
-        this.testSuite.addTest('Payment Intent Validation', 'failed', 'Should have rejected missing amount');
+        await axios.post(
+          `${this.baseURL}/api/merchant/create-merchant-payment-intent`,
+          testRequest
+        );
+        this.testSuite.addTest(
+          'Payment Intent Validation',
+          'failed',
+          'Should have rejected missing amount'
+        );
         return false;
       } catch (error) {
         const isBadRequest = error.response?.status === 400;
         if (isBadRequest) {
-          this.testSuite.addTest('Payment Intent Validation', 'passed', 'Properly validates required fields');
+          this.testSuite.addTest(
+            'Payment Intent Validation',
+            'passed',
+            'Properly validates required fields'
+          );
           return true;
         } else {
-          this.testSuite.addTest('Payment Intent Validation', 'failed', `Unexpected error: ${error.message}`);
+          this.testSuite.addTest(
+            'Payment Intent Validation',
+            'failed',
+            `Unexpected error: ${error.message}`
+          );
           return false;
         }
       }
     } catch (error) {
-      this.testSuite.addTest('Payment Intent Validation', 'failed', `Validation test failed: ${error.message}`);
+      this.testSuite.addTest(
+        'Payment Intent Validation',
+        'failed',
+        `Validation test failed: ${error.message}`
+      );
       return false;
     }
   }
@@ -235,17 +290,34 @@ class MerchantEndpointTests {
     // Check if server is running in mock mode by testing a health endpoint
     try {
       const healthResponse = await axios.get(`${this.baseURL}/health`);
-      const isServerHealthy = healthResponse.data && healthResponse.data.status === 'healthy';
+      const isServerHealthy =
+        healthResponse.data && healthResponse.data.status === 'healthy';
 
       if (isMockMode && isServerHealthy) {
-        this.testSuite.addTest('Environment Config', 'passed', 'Mock mode active - Stripe credentials not required');
+        this.testSuite.addTest(
+          'Environment Config',
+          'passed',
+          'Mock mode active - Stripe credentials not required'
+        );
       } else if (!isMockMode && isServerHealthy) {
-        this.testSuite.addTest('Environment Config', 'passed', 'Stripe credentials configured and server running in live mode');
+        this.testSuite.addTest(
+          'Environment Config',
+          'passed',
+          'Stripe credentials configured and server running in live mode'
+        );
       } else {
-        this.testSuite.addTest('Environment Config', 'failed', 'Environment configuration mismatch between client and server');
+        this.testSuite.addTest(
+          'Environment Config',
+          'failed',
+          'Environment configuration mismatch between client and server'
+        );
       }
     } catch (error) {
-      this.testSuite.addTest('Environment Config', 'failed', `Could not verify server health: ${error.message}`);
+      this.testSuite.addTest(
+        'Environment Config',
+        'failed',
+        `Could not verify server health: ${error.message}`
+      );
     }
 
     return true;
@@ -260,7 +332,9 @@ async function runComprehensiveMerchantTests() {
   console.log('🧪 Starting Comprehensive Merchant Bill Pay Integration Tests');
   console.log('='.repeat(70));
   console.log(`Server URL: ${TEST_CONFIG.SERVER.HOST}`);
-  console.log(`Stripe Credentials Configured: ${hasStripeCredentials ? '✅ Yes' : '⚠️ No'}`);
+  console.log(
+    `Stripe Credentials Configured: ${hasStripeCredentials ? '✅ Yes' : '⚠️ No'}`
+  );
   console.log('='.repeat(70));
 
   // Test environment configuration
@@ -279,7 +353,10 @@ async function runComprehensiveMerchantTests() {
   const report = testSuite.generateReport();
 
   // Save detailed report to file
-  const reportPath = path.join(process.cwd(), 'comprehensive_merchant_test_report.json');
+  const reportPath = path.join(
+    process.cwd(),
+    'comprehensive_merchant_test_report.json'
+  );
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
   console.log(`\n📄 Detailed report saved to: ${reportPath}`);
 

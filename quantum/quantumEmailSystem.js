@@ -14,7 +14,6 @@ const crypto = require('node:crypto');
 
 const { EventEmitter } = require('node:events');
 
-
 class QuantumEmailSystem extends EventEmitter {
   constructor() {
     super();
@@ -25,7 +24,7 @@ class QuantumEmailSystem extends EventEmitter {
     this.encryptionKeys = new Map();
     this.spamDetector = new QuantumSpamDetector();
     this.deliveryTracker = new QuantumDeliveryTracker();
-    
+
     this.initializeSystem();
   }
 
@@ -39,7 +38,7 @@ class QuantumEmailSystem extends EventEmitter {
       totalEmailsReceived: 0,
       encryptionLevel: 'quantum-safe',
       spamDetectionEnabled: true,
-      blockchainVerification: true
+      blockchainVerification: true,
     });
 
     // Load default email templates
@@ -47,7 +46,7 @@ class QuantumEmailSystem extends EventEmitter {
 
     this.emit('system-initialized', {
       systemId: this.getSystemId(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -71,21 +70,21 @@ Dear {{employeeName}},
 Your payroll for {{payPeriod}} has been processed successfully.
 
 Payment Details:
-- Gross Pay: ${{grossPay}}
-- Net Pay: ${{netPay}}
+- Gross Pay: ${{ grossPay }}
+- Net Pay: ${{ netPay }}
 - Payment Date: {{paymentDate}}
 - Payment Method: {{paymentMethod}}
 
 Tax Deductions:
-- Federal Tax: ${{federalTax}}
-- State Tax: ${{stateTax}}
-- Social Security: ${{socialSecurity}}
-- Medicare: ${{medicare}}
+- Federal Tax: ${{ federalTax }}
+- State Tax: ${{ stateTax }}
+- Social Security: ${{ socialSecurity }}
+- Medicare: ${{ medicare }}
 
 Benefits & Deductions:
-- Health Insurance: ${{healthInsurance}}
-- 401(k) Contribution: ${{retirement401k}}
-- Other Deductions: ${{otherDeductions}}
+- Health Insurance: ${{ healthInsurance }}
+- 401(k) Contribution: ${{ retirement401k }}
+- Other Deductions: ${{ otherDeductions }}
 
 Your payment will be deposited to your account ending in {{accountLast4}} on {{paymentDate}}.
 
@@ -100,7 +99,7 @@ Email ID: {{emailId}}
       `.trim(),
       category: 'payroll',
       priority: 'high',
-      encrypted: true
+      encrypted: true,
     });
 
     // Transaction notification template
@@ -115,7 +114,7 @@ Your {{transactionType}} transaction has been completed successfully.
 
 Transaction Details:
 - Transaction ID: {{transactionId}}
-- Amount: ${{amount}}
+- Amount: ${{ amount }}
 - Date: {{transactionDate}}
 - Status: {{status}}
 - Confirmation: {{confirmationNumber}}
@@ -133,7 +132,7 @@ Email ID: {{emailId}}
       `.trim(),
       category: 'transaction',
       priority: 'high',
-      encrypted: true
+      encrypted: true,
     });
 
     // System alert template
@@ -159,7 +158,7 @@ Email ID: {{emailId}}
       `.trim(),
       category: 'alert',
       priority: 'critical',
-      encrypted: true
+      encrypted: true,
     });
 
     // Welcome email template
@@ -196,7 +195,7 @@ Email ID: {{emailId}}
       `.trim(),
       category: 'onboarding',
       priority: 'high',
-      encrypted: true
+      encrypted: true,
     });
   }
 
@@ -204,13 +203,13 @@ Email ID: {{emailId}}
     this.emailTemplates.set(templateId, {
       templateId,
       ...template,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     });
   }
 
   async sendEmail(emailData) {
     const emailId = this.generateEmailId();
-    
+
     // Validate email data
     this.validateEmailData(emailData);
 
@@ -244,7 +243,7 @@ Email ID: {{emailId}}
       deliveredAt: null,
       readAt: null,
       quantumHash: this.generateQuantumHash(emailId, encryptedContent),
-      blockchainVerified: false
+      blockchainVerified: false,
     };
 
     // Add to queue
@@ -278,8 +277,8 @@ Email ID: {{emailId}}
       metadata: {
         templateId,
         templateCategory: template.category,
-        ...recipientData.metadata
-      }
+        ...recipientData.metadata,
+      },
     };
 
     return await this.sendEmail(emailData);
@@ -303,7 +302,7 @@ Email ID: {{emailId}}
     try {
       // Update status
       email.status = 'processing';
-      
+
       // Simulate email sending (in production, integrate with actual email service)
       await this.simulateEmailDelivery(email);
 
@@ -341,14 +340,14 @@ Email ID: {{emailId}}
 
   async simulateEmailDelivery(email) {
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     // In production, integrate with:
     // - SendGrid
     // - AWS SES
     // - Microsoft Graph API
     // - Custom SMTP server
-    
+
     return true;
   }
 
@@ -380,13 +379,13 @@ Email ID: {{emailId}}
     const content = JSON.stringify({
       subject: emailData.subject,
       body: emailData.body,
-      metadata: emailData.metadata
+      metadata: emailData.metadata,
     });
 
     const encryptionKey = crypto.randomBytes(32);
     const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipheriv('aes-256-gcm', encryptionKey, iv);
-    
+
     let encrypted = cipher.update(content, 'utf8', 'hex');
     encrypted += cipher.final('hex');
     const authTag = cipher.getAuthTag();
@@ -396,13 +395,13 @@ Email ID: {{emailId}}
     this.encryptionKeys.set(emailId, {
       key: encryptionKey.toString('hex'),
       iv: iv.toString('hex'),
-      authTag: authTag.toString('hex')
+      authTag: authTag.toString('hex'),
     });
 
     return {
       encrypted,
       algorithm: 'aes-256-gcm',
-      keyId: emailId
+      keyId: emailId,
     };
   }
 
@@ -417,12 +416,12 @@ Email ID: {{emailId}}
       Buffer.from(keyData.key, 'hex'),
       Buffer.from(keyData.iv, 'hex')
     );
-    
+
     decipher.setAuthTag(Buffer.from(keyData.authTag, 'hex'));
-    
+
     let decrypted = decipher.update(encryptedContent.encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return JSON.parse(decrypted);
   }
 
@@ -480,7 +479,7 @@ Email ID: {{emailId}}
       queuedEmails: this.emailQueue.size,
       sentEmails: this.sentEmails.size,
       templates: this.emailTemplates.size,
-      metrics: this.quantumEngine.getRealTimeMetrics()
+      metrics: this.quantumEngine.getRealTimeMetrics(),
     };
   }
 
@@ -496,18 +495,24 @@ Email ID: {{emailId}}
       stateTax: payrollData.taxes.state.toLocaleString(),
       socialSecurity: payrollData.taxes.socialSecurity.toLocaleString(),
       medicare: payrollData.taxes.medicare.toLocaleString(),
-      healthInsurance: payrollData.benefits.healthInsurance?.toLocaleString() || '0',
-      retirement401k: payrollData.benefits.retirement401k?.toLocaleString() || '0',
+      healthInsurance:
+        payrollData.benefits.healthInsurance?.toLocaleString() || '0',
+      retirement401k:
+        payrollData.benefits.retirement401k?.toLocaleString() || '0',
       otherDeductions: payrollData.deductions.total.toLocaleString(),
       accountLast4: employee.bankAccount?.slice(-4) || 'XXXX',
       companyName: 'JPMorgan-OwlBan Group',
-      emailId: this.generateEmailId()
+      emailId: this.generateEmailId(),
     };
 
-    return await this.sendTemplateEmail('payroll_notification', {
-      to: employee.email,
-      from: 'payroll@jpmorgan-owlban.com'
-    }, variables);
+    return await this.sendTemplateEmail(
+      'payroll_notification',
+      {
+        to: employee.email,
+        from: 'payroll@jpmorgan-owlban.com',
+      },
+      variables
+    );
   }
 
   async sendTransactionNotification(recipient, transactionData) {
@@ -522,13 +527,17 @@ Email ID: {{emailId}}
       additionalDetails: transactionData.details || '',
       blockchainId: transactionData.blockchainId || 'N/A',
       companyName: 'JPMorgan-OwlBan Group',
-      emailId: this.generateEmailId()
+      emailId: this.generateEmailId(),
     };
 
-    return await this.sendTemplateEmail('transaction_notification', {
-      to: recipient.email,
-      from: 'transactions@jpmorgan-owlban.com'
-    }, variables);
+    return await this.sendTemplateEmail(
+      'transaction_notification',
+      {
+        to: recipient.email,
+        from: 'transactions@jpmorgan-owlban.com',
+      },
+      variables
+    );
   }
 
   async sendWelcomeEmail(employee) {
@@ -540,13 +549,17 @@ Email ID: {{emailId}}
       department: employee.department,
       position: employee.position,
       startDate: employee.startDate,
-      emailId: this.generateEmailId()
+      emailId: this.generateEmailId(),
     };
 
-    return await this.sendTemplateEmail('welcome_email', {
-      to: employee.email,
-      from: 'hr@jpmorgan-owlban.com'
-    }, variables);
+    return await this.sendTemplateEmail(
+      'welcome_email',
+      {
+        to: employee.email,
+        from: 'hr@jpmorgan-owlban.com',
+      },
+      variables
+    );
   }
 
   async sendSystemAlert(recipients, alertData) {
@@ -558,15 +571,19 @@ Email ID: {{emailId}}
       actionRequired: alertData.actionRequired || 'None',
       systemStatus: alertData.systemStatus || 'Operational',
       alertId: crypto.randomBytes(8).toString('hex').toUpperCase(),
-      emailId: this.generateEmailId()
+      emailId: this.generateEmailId(),
     };
 
     const emails = [];
     for (const recipient of recipients) {
-      const email = await this.sendTemplateEmail('system_alert', {
-        to: recipient,
-        from: 'alerts@jpmorgan-owlban.com'
-      }, variables);
+      const email = await this.sendTemplateEmail(
+        'system_alert',
+        {
+          to: recipient,
+          from: 'alerts@jpmorgan-owlban.com',
+        },
+        variables
+      );
       emails.push(email);
     }
 
@@ -580,7 +597,13 @@ class QuantumSpamDetector {
     let spamScore = 0;
 
     // Check for spam keywords
-    const spamKeywords = ['viagra', 'lottery', 'winner', 'click here', 'act now'];
+    const spamKeywords = [
+      'viagra',
+      'lottery',
+      'winner',
+      'click here',
+      'act now',
+    ];
     const bodyLower = emailData.body.toLowerCase();
     for (const keyword of spamKeywords) {
       if (bodyLower.includes(keyword)) {
@@ -589,7 +612,8 @@ class QuantumSpamDetector {
     }
 
     // Check for excessive caps
-    const capsRatio = (emailData.body.match(/[A-Z]/g) || []).length / emailData.body.length;
+    const capsRatio =
+      (emailData.body.match(/[A-Z]/g) || []).length / emailData.body.length;
     if (capsRatio > 0.5) {
       spamScore += 0.3;
     }
@@ -616,7 +640,7 @@ class QuantumDeliveryTracker {
       sentAt: email.sentAt,
       status: 'delivered',
       deliveryTime: Date.now(),
-      attempts: 1
+      attempts: 1,
     });
   }
 

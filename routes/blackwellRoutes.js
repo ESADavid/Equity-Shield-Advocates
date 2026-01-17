@@ -15,7 +15,7 @@ router.use((req, res, next) => {
   if (!hasAccess) {
     return res.status(403).json({
       success: false,
-      error: 'Blackwell GPU access denied'
+      error: 'Blackwell GPU access denied',
     });
   }
   next();
@@ -29,13 +29,13 @@ router.post('/initialize', async (req, res) => {
       success: result.success,
       gpuCount: result.gpuCount,
       capabilities: blackwellService.blackwellCapabilities,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Blackwell initialization failed',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -48,17 +48,21 @@ router.post('/inference', async (req, res) => {
     if (!model || !input) {
       return res.status(400).json({
         success: false,
-        error: 'Model and input are required'
+        error: 'Model and input are required',
       });
     }
 
-    const result = await blackwellService.runBlackwellInference(model, input, options);
+    const result = await blackwellService.runBlackwellInference(
+      model,
+      input,
+      options
+    );
     res.json(result);
   } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Blackwell inference failed',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -71,17 +75,21 @@ router.post('/memory/allocate', async (req, res) => {
     if (gpuId === undefined || !size) {
       return res.status(400).json({
         success: false,
-        error: 'GPU ID and size are required'
+        error: 'GPU ID and size are required',
       });
     }
 
-    const result = await blackwellService.allocateBlackwellMemory(gpuId, size, quantumShared);
+    const result = await blackwellService.allocateBlackwellMemory(
+      gpuId,
+      size,
+      quantumShared
+    );
     res.json(result);
   } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Memory allocation failed',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -94,17 +102,21 @@ router.post('/memory/free', async (req, res) => {
     if (gpuId === undefined || !allocationId || !size) {
       return res.status(400).json({
         success: false,
-        error: 'GPU ID, allocation ID, and size are required'
+        error: 'GPU ID, allocation ID, and size are required',
       });
     }
 
-    const result = await blackwellService.freeBlackwellMemory(gpuId, allocationId, size);
+    const result = await blackwellService.freeBlackwellMemory(
+      gpuId,
+      allocationId,
+      size
+    );
     res.json(result);
   } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Memory deallocation failed',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -117,21 +129,24 @@ router.post('/quantum-hybrid', async (req, res) => {
     if (!quantumCircuit || !classicalData) {
       return res.status(400).json({
         success: false,
-        error: 'Quantum circuit and classical data are required'
+        error: 'Quantum circuit and classical data are required',
       });
     }
 
-    const result = await blackwellService.runQuantumBlackwellHybrid(quantumCircuit, classicalData);
+    const result = await blackwellService.runQuantumBlackwellHybrid(
+      quantumCircuit,
+      classicalData
+    );
     res.json({
       success: true,
       result,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Quantum-Blackwell hybrid computation failed',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -143,13 +158,13 @@ router.get('/metrics', (req, res) => {
     res.json({
       success: true,
       metrics,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Failed to retrieve Blackwell metrics',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -163,7 +178,7 @@ router.post('/optimize', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Blackwell optimization failed',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -177,18 +192,21 @@ router.post('/billing/:kernelId', async (req, res) => {
     if (!hoursUsed || !memoryUsageGB || !operationsPerformed) {
       return res.status(400).json({
         success: false,
-        error: 'Usage metrics are required'
+        error: 'Usage metrics are required',
       });
     }
 
     const usageMetrics = { hoursUsed, memoryUsageGB, operationsPerformed };
-    const result = await blackwellService.billBlackwellUsage(kernelId, usageMetrics);
+    const result = await blackwellService.billBlackwellUsage(
+      kernelId,
+      usageMetrics
+    );
     res.json(result);
   } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Blackwell billing failed',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -200,7 +218,7 @@ router.get('/capabilities', (req, res) => {
     capabilities: blackwellService.blackwellCapabilities,
     gpuDevices: blackwellService.gpuDevices.length,
     quantumHybridMode: blackwellService.quantumHybridMode,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -212,7 +230,7 @@ router.get('/health', (req, res) => {
     gpuCount: blackwellService.gpuDevices.length,
     activeKernels: blackwellService.activeKernels.size,
     quantumMode: blackwellService.quantumHybridMode,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   res.json(health);

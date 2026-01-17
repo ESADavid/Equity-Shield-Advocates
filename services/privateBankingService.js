@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import logger from '../utils/loggerWrapper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,56 +35,59 @@ class PrivateBankingService {
         name: 'Primary Checking Account',
         type: 'checking',
         currency: 'USD',
-        balance: 2500000.00,
-        availableBalance: 2400000.00,
+        balance: 2500000.0,
+        availableBalance: 2400000.0,
         accountNumber: '****1234',
         routingNumber: '021000021', // JPMorgan routing
         status: 'active',
-        minimumBalance: 1000.00,
+        minimumBalance: 1000.0,
         interestRate: 0.001,
-        lastTransaction: new Date(Date.now() - 86400000).toISOString()
+        lastTransaction: new Date(Date.now() - 86400000).toISOString(),
       },
       {
         id: 'investment-account',
         name: 'Investment Portfolio',
         type: 'investment',
         currency: 'USD',
-        balance: 15000000.00,
-        availableBalance: 14800000.00,
+        balance: 15000000.0,
+        availableBalance: 14800000.0,
         accountNumber: '****5678',
         routingNumber: '021000021',
         status: 'active',
         minimumBalance: 0,
         interestRate: 0.045,
-        lastTransaction: new Date(Date.now() - 43200000).toISOString()
+        lastTransaction: new Date(Date.now() - 43200000).toISOString(),
       },
       {
         id: 'private-reserve',
         name: 'Private Banking Reserve',
         type: 'savings',
         currency: 'USD',
-        balance: 50000000.00,
-        availableBalance: 49500000.00,
+        balance: 50000000.0,
+        availableBalance: 49500000.0,
         accountNumber: '****9012',
         routingNumber: '021000021',
         status: 'active',
-        minimumBalance: 50000.00,
+        minimumBalance: 50000.0,
         interestRate: 0.025,
-        lastTransaction: new Date(Date.now() - 21600000).toISOString()
-      }
+        lastTransaction: new Date(Date.now() - 21600000).toISOString(),
+      },
     ];
 
-    const accountsToInitialize = accountData.length > 0 ? accountData : defaultAccounts;
+    const accountsToInitialize =
+      accountData.length > 0 ? accountData : defaultAccounts;
 
-    accountsToInitialize.forEach(account => {
+    accountsToInitialize.forEach((account) => {
       this.accounts.set(account.id, {
         ...account,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
     });
 
-    console.log(`Initialized ${accountsToInitialize.length} private banking accounts`);
+    logger.info(
+      `Initialized ${accountsToInitialize.length} private banking accounts`
+    );
   }
 
   /**
@@ -97,101 +101,101 @@ class PrivateBankingService {
         id: 'stocks-equities',
         name: 'Stocks & Equities',
         type: 'equity',
-        value: 25000000.00,
+        value: 25000000.0,
         currency: 'USD',
         allocation: 0.35,
         performance: {
           daily: 0.012,
           monthly: 0.045,
-          yearly: 0.128
+          yearly: 0.128,
         },
         holdings: [
           { symbol: 'AAPL', shares: 50000, value: 7500000 },
           { symbol: 'MSFT', shares: 30000, value: 6000000 },
-          { symbol: 'GOOGL', shares: 15000, value: 3000000 }
-        ]
+          { symbol: 'GOOGL', shares: 15000, value: 3000000 },
+        ],
       },
       {
         id: 'fixed-income',
         name: 'Fixed Income Securities',
         type: 'bonds',
-        value: 20000000.00,
+        value: 20000000.0,
         currency: 'USD',
         allocation: 0.28,
         performance: {
           daily: 0.003,
           monthly: 0.012,
-          yearly: 0.042
+          yearly: 0.042,
         },
         holdings: [
           { name: 'US Treasury 10Y', value: 10000000, yield: 0.045 },
-          { name: 'Corporate Bonds AAA', value: 10000000, yield: 0.038 }
-        ]
+          { name: 'Corporate Bonds AAA', value: 10000000, yield: 0.038 },
+        ],
       },
       {
         id: 'alternative-investments',
         name: 'Alternative Investments',
         type: 'alternative',
-        value: 15000000.00,
+        value: 15000000.0,
         currency: 'USD',
         allocation: 0.21,
         performance: {
           daily: 0.008,
           monthly: 0.032,
-          yearly: 0.089
+          yearly: 0.089,
         },
         holdings: [
           { name: 'Private Equity Fund', value: 8000000 },
           { name: 'Hedge Fund', value: 5000000 },
-          { name: 'Real Estate', value: 2000000 }
-        ]
+          { name: 'Real Estate', value: 2000000 },
+        ],
       },
       {
         id: 'cash-reserves',
         name: 'Cash & Cash Equivalents',
         type: 'cash',
-        value: 10000000.00,
+        value: 10000000.0,
         currency: 'USD',
         allocation: 0.14,
         performance: {
           daily: 0.001,
           monthly: 0.003,
-          yearly: 0.025
-        }
+          yearly: 0.025,
+        },
       },
       {
         id: 'crypto-assets',
         name: 'Cryptocurrency Assets',
         type: 'crypto',
-        value: 2000000.00,
+        value: 2000000.0,
         currency: 'USD',
         allocation: 0.02,
         performance: {
           daily: -0.025,
           monthly: 0.156,
-          yearly: 0.234
+          yearly: 0.234,
         },
         holdings: [
           { symbol: 'BTC', amount: 25, value: 1250000 },
-          { symbol: 'ETH', amount: 500, value: 750000 }
-        ]
-      }
+          { symbol: 'ETH', amount: 500, value: 750000 },
+        ],
+      },
     ];
 
     const assetsToInitialize = assetData.length > 0 ? assetData : defaultAssets;
 
-    assetsToInitialize.forEach(asset => {
+    assetsToInitialize.forEach((asset) => {
       this.assets.set(asset.id, {
         ...asset,
         lastUpdated: new Date().toISOString(),
-        history: []
+        history: [],
       });
 
       // Initialize asset history
       this.assetHistory.set(asset.id, []);
     });
 
-    console.log(`Initialized ${assetsToInitialize.length} asset classes`);
+    logger.info(`Initialized ${assetsToInitialize.length} asset classes`);
   }
 
   /**
@@ -199,10 +203,13 @@ class PrivateBankingService {
    * @returns {Array} Array of account objects
    */
   getAccounts() {
-    return Array.from(this.accounts.values()).map(account => ({
+    return Array.from(this.accounts.values()).map((account) => ({
       ...account,
       balance: this.formatCurrency(account.balance, account.currency),
-      availableBalance: this.formatCurrency(account.availableBalance, account.currency)
+      availableBalance: this.formatCurrency(
+        account.availableBalance,
+        account.currency
+      ),
     }));
   }
 
@@ -218,7 +225,10 @@ class PrivateBankingService {
     return {
       ...account,
       balance: this.formatCurrency(account.balance, account.currency),
-      availableBalance: this.formatCurrency(account.availableBalance, account.currency)
+      availableBalance: this.formatCurrency(
+        account.availableBalance,
+        account.currency
+      ),
     };
   }
 
@@ -227,10 +237,10 @@ class PrivateBankingService {
    * @returns {Array} Array of asset objects
    */
   getAssets() {
-    return Array.from(this.assets.values()).map(asset => ({
+    return Array.from(this.assets.values()).map((asset) => ({
       ...asset,
       value: this.formatCurrency(asset.value, asset.currency),
-      allocation: (asset.allocation * 100).toFixed(2) + '%'
+      allocation: (asset.allocation * 100).toFixed(2) + '%',
     }));
   }
 
@@ -246,7 +256,7 @@ class PrivateBankingService {
     return {
       ...asset,
       value: this.formatCurrency(asset.value, asset.currency),
-      allocation: (asset.allocation * 100).toFixed(2) + '%'
+      allocation: (asset.allocation * 100).toFixed(2) + '%',
     };
   }
 
@@ -258,7 +268,12 @@ class PrivateBankingService {
    * @param {string} description - Transaction description
    * @returns {Object} Update result
    */
-  updateAccountBalance(accountId, newBalance, transactionType = 'adjustment', description = '') {
+  updateAccountBalance(
+    accountId,
+    newBalance,
+    transactionType = 'adjustment',
+    description = ''
+  ) {
     const account = this.accounts.get(accountId);
     if (!account) {
       return { success: false, error: 'Account not found' };
@@ -268,7 +283,10 @@ class PrivateBankingService {
     const difference = newBalance - oldBalance;
 
     account.balance = newBalance;
-    account.availableBalance = Math.max(0, newBalance - (account.minimumBalance || 0));
+    account.availableBalance = Math.max(
+      0,
+      newBalance - (account.minimumBalance || 0)
+    );
     account.updatedAt = new Date().toISOString();
     account.lastTransaction = new Date().toISOString();
 
@@ -280,7 +298,7 @@ class PrivateBankingService {
       amount: difference,
       balance: newBalance,
       description: description || `${transactionType} adjustment`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     this.transactions.push(transaction);
@@ -295,7 +313,7 @@ class PrivateBankingService {
       account: this.getAccount(accountId),
       transaction,
       oldBalance: this.formatCurrency(oldBalance, account.currency),
-      newBalance: this.formatCurrency(newBalance, account.currency)
+      newBalance: this.formatCurrency(newBalance, account.currency),
     };
   }
 
@@ -330,7 +348,7 @@ class PrivateBankingService {
       value: newValue,
       change: change,
       changePercent: changePercent,
-      reason: reason
+      reason: reason,
     };
 
     const history = this.assetHistory.get(assetId) || [];
@@ -349,7 +367,7 @@ class PrivateBankingService {
       oldValue: this.formatCurrency(oldValue, asset.currency),
       newValue: this.formatCurrency(newValue, asset.currency),
       change: this.formatCurrency(change, asset.currency),
-      changePercent: changePercent.toFixed(2) + '%'
+      changePercent: changePercent.toFixed(2) + '%',
     };
   }
 
@@ -361,17 +379,21 @@ class PrivateBankingService {
     const accounts = Array.from(this.accounts.values());
     const assets = Array.from(this.assets.values());
 
-    const totalAccountBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
+    const totalAccountBalance = accounts.reduce(
+      (sum, acc) => sum + acc.balance,
+      0
+    );
     const totalAssetValue = assets.reduce((sum, asset) => sum + asset.value, 0);
     const totalPortfolioValue = totalAccountBalance + totalAssetValue;
 
     // Calculate asset allocation
     const assetAllocation = {};
-    assets.forEach(asset => {
+    assets.forEach((asset) => {
       assetAllocation[asset.name] = {
         value: asset.value,
-        percentage: totalAssetValue > 0 ? (asset.value / totalAssetValue * 100) : 0,
-        performance: asset.performance
+        percentage:
+          totalAssetValue > 0 ? (asset.value / totalAssetValue) * 100 : 0,
+        performance: asset.performance,
       };
     });
 
@@ -388,9 +410,9 @@ class PrivateBankingService {
       performance: {
         totalReturn: (totalReturn * 100).toFixed(2) + '%',
         numberOfAccounts: accounts.length,
-        numberOfAssets: assets.length
+        numberOfAssets: assets.length,
       },
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
   }
 
@@ -404,16 +426,16 @@ class PrivateBankingService {
     let transactions = this.transactions;
 
     if (accountId) {
-      transactions = transactions.filter(tx => tx.accountId === accountId);
+      transactions = transactions.filter((tx) => tx.accountId === accountId);
     }
 
     return transactions
       .slice(-limit)
       .reverse()
-      .map(tx => ({
+      .map((tx) => ({
         ...tx,
         amount: this.formatCurrency(tx.amount, 'USD'),
-        balance: this.formatCurrency(tx.balance, 'USD')
+        balance: this.formatCurrency(tx.balance, 'USD'),
       }));
   }
 
@@ -429,11 +451,11 @@ class PrivateBankingService {
     cutoffDate.setDate(cutoffDate.getDate() - days);
 
     return history
-      .filter(entry => new Date(entry.timestamp) >= cutoffDate)
-      .map(entry => ({
+      .filter((entry) => new Date(entry.timestamp) >= cutoffDate)
+      .map((entry) => ({
         ...entry,
         value: this.formatCurrency(entry.value, 'USD'),
-        change: this.formatCurrency(entry.change, 'USD')
+        change: this.formatCurrency(entry.change, 'USD'),
       }));
   }
 
@@ -500,19 +522,27 @@ class PrivateBankingService {
     }
 
     // Debit from account
-    this.updateAccountBalance(accountId, fromAccount.balance - amount, 'transfer',
-      `Transfer to ${toAccount.name}: ${description || ''}`);
+    this.updateAccountBalance(
+      accountId,
+      fromAccount.balance - amount,
+      'transfer',
+      `Transfer to ${toAccount.name}: ${description || ''}`
+    );
 
     // Credit to account
-    this.updateAccountBalance(toAccountId, toAccount.balance + amount, 'transfer',
-      `Transfer from ${fromAccount.name}: ${description || ''}`);
+    this.updateAccountBalance(
+      toAccountId,
+      toAccount.balance + amount,
+      'transfer',
+      `Transfer from ${fromAccount.name}: ${description || ''}`
+    );
 
     return {
       success: true,
       message: `Transferred ${this.formatCurrency(amount, 'USD')} from ${fromAccount.name} to ${toAccount.name}`,
       fromAccount: accountId,
       toAccount: toAccountId,
-      amount: this.formatCurrency(amount, 'USD')
+      amount: this.formatCurrency(amount, 'USD'),
     };
   }
 
@@ -529,15 +559,19 @@ class PrivateBankingService {
     const account = this.accounts.get(accountId);
     const newBalance = account.balance + amount;
 
-    this.updateAccountBalance(accountId, newBalance, 'deposit',
-      description || 'Cash deposit');
+    this.updateAccountBalance(
+      accountId,
+      newBalance,
+      'deposit',
+      description || 'Cash deposit'
+    );
 
     return {
       success: true,
       message: `Deposited ${this.formatCurrency(amount, 'USD')} to ${account.name}`,
       account: accountId,
       amount: this.formatCurrency(amount, 'USD'),
-      newBalance: this.formatCurrency(newBalance, 'USD')
+      newBalance: this.formatCurrency(newBalance, 'USD'),
     };
   }
 
@@ -559,15 +593,19 @@ class PrivateBankingService {
 
     const newBalance = account.balance - amount;
 
-    this.updateAccountBalance(accountId, newBalance, 'withdrawal',
-      description || 'Cash withdrawal');
+    this.updateAccountBalance(
+      accountId,
+      newBalance,
+      'withdrawal',
+      description || 'Cash withdrawal'
+    );
 
     return {
       success: true,
       message: `Withdrew ${this.formatCurrency(amount, 'USD')} from ${account.name}`,
       account: accountId,
       amount: this.formatCurrency(amount, 'USD'),
-      newBalance: this.formatCurrency(newBalance, 'USD')
+      newBalance: this.formatCurrency(newBalance, 'USD'),
     };
   }
 
@@ -583,7 +621,7 @@ class PrivateBankingService {
       success: true,
       message: `Account ${account.name} has been frozen`,
       account: accountId,
-      status: 'frozen'
+      status: 'frozen',
     };
   }
 
@@ -599,7 +637,7 @@ class PrivateBankingService {
       success: true,
       message: `Account ${account.name} has been unfrozen`,
       account: accountId,
-      status: 'active'
+      status: 'active',
     };
   }
 
@@ -610,7 +648,10 @@ class PrivateBankingService {
     const account = this.accounts.get(accountId);
 
     if (account.balance > 0) {
-      return { success: false, error: 'Cannot close account with positive balance' };
+      return {
+        success: false,
+        error: 'Cannot close account with positive balance',
+      };
     }
 
     account.status = 'closed';
@@ -620,7 +661,7 @@ class PrivateBankingService {
       success: true,
       message: `Account ${account.name} has been closed`,
       account: accountId,
-      status: 'closed'
+      status: 'closed',
     };
   }
 
@@ -633,7 +674,7 @@ class PrivateBankingService {
   formatCurrency(value, currency = 'USD') {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: currency
+      currency: currency,
     }).format(value);
   }
 
@@ -647,9 +688,11 @@ class PrivateBankingService {
       accounts: this.accounts.size,
       assets: this.assets.size,
       transactions: this.transactions.length,
-      lastTransaction: this.transactions.length > 0 ?
-        this.transactions[this.transactions.length - 1].timestamp : null,
-      timestamp: new Date().toISOString()
+      lastTransaction:
+        this.transactions.length > 0
+          ? this.transactions[this.transactions.length - 1].timestamp
+          : null,
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -664,7 +707,7 @@ class PrivateBankingService {
       transactions: this.transactions,
       assetHistory: Object.fromEntries(this.assetHistory),
       portfolioSummary: this.getPortfolioSummary(),
-      exportTimestamp: new Date().toISOString()
+      exportTimestamp: new Date().toISOString(),
     };
   }
 }

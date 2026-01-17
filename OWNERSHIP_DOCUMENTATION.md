@@ -40,7 +40,7 @@ This document provides comprehensive ownership documentation for the Oscar Broom
 - **Account Holder**: Oscar Broome
 - **Bank**: JPMorgan Chase
 - **Account Type**: Business Checking
-- **Account Number**: ****-****-****-1234 (Last 4 digits: 1234)
+- **Account Number**: \***\*-\*\***-\*\*\*\*-1234 (Last 4 digits: 1234)
 - **Routing Number**: 021000021 (JPMorgan Chase)
 - **Purpose**: Primary revenue collection and operational expenses
 
@@ -49,7 +49,7 @@ This document provides comprehensive ownership documentation for the Oscar Broom
 - **Account Holder**: Oscar Broome
 - **Bank**: JPMorgan Chase
 - **Account Type**: Treasury Management
-- **Account Number**: ****-****-****-5678 (Last 4 digits: 5678)
+- **Account Number**: \***\*-\*\***-\*\*\*\*-5678 (Last 4 digits: 5678)
 - **Routing Number**: 021000021 (JPMorgan Chase)
 - **Purpose**: Cash management and investment operations
 
@@ -58,7 +58,7 @@ This document provides comprehensive ownership documentation for the Oscar Broom
 - **Account Holder**: Oscar Broome
 - **Bank**: JPMorgan Chase
 - **Account Type**: Business Checking
-- **Account Number**: ****-****-****-9012 (Last 4 digits: 9012)
+- **Account Number**: \***\*-\*\***-\*\*\*\*-9012 (Last 4 digits: 9012)
 - **Routing Number**: 021000021 (JPMorgan Chase)
 - **Purpose**: Payroll processing and employee payments
 
@@ -119,9 +119,11 @@ function validateRoutingNumber(routingNumber) {
 
   // ABA checksum validation
   const digits = routingNumber.split('').map(Number);
-  const checksum = (3 * (digits[0] + digits[3] + digits[6]) +
-                   7 * (digits[1] + digits[4] + digits[7]) +
-                   1 * (digits[2] + digits[5] + digits[8])) % 10;
+  const checksum =
+    (3 * (digits[0] + digits[3] + digits[6]) +
+      7 * (digits[1] + digits[4] + digits[7]) +
+      1 * (digits[2] + digits[5] + digits[8])) %
+    10;
 
   return checksum === 0;
 }

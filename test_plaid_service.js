@@ -1,26 +1,43 @@
 import plaidService from './services/plaidService.js';
 
 async function testPlaidService() {
-  console.log('🧪 Testing Plaid Service for Proof of Funds and Income Verification');
-  console.log('======================================================================');
+  console.log(
+    '🧪 Testing Plaid Service for Proof of Funds and Income Verification'
+  );
+  console.log(
+    '======================================================================'
+  );
 
   try {
     // Test 1: Create link token
     console.log('\n📋 Test 1: Creating link token...');
     try {
-      const linkToken = await plaidService.createLinkToken('test-user-123', ['transactions', 'income']);
+      const linkToken = await plaidService.createLinkToken('test-user-123', [
+        'transactions',
+        'income',
+      ]);
       console.log('✅ Link token created successfully');
-      console.log('   Link Token:', linkToken.link_token.substring(0, 20) + '...');
+      console.log(
+        '   Link Token:',
+        linkToken.link_token.substring(0, 20) + '...'
+      );
     } catch (error) {
-      console.log('❌ Link token creation failed (expected if no credentials):', error.message);
+      console.log(
+        '❌ Link token creation failed (expected if no credentials):',
+        error.message
+      );
     }
 
     // Test 2: Mock proof of funds verification
     console.log('\n💰 Test 2: Testing proof of funds verification (mock)...');
     try {
       // This would normally require a real access token
-      console.log('ℹ️  Proof of funds verification requires real Plaid credentials');
-      console.log('   In production, this would verify account balances against required amounts');
+      console.log(
+        'ℹ️  Proof of funds verification requires real Plaid credentials'
+      );
+      console.log(
+        '   In production, this would verify account balances against required amounts'
+      );
     } catch (error) {
       console.log('❌ Proof of funds test failed:', error.message);
     }
@@ -29,7 +46,9 @@ async function testPlaidService() {
     console.log('\n💼 Test 3: Testing income verification (mock)...');
     try {
       console.log('ℹ️  Income verification requires real Plaid credentials');
-      console.log('   In production, this would retrieve income data from connected accounts');
+      console.log(
+        '   In production, this would retrieve income data from connected accounts'
+      );
     } catch (error) {
       console.log('❌ Income verification test failed:', error.message);
     }
@@ -47,7 +66,9 @@ async function testPlaidService() {
     if (hasClientId && hasSecret) {
       console.log('✅ Plaid service is fully configured');
     } else {
-      console.log('⚠️  Plaid service is in mock mode - configure PLAID_CLIENT_ID and PLAID_SECRET for full functionality');
+      console.log(
+        '⚠️  Plaid service is in mock mode - configure PLAID_CLIENT_ID and PLAID_SECRET for full functionality'
+      );
     }
 
     console.log('\n📊 Test Results Summary:');
@@ -55,7 +76,9 @@ async function testPlaidService() {
     console.log('✅ Service initialization: PASSED');
     console.log('✅ Mock mode handling: PASSED');
     console.log('✅ Configuration validation: PASSED');
-    console.log('ℹ️  Full integration testing requires Plaid sandbox credentials');
+    console.log(
+      'ℹ️  Full integration testing requires Plaid sandbox credentials'
+    );
 
     console.log('\n🔗 Next Steps for Full Integration:');
     console.log('===================================');
@@ -66,7 +89,6 @@ async function testPlaidService() {
     console.log('   - PLAID_SECRET=your_sandbox_secret');
     console.log('   - PLAID_ENV=sandbox');
     console.log('4. Test with real bank account connections');
-
   } catch (error) {
     console.error('❌ Test suite failed:', error);
   }

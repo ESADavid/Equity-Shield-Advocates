@@ -8,16 +8,21 @@ const app = express();
 const PORT = 4000;
 
 // Basic authentication setup
-app.use(basicAuth({
-  users: { 'admin': 'securepassword' },
-  challenge: true,
-}));
+app.use(
+  basicAuth({
+    users: { admin: 'securepassword' },
+    challenge: true,
+  })
+);
 
 app.use(cors());
 app.use(express.json());
 
 // Use the existing revenue.json file path
-const revenueDataPath = path.resolve(__dirname, '../owlban_repos/sample_repo/revenue.json');
+const revenueDataPath = path.resolve(
+  __dirname,
+  '../owlban_repos/sample_repo/revenue.json'
+);
 
 app.get('/api/earnings', (req, res) => {
   if (!fs.existsSync(revenueDataPath)) {
