@@ -520,4 +520,218 @@ router.get('/transfer-sweeps', authenticateToken, async (req, res) => {
   }
 });
 
+// Create a transfer
+router.post('/transfers', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken, accountId, amount, description, achClass, type, network, idempotencyKey, metadata, originatorClientId, user } = req.body;
+
+    if (!accessToken || !accountId || !amount || !description) {
+      return res.status(400).json({
+        success: false,
+        message: 'Access token, account ID, amount, and description are required',
+      });
+    }
+
+    const transferData = {
+      accountId,
+      amount,
+      description,
+      achClass,
+      type,
+      network,
+      idempotencyKey,
+      metadata,
+      originatorClientId,
+      user,
+    };
+
+    const transfer = await plaidService.createTransfer(accessToken, transferData);
+
+    res.json({
+      success: true,
+      data: transfer,
+    });
+  } catch (error) {
+    console.error('Error creating transfer:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create transfer',
+      error: error.message,
+    });
+  }
+});
+
+// List transfers
+router.get('/transfers', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken, startDate, endDate, count, offset } = req.query;
+
+    if (!accessToken) {
+      return res.status(400).json({
+        success: false,
+        message: 'Access token is required',
+      });
+    }
+
+    const options = {
+      startDate,
+      endDate,
+      count: count ? parseInt(count) : 25,
+      offset: offset ? parseInt(offset) : 0,
+    };
+
+    const transfers = await plaidService.listTransfers(accessToken, options);
+
+    res.json({
+      success: true,
+      data: transfers,
+    });
+  } catch (error) {
+    console.error('Error listing transfers:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to list transfers',
+      error: error.message,
+    });
+  }
+});
+
+// Get transfer details
+router.get('/transfers/:transferId', authenticateToken, async (req, res) => {
+  try {
+    const { transferId } = req.params;
+
+    const transfer = await plaidService.getTransfer(transferId);
+
+    res.json({
+      success: true,
+      data: transfer,
+    });
+  } catch (error) {
+    console.error('Error getting transfer:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get transfer',
+      error: error.message,
+    });
+  }
+});
+
+// Cancel a transfer
+router.delete('/transfers/:transferId', authenticateToken, async (req, res) => {
+  try {
+    const { transferId } = req.params;
+
+    const result = await plaidService.cancelTransfer(transferId);
+
+    res.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.error('Error canceling transfer:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to cancel transfer',
+      error: error.message,
+    });
+  }
+});
+
+// Create transfer intent
+router.post('/transfer-intents', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken, accountId, amount, description, achClass, mode, network, idempotencyKey, metadata, user } = req.body;
+
+    if (!accessToken || !accountId || !amount || !description) {
+      return res.status(400).json({
+        success: false,
+        message: 'Access token, account ID, amount, and description are required',
+      });
+    }
+
+    const intentData = {
+      accountId,
+      amount,
+      description,
+      achClass,
+      mode,
+      network,
+      idempotencyKey,
+      metadata,
+      user,
+    };
+
+    const intent = await plaidService.createTransferIntent(accessToken, intentData);
+
+    res.json({
+      success: true,
+      data: intent,
+    });
+  } catch (error) {
+    console.error('Error creating transfer intent:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create transfer intent',
+      error: error.message,
+    });
+  }
+});
+
+// Get transfer intent
+router.get('/transfer-intents/:intentId', authenticateToken, async (req, res) => {
+  try {
+    const { intentId } = req.params;
+
+    const intent = await plaidService.getTransferIntent(intentId);
+
+    res.json({
+      success: true,
+      data: intent,
+    });
+  } catch (error) {
+    console.error('Error getting transfer intent:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get transfer intent',
+      error: error.message,
+    });
+  }
+});
+
+// List transfer intents
+router.get('/transfer-intents', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken, transferId, accountId, count, offset } = req.query;
+
+    if (!accessToken) {
+      return res.status(400).json({
+        success: false,
+        message: 'Access token is required',
+      });
+    }
+
+    const options = {
+      transferId,
+      accountId,
+      count: count ? parseInt(count) : 25,
+      offset: offset ? parseInt(offset) : 0,
+    };
+
+    const intents = await plaidService.listTransferIntents(accessToken, options);
+
+    res.json({
+      success: true,
+      data: intents,
+    });
+  } catch (error) {
+    console.error('Error listing transfer intents:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to list transfer intents',
+      error: error.message,
+    });
+  }
+});
+
 export default router;

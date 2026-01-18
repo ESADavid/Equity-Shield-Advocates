@@ -160,6 +160,160 @@ class PlaidService {
       throw error;
     }
   }
+
+  // Create a transfer
+  async createTransfer(accessToken, transferData) {
+    try {
+      const request = {
+        access_token: accessToken,
+        account_id: transferData.accountId,
+        amount: transferData.amount,
+        description: transferData.description,
+        ach_class: transferData.achClass || 'ppd', // ppd, ccd, tel
+        type: transferData.type || 'debit', // debit or credit
+        network: transferData.network || 'ach',
+        idempotency_key: transferData.idempotencyKey || crypto.randomUUID(),
+        metadata: transferData.metadata || {},
+      };
+
+      // Add optional fields
+      if (transferData.originatorClientId) {
+        request.originator_client_id = transferData.originatorClientId;
+      }
+
+      if (transferData.user) {
+        request.user = transferData.user;
+      }
+
+      const response = await plaidClient.transferCreate(request);
+      return response.data;
+    } catch (error) {
+      logger.error('Error creating transfer:', error);
+      throw error;
+    }
+  }
+
+  // List transfers
+  async listTransfers(accessToken, options = {}) {
+    try {
+      const request = {
+        access_token: accessToken,
+        start_date: options.startDate,
+        end_date: options.endDate,
+        count: options.count || 25,
+        offset: options.offset || 0,
+      };
+
+      // Remove undefined values
+      Object.keys(request).forEach(key => {
+        if (request[key] === undefined) {
+          delete request[key];
+        }
+      });
+
+      const response = await plaidClient.transferList(request);
+      return response.data;
+    } catch (error) {
+      logger.error('Error listing transfers:', error);
+      throw error;
+    }
+  }
+
+  // Get transfer details
+  async getTransfer(transferId) {
+    try {
+      const response = await plaidClient.transferGet({
+        transfer_id: transferId,
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('Error getting transfer:', error);
+      throw error;
+    }
+  }
+
+  // Cancel a transfer
+  async cancelTransfer(transferId) {
+    try {
+      const response = await plaidClient.transferCancel({
+        transfer_id: transferId,
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('Error canceling transfer:', error);
+      throw error;
+    }
+  }
+
+  // Create transfer intent (for authorization)
+  async createTransferIntent(accessToken, intentData) {
+    try {
+      const request = {
+        access_token: accessToken,
+        account_id: intentData.accountId,
+        amount: intentData.amount,
+        description: intentData.description,
+        ach_class: intentData.achClass || 'ppd',
+        mode: intentData.mode || 'payment', // payment or disbursement
+        network: intentData.network || 'ach',
+        idempotency_key: intentData.idempotencyKey || crypto.randomUUID(),
+        metadata: intentData.metadata || {},
+      };
+
+      // Add optional fields
+      if (intentData.user) {
+        request.user = intentData.user;
+      }
+
+      const response = await plaidClient.transferIntentCreate(request);
+      return response.data;
+    } catch (error) {
+      logger.error('Error creating transfer intent:', error);
+      throw error;
+    }
+  }
+
+  // Get transfer intent
+  async getTransferIntent(intentId) {
+    try {
+      const response = await plaidClient.transferIntentGet({
+        transfer_intent_id: intentId,
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('Error getting transfer intent:', error);
+      throw error;
+    }
+  }
+
+  // List transfer intents
+  async listTransferIntents(accessToken, options = {}) {
+    try {
+      const request = {
+        access_token: accessToken,
+        transfer_id: options.transferId,
+        account_id: options.accountId,
+        count: options.count || 25,
+        offset: options.offset || 0,
+      };
+
+      // Remove undefined values
+      Object.keys(request).forEach(key => {
+        if (request[key] === undefined) {
+          delete request[key];
+        }
+      });
+
+      const response = await plaidClient.transferIntentList(request);
+      return response.data;
+    } catch (error) {
+      logger.error('Error listing transfer intents:', error);
+      throw error;
+    }
+  }
 }
 
 const plaidService = new PlaidService();
