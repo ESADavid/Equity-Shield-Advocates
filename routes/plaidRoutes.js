@@ -369,76 +369,75 @@ router.post(
   }
 );
 
-export default router;
-  // Initiate SMS microdeposits for account verification
-  router.post('/microdeposits/initiate/:accessToken/:accountId', authenticateToken, async (req, res) => {
-    try {
-      const { accessToken, accountId } = req.params;
+// Initiate SMS microdeposits for account verification
+router.post('/microdeposits/initiate/:accessToken/:accountId', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken, accountId } = req.params;
 
-      const result = await plaidService.initiateMicrodeposits(accessToken, accountId);
+    const result = await plaidService.initiateMicrodeposits(accessToken, accountId);
 
-      res.json({
-        success: true,
-        data: result,
-      });
-    } catch (error) {
-      logger.error('Error initiating microdeposits:', error);
-      res.status(500).json({
+    res.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    logger.error('Error initiating microdeposits:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to initiate microdeposits',
+      error: error.message,
+    });
+  }
+});
+
+// Verify SMS microdeposits with deposit amounts
+router.post('/microdeposits/verify/:accessToken/:accountId', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken, accountId } = req.params;
+    const { amounts } = req.body;
+
+    if (!amounts || !Array.isArray(amounts)) {
+      return res.status(400).json({
         success: false,
-        message: 'Failed to initiate microdeposits',
-        error: error.message,
+        message: 'Amounts array is required',
       });
     }
-  });
 
-  // Verify SMS microdeposits with deposit amounts
-  router.post('/microdeposits/verify/:accessToken/:accountId', authenticateToken, async (req, res) => {
-    try {
-      const { accessToken, accountId } = req.params;
-      const { amounts } = req.body;
+    const result = await plaidService.verifyMicrodeposits(accessToken, accountId, amounts);
 
-      if (!amounts || !Array.isArray(amounts)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Amounts array is required',
-        });
-      }
+    res.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    logger.error('Error verifying microdeposits:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to verify microdeposits',
+      error: error.message,
+    });
+  }
+});
 
-      const result = await plaidService.verifyMicrodeposits(accessToken, accountId, amounts);
+// Get microdeposits verification status
+router.get('/microdeposits/status/:accessToken/:accountId', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken, accountId } = req.params;
 
-      res.json({
-        success: true,
-        data: result,
-      });
-    } catch (error) {
-      logger.error('Error verifying microdeposits:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Failed to verify microdeposits',
-        error: error.message,
-      });
-    }
-  });
+    const status = await plaidService.getMicrodepositsStatus(accessToken, accountId);
 
-  // Get microdeposits verification status
-  router.get('/microdeposits/status/:accessToken/:accountId', authenticateToken, async (req, res) => {
-    try {
-      const { accessToken, accountId } = req.params;
-
-      const status = await plaidService.getMicrodepositsStatus(accessToken, accountId);
-
-      res.json({
-        success: true,
-        data: status,
-      });
-    } catch (error) {
-      logger.error('Error getting microdeposits status:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Failed to get microdeposits status',
-        error: error.message,
-      });
-    }
-  });
+    res.json({
+      success: true,
+      data: status,
+    });
+  } catch (error) {
+    logger.error('Error getting microdeposits status:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get microdeposits status',
+      error: error.message,
+    });
+  }
+});
 
 export default router;
