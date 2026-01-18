@@ -88,4 +88,32 @@ router.post('/signal/decision/report', authenticateToken, async (req, res) => {
   }
 });
 
+// Plaid Signal - Create custom ruleset
+router.post('/signal/ruleset', authenticateToken, async (req, res) => {
+  try {
+    const { rulesetData } = req.body;
+
+    if (!rulesetData) {
+      return res.status(400).json({
+        success: false,
+        message: 'Ruleset data is required',
+      });
+    }
+
+    const result = await plaidSignalService.createRuleset(rulesetData);
+
+    res.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.error('Error creating ruleset:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create ruleset',
+      error: error.message,
+    });
+  }
+});
+
 export default router;

@@ -1,6 +1,7 @@
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
 import crypto from 'crypto';
 import logger from '../config/logger.js';
+import plaidSignalService from './plaidSignalService.js';
 
 // Plaid configuration
 const baseOptions = {};
@@ -161,9 +162,39 @@ class PlaidService {
     }
   }
 
-  // Create a transfer
+  // Create a transfer with real-time balance check via Signal
   async createTransfer(accessToken, transferData) {
     try {
+      // First, evaluate the transaction using Plaid Signal (default ruleset includes real-time balance check)
+      const signalEvaluation = await plaidSignalService.evaluateTransaction(accessToken, {
+        client_transaction_id: transferData.idempotencyKey || crypto.randomUUID(),
+        amount: transferData.amount,
+        merchant_name: transferData.description || 'Transfer',
+        iso_currency_code: 'USD',
+        transaction_type: 'debit',
+        transaction_initiation_date: new Date().toISOString(),
+        user: transferData.user || {},
+      });
+
+      // Check if any rules were triggered that would block the transfer
+      const triggeredRules = signalEvaluation.signals?.filter(signal => signal.triggered) || [];
+      const blockingRules = triggeredRules.filter(signal => signal.rule?.outcome === 'block' || signal.rule?.outcome === 'review');
+
+      if (blockingRules.length > 0) {
+        logger.warn('Transfer blocked by Plaid Signal rules:', {
+          transferData,
+          triggeredRules: blockingRules,
+        });
+        throw new Error(`Transfer blocked by fraud detection rules: ${blockingRules.map(r => r.rule?.name).join(', ')}`);
+      }
+
+      // Log successful signal evaluation
+      logger.info('Signal evaluation passed for transfer:', {
+        amount: transferData.amount,
+        triggeredRulesCount: triggeredRules.length,
+        scores: signalEvaluation.scores,
+      });
+
       const request = {
         access_token: accessToken,
         account_id: transferData.accountId,

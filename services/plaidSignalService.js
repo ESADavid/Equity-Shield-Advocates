@@ -90,6 +90,25 @@ class PlaidSignalService {
       throw error;
     }
   }
+
+  // Plaid Signal - Create custom ruleset
+  async createRuleset(rulesetData) {
+    try {
+      const request = {
+        ruleset: {
+          item_id: rulesetData.item_id,
+          name: rulesetData.name,
+          rules: rulesetData.rules || [],
+        },
+      };
+
+      const response = await plaidClient.signalRulesetCreate(request);
+      return response.data;
+    } catch (error) {
+      logger.error('Error creating custom ruleset with Signal:', error);
+      throw error;
+    }
+  }
 }
 
 const plaidSignalService = new PlaidSignalService();
