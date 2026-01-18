@@ -370,36 +370,75 @@ router.post(
 );
 
 export default router;
-/ /   G e t   b a n k   t r a n s f e r   e v e n t s  
- r o u t e r . g e t ( ' / t r a n s f e r - e v e n t s / : a c c e s s T o k e n ' ,   a u t h e n t i c a t e T o k e n ,   a s y n c   ( r e q ,   r e s )   = >   {  
-     t r y   {  
-         c o n s t   {   a c c e s s T o k e n   }   =   r e q . p a r a m s ;  
-         c o n s t   {   s t a r t D a t e ,   e n d D a t e ,   t r a n s f e r I d ,   a c c o u n t I d ,   t r a n s f e r T y p e ,   e v e n t T y p e s ,   c o u n t ,   o f f s e t   }   =   r e q . q u e r y ;  
-  
-         c o n s t   o p t i o n s   =   {  
-             s t a r t D a t e ,  
-             e n d D a t e ,  
-             t r a n s f e r I d ,  
-             a c c o u n t I d ,  
-             t r a n s f e r T y p e ,  
-             e v e n t T y p e s :   e v e n t T y p e s   ?   e v e n t T y p e s . s p l i t ( ' , ' )   :   u n d e f i n e d ,  
-             c o u n t :   c o u n t   ?   p a r s e I n t ( c o u n t )   :   u n d e f i n e d ,  
-             o f f s e t :   o f f s e t   ?   p a r s e I n t ( o f f s e t )   :   u n d e f i n e d ,  
-         } ;  
-  
-         c o n s t   t r a n s f e r E v e n t s   =   a w a i t   p l a i d S e r v i c e . g e t B a n k T r a n s f e r E v e n t s ( a c c e s s T o k e n ,   o p t i o n s ) ;  
-  
-         r e s . j s o n ( {  
-             s u c c e s s :   t r u e ,  
-             d a t a :   t r a n s f e r E v e n t s ,  
-         } ) ;  
-     }   c a t c h   ( e r r o r )   {  
-         l o g g e r . e r r o r ( ' E r r o r   g e t t i n g   b a n k   t r a n s f e r   e v e n t s : ' ,   e r r o r ) ;  
-         r e s . s t a t u s ( 5 0 0 ) . j s o n ( {  
-             s u c c e s s :   f a l s e ,  
-             m e s s a g e :   ' F a i l e d   t o   g e t   b a n k   t r a n s f e r   e v e n t s ' ,  
-             e r r o r :   e r r o r . m e s s a g e ,  
-         } ) ;  
-     }  
- } ) ;  
- 
+  // Initiate SMS microdeposits for account verification
+  router.post('/microdeposits/initiate/:accessToken/:accountId', authenticateToken, async (req, res) => {
+    try {
+      const { accessToken, accountId } = req.params;
+
+      const result = await plaidService.initiateMicrodeposits(accessToken, accountId);
+
+      res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      logger.error('Error initiating microdeposits:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to initiate microdeposits',
+        error: error.message,
+      });
+    }
+  });
+
+  // Verify SMS microdeposits with deposit amounts
+  router.post('/microdeposits/verify/:accessToken/:accountId', authenticateToken, async (req, res) => {
+    try {
+      const { accessToken, accountId } = req.params;
+      const { amounts } = req.body;
+
+      if (!amounts || !Array.isArray(amounts)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Amounts array is required',
+        });
+      }
+
+      const result = await plaidService.verifyMicrodeposits(accessToken, accountId, amounts);
+
+      res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      logger.error('Error verifying microdeposits:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to verify microdeposits',
+        error: error.message,
+      });
+    }
+  });
+
+  // Get microdeposits verification status
+  router.get('/microdeposits/status/:accessToken/:accountId', authenticateToken, async (req, res) => {
+    try {
+      const { accessToken, accountId } = req.params;
+
+      const status = await plaidService.getMicrodepositsStatus(accessToken, accountId);
+
+      res.json({
+        success: true,
+        data: status,
+      });
+    } catch (error) {
+      logger.error('Error getting microdeposits status:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get microdeposits status',
+        error: error.message,
+      });
+    }
+  });
+
+export default router;
