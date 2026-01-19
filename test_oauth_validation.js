@@ -1,10 +1,15 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 console.log('🧪 Validating OAuth Implementation Structure...\n');
 
 // Test 1: Check if services/plaidService.js has OAuth support
 console.log('Test 1: Checking plaidService.js for OAuth parameters...');
 try {
-  const fs = require('fs');
-  const path = require('path');
 
   const servicePath = path.join(__dirname, 'services', 'plaidService.js');
   const serviceContent = fs.readFileSync(servicePath, 'utf8');
@@ -27,8 +32,6 @@ try {
 // Test 2: Check if routes/plaidRoutes.js has OAuth support
 console.log('\nTest 2: Checking routes/plaidRoutes.js for OAuth parameters...');
 try {
-  const fs = require('fs');
-  const path = require('path');
 
   const routesPath = path.join(__dirname, 'routes', 'plaidRoutes.js');
   const routesContent = fs.readFileSync(routesPath, 'utf8');
@@ -51,8 +54,6 @@ try {
 // Test 3: Check if frontend component has OAuth support
 console.log('\nTest 3: Checking frontend PlaidLink component for OAuth support...');
 try {
-  const fs = require('fs');
-  const path = require('path');
 
   const componentPath = path.join(__dirname, 'earnings_dashboard', 'src', 'PlaidLink.jsx');
   const componentContent = fs.readFileSync(componentPath, 'utf8');
@@ -75,8 +76,6 @@ try {
 // Test 4: Check README for OAuth documentation
 console.log('\nTest 4: Checking README for OAuth documentation...');
 try {
-  const fs = require('fs');
-  const path = require('path');
 
   const readmePath = path.join(__dirname, 'PLAID_INTEGRATION_README.md');
   const readmeContent = fs.readFileSync(readmePath, 'utf8');
