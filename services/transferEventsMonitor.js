@@ -11,11 +11,11 @@ class TransferEventsMonitor {
       options,
       startTime: Date.now(),
       success: (count) => {
-        console.log(`Transfer events request ${id} completed successfully with ${count} events`);
+        // Transfer events request completed successfully
         this.requests.delete(id);
       },
       error: (error) => {
-        console.error(`Transfer events request ${id} failed:`, error);
+        // Transfer events request failed
         this.requests.delete(id);
       }
     };

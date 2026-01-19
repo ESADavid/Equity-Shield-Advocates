@@ -162,11 +162,12 @@ class PlaidService {
       const request = {
         user: {
           client_user_id: userId.toString(),
+          ...(options.user && { ...options.user }), // Spread user object if provided
         },
         client_name: 'Oscar Broome Revenue System',
         products: products,
-        country_codes: ['US'],
-        language: 'en',
+        country_codes: options.countryCodes || ['US'],
+        language: options.language || 'en',
       };
 
       // Add OAuth configuration if enabled
@@ -179,9 +180,36 @@ class PlaidService {
         request.redirect_uri = options.redirectUri;
       }
 
-      // Only add webhook if BASE_URL is configured
-      if (process.env.BASE_URL) {
+      // Add webhook - use provided webhook or default to BASE_URL
+      if (options.webhook) {
+        request.webhook = options.webhook;
+      } else if (process.env.BASE_URL) {
         request.webhook = `${process.env.BASE_URL}/api/plaid/webhook`;
+      }
+
+      // Add link customization name
+      if (options.linkCustomizationName) {
+        request.link_customization_name = options.linkCustomizationName;
+      }
+
+      // Add institution ID for pre-selection
+      if (options.institutionId) {
+        request.institution_id = options.institutionId;
+      }
+
+      // Add account filters
+      if (options.accountFilters) {
+        request.account_filters = options.accountFilters;
+      }
+
+      // Add payment initiation
+      if (options.paymentInitiation) {
+        request.payment_initiation = options.paymentInitiation;
+      }
+
+      // Add mode
+      if (options.mode) {
+        request.mode = options.mode;
       }
 
       const response = await plaidClient.linkTokenCreate(request);

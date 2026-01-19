@@ -9,7 +9,7 @@ const router = express.Router();
 // Create link token for account linking
 router.post('/create-link-token', authenticateToken, async (req, res) => {
   try {
-    const { userId, products, oauth, redirectUri } = req.body;
+    const { userId, products, oauth, redirectUri, countryCodes, language, user, webhook, linkCustomizationName, institutionId, accountFilters, paymentInitiation, mode } = req.body;
 
     if (!userId) {
       return res.status(400).json({
@@ -21,6 +21,15 @@ router.post('/create-link-token', authenticateToken, async (req, res) => {
     const options = {};
     if (oauth !== undefined) options.oauth = oauth;
     if (redirectUri) options.redirectUri = redirectUri;
+    if (countryCodes) options.countryCodes = countryCodes;
+    if (language) options.language = language;
+    if (user) options.user = user;
+    if (webhook) options.webhook = webhook;
+    if (linkCustomizationName) options.linkCustomizationName = linkCustomizationName;
+    if (institutionId) options.institutionId = institutionId;
+    if (accountFilters) options.accountFilters = accountFilters;
+    if (paymentInitiation) options.paymentInitiation = paymentInitiation;
+    if (mode) options.mode = mode;
 
     const linkTokenData = await plaidService.createLinkToken(userId, products, options);
 

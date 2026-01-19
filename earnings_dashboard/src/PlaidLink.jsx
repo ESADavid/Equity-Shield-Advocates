@@ -14,7 +14,18 @@ function PlaidLink({
   redirectUri,
   oauth = false, // Enable OAuth support
   longtail = true,
-  forceIframe = false
+  forceIframe = false,
+  // New customization props
+  countryCodes = ['US'], // Array of country codes
+  language = 'en', // Language code
+  user, // User object for personalization
+  webhook, // Webhook URL for events
+  linkCustomizationName, // Name of Link customization
+  theme = 'default', // 'default', 'dark', 'light'
+  buttonStyle = {}, // Custom button styles
+  showInstitutionSearch = true, // Show institution search
+  showInstitutionList = true, // Show institution list
+  onEvent // Additional event handler
 }) {
   const [linkToken, setLinkToken] = useState(providedLinkToken || null);
   const [loading, setLoading] = useState(!providedLinkToken);
@@ -38,6 +49,11 @@ function PlaidLink({
         if (paymentInitiation) requestBody.paymentInitiation = paymentInitiation;
         if (redirectUri) requestBody.redirectUri = redirectUri;
         if (oauth !== undefined) requestBody.oauth = oauth;
+        if (countryCodes) requestBody.countryCodes = countryCodes;
+        if (language) requestBody.language = language;
+        if (user) requestBody.user = user;
+        if (webhook) requestBody.webhook = webhook;
+        if (linkCustomizationName) requestBody.linkCustomizationName = linkCustomizationName;
 
         const response = await fetch('/api/plaid/create-link-token', {
           method: 'POST',
@@ -62,7 +78,7 @@ function PlaidLink({
     };
 
     fetchLinkToken();
-  }, [userId, products, mode, institutionId, accountFilters, paymentInitiation, redirectUri, providedLinkToken]);
+  }, [userId, products, mode, institutionId, accountFilters, paymentInitiation, redirectUri, providedLinkToken, countryCodes, language, user, webhook, linkCustomizationName]);
 
   // Handle successful Plaid Link connection
   const handleOnSuccess = async (publicToken, metadata) => {
