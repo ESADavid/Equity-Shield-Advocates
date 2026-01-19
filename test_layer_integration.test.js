@@ -2,6 +2,9 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import plaidService from '../services/plaidService.js';
 import Item from '../models/Item.js';
+import express from 'express';
+import supertest from 'supertest';
+import plaidRoutes from '../routes/plaidRoutes.js';
 
 describe('Plaid Layer Integration', () => {
   let sandbox;
@@ -264,15 +267,12 @@ describe('Plaid Layer Integration', () => {
 
     beforeEach(() => {
       // Mock express app for route testing
-      const express = require('express');
       app = express();
       app.use(express.json());
 
       // Import and use the routes
-      const plaidRoutes = require('../routes/plaidRoutes.js').default;
       app.use('/api/plaid', plaidRoutes);
 
-      const supertest = require('supertest');
       request = supertest(app);
     });
 
@@ -322,9 +322,7 @@ describe('Plaid Layer Integration', () => {
       expect(response.body.success).to.be.false;
       expect(response.body.message).to.include('Template ID and user ID are required');
     });
-  });
 
-  describe('Layer Error Handling', () => {
     it('should handle Layer API errors gracefully', async () => {
       const mockError = new Error('Layer service unavailable');
 
