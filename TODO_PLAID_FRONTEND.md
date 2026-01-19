@@ -6,12 +6,12 @@ Implement Plaid Link integration in the React frontend for bank account connecti
 
 ## Tasks
 
-- [ ] Install react-plaid-link dependency
-- [ ] Create PlaidLink React component
-- [ ] Integrate PlaidLink into App.jsx
-- [ ] Test Plaid Link integration
-- [ ] Handle success/error callbacks
-- [ ] Add account data display
+- [x] Install react-plaid-link dependency
+- [x] Create PlaidLink React component
+- [x] Integrate PlaidLink into App.jsx
+- [x] Test Plaid Link integration
+- [x] Handle success/error callbacks
+- [x] Add account data display
 
 ## Files to Modify
 

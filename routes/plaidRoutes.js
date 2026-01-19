@@ -1,7 +1,8 @@
 import express from 'express';
 import plaidService from '../services/plaidService.js';
-import { authenticateToken } from '../../config/security.js';
-import transferEventsMonitor from '../../services/transferEventsMonitor.js';
+import { authenticateToken } from '../config/security.js';
+import transferEventsMonitor from '../services/transferEventsMonitor.js';
+import logger from '../config/logger.js';
 
 const router = express.Router();
 
