@@ -27,6 +27,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeView, setActiveView] = useState('earnings');
+  const [connectedAccounts, setConnectedAccounts] = useState([]);
 
   useEffect(() => {
     if (activeView === 'earnings') {
@@ -132,6 +133,9 @@ function Dashboard() {
               products={['transactions', 'balances', 'income']}
               onSuccess={(data, metadata) => {
                 console.log('Plaid Link Success:', data, metadata);
+                if (data && data.accounts) {
+                  setConnectedAccounts(data.accounts);
+                }
                 alert('Bank account connected successfully!');
               }}
               onExit={(err, metadata) => {
@@ -141,6 +145,18 @@ function Dashboard() {
                 }
               }}
             />
+            {connectedAccounts.length > 0 && (
+              <div className="connected-accounts">
+                <h2>Connected Accounts</h2>
+                <ul>
+                  {connectedAccounts.map((account, index) => (
+                    <li key={index}>
+                      <strong>{account.name}</strong> - {account.type} ({account.subtype}) - Balance: ${account.balances.current}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
       </main>
