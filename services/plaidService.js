@@ -532,6 +532,9 @@ class PlaidService {
         case 'INCOME':
           await this.handleIncomeWebhook(webhookEvent);
           break;
+        case 'LAYER':
+          await this.handleLayerWebhook(webhookEvent);
+          break;
         default:
           logger.info('Unhandled webhook type:', webhookEvent.webhook_type);
       }
@@ -1084,6 +1087,91 @@ class PlaidService {
 
     } catch (error) {
       logger.error('Error handling PNC TAN expiration:', error);
+      throw error;
+    }
+  }
+
+  // Layer Integration Methods
+
+  // Create a Layer session token
+  async createSessionToken(templateId, userId, options = {}) {
+    return retryWithBackoff(async () => {
+      const request = {
+        template_id: templateId,
+        user: {
+          client_user_id: userId.toString(),
+          ...(options.user && { ...options.user }),
+        },
+        client_name: options.clientName || 'Oscar Broome Revenue System',
+      };
+
+      // Add optional parameters
+      if (options.webhook) {
+        request.webhook = options.webhook;
+      } else if (process.env.BASE_URL) {
+        request.webhook = `${process.env.BASE_URL}/api/plaid/webhook`;
+      }
+
+      if (options.linkCustomizationName) {
+        request.link_customization_name = options.linkCustomizationName;
+      }
+
+      const response = await plaidClient.sessionTokenCreate(request);
+      return response.data;
+    }, 'createSessionToken');
+  }
+
+  // Get user account session data after Layer completion
+  async getUserAccountSession(sessionId) {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.userAccountSessionGet({
+        session_id: sessionId,
+      });
+
+      return response.data;
+    }, 'getUserAccountSession');
+  }
+
+  // Handle Layer-specific webhooks
+  async handleLayerWebhook(webhookEvent) {
+    try {
+      const { webhook_code, session_id, item_id } = webhookEvent;
+
+      switch (webhook_code) {
+        case 'LAYER_AUTHENTICATION_PASSED':
+          logger.info('Layer authentication passed for session:', {
+            session_id,
+            item_id,
+          });
+          // User has been authenticated via Layer
+          // Can now proceed with account linking
+          break;
+
+        case 'SESSION_FINISHED':
+          logger.info('Layer session finished:', {
+            session_id,
+            item_id,
+          });
+          // Layer session completed successfully
+          // Retrieve user account data using session_id
+          try {
+            const sessionData = await this.getUserAccountSession(session_id);
+            logger.info('Retrieved Layer session data:', {
+              session_id,
+              has_accounts: !!sessionData.accounts,
+              has_identity: !!sessionData.identity,
+            });
+            // Process the session data (store in database, etc.)
+          } catch (error) {
+            logger.error('Error retrieving Layer session data:', error);
+          }
+          break;
+
+        default:
+          logger.info('Unknown Layer webhook code:', webhook_code);
+      }
+    } catch (error) {
+      logger.error('Error handling Layer webhook:', error);
       throw error;
     }
   }

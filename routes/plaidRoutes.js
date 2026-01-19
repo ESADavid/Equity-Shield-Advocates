@@ -1111,4 +1111,60 @@ router.get('/items/tan/expired', authenticateToken, async (req, res) => {
   }
 });
 
+// Layer Integration Routes
+
+// Create Layer session token
+router.post('/layer/session-token', authenticateToken, async (req, res) => {
+  try {
+    const { templateId, userId, clientName, webhook, linkCustomizationName } = req.body;
+
+    if (!templateId || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Template ID and user ID are required',
+      });
+    }
+
+    const options = {};
+    if (clientName) options.clientName = clientName;
+    if (webhook) options.webhook = webhook;
+    if (linkCustomizationName) options.linkCustomizationName = linkCustomizationName;
+
+    const sessionTokenData = await plaidService.createSessionToken(templateId, userId, options);
+
+    res.json({
+      success: true,
+      data: sessionTokenData,
+    });
+  } catch (error) {
+    console.error('Error creating Layer session token:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create Layer session token',
+      error: error.message,
+    });
+  }
+});
+
+// Get Layer user account session data
+router.get('/layer/user-session/:sessionId', authenticateToken, async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+
+    const sessionData = await plaidService.getUserAccountSession(sessionId);
+
+    res.json({
+      success: true,
+      data: sessionData,
+    });
+  } catch (error) {
+    console.error('Error getting Layer user session:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get Layer user session',
+      error: error.message,
+    });
+  }
+});
+
 export default router;
