@@ -53,8 +53,33 @@ async function testPlaidService() {
       console.log('❌ Income verification test failed:', error.message);
     }
 
-    // Test 4: Service configuration check
-    console.log('\n⚙️  Test 4: Checking service configuration...');
+    // Test 4: Mock identity match verification
+    console.log('\n🆔 Test 4: Testing identity match verification (mock)...');
+    try {
+      console.log('ℹ️  Identity match verification requires real Plaid credentials');
+      console.log(
+        '   In production, this would match user-provided identity data against institution records'
+      );
+      console.log('   Sample request body:');
+      console.log('   {');
+      console.log('     "legal_name": "John Doe",');
+      console.log('     "phone_number": "+1234567890",');
+      console.log('     "email_address": "john.doe@example.com",');
+      console.log('     "address": {');
+      console.log('       "street": "123 Main St",');
+      console.log('       "city": "Anytown",');
+      console.log('       "region": "CA",');
+      console.log('       "postal_code": "12345",');
+      console.log('       "country": "US"');
+      console.log('     }');
+      console.log('   }');
+      console.log('   Expected response includes match scores for each field (0-100)');
+    } catch (error) {
+      console.log('❌ Identity match test failed:', error.message);
+    }
+
+    // Test 5: Service configuration check
+    console.log('\n⚙️  Test 5: Checking service configuration...');
     const hasClientId = !!process.env.PLAID_CLIENT_ID;
     const hasSecret = !!process.env.PLAID_SECRET;
     const env = process.env.PLAID_ENV || 'sandbox';

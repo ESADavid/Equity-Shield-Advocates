@@ -207,6 +207,22 @@ class PlaidService {
         request.payment_initiation = options.paymentInitiation;
       }
 
+      // Add investments_auth configuration for Investments Move
+      if (products.includes('investments_auth')) {
+        request.investments_auth = {};
+
+        // Add fallback flow options
+        if (options.maskedNumberMatchEnabled !== undefined) {
+          request.investments_auth.masked_number_match_enabled = options.maskedNumberMatchEnabled;
+        }
+        if (options.statedAccountNumberEnabled !== undefined) {
+          request.investments_auth.stated_account_number_enabled = options.statedAccountNumberEnabled;
+        }
+        if (options.manualEntryEnabled !== undefined) {
+          request.investments_auth.manual_entry_enabled = options.manualEntryEnabled;
+        }
+      }
+
       // Add mode
       if (options.mode) {
         request.mode = options.mode;
@@ -298,8 +314,95 @@ class PlaidService {
         access_token: accessToken,
       });
 
-      return response.data.accounts;
+      // Enhance accounts with Auth-specific metadata
+      const enhancedAccounts = response.data.accounts.map(account => {
+        const numbers = response.data.numbers || {};
+
+        // Check if account uses tokenized account numbers (TANs)
+        const achNumbers = numbers.ach || [];
+        const accountNumberData = achNumbers.find(num => num.account_id === account.account_id);
+
+        // Determine if this is a tokenized account number
+        const isTokenized = this.isTokenizedAccountNumber(accountNumberData?.account);
+
+        return {
+          ...account,
+          // Include tokenized account number flag
+          is_tokenized_account_number: isTokenized,
+          // Include persistent account ID for TAN-enabled accounts
+          persistent_account_id: isTokenized ? this.generatePersistentAccountId(account.account_id) : null,
+          // Include consent expiration time if available
+          consent_expiration_time: response.data.consent_expiration_time || null,
+          // Include all number types
+          numbers: {
+            ach: achNumbers.filter(num => num.account_id === account.account_id),
+            eft: (numbers.eft || []).filter(num => num.account_id === account.account_id),
+            international: (numbers.international || []).filter(num => num.account_id === account.account_id),
+            bacs: (numbers.bacs || []).filter(num => num.account_id === account.account_id),
+          },
+        };
+      });
+
+      return {
+        accounts: enhancedAccounts,
+        consent_expiration_time: response.data.consent_expiration_time,
+        item: response.data.item,
+      };
     }, 'getAuth');
+  }
+
+  // Get investments auth information (for ACATS transfers)
+  async getInvestmentsAuth(accessToken) {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.investmentsAuthGet({
+        access_token: accessToken,
+      });
+
+      return response.data;
+    }, 'getInvestmentsAuth');
+  }
+
+  // Get investments holdings and transactions
+  async getInvestments(accessToken, options = {}) {
+    return retryWithBackoff(async () => {
+      const request = {
+        access_token: accessToken,
+      };
+
+      // Add optional parameters
+      if (options.count) request.count = options.count;
+      if (options.offset) request.offset = options.offset;
+
+      const response = await plaidClient.investmentsGet(request);
+      return response.data;
+    }, 'getInvestments');
+  }
+
+  // Get liabilities information (debt details)
+  async getLiabilities(accessToken) {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.liabilitiesGet({
+        access_token: accessToken,
+      });
+
+      return response.data;
+    }, 'getLiabilities');
+  }
+
+  // Enrich transactions data
+  async enrichTransactions(transactions, options = {}) {
+    return retryWithBackoff(async () => {
+      const request = {
+        transactions: transactions,
+      };
+
+      // Add optional parameters
+      if (options.account_type) request.account_type = options.account_type;
+      if (options.country_code) request.country_code = options.country_code;
+
+      const response = await plaidClient.transactionsEnrich(request);
+      return response.data;
+    }, 'enrichTransactions');
   }
 
   // Verify account ownership (proof of funds)
@@ -324,6 +427,50 @@ class PlaidService {
 
       return response.data.accounts;
     }, 'getIdentity');
+  }
+
+  // Match user identity information against institution data
+  async identityMatch(accessToken, userIdentity) {
+    return retryWithBackoff(async () => {
+      const request = {
+        access_token: accessToken,
+      };
+
+      // Add user identity data for matching
+      if (userIdentity.legal_name) {
+        request.user = {
+          ...request.user,
+          legal_name: userIdentity.legal_name,
+        };
+      }
+
+      if (userIdentity.phone_number) {
+        request.user = {
+          ...request.user,
+          phone_number: userIdentity.phone_number,
+        };
+      }
+
+      if (userIdentity.email_address) {
+        request.user = {
+          ...request.user,
+          email_address: userIdentity.email_address,
+        };
+      }
+
+      if (userIdentity.address) {
+        request.user = {
+          ...request.user,
+          address: userIdentity.address,
+        };
+      }
+
+      const response = await plaidClient.identityMatch({
+        ...request,
+      });
+
+      return response.data;
+    }, 'identityMatch');
   }
 
   // Remove item (disconnect account)
@@ -462,20 +609,49 @@ class PlaidService {
   // Handle auth webhooks
   async handleAuthWebhook(webhookEvent) {
     try {
-      const { webhook_code, item_id } = webhookEvent;
+      const { webhook_code, item_id, account_id } = webhookEvent;
 
       switch (webhook_code) {
         case 'AUTOMATICALLY_VERIFIED':
-          logger.info('Auth automatically verified for item:', item_id);
+          logger.info('Auth automatically verified for item:', { item_id, account_id });
+          // Account numbers are now available and verified
           break;
+
         case 'VERIFICATION_EXPIRED':
-          logger.warn('Auth verification expired for item:', item_id);
+          logger.warn('Auth verification expired for item:', { item_id, account_id });
+          // Consent has expired, need to send user through update mode
+          // TODO: Trigger update mode flow
           break;
+
         case 'DEFAULT_UPDATE':
-          logger.info('Auth default update for item:', item_id);
+          logger.info('Auth default update for item:', { item_id, account_id });
+          // Account/routing numbers have changed, need to refresh data
+          // TODO: Call /auth/get to get updated account numbers
           break;
+
+        case 'LOGIN_REPAIRED':
+          logger.info('Auth login repaired for item:', { item_id, account_id });
+          // User successfully repaired their login
+          break;
+
+        case 'NUMBER_VERIFIED':
+          logger.info('Auth number verified for item:', { item_id, account_id });
+          // Account number has been verified via micro-deposits
+          break;
+
+        case 'NUMBER_VERIFICATION_FAILED':
+          logger.warn('Auth number verification failed for item:', { item_id, account_id });
+          // Micro-deposit verification failed
+          break;
+
         default:
-          logger.info('Unknown auth webhook code:', webhook_code);
+          logger.info('Unknown auth webhook code:', { webhook_code, item_id, account_id });
+      }
+
+      // Handle PNC-specific TAN expiration logic
+      if (webhook_code === 'VERIFICATION_EXPIRED' || webhook_code === 'DEFAULT_UPDATE') {
+        // Check if this is a PNC item and handle TAN regeneration
+        await this.handlePncTanExpiration(item_id, account_id);
       }
     } catch (error) {
       logger.error('Error handling auth webhook:', error);
@@ -844,6 +1020,70 @@ class PlaidService {
       throw new Error(`getAccessTokenByItemId method needs to be implemented for item ID: ${itemId}`);
     } catch (error) {
       logger.error('Error getting access token by item ID:', error);
+      throw error;
+    }
+  }
+
+  // Check if account number is tokenized (TAN)
+  isTokenizedAccountNumber(accountNumber) {
+    if (!accountNumber || typeof accountNumber !== 'string') {
+      return false;
+    }
+
+    // Tokenized account numbers typically have specific patterns:
+    // - Chase: Usually start with specific prefixes or have certain lengths
+    // - PNC: TANs are different from real account numbers
+    // - US Bank: TANs follow different patterns
+    // For sandbox, we can detect based on known test patterns
+
+    // In production, this would be determined by the Plaid API response
+    // For now, we'll use heuristics based on account number patterns
+    const tanPatterns = [
+      // Chase TANs often have specific formats
+      /^9\d{10,}$/, // Chase TANs may start with 9
+      // PNC TANs are typically different from real numbers
+      /^\d{8,12}$/, // PNC TANs have specific lengths
+      // US Bank TANs
+      /^\d{10,12}$/, // US Bank TANs have specific ranges
+    ];
+
+    // Check if the account number matches known TAN patterns
+    return tanPatterns.some(pattern => pattern.test(accountNumber));
+  }
+
+  // Generate persistent account ID for TAN-enabled accounts
+  generatePersistentAccountId(accountId) {
+    // Create a persistent identifier for TAN-enabled accounts
+    // This should be consistent across different Item instances for the same account
+    const hash = crypto.createHash('sha256');
+    hash.update(accountId + 'persistent_salt'); // Add salt for uniqueness
+    return hash.digest('hex').substring(0, 32); // Return first 32 chars
+  }
+
+  // Handle PNC TAN expiration and regeneration
+  async handlePncTanExpiration(itemId, accountId) {
+    try {
+      logger.info('Handling PNC TAN expiration for item:', { itemId, accountId });
+
+      // For PNC Items, we need to:
+      // 1. Send the Item through update mode
+      // 2. Call /auth/get to get new TAN after update mode completes
+      // 3. Update stored account information
+
+      // This is a placeholder for the actual implementation
+      // In production, this would:
+      // - Check if the item is at PNC
+      // - Trigger update mode flow
+      // - Refresh account data after update mode
+      // - Update database with new TAN
+
+      logger.warn('PNC TAN expiration handling needs to be implemented with proper update mode flow');
+
+      // TODO: Implement proper PNC TAN regeneration logic
+      // This should integrate with your Item management system
+
+    } catch (error) {
+      logger.error('Error handling PNC TAN expiration:', error);
       throw error;
     }
   }

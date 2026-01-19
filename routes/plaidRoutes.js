@@ -3,6 +3,7 @@ import plaidService from '../services/plaidService.js';
 import { authenticateToken } from '../config/security.js';
 import transferEventsMonitor from '../services/transferEventsMonitor.js';
 import logger from '../config/logger.js';
+import Item from '../models/Item.js';
 
 const router = express.Router();
 
@@ -196,6 +197,107 @@ router.get('/auth/:accessToken', authenticateToken, async (req, res) => {
   }
 });
 
+// Get investments auth information (for ACATS transfers)
+router.get('/investments/auth/:accessToken', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken } = req.params;
+
+    const investmentsAuth = await plaidService.getInvestmentsAuth(accessToken);
+
+    res.json({
+      success: true,
+      data: investmentsAuth,
+    });
+  } catch (error) {
+    console.error('Error getting investments auth:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get investments auth',
+      error: error.message,
+    });
+  }
+});
+
+// Get investments holdings and transactions
+router.get('/investments/:accessToken', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken } = req.params;
+    const { count, offset } = req.query;
+
+    const options = {
+      count: count ? parseInt(count) : undefined,
+      offset: offset ? parseInt(offset) : undefined,
+    };
+
+    const investments = await plaidService.getInvestments(accessToken, options);
+
+    res.json({
+      success: true,
+      data: investments,
+    });
+  } catch (error) {
+    console.error('Error getting investments:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get investments',
+      error: error.message,
+    });
+  }
+});
+
+// Get liabilities information (debt details)
+router.get('/liabilities/:accessToken', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken } = req.params;
+
+    const liabilities = await plaidService.getLiabilities(accessToken);
+
+    res.json({
+      success: true,
+      data: liabilities,
+    });
+  } catch (error) {
+    console.error('Error getting liabilities:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get liabilities',
+      error: error.message,
+    });
+  }
+});
+
+// Enrich transactions data
+router.post('/enrich/transactions', authenticateToken, async (req, res) => {
+  try {
+    const { transactions, account_type, country_code } = req.body;
+
+    if (!transactions || !Array.isArray(transactions)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Transactions array is required',
+      });
+    }
+
+    const options = {};
+    if (account_type) options.account_type = account_type;
+    if (country_code) options.country_code = country_code;
+
+    const enrichedData = await plaidService.enrichTransactions(transactions, options);
+
+    res.json({
+      success: true,
+      data: enrichedData,
+    });
+  } catch (error) {
+    console.error('Error enriching transactions:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to enrich transactions',
+      error: error.message,
+    });
+  }
+});
+
 // Verify account ownership (proof of funds)
 router.post('/verify-ownership/:accessToken/:accountId', authenticateToken, async (req, res) => {
   try {
@@ -245,6 +347,50 @@ router.get('/identity/:accessToken', authenticateToken, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to get identity',
+      error: error.message,
+    });
+  }
+});
+
+// Match user identity information against institution data
+router.post('/identity/match/:accessToken', authenticateToken, async (req, res) => {
+  try {
+    const { accessToken } = req.params;
+    const { legal_name, phone_number, email_address, address } = req.body;
+
+    // Validate required user identity data
+    if (!legal_name && !phone_number && !email_address && !address) {
+      return res.status(400).json({
+        success: false,
+        message: 'At least one identity field (legal_name, phone_number, email_address, or address) is required',
+      });
+    }
+
+    // Validate address structure if provided
+    if (address && typeof address !== 'object') {
+      return res.status(400).json({
+        success: false,
+        message: 'Address must be an object with street, city, region, postal_code, and country fields',
+      });
+    }
+
+    const userIdentity = {};
+    if (legal_name) userIdentity.legal_name = legal_name;
+    if (phone_number) userIdentity.phone_number = phone_number;
+    if (email_address) userIdentity.email_address = email_address;
+    if (address) userIdentity.address = address;
+
+    const matchResult = await plaidService.identityMatch(accessToken, userIdentity);
+
+    res.json({
+      success: true,
+      data: matchResult,
+    });
+  } catch (error) {
+    console.error('Error matching identity:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to match identity',
       error: error.message,
     });
   }
@@ -779,6 +925,189 @@ router.get('/oauth/redirect', async (req, res) => {
     const redirectUrl = `${frontendUrl}/plaid/oauth/error?error=${encodeURIComponent(error.message)}`;
 
     res.redirect(redirectUrl);
+  }
+});
+
+// Auth-specific routes
+
+// Get items for user
+router.get('/items', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const tenantId = req.user.tenantId;
+
+    const items = await Item.findByUser(userId, tenantId);
+
+    const publicItems = items.map(item => item.toPublicJSON());
+
+    res.json({
+      success: true,
+      data: publicItems,
+    });
+  } catch (error) {
+    console.error('Error getting items:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get items',
+      error: error.message,
+    });
+  }
+});
+
+// Get item by ID
+router.get('/items/:itemId', authenticateToken, async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    const userId = req.user._id;
+    const tenantId = req.user.tenantId;
+
+    const item = await Item.findOne({ itemId, userId, tenantId });
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: 'Item not found',
+      });
+    }
+
+    res.json({
+      success: true,
+      data: item.toPublicJSON(),
+    });
+  } catch (error) {
+    console.error('Error getting item:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get item',
+      error: error.message,
+    });
+  }
+});
+
+// Update consent expiration
+router.put('/items/:itemId/consent', authenticateToken, async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    const { consentExpiration } = req.body;
+    const userId = req.user._id;
+    const tenantId = req.user.tenantId;
+
+    if (!consentExpiration) {
+      return res.status(400).json({
+        success: false,
+        message: 'Consent expiration date is required',
+      });
+    }
+
+    const item = await Item.findOne({ itemId, userId, tenantId });
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: 'Item not found',
+      });
+    }
+
+    await item.updateConsentExpiration(new Date(consentExpiration));
+
+    res.json({
+      success: true,
+      data: item.toPublicJSON(),
+    });
+  } catch (error) {
+    console.error('Error updating consent:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update consent',
+      error: error.message,
+    });
+  }
+});
+
+// Update TAN (Tokenized Account Number)
+router.put('/items/:itemId/tan', authenticateToken, async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    const { tan, tanExpiration } = req.body;
+    const userId = req.user._id;
+    const tenantId = req.user.tenantId;
+
+    if (!tan || !tanExpiration) {
+      return res.status(400).json({
+        success: false,
+        message: 'TAN and expiration date are required',
+      });
+    }
+
+    const item = await Item.findOne({ itemId, userId, tenantId });
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: 'Item not found',
+      });
+    }
+
+    await item.updateTan(tan, new Date(tanExpiration));
+
+    res.json({
+      success: true,
+      data: item.toPublicJSON(),
+    });
+  } catch (error) {
+    console.error('Error updating TAN:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update TAN',
+      error: error.message,
+    });
+  }
+});
+
+// Get items needing consent renewal
+router.get('/items/consent/renewal-needed', authenticateToken, async (req, res) => {
+  try {
+    const tenantId = req.user.tenantId;
+    const { daysAhead = 7 } = req.query;
+
+    const items = await Item.findItemsNeedingConsentRenewal(tenantId, parseInt(daysAhead));
+
+    const publicItems = items.map(item => item.toPublicJSON());
+
+    res.json({
+      success: true,
+      data: publicItems,
+    });
+  } catch (error) {
+    console.error('Error getting items needing consent renewal:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get items needing consent renewal',
+      error: error.message,
+    });
+  }
+});
+
+// Get items with expired TAN
+router.get('/items/tan/expired', authenticateToken, async (req, res) => {
+  try {
+    const tenantId = req.user.tenantId;
+
+    const items = await Item.findItemsWithExpiredTan(tenantId);
+
+    const publicItems = items.map(item => item.toPublicJSON());
+
+    res.json({
+      success: true,
+      data: publicItems,
+    });
+  } catch (error) {
+    console.error('Error getting items with expired TAN:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get items with expired TAN',
+      error: error.message,
+    });
   }
 });
 

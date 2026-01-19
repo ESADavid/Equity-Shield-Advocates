@@ -1,4 +1,4 @@
-require('@testing-library/jest-dom');
+const { TextEncoder, TextDecoder } = require('util');
 
 global.setImmediate =
   global.setImmediate ||
@@ -7,7 +7,6 @@ global.setImmediate =
   };
 
 // Polyfills for Node.js environment
-const { TextEncoder, TextDecoder } = require('util');
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
