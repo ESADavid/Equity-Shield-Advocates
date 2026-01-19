@@ -4,6 +4,13 @@ function PrivateBankingControls({
   controlStatus: _controlStatus,
   onStatusUpdate,
 }) {
+  const statusMap = {
+    '0': 'Aktivní',
+    '1': 'Neaktivní',
+    '2': 'Pozastaveno',
+    '3': 'Zrušeno'
+  };
+
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -133,7 +140,7 @@ function PrivateBankingControls({
             <div className="account-header">
               <h3>{account.name}</h3>
               <span className={`status ${account.status}`}>
-                {account.status}
+                {statusMap[account.status] || account.status}
               </span>
             </div>
 

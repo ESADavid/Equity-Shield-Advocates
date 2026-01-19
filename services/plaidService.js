@@ -1,75 +1,61 @@
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
-import logger from '../utils/loggerWrapper.js';
+import crypto from 'crypto';
+import logger from '../config/logger.js';
+import plaidSignalService from './plaidSignalService.js';
 
-// Plaid API configuration
-const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
-const PLAID_SECRET = process.env.PLAID_SECRET;
-const PLAID_ENV = process.env.PLAID_ENV || 'sandbox'; // sandbox, development, production
-
-// Initialize Plaid client
-let plaidClient = null;
-if (PLAID_CLIENT_ID && PLAID_SECRET) {
-  const configuration = new Configuration({
-    basePath: PlaidEnvironments[PLAID_ENV],
-    baseOptions: {
-      headers: {
-        'PLAID-CLIENT-ID': PLAID_CLIENT_ID,
-        'PLAID-SECRET': PLAID_SECRET,
-      },
-    },
-  });
-
-  plaidClient = new PlaidApi(configuration);
-} else {
-  logger.warn(
-    '⚠️  PLAID_CLIENT_ID and/or PLAID_SECRET not found. Plaid functionality will be disabled for testing.'
-  );
+// Plaid configuration
+const baseOptions = {};
+if (process.env.PLAID_CLIENT_ID && process.env.PLAID_SECRET) {
+  baseOptions.headers = {
+    'PLAID-CLIENT-ID': process.env.PLAID_CLIENT_ID,
+    'PLAID-SECRET': process.env.PLAID_SECRET,
+  };
 }
 
-// Plaid service functions
-export const plaidService = {
-  // Create a link token for account linking
-  async createLinkToken(userId, products = ['transactions']) {
-    if (!plaidClient) {
-      throw new Error('Plaid client not configured');
+const configuration = new Configuration({
+  basePath: PlaidEnvironments[process.env.PLAID_ENV || 'sandbox'],
+  baseOptions,
+});
+
+const plaidClient = new PlaidApi(configuration);
+
+class PlaidService {
+  // Create link token for account linking
+  async createLinkToken(userId, products = ['auth', 'transactions', 'identity']) {
+    if (!process.env.PLAID_CLIENT_ID || !process.env.PLAID_SECRET) {
+      throw new Error('Plaid credentials not configured. Please set PLAID_CLIENT_ID and PLAID_SECRET environment variables.');
     }
 
     try {
       const request = {
         user: {
-          client_user_id: userId,
+          client_user_id: userId.toString(),
         },
         client_name: 'Oscar Broome Revenue System',
         products: products,
         country_codes: ['US'],
         language: 'en',
-        webhook: `${process.env.BASE_URL}/api/plaid/webhook`,
       };
+
+      // Only add webhook if BASE_URL is configured
+      if (process.env.BASE_URL) {
+        request.webhook = `${process.env.BASE_URL}/api/plaid/webhook`;
+      }
 
       const response = await plaidClient.linkTokenCreate(request);
-
-      return {
-        link_token: response.data.link_token,
-        expiration: response.data.expiration,
-      };
+      return response.data;
     } catch (error) {
-      logger.error('Error creating Plaid link token:', error);
-      throw new Error('Failed to create link token');
+      logger.error('Error creating link token:', error);
+      throw error;
     }
-  },
+  }
 
   // Exchange public token for access token
   async exchangePublicToken(publicToken) {
-    if (!plaidClient) {
-      throw new Error('Plaid client not configured');
-    }
-
     try {
-      const request = {
+      const response = await plaidClient.itemPublicTokenExchange({
         public_token: publicToken,
-      };
-
-      const response = await plaidClient.itemPublicTokenExchange(request);
+      });
 
       return {
         access_token: response.data.access_token,
@@ -77,245 +63,289 @@ export const plaidService = {
       };
     } catch (error) {
       logger.error('Error exchanging public token:', error);
-      throw new Error('Failed to exchange public token');
+      throw error;
     }
-  },
+  }
 
   // Get account information
   async getAccounts(accessToken) {
-    if (!plaidClient) {
-      throw new Error('Plaid client not configured');
-    }
-
     try {
-      const request = {
+      const response = await plaidClient.accountsGet({
         access_token: accessToken,
-      };
+      });
 
-      const response = await plaidClient.accountsGet(request);
       return response.data.accounts;
     } catch (error) {
       logger.error('Error getting accounts:', error);
-      throw new Error('Failed to get accounts');
+      throw error;
     }
-  },
+  }
+
+  // Get account balances
+  async getBalances(accessToken) {
+    try {
+      const response = await plaidClient.accountsBalanceGet({
+        access_token: accessToken,
+      });
+
+      return response.data.accounts;
+    } catch (error) {
+      logger.error('Error getting balances:', error);
+      throw error;
+    }
+  }
 
   // Get transactions
   async getTransactions(accessToken, startDate, endDate, options = {}) {
-    if (!plaidClient) {
-      throw new Error('Plaid client not configured');
-    }
-
     try {
       const request = {
         access_token: accessToken,
         start_date: startDate,
         end_date: endDate,
-        options: {
-          count: options.count || 100,
-          offset: options.offset || 0,
-          ...options,
-        },
+        options: options,
       };
 
       const response = await plaidClient.transactionsGet(request);
       return response.data.transactions;
     } catch (error) {
       logger.error('Error getting transactions:', error);
-      throw new Error('Failed to get transactions');
+      throw error;
     }
-  },
+  }
 
-  // Get account balances
-  async getBalances(accessToken) {
-    if (!plaidClient) {
-      throw new Error('Plaid client not configured');
-    }
-
+  // Sync transfer events
+  async syncTransferEvents(afterId, count) {
     try {
       const request = {
-        access_token: accessToken,
+        after_id: afterId,
+        count: count,
       };
 
-      const response = await plaidClient.accountsBalanceGet(request);
-      return response.data.accounts;
-    } catch (error) {
-      logger.error('Error getting balances:', error);
-      throw new Error('Failed to get balances');
-    }
-  },
-
-  // Get income information
-  async getIncome(accessToken) {
-    if (!plaidClient) {
-      throw new Error('Plaid client not configured');
-    }
-
-    try {
-      const request = {
-        access_token: accessToken,
-      };
-
-      const response = await plaidClient.incomeGet(request);
-      return response.data.income;
-    } catch (error) {
-      logger.error('Error getting income:', error);
-      throw new Error('Failed to get income');
-    }
-  },
-
-  // Verify account ownership (for proof of funds)
-  async verifyAccountOwnership(accessToken, accountId, amounts) {
-    if (!plaidClient) {
-      throw new Error('Plaid client not configured');
-    }
-
-    try {
-      // Get account details
-      const accounts = await this.getAccounts(accessToken);
-      const account = accounts.find((acc) => acc.account_id === accountId);
-
-      if (!account) {
-        throw new Error('Account not found');
-      }
-
-      // Check if account has sufficient balance for verification amounts
-      const verificationResults = amounts.map((amount) => ({
-        amount,
-        sufficient: account.balances.available >= amount,
-        available_balance: account.balances.available,
-        account_type: account.type,
-        account_subtype: account.subtype,
-      }));
-
-      return {
-        account_id: accountId,
-        account_name: account.name,
-        account_type: account.type,
-        verification_results: verificationResults,
-        verified_at: new Date().toISOString(),
-      };
-    } catch (error) {
-      logger.error('Error verifying account ownership:', error);
-      throw new Error('Failed to verify account ownership');
-    }
-  },
-
-  // Get identity information
-  async getIdentity(accessToken) {
-    if (!plaidClient) {
-      throw new Error('Plaid client not configured');
-    }
-
-    try {
-      const request = {
-        access_token: accessToken,
-      };
-
-      const response = await plaidClient.identityGet(request);
-      return response.data.accounts;
-    } catch (error) {
-      logger.error('Error getting identity:', error);
-      throw new Error('Failed to get identity');
-    }
-  },
-
-  // Remove item (disconnect account)
-  async removeItem(accessToken) {
-    if (!plaidClient) {
-      throw new Error('Plaid client not configured');
-    }
-
-    try {
-      const request = {
-        access_token: accessToken,
-      };
-
-      const response = await plaidClient.itemRemove(request);
+      const response = await plaidClient.transferEventSync(request);
       return response.data;
     } catch (error) {
-      logger.error('Error removing item:', error);
-      throw new Error('Failed to remove item');
+      logger.error('Error syncing transfer events:', error);
+      throw error;
     }
-  },
+  }
 
-  // Webhook handling
-  async handleWebhook(event) {
-    logger.info('Received Plaid webhook:', event);
-
-    switch (event.webhook_type) {
-      case 'TRANSACTIONS':
-        if (
-          event.webhook_code === 'INITIAL_UPDATE' ||
-          event.webhook_code === 'HISTORICAL_UPDATE'
-        ) {
-          // Handle transaction updates
-          await this.processTransactionUpdate(event);
-        }
-        break;
-
-      case 'ITEM':
-        if (event.webhook_code === 'ERROR') {
-          // Handle item errors
-          await this.handleItemError(event);
-        }
-        break;
-
-      default:
-        logger.info('Unhandled webhook type:', event.webhook_type);
-    }
-
-    return { received: true };
-  },
-
-  // Process transaction updates
-  async processTransactionUpdate(event) {
+  // Get transfer sweep
+  async getTransferSweep(sweepId) {
     try {
-      // Get updated transactions
-      const accessToken = await this.getAccessTokenForItem(event.item_id);
-      if (!accessToken) return;
+      const request = {
+        sweep_id: sweepId,
+      };
 
-      const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split('T')[0];
-      const endDate = new Date().toISOString().split('T')[0];
+      const response = await plaidClient.transferSweepGet(request);
+      return response.data;
+    } catch (error) {
+      logger.error('Error getting transfer sweep:', error);
+      throw error;
+    }
+  }
 
-      const transactions = await this.getTransactions(
-        accessToken,
-        startDate,
-        endDate
-      );
+  // List transfer sweeps
+  async listTransferSweeps(startDate, endDate, count = 14, offset = 0) {
+    try {
+      const request = {
+        start_date: startDate,
+        end_date: endDate,
+        count: count,
+        offset: offset,
+      };
 
-      // Process and store transactions
-      for (const transaction of transactions) {
-        await this.storeTransaction(transaction);
+      const response = await plaidClient.transferSweepList(request);
+      return response.data;
+    } catch (error) {
+      logger.error('Error listing transfer sweeps:', error);
+      throw error;
+    }
+  }
+
+  // Create a transfer with real-time balance check via Signal
+  async createTransfer(accessToken, transferData) {
+    try {
+      // First, evaluate the transaction using Plaid Signal (default ruleset includes real-time balance check)
+      const signalEvaluation = await plaidSignalService.evaluateTransaction(accessToken, {
+        client_transaction_id: transferData.idempotencyKey || crypto.randomUUID(),
+        amount: transferData.amount,
+        merchant_name: transferData.description || 'Transfer',
+        iso_currency_code: 'USD',
+        transaction_type: 'debit',
+        transaction_initiation_date: new Date().toISOString(),
+        user: transferData.user || {},
+      });
+
+      // Check if any rules were triggered that would block the transfer
+      const triggeredRules = signalEvaluation.signals?.filter(signal => signal.triggered) || [];
+      const blockingRules = triggeredRules.filter(signal => signal.rule?.outcome === 'block' || signal.rule?.outcome === 'review');
+
+      if (blockingRules.length > 0) {
+        logger.warn('Transfer blocked by Plaid Signal rules:', {
+          transferData,
+          triggeredRules: blockingRules,
+        });
+        throw new Error(`Transfer blocked by fraud detection rules: ${blockingRules.map(r => r.rule?.name).join(', ')}`);
       }
 
-      logger.info(
-        `Processed ${transactions.length} transactions for item ${event.item_id}`
-      );
+      // Log successful signal evaluation
+      logger.info('Signal evaluation passed for transfer:', {
+        amount: transferData.amount,
+        triggeredRulesCount: triggeredRules.length,
+        scores: signalEvaluation.scores,
+      });
+
+      const request = {
+        access_token: accessToken,
+        account_id: transferData.accountId,
+        amount: transferData.amount,
+        description: transferData.description,
+        ach_class: transferData.achClass || 'ppd', // ppd, ccd, tel
+        type: transferData.type || 'debit', // debit or credit
+        network: transferData.network || 'ach',
+        idempotency_key: transferData.idempotencyKey || crypto.randomUUID(),
+        metadata: transferData.metadata || {},
+      };
+
+      // Add optional fields
+      if (transferData.originatorClientId) {
+        request.originator_client_id = transferData.originatorClientId;
+      }
+
+      if (transferData.user) {
+        request.user = transferData.user;
+      }
+
+      const response = await plaidClient.transferCreate(request);
+      return response.data;
     } catch (error) {
-      logger.error('Error processing transaction update:', error);
+      logger.error('Error creating transfer:', error);
+      throw error;
     }
-  },
+  }
 
-  // Handle item errors
-  async handleItemError(event) {
-    logger.error('Plaid item error:', event.error);
-    // Handle item errors (e.g., invalid credentials, item locked)
-  },
+  // List transfers
+  async listTransfers(accessToken, options = {}) {
+    try {
+      const request = {
+        access_token: accessToken,
+        start_date: options.startDate,
+        end_date: options.endDate,
+        count: options.count || 25,
+        offset: options.offset || 0,
+      };
 
-  // Helper methods
-  async getAccessTokenForItem(itemId) {
-    // This would typically come from your database
-    // For now, return null (implement based on your storage)
-    return null;
-  },
+      // Remove undefined values
+      Object.keys(request).forEach(key => {
+        if (request[key] === undefined) {
+          delete request[key];
+        }
+      });
 
-  async storeTransaction(transaction) {
-    // Store transaction in your database
-    logger.info('Storing transaction:', transaction.transaction_id);
-  },
-};
+      const response = await plaidClient.transferList(request);
+      return response.data;
+    } catch (error) {
+      logger.error('Error listing transfers:', error);
+      throw error;
+    }
+  }
 
+  // Get transfer details
+  async getTransfer(transferId) {
+    try {
+      const response = await plaidClient.transferGet({
+        transfer_id: transferId,
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('Error getting transfer:', error);
+      throw error;
+    }
+  }
+
+  // Cancel a transfer
+  async cancelTransfer(transferId) {
+    try {
+      const response = await plaidClient.transferCancel({
+        transfer_id: transferId,
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('Error canceling transfer:', error);
+      throw error;
+    }
+  }
+
+  // Create transfer intent (for authorization)
+  async createTransferIntent(accessToken, intentData) {
+    try {
+      const request = {
+        access_token: accessToken,
+        account_id: intentData.accountId,
+        amount: intentData.amount,
+        description: intentData.description,
+        ach_class: intentData.achClass || 'ppd',
+        mode: intentData.mode || 'payment', // payment or disbursement
+        network: intentData.network || 'ach',
+        idempotency_key: intentData.idempotencyKey || crypto.randomUUID(),
+        metadata: intentData.metadata || {},
+      };
+
+      // Add optional fields
+      if (intentData.user) {
+        request.user = intentData.user;
+      }
+
+      const response = await plaidClient.transferIntentCreate(request);
+      return response.data;
+    } catch (error) {
+      logger.error('Error creating transfer intent:', error);
+      throw error;
+    }
+  }
+
+  // Get transfer intent
+  async getTransferIntent(intentId) {
+    try {
+      const response = await plaidClient.transferIntentGet({
+        transfer_intent_id: intentId,
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('Error getting transfer intent:', error);
+      throw error;
+    }
+  }
+
+  // List transfer intents
+  async listTransferIntents(accessToken, options = {}) {
+    try {
+      const request = {
+        access_token: accessToken,
+        transfer_id: options.transferId,
+        account_id: options.accountId,
+        count: options.count || 25,
+        offset: options.offset || 0,
+      };
+
+      // Remove undefined values
+      Object.keys(request).forEach(key => {
+        if (request[key] === undefined) {
+          delete request[key];
+        }
+      });
+
+      const response = await plaidClient.transferIntentList(request);
+      return response.data;
+    } catch (error) {
+      logger.error('Error listing transfer intents:', error);
+      throw error;
+    }
+  }
+}
+
+const plaidService = new PlaidService();
 export default plaidService;
