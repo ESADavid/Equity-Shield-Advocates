@@ -25,11 +25,54 @@ function PlaidLink({
   buttonStyle = {}, // Custom button styles
   showInstitutionSearch = true, // Show institution search
   showInstitutionList = true, // Show institution list
-  onEvent // Additional event handler
+  onEvent, // Additional event handler
+  // Update mode specific props
+  itemId, // Required for update mode
+  updateModeTrigger // What triggered the update mode
 }) {
   const [linkToken, setLinkToken] = useState(providedLinkToken || null);
   const [loading, setLoading] = useState(!providedLinkToken);
   const [error, setError] = useState(null);
+
+  // Handle OAuth redirect on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const publicToken = urlParams.get('public_token');
+    const oauthStateId = urlParams.get('oauth_state_id');
+
+    if (publicToken) {
+      // Handle OAuth redirect - exchange public token
+      const handleOAuthRedirect = async () => {
+        try {
+          const response = await fetch('/api/plaid/exchange-public-token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ publicToken }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || 'Failed to exchange token');
+          }
+
+          // Call parent success handler
+          if (onSuccess) {
+            onSuccess(data.data, { oauth_state_id: oauthStateId });
+          }
+
+          // Clear URL params
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+
+      handleOAuthRedirect();
+    }
+  }, [onSuccess]);
 
   // Fetch link token from backend if not provided
   useEffect(() => {
@@ -54,6 +97,12 @@ function PlaidLink({
         if (user) requestBody.user = user;
         if (webhook) requestBody.webhook = webhook;
         if (linkCustomizationName) requestBody.linkCustomizationName = linkCustomizationName;
+
+        // Add update mode specific parameters
+        if (mode === 'update') {
+          if (itemId) requestBody.itemId = itemId;
+          if (updateModeTrigger) requestBody.updateModeTrigger = updateModeTrigger;
+        }
 
         const response = await fetch('/api/plaid/create-link-token', {
           method: 'POST',

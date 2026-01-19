@@ -212,6 +212,18 @@ class PlaidService {
         request.mode = options.mode;
       }
 
+      // Add update mode specific fields
+      if (options.mode === 'update') {
+        if (options.itemId) {
+          request.access_token = await this.getAccessTokenByItemId(options.itemId);
+        }
+        if (options.updateModeTrigger) {
+          request.update = {
+            account_selection_enabled: true,
+          };
+        }
+      }
+
       const response = await plaidClient.linkTokenCreate(request);
       return response.data;
     }, 'createLinkToken');
@@ -266,6 +278,310 @@ class PlaidService {
       const response = await plaidClient.transactionsGet(request);
       return response.data.transactions;
     }, 'getTransactions');
+  }
+
+  // Get income information
+  async getIncome(accessToken) {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.incomeGet({
+        access_token: accessToken,
+      });
+
+      return response.data.income;
+    }, 'getIncome');
+  }
+
+  // Get auth information (account and routing numbers)
+  async getAuth(accessToken) {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.authGet({
+        access_token: accessToken,
+      });
+
+      return response.data.accounts;
+    }, 'getAuth');
+  }
+
+  // Verify account ownership (proof of funds)
+  async verifyAccountOwnership(accessToken, accountId, amounts) {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.identityVerificationCreate({
+        access_token: accessToken,
+        account_id: accountId,
+        amounts: amounts,
+      });
+
+      return response.data;
+    }, 'verifyAccountOwnership');
+  }
+
+  // Get identity information
+  async getIdentity(accessToken) {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.identityGet({
+        access_token: accessToken,
+      });
+
+      return response.data.accounts;
+    }, 'getIdentity');
+  }
+
+  // Remove item (disconnect account)
+  async removeItem(accessToken) {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.itemRemove({
+        access_token: accessToken,
+      });
+
+      return response.data;
+    }, 'removeItem');
+  }
+
+  // Get institutions
+  async getInstitutions(options = {}) {
+    return retryWithBackoff(async () => {
+      const request = {
+        count: options.count || 50,
+        offset: options.offset || 0,
+      };
+
+      if (options.country_codes) {
+        request.country_codes = options.country_codes;
+      }
+
+      const response = await plaidClient.institutionsGet(request);
+      return response.data.institutions;
+    }, 'getInstitutions');
+  }
+
+  // Get webhook verification key
+  async getWebhookVerificationKey() {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.webhookVerificationKeyGet({});
+      return response.data.key;
+    }, 'getWebhookVerificationKey');
+  }
+
+  // Handle webhook
+  async handleWebhook(webhookEvent) {
+    try {
+      logger.info('Processing webhook event:', {
+        type: webhookEvent.webhook_type,
+        code: webhookEvent.webhook_code,
+        item_id: webhookEvent.item_id,
+      });
+
+      // Handle different webhook types
+      switch (webhookEvent.webhook_type) {
+        case 'TRANSACTIONS':
+          await this.handleTransactionWebhook(webhookEvent);
+          break;
+        case 'ITEM':
+          await this.handleItemWebhook(webhookEvent);
+          break;
+        case 'AUTH':
+          await this.handleAuthWebhook(webhookEvent);
+          break;
+        case 'INCOME':
+          await this.handleIncomeWebhook(webhookEvent);
+          break;
+        default:
+          logger.info('Unhandled webhook type:', webhookEvent.webhook_type);
+      }
+
+      return { success: true };
+    } catch (error) {
+      logger.error('Error handling webhook:', error);
+      throw error;
+    }
+  }
+
+  // Handle transaction webhooks
+  async handleTransactionWebhook(webhookEvent) {
+    try {
+      const { webhook_code, item_id } = webhookEvent;
+
+      switch (webhook_code) {
+        case 'INITIAL_UPDATE':
+          logger.info('Initial transactions update received for item:', item_id);
+          // Could trigger a sync or notification
+          break;
+        case 'HISTORICAL_UPDATE':
+          logger.info('Historical transactions update received for item:', item_id);
+          break;
+        case 'DEFAULT_UPDATE':
+          logger.info('Default transactions update received for item:', item_id);
+          break;
+        case 'TRANSACTIONS_REMOVED':
+          logger.info('Transactions removed for item:', item_id);
+          break;
+        default:
+          logger.info('Unknown transaction webhook code:', webhook_code);
+      }
+    } catch (error) {
+      logger.error('Error handling transaction webhook:', error);
+      throw error;
+    }
+  }
+
+  // Handle item webhooks
+  async handleItemWebhook(webhookEvent) {
+    try {
+      const { webhook_code, item_id } = webhookEvent;
+
+      switch (webhook_code) {
+        case 'ERROR':
+          logger.error('Item error occurred:', { item_id, error: webhookEvent.error });
+          // Could trigger update mode or notification
+          break;
+        case 'PENDING_DISCONNECT':
+          logger.warn('Item pending disconnect:', item_id);
+          // Should launch update mode
+          break;
+        case 'PENDING_EXPIRATION':
+          logger.warn('Item pending expiration:', item_id);
+          // Should launch update mode
+          break;
+        case 'USER_PERMISSION_REVOKED':
+          logger.warn('User permission revoked for item:', item_id);
+          // Should create new Item
+          break;
+        case 'NEW_ACCOUNTS_AVAILABLE':
+          logger.info('New accounts available for item:', item_id);
+          // Could launch update mode to access new accounts
+          break;
+        default:
+          logger.info('Unknown item webhook code:', webhook_code);
+      }
+    } catch (error) {
+      logger.error('Error handling item webhook:', error);
+      throw error;
+    }
+  }
+
+  // Handle auth webhooks
+  async handleAuthWebhook(webhookEvent) {
+    try {
+      const { webhook_code, item_id } = webhookEvent;
+
+      switch (webhook_code) {
+        case 'AUTOMATICALLY_VERIFIED':
+          logger.info('Auth automatically verified for item:', item_id);
+          break;
+        case 'VERIFICATION_EXPIRED':
+          logger.warn('Auth verification expired for item:', item_id);
+          break;
+        case 'DEFAULT_UPDATE':
+          logger.info('Auth default update for item:', item_id);
+          break;
+        default:
+          logger.info('Unknown auth webhook code:', webhook_code);
+      }
+    } catch (error) {
+      logger.error('Error handling auth webhook:', error);
+      throw error;
+    }
+  }
+
+  // Handle income webhooks
+  async handleIncomeWebhook(webhookEvent) {
+    try {
+      const { webhook_code, item_id } = webhookEvent;
+
+      switch (webhook_code) {
+        case 'INCOME_VERIFICATION':
+          logger.info('Income verification completed for item:', item_id);
+          break;
+        default:
+          logger.info('Unknown income webhook code:', webhook_code);
+      }
+    } catch (error) {
+      logger.error('Error handling income webhook:', error);
+      throw error;
+    }
+  }
+
+  // Verify webhook signature
+  async verifyWebhookSignature(rawBody, signature, verificationKey) {
+    try {
+      // Plaid uses HMAC-SHA256 for webhook signature verification
+      const expectedSignature = crypto
+        .createHmac('sha256', verificationKey)
+        .update(rawBody, 'utf8')
+        .digest('hex');
+
+      // Plaid sends signature in format: "v2-sha256,<signature>"
+      const providedSignature = signature.replace('v2-sha256,', '');
+
+      const isValid = crypto.timingSafeEqual(
+        Buffer.from(expectedSignature, 'hex'),
+        Buffer.from(providedSignature, 'hex')
+      );
+
+      return isValid;
+    } catch (error) {
+      logger.error('Error verifying webhook signature:', error);
+      return false;
+    }
+  }
+
+  // Initiate SMS microdeposits for account verification
+  async initiateMicrodeposits(accessToken, accountId) {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.authMicrodepositsInitiate({
+        access_token: accessToken,
+        account_id: accountId,
+      });
+
+      return response.data;
+    }, 'initiateMicrodeposits');
+  }
+
+  // Verify SMS microdeposits with deposit amounts
+  async verifyMicrodeposits(accessToken, accountId, amounts) {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.authMicrodepositsVerify({
+        access_token: accessToken,
+        account_id: accountId,
+        amounts: amounts,
+      });
+
+      return response.data;
+    }, 'verifyMicrodeposits');
+  }
+
+  // Get microdeposits verification status
+  async getMicrodepositsStatus(accessToken, accountId) {
+    return retryWithBackoff(async () => {
+      const response = await plaidClient.authMicrodepositsGet({
+        access_token: accessToken,
+        account_id: accountId,
+      });
+
+      return response.data;
+    }, 'getMicrodepositsStatus');
+  }
+
+  // Get bank transfer events
+  async getBankTransferEvents(accessToken, options = {}) {
+    return retryWithBackoff(async () => {
+      const request = {
+        access_token: accessToken,
+        count: options.count || 25,
+        offset: options.offset || 0,
+      };
+
+      if (options.eventTypes) request.event_types = options.eventTypes;
+      if (options.transferId) request.transfer_id = options.transferId;
+      if (options.accountId) request.account_id = options.accountId;
+      if (options.transferType) request.transfer_type = options.transferType;
+      if (options.originationAccountId) request.origination_account_id = options.originationAccountId;
+      if (options.startDate) request.start_date = options.startDate;
+      if (options.endDate) request.end_date = options.endDate;
+
+      const response = await plaidClient.transferEventList(request);
+      return response.data.transfer_events;
+    }, 'getBankTransferEvents');
   }
 
   // Sync transfer events
@@ -509,6 +825,27 @@ class PlaidService {
       errorRate: plaidMetrics.apiCalls > 0 ? (plaidMetrics.failedCalls / plaidMetrics.apiCalls) * 100 : 0,
       uptime: plaidMetrics.lastErrorTime ? Date.now() - plaidMetrics.lastErrorTime : null,
     };
+  }
+
+  // Get access token by item ID (for update mode)
+  async getAccessTokenByItemId(itemId) {
+    try {
+      // This method needs to be implemented based on your data storage
+      // It should retrieve the access token associated with the given item ID
+      // For now, this is a placeholder that throws an error
+
+      // Example implementation (adjust based on your database schema):
+      // const item = await Item.findOne({ item_id: itemId });
+      // if (!item) {
+      //   throw new Error(`Item ${itemId} not found`);
+      // }
+      // return item.access_token;
+
+      throw new Error(`getAccessTokenByItemId method needs to be implemented for item ID: ${itemId}`);
+    } catch (error) {
+      logger.error('Error getting access token by item ID:', error);
+      throw error;
+    }
   }
 
   // Enhanced error handling with user-friendly messages
