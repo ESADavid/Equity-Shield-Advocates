@@ -1,24 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
 
-function PlaidLink({ onSuccess, onExit, userId, products = ['transactions', 'balances'] }) {
-  const [linkToken, setLinkToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+function PlaidLink({
+  onSuccess,
+  onExit,
+  userId,
+  products = ['transactions', 'balances', 'income'],
+  linkToken: providedLinkToken,
+  mode = 'link', // 'link' or 'update'
+  institutionId,
+  accountFilters,
+  paymentInitiation,
+  redirectUri,
+  oauth = false, // Enable OAuth support
+  longtail = true,
+  forceIframe = false
+}) {
+  const [linkToken, setLinkToken] = useState(providedLinkToken || null);
+  const [loading, setLoading] = useState(!providedLinkToken);
   const [error, setError] = useState(null);
 
-  // Fetch link token from backend
+  // Fetch link token from backend if not provided
   useEffect(() => {
+    if (providedLinkToken || !userId) return;
+
     const fetchLinkToken = async () => {
       try {
+        const requestBody = {
+          userId: userId || 'user_default',
+          products: products,
+          mode: mode,
+        };
+
+        // Add optional parameters
+        if (institutionId) requestBody.institutionId = institutionId;
+        if (accountFilters) requestBody.accountFilters = accountFilters;
+        if (paymentInitiation) requestBody.paymentInitiation = paymentInitiation;
+        if (redirectUri) requestBody.redirectUri = redirectUri;
+        if (oauth !== undefined) requestBody.oauth = oauth;
+
         const response = await fetch('/api/plaid/create-link-token', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            userId: userId || 'user_default',
-            products: products,
-          }),
+          body: JSON.stringify(requestBody),
         });
 
         const data = await response.json();
@@ -36,7 +62,7 @@ function PlaidLink({ onSuccess, onExit, userId, products = ['transactions', 'bal
     };
 
     fetchLinkToken();
-  }, [userId, products]);
+  }, [userId, products, mode, institutionId, accountFilters, paymentInitiation, redirectUri, providedLinkToken]);
 
   // Handle successful Plaid Link connection
   const handleOnSuccess = async (publicToken, metadata) => {
@@ -76,14 +102,24 @@ function PlaidLink({ onSuccess, onExit, userId, products = ['transactions', 'bal
     }
   };
 
-  // Configure Plaid Link
+  // Handle Plaid Link events
+  const handleOnEvent = (eventName, metadata) => {
+    console.log('Plaid Link Event:', eventName, metadata);
+  };
+
+  // Configure Plaid Link with enhanced options
   const config = {
     token: linkToken,
     onSuccess: handleOnSuccess,
     onExit: handleOnExit,
+    onEvent: handleOnEvent,
   };
 
-  const { open, ready } = usePlaidLink(config);
+  // Add optional configuration
+  if (longtail !== undefined) config.longtail = longtail;
+  if (forceIframe) config.forceIframe = forceIframe;
+
+  const { open, ready, exit } = usePlaidLink(config);
 
   if (loading) {
     return (
@@ -98,17 +134,27 @@ function PlaidLink({ onSuccess, onExit, userId, products = ['transactions', 'bal
     return (
       <div className="plaid-error">
         <p>Error: {error}</p>
-        <button
-          onClick={() => {
-            setError(null);
-            setLoading(true);
-            // Retry fetching link token
-            window.location.reload();
-          }}
-          className="btn btn-primary"
-        >
-          Retry
-        </button>
+        <div className="error-actions">
+          <button
+            onClick={() => {
+              setError(null);
+              setLoading(true);
+              // Retry fetching link token
+              window.location.reload();
+            }}
+            className="btn btn-primary"
+          >
+            Retry
+          </button>
+          {exit && (
+            <button
+              onClick={() => exit()}
+              className="btn btn-secondary"
+            >
+              Close
+            </button>
+          )}
+        </div>
       </div>
     );
   }
@@ -121,11 +167,21 @@ function PlaidLink({ onSuccess, onExit, userId, products = ['transactions', 'bal
         className="btn btn-primary plaid-connect-btn"
       >
         <span className="btn-icon">🏦</span>
-        Connect Bank Account
+        {mode === 'update' ? 'Update Bank Connection' : 'Connect Bank Account'}
       </button>
       <p className="plaid-description">
         Securely connect your bank account to verify funds and access financial data.
+        {institutionId && ' (Institution pre-selected)'}
+        {mode === 'update' && ' (Updating existing connection)'}
       </p>
+      {exit && (
+        <button
+          onClick={() => exit()}
+          className="btn btn-link plaid-exit-btn"
+        >
+          Cancel Connection
+        </button>
+      )}
     </div>
   );
 }

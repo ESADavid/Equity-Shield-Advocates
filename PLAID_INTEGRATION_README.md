@@ -87,7 +87,16 @@ Add to your `.env` file:
 PLAID_CLIENT_ID=your_client_id_here
 PLAID_SECRET=your_sandbox_secret_here
 PLAID_ENV=sandbox  # sandbox, development, production
+FRONTEND_URL=http://localhost:3000  # For OAuth redirects
 ```
+
+### 3. OAuth Configuration (Optional)
+
+For OAuth support with supported institutions:
+
+1. Configure your redirect URI in Plaid Dashboard under "Allowed redirect URIs"
+2. Add your OAuth redirect endpoint: `https://yourdomain.com/api/plaid/oauth/redirect`
+3. Set `FRONTEND_URL` environment variable for OAuth success/error redirects
 
 ### 3. Frontend Integration
 

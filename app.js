@@ -18,17 +18,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchEarningsFromBackend() {
     try {
-      logger.info('Fetching earnings from backend...');
+      info('Fetching earnings from backend...');
       const response = await fetch('/api/earnings', {
         headers: { Authorization: authHeader },
-        credentials: 'include',
+      credentials: 'include',
       });
-      logger.info('Fetch response status:', response.status);
+      info('Fetch response status:', response.status);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      logger.info('Earnings data received:', data);
+      info('Earnings data received:', data);
       balance = data.totalAnnualRevenue;
       transactions = []; // Backend does not provide generic transactions, so keep empty or could be enhanced
       purchasedCars = data.purchases.autoFleetDetails || [];
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
       summarySection.style.display = 'block';
       fleetSection.style.display = 'block';
     } catch (error) {
-      logger.error('Failed to fetch earnings from backend:', error);
+      error('Failed to fetch earnings from backend:', error);
       alert('Failed to load earnings data. Please try again later.');
     }
   }

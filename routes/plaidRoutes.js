@@ -9,7 +9,7 @@ const router = express.Router();
 // Create link token for account linking
 router.post('/create-link-token', authenticateToken, async (req, res) => {
   try {
-    const { userId, products } = req.body;
+    const { userId, products, oauth, redirectUri } = req.body;
 
     if (!userId) {
       return res.status(400).json({
@@ -18,7 +18,11 @@ router.post('/create-link-token', authenticateToken, async (req, res) => {
       });
     }
 
-    const linkTokenData = await plaidService.createLinkToken(userId, products);
+    const options = {};
+    if (oauth !== undefined) options.oauth = oauth;
+    if (redirectUri) options.redirectUri = redirectUri;
+
+    const linkTokenData = await plaidService.createLinkToken(userId, products, options);
 
     res.json({
       success: true,
@@ -732,6 +736,40 @@ router.get('/transfer-intents', authenticateToken, async (req, res) => {
       message: 'Failed to list transfer intents',
       error: error.message,
     });
+  }
+});
+
+// OAuth redirect handler
+router.get('/oauth/redirect', async (req, res) => {
+  try {
+    const { oauth_state_id, public_token } = req.query;
+
+    if (!public_token) {
+      return res.status(400).json({
+        success: false,
+        message: 'Public token is required',
+      });
+    }
+
+    // Exchange public token for access token (same as regular flow)
+    const tokenData = await plaidService.exchangePublicToken(public_token);
+
+    // For OAuth, you might want to store the oauth_state_id for verification
+    // and redirect to your frontend with the token data
+
+    // Redirect to frontend with success
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const redirectUrl = `${frontendUrl}/plaid/oauth/success?access_token=${tokenData.access_token}&item_id=${tokenData.item_id}`;
+
+    res.redirect(redirectUrl);
+  } catch (error) {
+    console.error('Error handling OAuth redirect:', error);
+
+    // Redirect to frontend with error
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const redirectUrl = `${frontendUrl}/plaid/oauth/error?error=${encodeURIComponent(error.message)}`;
+
+    res.redirect(redirectUrl);
   }
 });
 
