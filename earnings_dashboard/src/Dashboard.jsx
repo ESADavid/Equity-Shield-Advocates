@@ -11,6 +11,7 @@ import {
 } from 'chart.js';
 import JPMorganControlCenter from './JPMorganControlCenter.jsx';
 import WalletWebapp from './WalletWebapp.jsx';
+import PlaidLink from './PlaidLink.jsx';
 
 ChartJS.register(
   CategoryScale,
@@ -110,12 +111,38 @@ function Dashboard() {
         >
           Wallet Management
         </button>
+        <button
+          className={`nav-btn ${activeView === 'plaid' ? 'active' : ''}`}
+          onClick={() => setActiveView('plaid')}
+        >
+          Bank Account Connection
+        </button>
       </nav>
 
       <main className="dashboard-content">
         {activeView === 'earnings' && renderEarningsDashboard()}
         {activeView === 'control' && <JPMorganControlCenter />}
         {activeView === 'wallet' && <WalletWebapp />}
+        {activeView === 'plaid' && (
+          <div className="plaid-integration-section">
+            <h1>Bank Account Connection</h1>
+            <p>Connect your bank accounts securely using Plaid for proof of funds verification and income analysis.</p>
+            <PlaidLink
+              userId="oscar-broome-user"
+              products={['transactions', 'balances', 'income']}
+              onSuccess={(data, metadata) => {
+                console.log('Plaid Link Success:', data, metadata);
+                alert('Bank account connected successfully!');
+              }}
+              onExit={(err, metadata) => {
+                console.log('Plaid Link Exit:', err, metadata);
+                if (err) {
+                  alert('Connection cancelled or failed');
+                }
+              }}
+            />
+          </div>
+        )}
       </main>
     </div>
   );

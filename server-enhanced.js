@@ -31,6 +31,7 @@ import cacheService from './services/cacheService.js';
 // Import routes
 import authRoutes from './routes/auth.js';
 import transactionRoutes from './routes/transactionOverrideRoutes.js';
+import plaidRoutes from './routes/plaidRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -534,6 +535,10 @@ logger.info('✅ Authentication routes mounted at /api/auth');
 // Transaction Override API Routes
 app.use('/api/transactions', transactionRoutes);
 logger.info('✅ Transaction routes mounted at /api/transactions');
+
+// Plaid API Routes
+app.use('/api/plaid', plaidRoutes);
+logger.info('✅ Plaid routes mounted at /api/plaid');
 
 // Haiti Strategic Acquisition API Routes
 if (haitiStrategicRouter) {
