@@ -37,9 +37,9 @@ module.exports = {
 
   // Test match patterns
   testMatch: [
-    '<rootDir>/test/**/*.test.{js,jsx,ts,tsx}',
-    '<rootDir>/earnings_dashboard/**/*.test.{js,jsx,ts,tsx}',
-    '<rootDir>/**/*.test.{js,jsx,ts,tsx}',
+    '<rootDir>/test/**/*.test.{js,jsx,ts,tsx,mjs}',
+    '<rootDir>/earnings_dashboard/**/*.test.{js,jsx,ts,tsx,mjs}',
+    '<rootDir>/**/*.test.{js,jsx,ts,tsx,mjs}',
   ],
 
   // Ignore patterns

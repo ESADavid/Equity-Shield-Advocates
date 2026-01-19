@@ -22,8 +22,8 @@ module.exports = {
           '@babel/preset-env',
           {
             targets: { node: 'current' },
-            // Transform to CommonJS only in test environment
-            modules: 'commonjs',
+            // Keep ES modules for Jest
+            modules: false,
           },
         ],
         '@babel/preset-typescript',

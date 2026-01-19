@@ -6,34 +6,40 @@ This guide provides step-by-step instructions for completing the Layer integrati
 
 ## Prerequisites
 
-- Access to Plaid Dashboard (https://dashboard.plaid.com/)
+- Access to Plaid Dashboard (<https://dashboard.plaid.com/>)
 - Environment file access (`.env`)
 - Layer feature enabled in your Plaid account
 
 ## Step 1: Configure Layer Template in Plaid Dashboard
 
 ### 1.1 Access Plaid Dashboard
-1. Log in to your Plaid Dashboard at https://dashboard.plaid.com/
+
+1. Log in to your Plaid Dashboard at <https://dashboard.plaid.com/>
 2. Navigate to the "Layer" section in the left sidebar
 
 ### 1.2 Create Layer Template
+
 1. Click "Create Template" or "New Template"
 2. Configure the following settings:
 
 #### Basic Settings
+
 - **Template Name**: `OSCAR-BROOME Layer Onboarding`
 - **Description**: `Instant user onboarding with phone number verification`
 
 #### Identity Verification
+
 - **Phone Number Verification**: ✅ Enabled
 - **Extended Autofill**: ✅ Enabled
 - **Date of Birth Fallback**: ✅ Enabled
 
 #### Account Selection
+
 - **Account Types**: Checking, Savings (as needed)
 - **Institution Categories**: All major banks
 
 #### Webhook Configuration
+
 - **Webhook URL**: `https://your-domain.com/api/plaid/webhook`
 - **Webhook Events**:
   - ✅ `LAYER_AUTHENTICATION_PASSED`
@@ -42,11 +48,13 @@ This guide provides step-by-step instructions for completing the Layer integrati
   - ✅ `LAYER_AUTOFILL_NOT_AVAILABLE`
 
 #### Branding
+
 - **Client Name**: `OSCAR BROOME REVENUE`
 - **Logo**: Upload your company logo (optional)
 - **Primary Color**: Your brand color (optional)
 
 ### 1.3 Get Template ID
+
 1. After creating the template, note the **Template ID** from the template details page
 2. This ID will be used in your environment variables
 
@@ -229,8 +237,8 @@ try {
 
 ### Support
 
-- Plaid Dashboard: https://dashboard.plaid.com/
-- Plaid Documentation: https://plaid.com/docs/layer/
+- Plaid Dashboard: <https://dashboard.plaid.com/>
+- Plaid Documentation: <https://plaid.com/docs/layer/>
 - Layer Support: Contact Plaid support for Layer-specific issues
 
 ## Completion Checklist
