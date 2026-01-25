@@ -34,14 +34,12 @@ const itemSchema = new mongoose.Schema(
     // Auth-specific fields
     consentExpiration: {
       type: Date,
-      index: true,
     },
     tan: {
       type: String, // Tokenized Account Number
     },
     tanExpiration: {
       type: Date,
-      index: true,
     },
     isTokenizedAccountNumber: {
       type: Boolean,

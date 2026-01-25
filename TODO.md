@@ -1,35 +1,16 @@
-# Investments Move Implementation TODO
+# Server Startup Fixes TODO
 
-## Current Status
+## 1. Fix Duplicate Mongoose Indexes
+- [ ] Remove `index: true` from `consentExpiration` and `tanExpiration` fields in `models/Item.js`
+- [ ] Remove `schema.index({ 'personalInfo.nationalId': 1 })` from `models/Citizen.js` since `unique: true` already creates the index
 
-- [x] Analyze current Plaid integration
-- [x] Create implementation plan
-- [x] Get user approval
+## 2. Fix Service Imports in Routes
+- [ ] Update `routes/partnerRoutes.js`: Import `partnerService` and `pmcService` as instances, remove `new` instantiation
+- [ ] Update `routes/citizenPortalRoutes.js`: Import services as instances
+- [ ] Update `routes/notificationRoutes.js`: Fix import issues
+- [ ] Check and fix `earnings_dashboard/payroll_router.js` import/extension issues
 
-## Implementation Tasks
-
-- [x] Update services/plaidService.js
-  - [x] Add investments_auth product support to createLinkToken
-  - [x] Add fallback flow options (masked_number_match_enabled, stated_account_number_enabled, manual_entry_enabled)
-  - [x] Add getInvestmentsAuth method for retrieving account data
-- [x] Update routes/plaidRoutes.js
-  - [x] Add /investments/auth/get endpoint
-- [x] Update PLAID_INTEGRATION_README.md
-  - [x] Add Investments Move documentation
-  - [x] Add API endpoint documentation
-- [x] Create test file for Investments Move
-  - [x] Test link token creation with investments_auth
-  - [x] Test fallback flows
-  - [x] Test getInvestmentsAuth endpoint
-
-## Testing & Validation
-
-- [x] Test in sandbox environment (Jest ES module configuration issue - implementation verified)
-- [x] Verify fallback flows work correctly (implemented in code)
-- [ ] Update frontend components if needed
-
-## Completion
-
-- [x] All tasks completed
-- [x] Documentation updated
-- [x] Tests created (Jest ES module config issue - implementation verified)
+## 3. Test Server Startup
+- [ ] Run `node test_server_startup_simple.cjs` and verify no errors
+- [ ] Check that all services load successfully
+- [ ] Verify no duplicate index warnings
