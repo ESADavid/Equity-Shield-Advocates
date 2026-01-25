@@ -88,7 +88,7 @@ PLAID_LAYER_WEBHOOK_URL=https://your-domain.com/api/plaid/webhook
 Use these Plaid sandbox phone numbers for testing:
 
 | Phone Number | Description |
-|-------------|-------------|
+| ------------- | ------------- |
 | 4155550000 | Missing all identity and bank data |
 | 4155550011 | Default number for testing |
 | 4155550012 | Missing PII; 3 connected banks |
