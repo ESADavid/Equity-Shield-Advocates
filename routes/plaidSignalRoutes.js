@@ -23,7 +23,7 @@ router.post('/signal/evaluate', authenticateToken, async (req, res) => {
       data: evaluation,
     });
   } catch (error) {
-    console.error('Error evaluating transaction:', error);
+    logger.error('Error evaluating transaction:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to evaluate transaction',
@@ -51,7 +51,7 @@ router.post('/signal/return', authenticateToken, async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.error('Error reporting return:', error);
+    logger.error('Error reporting return:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to report return',
@@ -79,7 +79,7 @@ router.post('/signal/decision/report', authenticateToken, async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.error('Error reporting decision:', error);
+    logger.error('Error reporting decision:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to report decision',
@@ -107,7 +107,7 @@ router.post('/signal/ruleset', authenticateToken, async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.error('Error creating ruleset:', error);
+    logger.error('Error creating ruleset:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create ruleset',

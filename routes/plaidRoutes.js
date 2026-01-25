@@ -39,7 +39,7 @@ router.post('/create-link-token', authenticateToken, async (req, res) => {
       data: linkTokenData,
     });
   } catch (error) {
-    console.error('Error creating link token:', error);
+    logger.error('Error creating link token:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create link token',
@@ -67,7 +67,7 @@ router.post('/exchange-public-token', authenticateToken, async (req, res) => {
       data: tokenData,
     });
   } catch (error) {
-    console.error('Error exchanging public token:', error);
+    logger.error('Error exchanging public token:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to exchange public token',
@@ -88,7 +88,7 @@ router.get('/accounts/:accessToken', authenticateToken, async (req, res) => {
       data: accounts,
     });
   } catch (error) {
-    console.error('Error getting accounts:', error);
+    logger.error('Error getting accounts:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get accounts',
@@ -109,7 +109,7 @@ router.get('/balances/:accessToken', authenticateToken, async (req, res) => {
       data: balances,
     });
   } catch (error) {
-    console.error('Error getting balances:', error);
+    logger.error('Error getting balances:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get balances',
@@ -146,7 +146,7 @@ router.get('/transactions/:accessToken', authenticateToken, async (req, res) => 
       data: transactions,
     });
   } catch (error) {
-    console.error('Error getting transactions:', error);
+    logger.error('Error getting transactions:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get transactions',
@@ -167,7 +167,7 @@ router.get('/income/:accessToken', authenticateToken, async (req, res) => {
       data: income,
     });
   } catch (error) {
-    console.error('Error getting income:', error);
+    logger.error('Error getting income:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get income',
@@ -188,7 +188,7 @@ router.get('/auth/:accessToken', authenticateToken, async (req, res) => {
       data: auth,
     });
   } catch (error) {
-    console.error('Error getting auth:', error);
+    logger.error('Error getting auth:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get auth',
@@ -209,7 +209,7 @@ router.get('/investments/auth/:accessToken', authenticateToken, async (req, res)
       data: investmentsAuth,
     });
   } catch (error) {
-    console.error('Error getting investments auth:', error);
+    logger.error('Error getting investments auth:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get investments auth',
@@ -236,7 +236,7 @@ router.get('/investments/:accessToken', authenticateToken, async (req, res) => {
       data: investments,
     });
   } catch (error) {
-    console.error('Error getting investments:', error);
+    logger.error('Error getting investments:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get investments',
@@ -257,7 +257,7 @@ router.get('/liabilities/:accessToken', authenticateToken, async (req, res) => {
       data: liabilities,
     });
   } catch (error) {
-    console.error('Error getting liabilities:', error);
+    logger.error('Error getting liabilities:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get liabilities',
@@ -289,7 +289,7 @@ router.post('/enrich/transactions', authenticateToken, async (req, res) => {
       data: enrichedData,
     });
   } catch (error) {
-    console.error('Error enriching transactions:', error);
+    logger.error('Error enriching transactions:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to enrich transactions',
@@ -322,7 +322,7 @@ router.post('/verify-ownership/:accessToken/:accountId', authenticateToken, asyn
       data: verification,
     });
   } catch (error) {
-    console.error('Error verifying account ownership:', error);
+    logger.error('Error verifying account ownership:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to verify account ownership',
@@ -343,7 +343,7 @@ router.get('/identity/:accessToken', authenticateToken, async (req, res) => {
       data: identity,
     });
   } catch (error) {
-    console.error('Error getting identity:', error);
+    logger.error('Error getting identity:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get identity',
@@ -387,7 +387,7 @@ router.post('/identity/match/:accessToken', authenticateToken, async (req, res) 
       data: matchResult,
     });
   } catch (error) {
-    console.error('Error matching identity:', error);
+    logger.error('Error matching identity:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to match identity',
@@ -408,7 +408,7 @@ router.delete('/item/:accessToken', authenticateToken, async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.error('Error removing item:', error);
+    logger.error('Error removing item:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to remove item',
@@ -435,7 +435,7 @@ router.get('/institutions', authenticateToken, async (req, res) => {
       data: institutions,
     });
   } catch (error) {
-    console.error('Error getting institutions:', error);
+    logger.error('Error getting institutions:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get institutions',
@@ -456,7 +456,7 @@ router.get('/webhook-verification-key', authenticateToken, async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Error getting webhook verification key:', error);
+    logger.error('Error getting webhook verification key:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get webhook verification key',
@@ -480,7 +480,7 @@ router.post(
         try {
           verificationKey = await plaidService.getWebhookVerificationKey();
         } catch (error) {
-          console.error('Failed to retrieve webhook verification key:', error);
+          logger.error('Failed to retrieve webhook verification key:', error);
           return res.status(500).json({
             success: false,
             message: 'Webhook verification key unavailable',
@@ -497,7 +497,7 @@ router.post(
         );
 
         if (!isValidSignature) {
-          console.warn('Invalid webhook signature received');
+          logger.warn('Invalid webhook signature received');
           return res.status(401).json({
             success: false,
             message: 'Invalid webhook signature',
@@ -509,7 +509,7 @@ router.post(
 
       // Validate webhook event structure
       if (!event.webhook_type || !event.webhook_code) {
-        console.warn('Invalid webhook event structure:', event);
+        logger.warn('Invalid webhook event structure:', event);
         return res.status(400).json({
           success: false,
           message: 'Invalid webhook event structure',
@@ -520,7 +520,7 @@ router.post(
 
       res.json(result);
     } catch (error) {
-      console.error('Error handling webhook:', error);
+      logger.error('Error handling webhook:', error);
       res.status(500).json({
         success: false,
         message: 'Webhook processing failed',
@@ -542,7 +542,7 @@ router.post('/microdeposits/initiate/:accessToken/:accountId', authenticateToken
       data: result,
     });
   } catch (error) {
-    console.error('Error initiating microdeposits:', error);
+    logger.error('Error initiating microdeposits:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to initiate microdeposits',
@@ -571,7 +571,7 @@ router.post('/microdeposits/verify/:accessToken/:accountId', authenticateToken, 
       data: result,
     });
   } catch (error) {
-    console.error('Error verifying microdeposits:', error);
+    logger.error('Error verifying microdeposits:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to verify microdeposits',
@@ -592,7 +592,7 @@ router.get('/microdeposits/status/:accessToken/:accountId', authenticateToken, a
       data: status,
     });
   } catch (error) {
-    console.error('Error getting microdeposits status:', error);
+    logger.error('Error getting microdeposits status:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get microdeposits status',
@@ -638,7 +638,7 @@ router.get('/transfer-events/:accessToken', authenticateToken, async (req, res) 
     });
   } catch (error) {
     transferEventsMonitor.recordRequest(accessToken, req.query).error(error);
-    console.error('Error getting transfer events:', error);
+    logger.error('Error getting transfer events:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get transfer events',
@@ -671,7 +671,7 @@ router.get('/transfer-sweeps', authenticateToken, async (req, res) => {
       data: sweeps,
     });
   } catch (error) {
-    console.error('Error listing transfer sweeps:', error);
+    logger.error('Error listing transfer sweeps:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to list transfer sweeps',
@@ -712,7 +712,7 @@ router.post('/transfers', authenticateToken, async (req, res) => {
       data: transfer,
     });
   } catch (error) {
-    console.error('Error creating transfer:', error);
+    logger.error('Error creating transfer:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create transfer',
@@ -747,7 +747,7 @@ router.get('/transfers', authenticateToken, async (req, res) => {
       data: transfers,
     });
   } catch (error) {
-    console.error('Error listing transfers:', error);
+    logger.error('Error listing transfers:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to list transfers',
@@ -768,7 +768,7 @@ router.get('/transfers/:transferId', authenticateToken, async (req, res) => {
       data: transfer,
     });
   } catch (error) {
-    console.error('Error getting transfer:', error);
+    logger.error('Error getting transfer:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get transfer',
@@ -789,7 +789,7 @@ router.delete('/transfers/:transferId', authenticateToken, async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.error('Error canceling transfer:', error);
+    logger.error('Error canceling transfer:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to cancel transfer',
@@ -829,7 +829,7 @@ router.post('/transfer-intents', authenticateToken, async (req, res) => {
       data: intent,
     });
   } catch (error) {
-    console.error('Error creating transfer intent:', error);
+    logger.error('Error creating transfer intent:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create transfer intent',
@@ -850,7 +850,7 @@ router.get('/transfer-intents/:intentId', authenticateToken, async (req, res) =>
       data: intent,
     });
   } catch (error) {
-    console.error('Error getting transfer intent:', error);
+    logger.error('Error getting transfer intent:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get transfer intent',
@@ -885,7 +885,7 @@ router.get('/transfer-intents', authenticateToken, async (req, res) => {
       data: intents,
     });
   } catch (error) {
-    console.error('Error listing transfer intents:', error);
+    logger.error('Error listing transfer intents:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to list transfer intents',
@@ -918,7 +918,7 @@ router.get('/oauth/redirect', async (req, res) => {
 
     res.redirect(redirectUrl);
   } catch (error) {
-    console.error('Error handling OAuth redirect:', error);
+    logger.error('Error handling OAuth redirect:', error);
 
     // Redirect to frontend with error
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
@@ -945,7 +945,7 @@ router.get('/items', authenticateToken, async (req, res) => {
       data: publicItems,
     });
   } catch (error) {
-    console.error('Error getting items:', error);
+    logger.error('Error getting items:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get items',
@@ -975,7 +975,7 @@ router.get('/items/:itemId', authenticateToken, async (req, res) => {
       data: item.toPublicJSON(),
     });
   } catch (error) {
-    console.error('Error getting item:', error);
+    logger.error('Error getting item:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get item',
@@ -1015,7 +1015,7 @@ router.put('/items/:itemId/consent', authenticateToken, async (req, res) => {
       data: item.toPublicJSON(),
     });
   } catch (error) {
-    console.error('Error updating consent:', error);
+    logger.error('Error updating consent:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to update consent',
@@ -1055,7 +1055,7 @@ router.put('/items/:itemId/tan', authenticateToken, async (req, res) => {
       data: item.toPublicJSON(),
     });
   } catch (error) {
-    console.error('Error updating TAN:', error);
+    logger.error('Error updating TAN:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to update TAN',
@@ -1079,7 +1079,7 @@ router.get('/items/consent/renewal-needed', authenticateToken, async (req, res) 
       data: publicItems,
     });
   } catch (error) {
-    console.error('Error getting items needing consent renewal:', error);
+    logger.error('Error getting items needing consent renewal:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get items needing consent renewal',
@@ -1102,7 +1102,7 @@ router.get('/items/tan/expired', authenticateToken, async (req, res) => {
       data: publicItems,
     });
   } catch (error) {
-    console.error('Error getting items with expired TAN:', error);
+    logger.error('Error getting items with expired TAN:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get items with expired TAN',
@@ -1137,7 +1137,7 @@ router.post('/layer/session-token', authenticateToken, async (req, res) => {
       data: sessionTokenData,
     });
   } catch (error) {
-    console.error('Error creating Layer session token:', error);
+    logger.error('Error creating Layer session token:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create Layer session token',
@@ -1158,7 +1158,7 @@ router.get('/layer/user-session/:sessionId', authenticateToken, async (req, res)
       data: sessionData,
     });
   } catch (error) {
-    console.error('Error getting Layer user session:', error);
+    logger.error('Error getting Layer user session:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get Layer user session',
