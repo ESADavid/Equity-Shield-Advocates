@@ -34,8 +34,8 @@
 ## Tasks
 
 - [x] Fix .env encoding
-- [ ] Create pilot script
-- [ ] Create production script
-- [ ] Create scaling script
+- [x] Create pilot script
+- [x] Create production script
+- [x] Create scaling script
 - [ ] Test scripts locally
 - [ ] Update progress documentation
