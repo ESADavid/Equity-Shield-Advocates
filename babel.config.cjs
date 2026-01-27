@@ -31,6 +31,8 @@ module.exports = {
       plugins: [
         '@babel/plugin-transform-runtime',
         '@babel/plugin-transform-private-methods',
+        // Add dynamic import support for Jest
+        ['@babel/plugin-transform-modules-commonjs', { lazy: true }],
       ],
     },
   },

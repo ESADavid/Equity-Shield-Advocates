@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Script to identify and help replace console.log statements with proper logging
  *
@@ -25,7 +26,6 @@ const config = {
     'coverage',
     'logs',
     'owlban_repos',
-    'OSCAR-BROOME-REVENUE',
     'David-Leeper-Jr-Revenue',
     'FOUR-ERA-AI',
     'gh',
