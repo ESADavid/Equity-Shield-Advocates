@@ -11,56 +11,56 @@
       "name": "Environment Config",
       "result": "failed",
       "message": "Missing variables: JPMORGAN_BASE_URL",
-      "timestamp": "2026-01-27T05:05:03.382Z"
+      "timestamp": "2026-01-27T06:11:28.843Z"
     },
     {
       "name": "Health Endpoint",
       "result": "passed",
       "message": "Health check successful",
-      "timestamp": "2026-01-27T05:05:03.500Z"
+      "timestamp": "2026-01-27T06:11:29.029Z"
     },
     {
       "name": "Create Payment",
       "result": "failed",
       "message": "Payment creation failed: Request failed with status code 400",
-      "timestamp": "2026-01-27T05:05:03.563Z"
+      "timestamp": "2026-01-27T06:11:29.058Z"
     },
     {
       "name": "Payment Status",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2026-01-27T05:05:03.563Z"
+      "timestamp": "2026-01-27T06:11:29.058Z"
     },
     {
       "name": "Refund Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2026-01-27T05:05:03.564Z"
+      "timestamp": "2026-01-27T06:11:29.058Z"
     },
     {
       "name": "Capture Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2026-01-27T05:05:03.564Z"
+      "timestamp": "2026-01-27T06:11:29.058Z"
     },
     {
       "name": "Void Payment",
       "result": "skipped",
       "message": "Payment creation failed",
-      "timestamp": "2026-01-27T05:05:03.564Z"
+      "timestamp": "2026-01-27T06:11:29.058Z"
     },
     {
       "name": "Get Transactions",
       "result": "failed",
       "message": "Transactions fetch failed: timeout of 10000ms exceeded",
-      "timestamp": "2026-01-27T05:05:13.575Z"
+      "timestamp": "2026-01-27T06:11:39.079Z"
     },
     {
       "name": "Webhook Endpoint",
       "result": "passed",
       "message": "Webhook signature validation working (expected 401 for test signature)",
-      "timestamp": "2026-01-27T05:05:13.599Z"
+      "timestamp": "2026-01-27T06:11:39.117Z"
     }
   ],
-  "timestamp": "2026-01-27T05:05:13.600Z"
+  "timestamp": "2026-01-27T06:11:39.117Z"
 }

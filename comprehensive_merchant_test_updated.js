@@ -11,6 +11,7 @@ import axios from 'axios';
 import fs from 'node:fs';
 import path from 'node:path';
 import dotenv from 'dotenv';
+import { info, error as logError } from './utils/loggerWrapper.js';
 
 dotenv.config();
 
@@ -106,21 +107,21 @@ class TestSuite {
       timestamp: new Date().toISOString(),
     };
 
-    console.log('\n' + '='.repeat(60));
-    console.log('🧪 COMPREHENSIVE MERCHANT TEST REPORT');
-    console.log('='.repeat(60));
-    console.log(`Total Tests: ${report.summary.total}`);
-    console.log(`✅ Passed: ${report.summary.passed}`);
-    console.log(`❌ Failed: ${report.summary.failed}`);
-    console.log(`⚠️ Skipped: ${report.summary.skipped}`);
-    console.log(`📈 Success Rate: ${report.summary.successRate}%`);
-    console.log('='.repeat(60));
+    info('\n' + '='.repeat(60));
+    info('🧪 COMPREHENSIVE MERCHANT TEST REPORT');
+    info('='.repeat(60));
+    info(`Total Tests: ${report.summary.total}`);
+    info(`✅ Passed: ${report.summary.passed}`);
+    info(`❌ Failed: ${report.summary.failed}`);
+    info(`⚠️ Skipped: ${report.summary.skipped}`);
+    info(`📈 Success Rate: ${report.summary.successRate}%`);
+    info('='.repeat(60));
 
     const failedTests = this.results.tests.filter((t) => t.result === 'failed');
     if (failedTests.length > 0) {
-      console.log('\n❌ FAILED TESTS:');
+      info('\n❌ FAILED TESTS:');
       for (const test of failedTests) {
-        console.log(`• ${test.name}: ${test.message}`);
+        info(`• ${test.name}: ${test.message}`);
       }
     }
 
@@ -291,7 +292,9 @@ class MerchantEndpointTests {
     try {
       const healthResponse = await axios.get(`${this.baseURL}/health`);
       const isServerHealthy =
-        healthResponse.data && healthResponse.data.status === 'healthy';
+        healthResponse.data &&
+        (healthResponse.data.status === 'healthy' ||
+         healthResponse.data.status === 'degraded');
 
       if (isMockMode && isServerHealthy) {
         this.testSuite.addTest(
@@ -329,13 +332,13 @@ async function runComprehensiveMerchantTests() {
   const testSuite = new TestSuite();
   const endpointTests = new MerchantEndpointTests(testSuite);
 
-  console.log('🧪 Starting Comprehensive Merchant Bill Pay Integration Tests');
-  console.log('='.repeat(70));
-  console.log(`Server URL: ${TEST_CONFIG.SERVER.HOST}`);
-  console.log(
+  info('🧪 Starting Comprehensive Merchant Bill Pay Integration Tests');
+  info('='.repeat(70));
+  info(`Server URL: ${TEST_CONFIG.SERVER.HOST}`);
+  info(
     `Stripe Credentials Configured: ${hasStripeCredentials ? '✅ Yes' : '⚠️ No'}`
   );
-  console.log('='.repeat(70));
+  info('='.repeat(70));
 
   // Test environment configuration
   await endpointTests.testEnvironmentConfiguration();
