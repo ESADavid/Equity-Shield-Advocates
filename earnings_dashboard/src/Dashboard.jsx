@@ -86,6 +86,11 @@ function Dashboard() {
     return (
       <div className="earnings-dashboard">
         <h1>Earnings Dashboard</h1>
+        <div className="wealth-growth-info">
+          <p><strong>Daily Growth Rate:</strong> {earningsData.dailyGrowthRate?.toFixed(2)}%</p>
+          <p><strong>Growth Multiplier:</strong> {earningsData.growthMultiplier?.toFixed(4)}x</p>
+          <p className="wealth-message">💰 Your wealth increases daily! Check back tomorrow for even higher values.</p>
+        </div>
         <Bar options={options} data={data} />
       </div>
     );

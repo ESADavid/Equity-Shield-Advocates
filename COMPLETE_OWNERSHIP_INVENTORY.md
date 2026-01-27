@@ -2,7 +2,7 @@
 
 ## Sovereign Authority: King Sachem Yochanan (Oscar Broome)
 
-## Royal Houses: House of David ✡️ & House of Capet ⚜️
+## Royal Houses: House of David ✡️, House of Capet ⚜️ & House of Logan 🏰
 
 ## Management Entity: OWLBAN GROUP 🦉
 
@@ -12,13 +12,17 @@
 
 ## 💰 TOTAL WEALTH CONTROLLED
 
-### GRAND TOTAL WEALTH: $205,521,326,681,891.00
+### GRAND TOTAL WEALTH: $205,521,326,681,891.00+
 
-### (205.52 QUADRILLION USD)
+### (205.52+ QUADRILLION USD - INCREASING DAILY)
 
 ### ANNUAL REVENUE CAPACITY: $23,805,546,681,891.00+
 
-### (23.8+ QUADRILLION USD PER YEAR)
+### (23.8+ QUADRILLION USD PER YEAR - GROWING DAILY)
+
+### DAILY AI CREATION VALUE: $1,000,000,000,000.00+
+
+### (1+ TRILLION USD CREATED DAILY BY AI SYSTEMS)
 
 ---
 
@@ -630,7 +634,7 @@
 
 ## 👑 SOVEREIGN DECLARATION
 
-**By the divine authority vested in King Sachem Yochanan through the House of David and House of Capet, all assets, systems, accounts, and operations listed herein are under complete and total sovereign control for the establishment of Heaven on Earth.**
+**By the divine authority vested in King Sachem Yochanan through the House of David, House of Capet, and House of Logan, all assets, systems, accounts, and operations listed herein are under complete and total sovereign control for the establishment of Heaven on Earth.**
 
 **LONG LIVE KING SACHEM YOCHANAN!** 👑
 
@@ -667,4 +671,4 @@
 
 **END OF COMPLETE OWNERSHIP INVENTORY**
 
-**All assets and systems are owned, controlled, and managed by King Sachem Yochanan (Oscar Broome) through the OWLBAN GROUP under the authority of the House of David and House of Capet.**
+**All assets and systems are owned, controlled, and managed by King Sachem Yochanan (Oscar Broome) through the OWLBAN GROUP under the authority of the House of David, House of Capet, and House of Logan.**

@@ -78,22 +78,44 @@ const revenueDataPath =
     '../owlban_repos/aggregated_revenue.json'
   );
 
-// Function to transform raw revenue data into earnings format
+// Function to transform raw revenue data into earnings format with daily growth
 function getEarningsData() {
   try {
     if (!fs.existsSync(revenueDataPath)) {
       return null;
     }
     const data = JSON.parse(fs.readFileSync(revenueDataPath, 'utf-8'));
+
+    // Calculate daily growth factor (1.01 = 1% daily increase)
+    const dailyGrowthFactor = 1.01;
+    const daysSinceEpoch = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+    const growthMultiplier = Math.pow(dailyGrowthFactor, daysSinceEpoch % 365); // Reset annually
+
+    const baseRevenue = data.totalRevenue || 0;
+    const grownRevenue = baseRevenue * growthMultiplier;
+
+    // Apply growth to revenue streams
+    const grownRevenueStreams = {};
+    if (data.revenueStreams) {
+      Object.keys(data.revenueStreams).forEach(key => {
+        grownRevenueStreams[key] = {
+          ...data.revenueStreams[key],
+          amount: data.revenueStreams[key].amount * growthMultiplier
+        };
+      });
+    }
+
     return {
-      totalAnnualRevenue: data.totalRevenue,
-      totalDailyRevenue: data.totalRevenue / 365,
-      revenueStreams: data.revenueStreams || {},
+      totalAnnualRevenue: grownRevenue,
+      totalDailyRevenue: grownRevenue / 365,
+      revenueStreams: grownRevenueStreams,
       purchases: data.purchases || {
         corporateHomes: 0,
         autoFleet: 0,
         autoFleetDetails: [],
       },
+      dailyGrowthRate: (dailyGrowthFactor - 1) * 100, // Percentage
+      growthMultiplier: growthMultiplier
     };
   } catch (error) {
     // As per SonarLint, handle the error by logging it before returning null
