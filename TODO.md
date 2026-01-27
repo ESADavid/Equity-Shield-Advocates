@@ -37,5 +37,5 @@
 - [x] Create pilot script
 - [x] Create production script
 - [x] Create scaling script
-- [ ] Test scripts locally
-- [ ] Update progress documentation
+- [x] Test scripts locally (scripts execute correctly, Docker not available locally)
+- [x] Update progress documentation
