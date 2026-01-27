@@ -1,4 +1,4 @@
-const { info, error: logError } = require('./utils/loggerWrapper.js');
+import { info, error as logError } from './utils/loggerWrapper.js';
 
 export interface Employee {
   id: string;

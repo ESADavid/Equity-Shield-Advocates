@@ -9,7 +9,7 @@ import morgan from 'morgan';
 import winston from 'winston';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import jpmorganAuthRoutes from '../routes/jpmorganAuthRoutes.js';
+import jpmorganAuthRoutes from '../routes/jpmorgan_auth_routes.js';
 import payrollRouter from './payroll_router.js';
 import biometricRoutes from '../routes/biometricRoutes.js';
 
