@@ -319,10 +319,10 @@ kubectl rollout undo deployment/oscar-broome-app --to-revision=2
 
 ### Emergency Contacts
 
-- **DevOps Lead:** devops@oscar-broome.com
-- **Security Team:** security@oscar-broome.com
-- **Executive Team:** executives@oscar-broome.com
-- **24/7 Support:** support@oscar-broome.com
+- **DevOps Lead:** <devops@oscar-broome.com>
+- **Security Team:** <security@oscar-broome.com>
+- **Executive Team:** <executives@oscar-broome.com>
+- **24/7 Support:** <support@oscar-broome.com>
 
 ---
 

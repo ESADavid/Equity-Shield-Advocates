@@ -8,6 +8,7 @@
 ## 📋 EXECUTION PLAN
 
 ### Phase 1: Cloud Infrastructure Setup
+
 - [ ] Create cloud account and enable billing
 - [ ] Register domain name (oscar-broome.com)
 - [ ] Provision Kubernetes cluster (EKS/AKS/GKE)
@@ -17,6 +18,7 @@
 - [ ] Configure SSL certificates (Let's Encrypt or commercial)
 
 ### Phase 2: Application Deployment
+
 - [ ] Clone repository to cloud environment
 - [ ] Configure production environment variables
 - [ ] Execute `node scripts/setup-production-db.js`
@@ -25,12 +27,14 @@
 - [ ] Run `node scripts/execute-phase5-production.cjs` (production deploy)
 
 ### Phase 3: Pilot Program (100K Citizens)
+
 - [ ] Execute `node scripts/execute-phase5-pilot.cjs`
 - [ ] Monitor pilot performance for 24-48 hours
 - [ ] Collect user feedback and metrics
 - [ ] Validate pilot success criteria
 
 ### Phase 4: Full Production Scaling
+
 - [ ] Execute `node scripts/execute-phase5-scaling.cjs`
 - [ ] Configure auto-scaling policies
 - [ ] Setup monitoring dashboards (ELK + Prometheus/Grafana)
@@ -74,6 +78,6 @@
 
 ## 📞 CONTACTS
 
-**DevOps Lead:** devops@oscar-broome.com
-**Security Team:** security@oscar-broome.com
-**Executive Team:** executives@oscar-broome.com
+**DevOps Lead:** <devops@oscar-broome.com>
+**Security Team:** <security@oscar-broome.com>
+**Executive Team:** <executives@oscar-broome.com>
