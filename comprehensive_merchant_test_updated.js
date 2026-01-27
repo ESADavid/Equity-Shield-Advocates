@@ -51,7 +51,12 @@ class TestSuite {
     } else {
       prefix = 'ℹ️';
     }
-    console.log(`[${timestamp}] ${prefix} ${message}`);
+    const logMessage = `[${timestamp}] ${prefix} ${message}`;
+    if (type === 'error') {
+      logError(logMessage);
+    } else {
+      info(logMessage);
+    }
   }
 
   addTest(name, result, message = '') {
@@ -361,7 +366,7 @@ async function runComprehensiveMerchantTests() {
     'comprehensive_merchant_test_report.json'
   );
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-  console.log(`\n📄 Detailed report saved to: ${reportPath}`);
+  info(`\n📄 Detailed report saved to: ${reportPath}`);
 
   return report;
 }
@@ -371,10 +376,10 @@ if (require.main === module) {
   (async () => {
     try {
       const report = await runComprehensiveMerchantTests();
-      console.log('\n🏁 Comprehensive merchant testing completed!');
+      info('\n🏁 Comprehensive merchant testing completed!');
       process.exit(report.summary.failed > 0 ? 1 : 0);
     } catch (error) {
-      console.error('❌ Test execution failed:', error);
+      logError('❌ Test execution failed:', error);
       process.exit(1);
     }
   })();

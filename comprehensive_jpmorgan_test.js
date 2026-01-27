@@ -132,22 +132,22 @@ class TestSuite {
       timestamp: new Date().toISOString(),
     };
 
-    console.log('\n' + '='.repeat(60));
-    console.log('📊 COMPREHENSIVE TEST REPORT');
-    console.log('='.repeat(60));
-    console.log(`Total Tests: ${report.summary.total}`);
-    console.log(`✅ Passed: ${report.summary.passed}`);
-    console.log(`❌ Failed: ${report.summary.failed}`);
-    console.log(`⚠️ Skipped: ${report.summary.skipped}`);
-    console.log(`📈 Success Rate: ${report.summary.successRate}%`);
-    console.log('='.repeat(60));
+    info('\n' + '='.repeat(60));
+    info('📊 COMPREHENSIVE TEST REPORT');
+    info('='.repeat(60));
+    info(`Total Tests: ${report.summary.total}`);
+    info(`✅ Passed: ${report.summary.passed}`);
+    info(`❌ Failed: ${report.summary.failed}`);
+    info(`⚠️ Skipped: ${report.summary.skipped}`);
+    info(`📈 Success Rate: ${report.summary.successRate}%`);
+    info('='.repeat(60));
 
     if (report.summary.failed > 0) {
-      console.log('\n❌ FAILED TESTS:');
+      info('\n❌ FAILED TESTS:');
       this.results.tests
         .filter((t) => t.result === 'failed')
         .forEach((test) => {
-          console.log(`• ${test.name}: ${test.message}`);
+          info(`• ${test.name}: ${test.message}`);
         });
     }
 
