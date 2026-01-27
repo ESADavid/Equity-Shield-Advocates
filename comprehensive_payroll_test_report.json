@@ -6,7 +6,7 @@
     "failed": 4,
     "skipped": 0,
     "successRate": "20.00%",
-    "duration": 2266
+    "duration": 2170
   },
   "tests": [
     {
@@ -14,36 +14,36 @@
       "result": "passed",
       "message": "Server is degraded and running",
       "duration": 0,
-      "timestamp": "2026-01-13T03:39:16.051Z"
+      "timestamp": "2026-01-27T05:05:17.444Z"
     },
     {
       "name": "Get Employees",
       "result": "failed",
       "message": "Request failed: Request failed with status code 404",
       "duration": 0,
-      "timestamp": "2026-01-13T03:39:16.073Z"
+      "timestamp": "2026-01-27T05:05:17.492Z"
     },
     {
       "name": "Add Employee",
       "result": "failed",
       "message": "Request failed: Request failed with status code 404",
       "duration": 0,
-      "timestamp": "2026-01-13T03:39:16.088Z"
+      "timestamp": "2026-01-27T05:05:17.507Z"
     },
     {
       "name": "Calculate Payroll",
       "result": "failed",
       "message": "Request failed: Request failed with status code 404",
       "duration": 0,
-      "timestamp": "2026-01-13T03:39:16.107Z"
+      "timestamp": "2026-01-27T05:05:17.518Z"
     },
     {
       "name": "Process Payroll",
       "result": "failed",
       "message": "Request failed: Request failed with status code 404",
       "duration": 0,
-      "timestamp": "2026-01-13T03:39:16.131Z"
+      "timestamp": "2026-01-27T05:05:17.530Z"
     }
   ],
-  "timestamp": "2026-01-13T03:39:16.135Z"
+  "timestamp": "2026-01-27T05:05:17.533Z"
 }
