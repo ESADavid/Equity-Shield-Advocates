@@ -1,114 +1,193 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import PlaidLink from './PlaidLink.jsx';
 
 function ErrorRecovery({
-  error,
-  onRetry,
-  onUpdateMode,
-  onDismiss,
-  showUpdateOption = false
+  userId,
+  onSuccess,
+  onError,
+  onUpdateModeTriggered,
+  itemId,
+  errorCode,
+  errorMessage,
+  autoTriggerUpdate = true
 }) {
-  const getErrorMessage = (error) => {
-    if (!error) return 'An unknown error occurred';
+  const [showUpdateMode, setShowUpdateMode] = useState(false);
+  const [recoveryAttempts, setRecoveryAttempts] = useState(0);
+  const [lastError, setLastError] = useState(null);
 
-    // Map Plaid error codes to user-friendly messages
-    const errorMappings = {
-      'INVALID_ACCESS_TOKEN': 'Your bank connection has expired. Please reconnect your account.',
+  // Error recovery logic
+  useEffect(() => {
+    if (errorCode && autoTriggerUpdate) {
+      handleErrorRecovery(errorCode, errorMessage);
+    }
+  }, [errorCode, errorMessage, autoTriggerUpdate]);
+
+  const handleErrorRecovery = (code, message) => {
+    setLastError({ code, message });
+
+    switch (code) {
+      case 'ITEM_LOGIN_REQUIRED':
+        // Automatically trigger update mode for login required errors
+        console.warn('ITEM_LOGIN_REQUIRED detected - triggering update mode');
+        setShowUpdateMode(true);
+        if (onUpdateModeTriggered) {
+          onUpdateModeTriggered('ITEM_LOGIN_REQUIRED');
+        }
+        break;
+
+      case 'PENDING_DISCONNECT':
+        // Show reconnection prompt
+        setShowUpdateMode(true);
+        if (onUpdateModeTriggered) {
+          onUpdateModeTriggered('PENDING_DISCONNECT');
+        }
+        break;
+
+      case 'PENDING_EXPIRATION':
+        // Alert user to refresh connection
+        setShowUpdateMode(true);
+        if (onUpdateModeTriggered) {
+          onUpdateModeTriggered('PENDING_EXPIRATION');
+        }
+        break;
+
+      case 'USER_PERMISSION_REVOKED':
+        // Guide to re-link account
+        setShowUpdateMode(true);
+        if (onUpdateModeTriggered) {
+          onUpdateModeTriggered('USER_PERMISSION_REVOKED');
+        }
+        break;
+
+      default:
+        // For other errors, show retry option
+        setRecoveryAttempts(prev => prev + 1);
+        break;
+    }
+  };
+
+  const handleUpdateSuccess = (data, metadata) => {
+    logger.info('Update mode successful - connection restored');
+    setShowUpdateMode(false);
+    setRecoveryAttempts(0);
+    setLastError(null);
+    onSuccess && onSuccess(data, metadata);
+  };
+
+  const handleUpdateExit = (err, metadata) => {
+    if (err) {
+      logger.error('Update mode failed:', err);
+      setRecoveryAttempts(prev => prev + 1);
+    }
+    onError && onError(err, metadata);
+  };
+
+  const getErrorMessage = (code, message) => {
+    const errorMessages = {
       'ITEM_LOGIN_REQUIRED': 'Your bank requires re-authentication. Please update your connection.',
-      'PENDING_DISCONNECT': 'Your bank connection is pending disconnection. Please update your credentials.',
-      'PENDING_EXPIRATION': 'Your bank connection is about to expire. Please update your credentials.',
-      'USER_PERMISSION_REVOKED': 'Your bank has revoked access. Please reconnect your account.',
-      'ACCOUNT_LOCKED': 'Your bank account is temporarily locked. Please contact your bank.',
+      'PENDING_DISCONNECT': 'Your bank connection is pending disconnection. Please reconnect.',
+      'PENDING_EXPIRATION': 'Your bank connection is expiring soon. Please refresh it.',
+      'USER_PERMISSION_REVOKED': 'Your bank permissions have been revoked. Please reconnect.',
       'RATE_LIMIT_EXCEEDED': 'Too many requests. Please try again in a moment.',
       'PRODUCT_NOT_READY': 'Bank data is still being processed. Please try again later.',
     };
 
-    const plaidErrorCode = error.error_code || error.code;
-    return errorMappings[plaidErrorCode] || error.message || error.error_message || 'An error occurred while processing your request.';
+    return errorMessages[code] || (message ? message.replace(/[<>'"&]/g, '') : 'An error occurred. Please try again.');
   };
 
-  const getRecoveryActions = (error) => {
-    if (!error) return [];
+  const getRecoveryAction = (code) => {
+    const actions = {
+      'ITEM_LOGIN_REQUIRED': 'Update Connection',
+      'PENDING_DISCONNECT': 'Reconnect Account',
+      'PENDING_EXPIRATION': 'Refresh Connection',
+      'USER_PERMISSION_REVOKED': 'Reconnect Account',
+    };
 
-    const plaidErrorCode = error.error_code || error.code;
-    const actions = [];
-
-    switch (plaidErrorCode) {
-      case 'ITEM_LOGIN_REQUIRED':
-      case 'PENDING_DISCONNECT':
-      case 'PENDING_EXPIRATION':
-        actions.push({
-          label: 'Update Connection',
-          action: onUpdateMode,
-          primary: true
-        });
-        break;
-      case 'USER_PERMISSION_REVOKED':
-        actions.push({
-          label: 'Reconnect Account',
-          action: onUpdateMode,
-          primary: true
-        });
-        break;
-      default:
-        actions.push({
-          label: 'Retry',
-          action: onRetry,
-          primary: true
-        });
-    }
-
-    actions.push({
-      label: 'Dismiss',
-      action: onDismiss,
-      primary: false
-    });
-
-    return actions;
+    return actions[code] || 'Retry';
   };
 
-  const errorMessage = getErrorMessage(error);
-  const actions = getRecoveryActions(error);
-
-  return (
-    <div className="error-recovery-modal">
-      <div className="error-recovery-content">
-        <div className="error-icon">
-          <span>⚠️</span>
+  if (showUpdateMode) {
+    return (
+      <div className="error-recovery-container">
+        <div className="error-recovery-header">
+          <h3>🔄 Connection Update Required</h3>
+          <p>{getErrorMessage(lastError?.code, lastError?.message)}</p>
         </div>
-        <h3>Connection Issue</h3>
-        <p className="error-message">{errorMessage}</p>
 
-        <div className="error-details">
-          {error && (error.error_code || error.code) && (
-            <small>
-              Error Code: {error.error_code || error.code}
-            </small>
-          )}
+        <div className="error-recovery-actions">
+          <PlaidLink
+            userId={userId}
+            mode="update"
+            itemId={itemId}
+            onSuccess={handleUpdateSuccess}
+            onExit={handleUpdateExit}
+            updateModeTrigger={lastError?.code}
+            buttonStyle={{
+              backgroundColor: '#ff6b35',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '6px',
+              color: 'white',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}
+          >
+            {getRecoveryAction(lastError?.code)}
+          </PlaidLink>
+
+          <button
+            onClick={() => setShowUpdateMode(false)}
+            className="btn btn-secondary"
+            style={{ marginLeft: '10px' }}
+          >
+            Cancel
+          </button>
+        </div>
+
+        <div className="error-recovery-info">
+          <small>
+            This will securely reconnect your account without requiring you to re-enter your bank credentials.
+          </small>
+        </div>
+      </div>
+    );
+  }
+
+  if (lastError && !showUpdateMode) {
+    return (
+      <div className="error-display">
+        <div className="error-message">
+          <span className="error-icon">⚠️</span>
+          <span>{getErrorMessage(lastError.code, lastError.message)}</span>
         </div>
 
         <div className="error-actions">
-          {actions.map((action, index) => (
+          {recoveryAttempts < 3 && (
             <button
-              key={index}
-              onClick={action.action}
-              className={`btn ${action.primary ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => handleErrorRecovery(lastError.code, lastError.message)}
+              className="btn btn-primary"
             >
-              {action.label}
+              {getRecoveryAction(lastError.code)}
             </button>
-          ))}
-        </div>
+          )}
 
-        {showUpdateOption && (
-          <div className="update-mode-info">
-            <p>
-              <strong>Update Mode:</strong> This will allow you to fix your bank connection
-              without losing your existing account data.
-            </p>
-          </div>
-        )}
+          {recoveryAttempts >= 3 && (
+            <div className="error-help">
+              <p>Multiple recovery attempts failed. Please contact support.</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="btn btn-secondary"
+              >
+                Refresh Page
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return null;
 }
 
 export default ErrorRecovery;

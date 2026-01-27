@@ -41,6 +41,12 @@ function PlaidLink({
     const oauthStateId = urlParams.get('oauth_state_id');
 
     if (publicToken) {
+      // SECURITY: Validate OAuth redirect parameters
+      if (!publicToken || typeof publicToken !== 'string' || publicToken.length < 10) {
+        setError('Invalid OAuth redirect parameters');
+        return;
+      }
+
       // Handle OAuth redirect - exchange public token
       const handleOAuthRedirect = async () => {
         try {
@@ -66,7 +72,9 @@ function PlaidLink({
           // Clear URL params
           window.history.replaceState({}, document.title, window.location.pathname);
         } catch (err) {
-          setError(err.message);
+          // SECURITY: Sanitize error messages to prevent XSS
+          const sanitizedError = err.message ? err.message.replace(/[<>'"&]/g, '') : 'OAuth redirect failed';
+          setError(sanitizedError);
         }
       };
 
@@ -169,7 +177,16 @@ function PlaidLink({
 
   // Handle Plaid Link events
   const handleOnEvent = (eventName, metadata) => {
-    console.log('Plaid Link Event:', eventName, metadata);
+    // SECURITY: Remove sensitive data logging in production
+    if (process.env.NODE_ENV !== 'production') {
+      logger.info('Plaid Link Event:', { eventName, metadata: { ...metadata, account_id: '[REDACTED]' } });
+    }
+
+    // Handle specific events for error recovery
+    if (eventName === 'ERROR' && metadata?.error_code === 'ITEM_LOGIN_REQUIRED') {
+      logger.warn('ITEM_LOGIN_REQUIRED detected - update mode needed');
+      // Could trigger update mode automatically here
+    }
   };
 
   // Configure Plaid Link with enhanced options
@@ -198,7 +215,7 @@ function PlaidLink({
   if (error) {
     return (
       <div className="plaid-error">
-        <p>Error: {error}</p>
+        <p>Error: {error.replace(/[<>'"&]/g, '')}</p>
         <div className="error-actions">
           <button
             onClick={() => {

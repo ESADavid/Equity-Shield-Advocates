@@ -509,10 +509,19 @@ class PlaidService {
     }, 'getWebhookVerificationKey');
   }
 
-  // Handle webhook
-  async handleWebhook(webhookEvent) {
+  // Handle webhook with signature verification
+  async handleWebhook(rawBody, signature, webhookEvent) {
     try {
-      logger.info('Processing webhook event:', {
+      // SECURITY: Verify webhook signature to prevent spoofing
+      const verificationKey = await this.getWebhookVerificationKey();
+      const isValidSignature = await this.verifyWebhookSignature(rawBody, signature, verificationKey);
+
+      if (!isValidSignature) {
+        logger.error('Invalid webhook signature - possible spoofing attempt');
+        throw new Error('Invalid webhook signature');
+      }
+
+      logger.info('Processing verified webhook event:', {
         type: webhookEvent.webhook_type,
         code: webhookEvent.webhook_code,
         item_id: webhookEvent.item_id,
@@ -815,6 +824,23 @@ class PlaidService {
   // Create a transfer with real-time balance check via Signal
   async createTransfer(accessToken, transferData) {
     try {
+      // SECURITY: Validate transfer data inputs
+      if (!transferData || typeof transferData !== 'object') {
+        throw new Error('Invalid transfer data provided');
+      }
+
+      if (!transferData.accountId || typeof transferData.accountId !== 'string') {
+        throw new Error('Valid account ID is required');
+      }
+
+      if (!transferData.amount || typeof transferData.amount !== 'number' || transferData.amount <= 0) {
+        throw new Error('Valid positive amount is required');
+      }
+
+      if (transferData.amount > 10000) { // Example limit - adjust based on business rules
+        throw new Error('Transfer amount exceeds maximum limit');
+      }
+
       // First, evaluate the transaction using Plaid Signal (default ruleset includes real-time balance check)
       const signalEvaluation = await plaidSignalService.evaluateTransaction(accessToken, {
         client_transaction_id: transferData.idempotencyKey || crypto.randomUUID(),
