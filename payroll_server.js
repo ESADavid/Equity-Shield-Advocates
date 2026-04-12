@@ -1,13 +1,10 @@
 'use strict';
-var __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
+const __importDefault = (mod) => mod?.__esModule ? mod : { default: mod };
+
 Object.defineProperty(exports, '__esModule', { value: true });
 const express_1 = __importDefault(require('express'));
 const body_parser_1 = __importDefault(require('body-parser'));
-const logger_js_1 = require('../config/logger.js');
+import { logger } from '../utils/logger.js';
 const payrollSystem_1 = require('./payrollSystem');
 const app = (0, express_1.default)();
 const port = 5000;

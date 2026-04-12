@@ -1,0 +1,272 @@
+openapi: 3.0.3
+info:
+  title: OSCAR-BROOME-REVENUE API
+  version: 2.0.0
+  description: Revenue system with UBI, partners, PMC, JPMorgan auth + Personal Asset Management
+servers:
+  - url: http://localhost:3000/api
+    description: Local
+
+paths:
+  /partners/onboard:
+    post:
+      summary: Onboard partner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                companyName:
+                  type: string
+                email:
+                  type: string
+              required:
+                - companyName
+                - email
+      responses:
+        '201':
+          description: Partner created
+        default:
+          description: Error
+
+  /citizen-portal/register:
+    post:
+      summary: Register citizen with UBI check
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                ssn:
+                  type: string
+                address:
+                  type: string
+              required:
+                - name
+                - ssn
+                - address
+      responses:
+        '201':
+          description: Citizen registered, UBI eligible
+        default:
+          description: Error
+
+  /citizen-portal/ubi-payment:
+    post:
+      summary: Process UBI payment
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                citizenId:
+                  type: string
+                amount:
+                  type: number
+                month:
+                  type: string
+              required:
+                - citizenId
+                - amount
+                - month
+      responses:
+        '200':
+          description: Payment processed
+        default:
+          description: Error
+
+  /assets/{citizenId}:
+    get:
+      summary: Get all assets for citizen (with netWorth)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: citizenId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assets list with netWorth
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetSummary'
+        '404':
+          description: Citizen not found
+    post:
+      summary: Add new asset for citizen
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: citizenId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetCreate'
+      responses:
+        '201':
+          description: Asset created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assetId:
+                    type: string
+        '400':
+          description: Invalid data
+  /assets/{citizenId}/{assetId}:
+    put:
+      summary: Update asset
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: citizenId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assetId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  type: number
+                # other updates
+      responses:
+        '200':
+          description: Updated
+        '400':
+          description: Error
+    delete:
+      summary: Delete asset
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: citizenId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assetId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted
+        '400':
+          description: Error
+
+  /jpmorgan-auth/login:
+    post:
+      summary: JPMorgan login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Login successful, returns JWT
+        default:
+          description: Error
+
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+        default:
+          description: Error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    AssetSummary:
+      type: object
+      properties:
+        netWorth:
+          type: number
+        companies:
+          type: array
+          items:
+            type: object
+        stocks:
+          type: array
+        patents:
+          type: array
+        cars:
+          type: array
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssetRef'
+    AssetCreate:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [company, stock, patent, car]
+        # type-specific fields
+        name:
+          type: string
+        value:
+          type: number
+      required:
+        - type
+        - value
+    AssetRef:
+      type: object
+      properties:
+        type:
+          type: string
+        refId:
+          type: string
+        value:
+          type: number
+
+security:
+  - bearerAuth: []
+

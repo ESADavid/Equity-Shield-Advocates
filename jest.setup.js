@@ -1,26 +1,56 @@
-const { TextEncoder, TextDecoder } = require('util');
-
-global.setImmediate =
-  global.setImmediate ||
-  function (fn) {
-    return setTimeout(fn, 0);
-  };
-
-// Polyfills for Node.js environment
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
-
-// Set NODE_ENV to test for test environment detection
+// jest.setup.js - Global test environment setup
 process.env.NODE_ENV = 'test';
+process.env.LOG_LEVEL = 'warn'; // Reduce logger noise
 
-// Set dummy environment variables for tests
-process.env.DYNAMICS365_BASE_URL = 'https://dummy.dynamics365.com';
-process.env.DYNAMICS365_ACCESS_TOKEN = 'dummy-token';
-process.env.QUICKBOOKS_BASE_URL = 'https://dummy.quickbooks.com';
-process.env.QUICKBOOKS_ACCESS_TOKEN = 'dummy-qb-token';
-process.env.JPMORGAN_API_KEY = 'dummy-jp-key';
-process.env.JPMORGAN_BASE_URL = 'https://dummy.jpmorgan.com';
-process.env.MERCHANT_API_KEY = 'dummy-merchant-key';
-process.env.TREASURY_API_KEY = 'dummy-treasury-key';
-process.env.BLOCKCHAIN_NODE_URL = 'https://dummy.blockchain.com';
-process.env.QUANTUM_ENCRYPTION_KEY = 'dummy-quantum-key';
+/* eslint-disable no-console */
+// Mock console methods to reduce noise
+const originalConsoleMethods = {
+  log: console.log,
+  info: console.info,
+  warn: console.warn,
+  error: console.error
+};
+
+const suppressedMethods = ['log', 'info'];
+const consoleMethods = {};
+
+suppressedMethods.forEach(method => {
+  consoleMethods[method] = jest.fn();
+});
+
+Object.keys(originalConsoleMethods).forEach(method => {
+  if (!consoleMethods[method]) {
+    consoleMethods[method] = originalConsoleMethods[method];
+  }
+});
+
+Object.assign(console, consoleMethods);
+
+globalThis.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({}),
+  })
+);
+
+globalThis.TextEncoder = require('node:util').TextEncoder;
+globalThis.TextDecoder = require('node:util').TextDecoder;
+
+// Service Worker mocks for browser tests
+if (typeof globalThis !== 'undefined') {
+  globalThis.caches = {
+    open: jest.fn(),
+    match: jest.fn(),
+    add: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+    keys: jest.fn(),
+  };
+}
+
+// Fix for jsdom
+globalThis.ResizeObserver = class ResizeObserver {
+  observe() { return; } // intentional no-op for jsdom test mock
+  unobserve() { return; } // intentional no-op for jsdom test mock
+  disconnect() { return; } // intentional no-op for jsdom test mock
+};

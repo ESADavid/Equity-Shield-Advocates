@@ -110,6 +110,45 @@ try {
   );
 }
 
+// ===== PHASE 2 SERVICES - Graceful Initialization =====
+let partnerCoordinationService;
+let citizenPortalService;
+let pmcIntegrationService;
+
+try {
+  const PartnerCoordinationService = await import('./services/partnerCoordinationService.js').then(m => m.default);
+  partnerCoordinationService = new PartnerCoordinationService();
+  logger.info('✅ PartnerCoordinationService initialized');
+} catch (error) {
+  logger.warn('⚠️ PartnerCoordinationService init failed, using fallback:', error.message);
+  partnerCoordinationService = { getHealthStatus: () => ({status: 'fallback', mode: 'mock'}) };
+}
+
+try {
+  const CitizenPortalService = await import('./services/citizenPortalService.js').then(m => m.default);
+  citizenPortalService = new CitizenPortalService();
+  logger.info('✅ CitizenPortalService initialized');
+} catch (error) {
+  logger.warn('⚠️ CitizenPortalService init failed, using fallback:', error.message);
+  citizenPortalService = { getHealthStatus: () => ({status: 'fallback', mode: 'mock'}) };
+}
+
+try {
+  const PMCIntegrationService = await import('./services/pmcIntegrationService.js').then(m => m.default);
+  pmcIntegrationService = new PMCIntegrationService();
+  logger.info('✅ PMCIntegrationService initialized');
+} catch (error) {
+  logger.warn('⚠️ PMCIntegrationService init failed, using fallback:', error.message);
+  pmcIntegrationService = { getHealthStatus: () => ({status: 'fallback', mode: 'mock'}) };
+}
+
+// Log services health
+logger.info('🏥 Phase 2 Services Health:', {
+  partner: partnerCoordinationService.getHealthStatus(),
+  citizen: citizenPortalService.getHealthStatus(),
+  pmc: pmcIntegrationService.getHealthStatus()
+});
+
 // Initialize notification service
 const notificationService = new NotificationService(io);
 
@@ -499,7 +538,7 @@ app.get('/api/status', (req, res) => {
 });
 
 // Merchant Bill Pay API Routes
-if (merchantBillPay && merchantBillPay.router) {
+if (merchantBillPay?.router) {
   app.use('/api/merchant', merchantBillPay.router);
   logger.info('✅ Merchant bill pay routes mounted at /api/merchant');
 }
@@ -532,6 +571,17 @@ if (notificationRouter) {
 app.use('/api/auth', authRoutes);
 logger.info('✅ Authentication routes mounted at /api/auth');
 
+// JPMorgan Auth Routes
+let jpmorganAuthRoutes;
+try {
+  const jpmorganAuthModule = await import('./routes/jpmorgan_auth_routes.js');
+  jpmorganAuthRoutes = jpmorganAuthModule.default || jpmorganAuthModule;
+  app.use('/api/jpmorgan-auth', jpmorganAuthRoutes);
+  logger.info('✅ JPMorgan auth routes mounted at /api/jpmorgan-auth');
+} catch (error) {
+  logger.error('❌ Failed to load JPMorgan auth routes:', error.message);
+}
+
 // Transaction Override API Routes
 app.use('/api/transactions', transactionRoutes);
 logger.info('✅ Transaction routes mounted at /api/transactions');
@@ -562,7 +612,7 @@ if (educationRouter) {
 
 // ITG API Routes - KING SACHEM YOCHANAN
 if (itgRouter) {
-  app.use('/api/itg', itgRouter);
+  app.use('/api/itg', itgRouter ?? (() => {}));
   logger.info('✅ ITG routes mounted at /api/itg');
   logger.info('   👑 King Sachem Yochanan ITG Algorithm active');
   logger.info('   ✨ Sacred Geometry + Divine Wisdom + Quantum Enhancement');
@@ -570,7 +620,7 @@ if (itgRouter) {
 
 // Divine AI API Routes - PRIVATE PERSONAL AI
 if (divineAIRouter) {
-  app.use('/api/divine-ai', divineAIRouter);
+  app.use('/api/divine-ai', divineAIRouter ?? (() => {}));
   logger.info('✅ Divine AI routes mounted at /api/divine-ai');
   logger.info('   🤖 Divine AI active - Personal benefit only');
   logger.info('   🔐 Private access - King Sachem Yochanan exclusive');
@@ -578,21 +628,21 @@ if (divineAIRouter) {
 
 // Partner API Routes - PHASE 2
 if (partnerRouter) {
-  app.use('/api/partners', partnerRouter);
+  app.use('/api/partners', partnerRouter ?? (() => {}));
   logger.info('✅ Partner routes mounted at /api/partners');
   logger.info('   🤝 Partner coordination & PMC integration active');
 }
 
 // Citizen Portal API Routes - PHASE 2
 if (citizenPortalRouter) {
-  app.use('/api/citizen-portal', citizenPortalRouter);
+  app.use('/api/citizen-portal', citizenPortalRouter ?? (() => {}));
   logger.info('✅ Citizen portal routes mounted at /api/citizen-portal');
   logger.info('   👥 Citizen registration & services active');
 }
 
 // UBI Payment API Routes - PHASE 2
 if (ubiPaymentRouter) {
-  app.use('/api/ubi-payments', ubiPaymentRouter);
+  app.use('/api/ubi-payments', ubiPaymentRouter ?? (() => {}));
   logger.info('✅ UBI payment routes mounted at /api/ubi-payments');
   logger.info('   💵 UBI payment processing active');
 }

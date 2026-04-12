@@ -168,7 +168,7 @@ transactionSchema.index({ tenantId: 1, 'fromAccount.accountId': 1 });
 transactionSchema.index({ tenantId: 1, 'toAccount.accountId': 1 });
 transactionSchema.index({ tenantId: 1, 'merchant.merchantId': 1 });
 transactionSchema.index({ tenantId: 1, 'blockchain.recorded': 1 });
-transactionSchema.index({ tenantId: 1, transactionId: 1 }, { unique: true });
+// Duplicate unique index removed (field already has unique: true)
 
 // Virtual for total amount including fees
 transactionSchema.virtual('totalAmount').get(function () {

@@ -26,17 +26,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 class CacheService {
-  constructor() {
-    this.client = null;
-    this.isConnected = false;
-    this.metrics = {
-      hits: 0,
-      misses: 0,
-      sets: 0,
-      deletes: 0,
-      errors: 0,
-    };
-  }
+  client = null;\n  isConnected = false;\n  metrics = {\n    hits: 0,\n    misses: 0,\n    sets: 0,\n    deletes: 0,\n    errors: 0,\n  };
 
   async connect() {
     try {
@@ -72,9 +62,12 @@ class CacheService {
       });
 
       this.client.on('error', (error) => {
+        if (!this.lastErrorTime || Date.now() - this.lastErrorTime > 60000) { // Debounce 1min
+          this.lastErrorTime = Date.now();
+          logger.error('Redis connection error (suppressed repeats)', { error: error.message });
+        }
         this.isConnected = false;
         this.metrics.errors++;
-        logger.error('Redis connection error', { error: error.message });
       });
 
       this.client.on('ready', () => {

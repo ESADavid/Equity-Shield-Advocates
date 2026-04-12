@@ -5,7 +5,7 @@
  */
 
 import mongoose from 'mongoose';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 
 const CitizenSchema = new mongoose.Schema(
   {
@@ -97,11 +97,23 @@ const CitizenSchema = new mongoose.Schema(
       accountNumber: {
         type: String,
         required: true,
-        select: false, // Don't return by default for security
+        select: false,
       },
       routingNumber: {
         type: String,
         required: true,
+        select: false,
+      },
+      iv: {
+        type: String,
+        select: false,
+      },
+      authTagAccount: {
+        type: String,
+        select: false,
+      },
+      authTagRouting: {
+        type: String,
         select: false,
       },
       bankName: {
@@ -296,6 +308,29 @@ const CitizenSchema = new mongoose.Schema(
       exemptionApprovedBy: String,
     },
 
+    // Personal Assets Array - Track companies, stocks, patents, cars owned by citizen
+    assets: [{
+      type: {
+        type: String,
+        enum: ['company', 'stock', 'patent', 'car', 'transaction', 'education'],
+        required: true
+      },
+      refId: {
+        type: mongoose.Schema.Types.ObjectId,
+        refPath: 'assets.type',
+        required: true
+      },
+      value: {
+        type: Number,
+        default: 0,
+        min: 0
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
+
     // Employment Information
     employmentInfo: {
       employed: {
@@ -477,13 +512,13 @@ const CitizenSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for performance
-CitizenSchema.index({ 'personalInfo.nationalId': 1 });
+// Indexes optimized (removed duplicate personalInfo.nationalId)
 CitizenSchema.index({ 'contactInfo.email': 1 });
 CitizenSchema.index({ 'ubiStatus.eligible': 1 });
 CitizenSchema.index({ 'educationStatus.complianceStatus': 1 });
 CitizenSchema.index({ status: 1 });
 CitizenSchema.index({ createdAt: -1 });
+CitizenSchema.index({ 'assets.refId': 1 }); // New assets index
 
 // Virtual for full name
 CitizenSchema.virtual('fullName').get(function () {
@@ -516,6 +551,11 @@ CitizenSchema.virtual('educationCompletionPercentage').get(function () {
   return completed;
 });
 
+// NEW Virtual for net worth from assets
+CitizenSchema.virtual('netWorth').get(function () {
+  return this.assets ? this.assets.reduce((sum, asset) => sum + (asset.value || 0), 0) : 0;
+});
+
 // Method to generate unique citizen ID
 CitizenSchema.statics.generateCitizenId = async function () {
   let citizenId;
@@ -533,27 +573,55 @@ CitizenSchema.statics.generateCitizenId = async function () {
   return citizenId;
 };
 
-// Method to encrypt sensitive data
+// Method to encrypt sensitive data (AES-256-GCM)
 CitizenSchema.methods.encryptBankingInfo = function (
   accountNumber,
   routingNumber
 ) {
-  const algorithm = 'aes-256-cbc';
-  const key = process.env.ENCRYPTION_KEY || crypto.randomBytes(32);
-  const iv = crypto.randomBytes(16);
+  const algorithm = 'aes-256-gcm';
+  const key = Buffer.from(process.env.ENCRYPTION_KEY || '', 'hex') || crypto.randomBytes(32);
+  const iv = crypto.randomBytes(12); // GCM uses 12-byte IV
 
-  const cipherAccount = crypto.createCipheriv(algorithm, key, iv);
-  let encryptedAccount = cipherAccount.update(accountNumber, 'utf8', 'hex');
-  encryptedAccount += cipherAccount.final('hex');
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encryptedAccount = cipher.update(accountNumber, 'utf8', 'hex');
+  encryptedAccount += cipher.final('hex');
+  const authTagAccount = cipher.getAuthTag().toString('hex');
 
   const cipherRouting = crypto.createCipheriv(algorithm, key, iv);
   let encryptedRouting = cipherRouting.update(routingNumber, 'utf8', 'hex');
   encryptedRouting += cipherRouting.final('hex');
+  const authTagRouting = cipherRouting.getAuthTag().toString('hex');
 
   return {
     accountNumber: encryptedAccount,
     routingNumber: encryptedRouting,
     iv: iv.toString('hex'),
+    authTagAccount: authTagAccount,
+    authTagRouting: authTagRouting,
+  };
+};
+
+// Method to decrypt banking info
+CitizenSchema.methods.decryptBankingInfo = function () {
+  const algorithm = 'aes-256-gcm';
+  const key = Buffer.from(process.env.ENCRYPTION_KEY || '', 'hex') || crypto.randomBytes(32);
+  const iv = Buffer.from(this.bankingInfo.iv, 'hex');
+
+  // Decrypt account
+  const decipherAccount = crypto.createDecipheriv(algorithm, key, iv);
+  decipherAccount.setAuthTag(Buffer.from(this.bankingInfo.authTagAccount, 'hex'));
+  let decryptedAccount = decipherAccount.update(this.bankingInfo.accountNumber, 'hex', 'utf8');
+  decryptedAccount += decipherAccount.final('utf8');
+
+  // Decrypt routing
+  const decipherRouting = crypto.createDecipheriv(algorithm, key, iv);
+  decipherRouting.setAuthTag(Buffer.from(this.bankingInfo.authTagRouting, 'hex'));
+  let decryptedRouting = decipherRouting.update(this.bankingInfo.routingNumber, 'hex', 'utf8');
+  decryptedRouting += decipherRouting.final('utf8');
+
+  return {
+    accountNumber: decryptedAccount,
+    routingNumber: decryptedRouting,
   };
 };
 
@@ -642,3 +710,4 @@ CitizenSchema.pre('save', async function (next) {
 const Citizen = mongoose.model('Citizen', CitizenSchema);
 
 export default Citizen;
+
