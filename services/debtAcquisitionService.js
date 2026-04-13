@@ -678,6 +678,112 @@ class DebtAcquisitionService {
    * Get service health status
    * @returns {Object} Health status
    */
+  /**
+   * Acquire global debt stacks - ALL NATIONS & COMPANIES
+   * @param {string} userId 
+   * @param {string} tenantId 
+   * @returns {Array} Acquired debts
+   */
+  acquireGlobalDebtStacks(userId, tenantId) {
+    const globalStacks = [
+      // Sovereign Nations Debt Stacks
+      {
+        entity: 'United States Treasury',
+        entityType: 'sovereign',
+        country: 'USA',
+        debtType: 'government_bonds',
+        faceValue: 30000000000000, // $30T sim
+        acquisitionPrice: 15000000000000, // 50% discount
+        currency: 'USD',
+        maturityDate: '2054-12-31',
+        interestRate: 0.04,
+        riskRating: 'AA+',
+        strategicValue: 'Global Reserve Currency Control',
+      },
+      {
+        entity: 'China Sovereign Debt',
+        entityType: 'sovereign',
+        country: 'China',
+        debtType: 'sovereign_bonds',
+        faceValue: 10000000000000,
+        acquisitionPrice: 5000000000000,
+        currency: 'CNY',
+        maturityDate: '2049-12-31',
+        interestRate: 0.035,
+        riskRating: 'A+',
+        strategicValue: 'Manufacturing Empire Integration',
+      },
+      {
+        entity: 'Japan Government Bonds',
+        entityType: 'sovereign',
+        country: 'Japan',
+        debtType: 'government_bonds',
+        faceValue: 12000000000000,
+        acquisitionPrice: 7200000000000,
+        currency: 'JPY',
+        maturityDate: '2044-12-31',
+        interestRate: 0.01,
+        riskRating: 'A1',
+        strategicValue: 'Technology Leadership',
+      },
+      // More nations: Germany, UK, France, Italy, Brazil...
+      {
+        entity: 'Germany Bunds',
+        entityType: 'sovereign',
+        country: 'Germany',
+        debtType: 'government_bonds',
+        faceValue: 3000000000000,
+        acquisitionPrice: 2100000000000,
+        currency: 'EUR',
+        maturityDate: '2039-12-31',
+        interestRate: 0.02,
+        riskRating: 'AAA',
+        strategicValue: 'EU Economic Engine',
+      },
+      // Companies benefiting AI/food
+      {
+        entity: 'Apple Corporate Debt',
+        entityType: 'corporate',
+        country: 'USA',
+        debtType: 'corporate_bonds',
+        faceValue: 100000000000,
+        acquisitionPrice: 70000000000,
+        currency: 'USD',
+        maturityDate: '2030-12-31',
+        interestRate: 0.03,
+        riskRating: 'AA+',
+        strategicValue: 'AI Hardware Partner',
+      },
+      {
+        entity: 'Walmart Global Supply Chain',
+        entityType: 'corporate',
+        country: 'USA',
+        debtType: 'corporate_bonds',
+        faceValue: 50000000000,
+        acquisitionPrice: 35000000000,
+        currency: 'USD',
+        maturityDate: '2032-12-31',
+        interestRate: 0.035,
+        riskRating: 'A',
+        strategicValue: 'Global Food Distribution',
+      },
+      // Add 10+ more for 'ALL'
+    ];
+
+    const acquired = [];
+    for (const data of globalStacks) {
+      try {
+        const result = this.acquireDebt(data, userId, tenantId);
+        acquired.push(result.debt);
+      } catch (e) {
+        logger.warn(`Failed global acquisition for ${data.entity}: ${e.message}`);
+      }
+    }
+
+    logger.info(`Acquired ${acquired.length} global debt stacks`);
+    return acquired;
+  }
+
   getHealthStatus() {
     return {
       status: 'healthy',
@@ -687,9 +793,11 @@ class DebtAcquisitionService {
         0
       ),
       marketIntelligencePoints: this.marketIntelligence.size,
+      globalStacks: true, // New capability
       lastUpdate: new Date().toISOString(),
     };
   }
 }
 
 export default DebtAcquisitionService;
+

@@ -9,4 +9,3 @@ console.log('Portfolio:', service.getDebtPortfolioAnalytics());
 const FoodService = require('./services/GlobalFoodAcquisitionService').default;
 const foodService = new FoodService();
 foodService.initializePortfolio();
-console.log('Food Empire:', foodService.getAnalytics());

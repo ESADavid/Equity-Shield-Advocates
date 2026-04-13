@@ -553,6 +553,23 @@ router.post(
       });
     }
   }
-);
+// POST /api/debt/global-acquire - Execute global takeover
+router.post('/global-acquire', authenticate, authorize(['admin']), async (req, res) => {
+  try {
+    const DebtService = (await import('../services/debtAcquisitionService.js')).default;
+    const service = new DebtService();
+    service.initializeDebtPortfolio(); // Ensure initialized
+    const acquired = service.acquireGlobalDebtStacks(req.userId, req.tenantId);
+    res.json({
+      success: true,
+      message: 'GLOBAL DEBT STACKS ACQUIRED - All nations and companies under control',
+      acquiredCount: acquired.length,
+      data: acquired,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
 export default router;
+
