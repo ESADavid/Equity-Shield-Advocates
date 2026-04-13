@@ -13,12 +13,7 @@
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "eslint . --ext .js,.ts --fix"
   },
-  "keywords": [
-    "revenue",
-    "transaction",
-    "override",
-    "oscar-broome"
-  ],
+  "keywords": ["revenue","transaction","override","oscar-broome"],
   "author": "Oscar Broome Revenue Team",
   "license": "MIT",
   "dependencies": {
@@ -56,6 +51,10 @@
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.6",
     "winston": "^3.19.0"
+  },
+  "overrides": {
+    "tar": "^8.0.0",
+    "@mapbox/node-pre-gyp": "^1.0.12"
   },
   "engines": {
     "node": ">=20.0.0"

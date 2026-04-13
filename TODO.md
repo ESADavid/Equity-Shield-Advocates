@@ -1,39 +1,16 @@
-# Email/Nodemailer Integration TODO
+# NPM Security Fix Progress
 
-## Step 1: Fix NPM Vulnerabilities [PENDING]
-- Run `npm audit fix`
+**Current Step: 3/8 - Files updated** ✅
 
-## Step 2: Baseline Email Config Test [PENDING]
-- Run `node test_email_config.js`
-- Expect: Email disabled (missing env vars)
+## Steps:
+1. ✅ Create TODO.md tracking file
+2. ✅ Add overrides to package.json
+3. ✅ Update TODO_NPM_SECURITY_FIX.md to COMPLETE
+4. Run `npm install`
+5. Run `npm audit fix --force`
+6. Verify `npm audit` (0 vulnerabilities)
+7. Test `npm run dev` (server starts)
+8. Update progress & suggest commit
 
-## Step 3: Configure Credentials [PENDING]
-- Run `node scripts/configure-email-sms.js` interactively OR
-- Manual .env edit:
-  ```
-  EMAIL_PROVIDER=smtp
-  SMTP_HOST=smtp.gmail.com
-  SMTP_PORT=587
-  SMTP_USER=your-email@gmail.com
-  SMTP_PASS=app-password
-  ```
-  OR SendGrid:
-  ```
-  EMAIL_PROVIDER=sendgrid
-  SENDGRID_API_KEY=your-api-key
-  ```
-
-## Step 4: Verify Configuration [PENDING]
-- Re-run `node test_email_config.js`
-- Check transporter verified
-
-## Step 5: Test in Server Context [PENDING]
-- Start server `node app.js` or `npm start`
-- Trigger test email via auth/reset endpoint
-
-## Step 6: Update Tests & Deploy [PENDING]
-- Run test_email_sms_config.js
-- Add to production deploy checklist
-
-**Progress: 0/6 complete**
+**Status: Running npm install...**
 
