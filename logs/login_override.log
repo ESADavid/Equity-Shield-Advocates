@@ -30,6 +30,7 @@
 {"adminUserId":"admin@oscarsystem.com","expiresAt":"2025-09-29T21:17:14.269Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1759179734269_3F9F43E0","reason":"technical_issue","service":"login-override","targetUserId":"USER_1759179734260_674C3620","timestamp":"2025-09-29T21:02:14.269Z"}
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -81,3 +82,5 @@
 {"adminUserId":"admin@oscarsystem.com","expiresAt":"2026-01-25T23:16:33.463Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1769382093463_A4E9C750","reason":"technical_issue","service":"login-override","targetUserId":"USER_1769382093442_AC58BE54","timestamp":"2026-01-25T23:01:33.463Z"}
 {"expiresAt":"2026-01-26T00:11:30.432Z","level":"warn","message":"EMERGENCY OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1769385390432_9005DA08","reason":"emergency_access","service":"login-override","timestamp":"2026-01-25T23:56:30.432Z","userId":"USER_1769385389958_0EEA28ED"}
 {"adminUserId":"admin@oscarsystem.com","expiresAt":"2026-01-26T00:11:30.860Z","justification":"User reported login issues","level":"info","message":"ADMIN OVERRIDE ACTIVATED","overrideId":"OVERRIDE_1769385390860_C73D3436","reason":"technical_issue","service":"login-override","targetUserId":"USER_1769385390819_2EFACB2D","timestamp":"2026-01-25T23:56:30.860Z"}
+=======
+>>>>>>> Stashed changes
