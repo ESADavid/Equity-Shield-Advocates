@@ -7,7 +7,8 @@ describe('Investments Move Integration Tests', () => {
 
   beforeAll(async () => {
     // Setup test environment
-    process.env.PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID || 'test_client_id';
+    process.env.PLAID_CLIENT_ID =
+      process.env.PLAID_CLIENT_ID || 'test_client_id';
     process.env.PLAID_SECRET = process.env.PLAID_SECRET || 'test_secret';
     process.env.PLAID_ENV = 'sandbox';
   });
@@ -21,7 +22,11 @@ describe('Investments Move Integration Tests', () => {
         manualEntryEnabled: true,
       };
 
-      const result = await plaidService.createLinkToken(testUserId, products, options);
+      const result = await plaidService.createLinkToken(
+        testUserId,
+        products,
+        options
+      );
 
       expect(result).toBeDefined();
       expect(result.link_token).toBeDefined();
@@ -39,7 +44,11 @@ describe('Investments Move Integration Tests', () => {
         manualEntryEnabled: true,
       };
 
-      const result = await plaidService.createLinkToken(testUserId, products, options);
+      const result = await plaidService.createLinkToken(
+        testUserId,
+        products,
+        options
+      );
 
       expect(result).toBeDefined();
       expect(result.link_token).toBeDefined();
@@ -50,9 +59,9 @@ describe('Investments Move Integration Tests', () => {
     test('should handle invalid products gracefully', async () => {
       const products = ['invalid_product'];
 
-      await expect(plaidService.createLinkToken(testUserId, products))
-        .rejects
-        .toThrow();
+      await expect(
+        plaidService.createLinkToken(testUserId, products)
+      ).rejects.toThrow();
 
       logger.info('✅ Invalid products handled correctly');
     });
@@ -63,7 +72,8 @@ describe('Investments Move Integration Tests', () => {
       // This would normally require a real public token from Link flow
       // For testing purposes, we'll mock the expected behavior
 
-      const mockPublicToken = 'public-sandbox-' + Math.random().toString(36).substring(2);
+      const mockPublicToken =
+        'public-sandbox-' + Math.random().toString(36).substring(2);
 
       // In a real test, you would:
       // 1. Create a link token
@@ -82,7 +92,8 @@ describe('Investments Move Integration Tests', () => {
       // 2. Complete Link flow to get access token
       // 3. Call getInvestmentsAuth
 
-      const mockAccessToken = 'access-sandbox-' + Math.random().toString(36).substring(2);
+      const mockAccessToken =
+        'access-sandbox-' + Math.random().toString(36).substring(2);
 
       // Mock the expected API call
       const mockResponse = {
@@ -93,8 +104,8 @@ describe('Investments Move Integration Tests', () => {
             type: 'investment',
             subtype: 'brokerage',
             balances: {
-              available: 10000.00,
-              current: 10000.00,
+              available: 10000.0,
+              current: 10000.0,
               iso_currency_code: 'USD',
             },
             numbers: {
@@ -106,8 +117,8 @@ describe('Investments Move Integration Tests', () => {
                 account_id: 'account_123',
                 security_id: 'sec_123',
                 quantity: 100,
-                price: 50.00,
-                value: 5000.00,
+                price: 50.0,
+                value: 5000.0,
               },
             ],
           },
@@ -135,9 +146,9 @@ describe('Investments Move Integration Tests', () => {
     test('should handle invalid access token', async () => {
       const invalidToken = 'invalid-token-123';
 
-      await expect(plaidService.getInvestmentsAuth(invalidToken))
-        .rejects
-        .toThrow();
+      await expect(
+        plaidService.getInvestmentsAuth(invalidToken)
+      ).rejects.toThrow();
 
       logger.info('✅ Invalid access token handled correctly');
     });
@@ -156,7 +167,11 @@ describe('Investments Move Integration Tests', () => {
         manualEntryEnabled: true,
       };
 
-      const result = await plaidService.createLinkToken(testUserId, products, options);
+      const result = await plaidService.createLinkToken(
+        testUserId,
+        products,
+        options
+      );
 
       expect(result).toBeDefined();
       expect(result.link_token).toBeDefined();
@@ -193,7 +208,7 @@ describe('Investments Move Integration Tests', () => {
         },
       ];
 
-      testCases.forEach(testCase => {
+      testCases.forEach((testCase) => {
         logger.info(`Testing: ${testCase.name}`);
         // Each configuration should work without errors
       });
@@ -209,9 +224,9 @@ describe('Investments Move Integration Tests', () => {
       process.env.PLAID_CLIENT_ID = 'invalid_client_id';
 
       try {
-        await expect(plaidService.createLinkToken(testUserId, ['investments_auth']))
-          .rejects
-          .toThrow();
+        await expect(
+          plaidService.createLinkToken(testUserId, ['investments_auth'])
+        ).rejects.toThrow();
       } finally {
         process.env.PLAID_CLIENT_ID = originalClientId;
       }
@@ -238,8 +253,8 @@ describe('Investments Move Integration Tests', () => {
             type: 'investment',
             subtype: 'brokerage',
             balances: {
-              available: 10000.00,
-              current: 10000.00,
+              available: 10000.0,
+              current: 10000.0,
               iso_currency_code: 'USD',
             },
             numbers: {
@@ -251,8 +266,8 @@ describe('Investments Move Integration Tests', () => {
                 account_id: 'account_123',
                 security_id: 'sec_123',
                 quantity: 100,
-                price: 50.00,
-                value: 5000.00,
+                price: 50.0,
+                value: 5000.0,
               },
             ],
           },

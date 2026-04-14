@@ -6,12 +6,12 @@ class QuantumEnhancedAIService {
       portfolio: {
         maxAllocation: 0.3, // Max 30% per asset
         minAllocation: 0.05, // Min 5% per asset
-        rebalanceThreshold: 0.05 // Rebalance if deviation > 5%
+        rebalanceThreshold: 0.05, // Rebalance if deviation > 5%
       },
       risk: {
         maxVolatility: 0.2,
-        targetReturn: 0.08
-      }
+        targetReturn: 0.08,
+      },
     };
   }
 
@@ -20,7 +20,7 @@ class QuantumEnhancedAIService {
     const totalValue = assets.reduce((sum, asset) => sum + asset.value, 0);
 
     // Simple mean-variance optimization simulation
-    const optimized = assets.map(asset => {
+    const optimized = assets.map((asset) => {
       const currentWeight = asset.value / totalValue;
       let targetWeight = currentWeight;
 
@@ -36,13 +36,16 @@ class QuantumEnhancedAIService {
         ...asset,
         currentWeight,
         targetWeight,
-        adjustment: targetWeight - currentWeight
+        adjustment: targetWeight - currentWeight,
       };
     });
 
     // Normalize weights to sum to 1
-    const totalTarget = optimized.reduce((sum, asset) => sum + asset.targetWeight, 0);
-    optimized.forEach(asset => {
+    const totalTarget = optimized.reduce(
+      (sum, asset) => sum + asset.targetWeight,
+      0
+    );
+    optimized.forEach((asset) => {
       asset.targetWeight = asset.targetWeight / totalTarget;
       asset.adjustment = asset.targetWeight - asset.currentWeight;
     });
@@ -51,19 +54,24 @@ class QuantumEnhancedAIService {
       optimized,
       expectedReturn: this.calculateExpectedReturn(optimized),
       expectedRisk: this.calculateExpectedRisk(optimized),
-      method: 'traditional_optimization'
+      method: 'traditional_optimization',
     };
   }
 
   calculateExpectedReturn(portfolio) {
     // Simple weighted average return
-    return portfolio.reduce((sum, asset) => sum + (asset.targetWeight * (asset.expectedReturn || 0.07)), 0);
+    return portfolio.reduce(
+      (sum, asset) => sum + asset.targetWeight * (asset.expectedReturn || 0.07),
+      0
+    );
   }
 
   calculateExpectedRisk(portfolio) {
     // Simplified risk calculation
-    const weightedVolatility = portfolio.reduce((sum, asset) =>
-      sum + (asset.targetWeight * (asset.volatility || 0.15)), 0);
+    const weightedVolatility = portfolio.reduce(
+      (sum, asset) => sum + asset.targetWeight * (asset.volatility || 0.15),
+      0
+    );
     return Math.sqrt(weightedVolatility);
   }
 
@@ -76,7 +84,7 @@ class QuantumEnhancedAIService {
     const solution = {
       variables: {},
       objectiveValue: 0,
-      feasible: true
+      feasible: true,
     };
 
     if (objective === 'maximize_return') {
@@ -109,7 +117,9 @@ class QuantumEnhancedAIService {
     if (typeof item === 'string' && typeof target === 'string') {
       const itemWords = item.toLowerCase().split(' ');
       const targetWords = target.toLowerCase().split(' ');
-      const common = itemWords.filter(word => targetWords.includes(word)).length;
+      const common = itemWords.filter((word) =>
+        targetWords.includes(word)
+      ).length;
       return common / Math.max(itemWords.length, targetWords.length);
     }
     return 0.5; // Default similarity

@@ -42,20 +42,24 @@ const PartnerSchema = new mongoose.Schema(
       onTimeDelivery: { type: Number, default: 0 },
       totalRevenue: { type: mongoose.Decimal128, default: 0 },
     },
-    projects: [{
-      projectId: String,
-      name: String,
-      status: String,
-      assignedDate: Date,
-      deadline: Date,
-      value: mongoose.Decimal128,
-    }],
-    communications: [{
-      type: String, // email/call/meeting
-      date: Date,
-      summary: String,
-      sentBy: String,
-    }],
+    projects: [
+      {
+        projectId: String,
+        name: String,
+        status: String,
+        assignedDate: Date,
+        deadline: Date,
+        value: mongoose.Decimal128,
+      },
+    ],
+    communications: [
+      {
+        type: String, // email/call/meeting
+        date: Date,
+        summary: String,
+        sentBy: String,
+      },
+    ],
     onboarding: {
       completed: { type: Boolean, default: false },
       date: Date,
@@ -74,20 +78,25 @@ PartnerSchema.index({ status: 1 });
 PartnerSchema.index({ 'performance.rating': 1 });
 PartnerSchema.index({ 'contactPerson.email': 1 });
 
-PartnerSchema.statics.generatePartnerId = async function() {
+PartnerSchema.statics.generatePartnerId = async function () {
   let id;
   do {
-    id = 'PARTNER-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+    id =
+      'PARTNER-' +
+      Date.now() +
+      '-' +
+      Math.random().toString(36).substr(2, 6).toUpperCase();
   } while (await this.findOne({ partnerId: id }));
   return id;
 };
 
-PartnerSchema.pre('save', async function(next) {
-  if (!this.partnerId) this.partnerId = await this.constructor.generatePartnerId();
+PartnerSchema.pre('save', async function (next) {
+  if (!this.partnerId)
+    this.partnerId = await this.constructor.generatePartnerId();
   next();
 });
 
-PartnerSchema.methods.activate = function(userId) {
+PartnerSchema.methods.activate = function (userId) {
   this.status = 'active';
   this.onboarding.completed = true;
   this.onboarding.date = new Date();
@@ -95,10 +104,9 @@ PartnerSchema.methods.activate = function(userId) {
   return this.save();
 };
 
-PartnerSchema.methods.addProject = function(projectData) {
+PartnerSchema.methods.addProject = function (projectData) {
   this.projects.push({ ...projectData, projectId: 'PROJ-' + Date.now() });
   return this.save();
 };
 
 export default mongoose.model('Partner', PartnerSchema);
-

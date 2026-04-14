@@ -14,7 +14,7 @@ function LayerOnboarding({
   webhook,
   linkCustomizationName,
   buttonStyle = {},
-  theme = 'default'
+  theme = 'default',
 }) {
   const [sessionToken, setSessionToken] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -49,7 +49,9 @@ function LayerOnboarding({
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || 'Failed to create Layer session token');
+          throw new Error(
+            data.message || 'Failed to create Layer session token'
+          );
         }
 
         setSessionToken(data.data.session_token);
@@ -218,7 +220,10 @@ function LayerOnboarding({
       {currentStep === 'phone' && (
         <div className="layer-phone-step">
           <h3>Instant Account Verification</h3>
-          <p>Enter your phone number to instantly verify your identity and connect your accounts.</p>
+          <p>
+            Enter your phone number to instantly verify your identity and
+            connect your accounts.
+          </p>
 
           <form onSubmit={handlePhoneSubmit} className="layer-form">
             <div className="form-group">
@@ -248,7 +253,10 @@ function LayerOnboarding({
       {currentStep === 'dob' && layerEligibility === 'not_available' && (
         <div className="layer-dob-step">
           <h3>Additional Verification</h3>
-          <p>Your phone number isn't eligible for instant verification. Please provide your date of birth for extended verification.</p>
+          <p>
+            Your phone number isn't eligible for instant verification. Please
+            provide your date of birth for extended verification.
+          </p>
 
           <form onSubmit={handleDOBSubmit} className="layer-form">
             <div className="form-group">
@@ -273,7 +281,8 @@ function LayerOnboarding({
           </form>
 
           <p className="layer-alternative">
-            Or <button
+            Or{' '}
+            <button
               type="button"
               className="btn-link"
               onClick={() => {
@@ -290,7 +299,10 @@ function LayerOnboarding({
       {currentStep === 'layer' && layerEligibility === 'ready' && (
         <div className="layer-ready-step">
           <h3>Ready to Connect</h3>
-          <p>Your information has been verified! Click below to securely connect your accounts.</p>
+          <p>
+            Your information has been verified! Click below to securely connect
+            your accounts.
+          </p>
 
           <button
             onClick={handleOpenLayer}
@@ -305,7 +317,10 @@ function LayerOnboarding({
       {layerEligibility === 'autofill_not_available' && (
         <div className="layer-fallback">
           <h3>Alternative Verification Required</h3>
-          <p>Extended verification is not available. Please use our standard account connection process.</p>
+          <p>
+            Extended verification is not available. Please use our standard
+            account connection process.
+          </p>
 
           <button
             onClick={() => {
@@ -321,7 +336,8 @@ function LayerOnboarding({
 
       <div className="layer-info">
         <p className="layer-security-note">
-          🔒 Your data is encrypted and secure. We use bank-level security to protect your information.
+          🔒 Your data is encrypted and secure. We use bank-level security to
+          protect your information.
         </p>
       </div>
     </div>

@@ -116,37 +116,57 @@ let citizenPortalService;
 let pmcIntegrationService;
 
 try {
-  const PartnerCoordinationService = await import('./services/partnerCoordinationService.js').then(m => m.default);
+  const PartnerCoordinationService =
+    await import('./services/partnerCoordinationService.js').then(
+      (m) => m.default
+    );
   partnerCoordinationService = new PartnerCoordinationService();
   logger.info('✅ PartnerCoordinationService initialized');
 } catch (error) {
-  logger.warn('⚠️ PartnerCoordinationService init failed, using fallback:', error.message);
-  partnerCoordinationService = { getHealthStatus: () => ({status: 'fallback', mode: 'mock'}) };
+  logger.warn(
+    '⚠️ PartnerCoordinationService init failed, using fallback:',
+    error.message
+  );
+  partnerCoordinationService = {
+    getHealthStatus: () => ({ status: 'fallback', mode: 'mock' }),
+  };
 }
 
 try {
-  const CitizenPortalService = await import('./services/citizenPortalService.js').then(m => m.default);
+  const CitizenPortalService =
+    await import('./services/citizenPortalService.js').then((m) => m.default);
   citizenPortalService = new CitizenPortalService();
   logger.info('✅ CitizenPortalService initialized');
 } catch (error) {
-  logger.warn('⚠️ CitizenPortalService init failed, using fallback:', error.message);
-  citizenPortalService = { getHealthStatus: () => ({status: 'fallback', mode: 'mock'}) };
+  logger.warn(
+    '⚠️ CitizenPortalService init failed, using fallback:',
+    error.message
+  );
+  citizenPortalService = {
+    getHealthStatus: () => ({ status: 'fallback', mode: 'mock' }),
+  };
 }
 
 try {
-  const PMCIntegrationService = await import('./services/pmcIntegrationService.js').then(m => m.default);
+  const PMCIntegrationService =
+    await import('./services/pmcIntegrationService.js').then((m) => m.default);
   pmcIntegrationService = new PMCIntegrationService();
   logger.info('✅ PMCIntegrationService initialized');
 } catch (error) {
-  logger.warn('⚠️ PMCIntegrationService init failed, using fallback:', error.message);
-  pmcIntegrationService = { getHealthStatus: () => ({status: 'fallback', mode: 'mock'}) };
+  logger.warn(
+    '⚠️ PMCIntegrationService init failed, using fallback:',
+    error.message
+  );
+  pmcIntegrationService = {
+    getHealthStatus: () => ({ status: 'fallback', mode: 'mock' }),
+  };
 }
 
 // Log services health
 logger.info('🏥 Phase 2 Services Health:', {
   partner: partnerCoordinationService.getHealthStatus(),
   citizen: citizenPortalService.getHealthStatus(),
-  pmc: pmcIntegrationService.getHealthStatus()
+  pmc: pmcIntegrationService.getHealthStatus(),
 });
 
 // Initialize notification service
@@ -183,7 +203,10 @@ try {
   payrollRouter = payrollModule.default || payrollModule;
   logger.info('✅ Payroll system loaded successfully');
 } catch (error) {
-  logger.warn('⚠️ Payroll system not loaded (TypeScript module issue):', error.message);
+  logger.warn(
+    '⚠️ Payroll system not loaded (TypeScript module issue):',
+    error.message
+  );
   logger.info('   Server will continue without payroll routes');
   // Don't exit - continue without payroll system
 }
@@ -219,7 +242,10 @@ try {
   haitiStrategicRouter = haitiModule.default || haitiModule;
   logger.info('✅ Haiti strategic acquisition system loaded successfully');
 } catch (error) {
-  logger.warn('⚠️ Haiti strategic system not loaded (module issue):', error.message);
+  logger.warn(
+    '⚠️ Haiti strategic system not loaded (module issue):',
+    error.message
+  );
   logger.info('   Server will continue without Haiti strategic routes');
   // Don't exit - continue without Haiti strategic system
 }
@@ -650,7 +676,9 @@ if (ubiPaymentRouter) {
 // Multi-Channel Notification API Routes - PHASE 2
 if (notificationRoutesPhase2) {
   app.use('/api/notifications-v2', notificationRoutesPhase2);
-  logger.info('✅ Multi-channel notification routes mounted at /api/notifications-v2');
+  logger.info(
+    '✅ Multi-channel notification routes mounted at /api/notifications-v2'
+  );
   logger.info('   📧 Email, SMS, Push, In-App notifications active');
 }
 
@@ -686,7 +714,13 @@ app.use(
 // Catch-all handler for SPA (must be before 404 handler)
 app.get('*', (req, res, next) => {
   // Only serve SPA for non-API routes and exclude health/metrics endpoints
-  if (req.path.startsWith('/api/') || req.path.startsWith('/jpmorgan/') || req.path === '/health' || req.path === '/metrics' || req.path === '/api/status') {
+  if (
+    req.path.startsWith('/api/') ||
+    req.path.startsWith('/jpmorgan/') ||
+    req.path === '/health' ||
+    req.path === '/metrics' ||
+    req.path === '/api/status'
+  ) {
     return next();
   }
   // Serve override-dashboard.html instead of missing index.html

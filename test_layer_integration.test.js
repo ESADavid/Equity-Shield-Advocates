@@ -66,8 +66,9 @@ describe('Plaid Layer Integration', () => {
       plaidService.plaidClient = mockClient;
 
       try {
-        await expect(plaidService.createSessionToken('invalid-template', 'user-123'))
-          .to.be.rejectedWith('Invalid template ID');
+        await expect(
+          plaidService.createSessionToken('invalid-template', 'user-123')
+        ).to.be.rejectedWith('Invalid template ID');
       } finally {
         plaidService.plaidClient = originalClient;
       }
@@ -128,7 +129,9 @@ describe('Plaid Layer Integration', () => {
 
         expect(result).to.deep.equal(mockSessionData.data);
         expect(mockClient.userAccountSessionGet.calledOnce).to.be.true;
-        expect(mockClient.userAccountSessionGet.firstCall.args[0]).to.deep.equal({
+        expect(
+          mockClient.userAccountSessionGet.firstCall.args[0]
+        ).to.deep.equal({
           session_id: 'session-123',
         });
       } finally {
@@ -160,13 +163,12 @@ describe('Plaid Layer Integration', () => {
 
       await plaidService.handleLayerWebhook(webhookEvent);
 
-      expect(loggerStub.info.calledWith(
-        'Layer authentication passed for session:',
-        {
+      expect(
+        loggerStub.info.calledWith('Layer authentication passed for session:', {
           session_id: 'session-123',
           item_id: 'item-456',
-        }
-      )).to.be.true;
+        })
+      ).to.be.true;
     });
 
     it('should handle SESSION_FINISHED webhook and retrieve session data', async () => {
@@ -184,29 +186,28 @@ describe('Plaid Layer Integration', () => {
         },
       };
 
-      const getUserAccountSessionStub = sandbox.stub(plaidService, 'getUserAccountSession')
+      const getUserAccountSessionStub = sandbox
+        .stub(plaidService, 'getUserAccountSession')
         .resolves(mockSessionData.data);
 
       await plaidService.handleLayerWebhook(webhookEvent);
 
-      expect(loggerStub.info.calledWith(
-        'Layer session finished:',
-        {
+      expect(
+        loggerStub.info.calledWith('Layer session finished:', {
           session_id: 'session-123',
           item_id: 'item-456',
-        }
-      )).to.be.true;
+        })
+      ).to.be.true;
 
       expect(getUserAccountSessionStub.calledWith('session-123')).to.be.true;
 
-      expect(loggerStub.info.calledWith(
-        'Retrieved Layer session data:',
-        {
+      expect(
+        loggerStub.info.calledWith('Retrieved Layer session data:', {
           session_id: 'session-123',
           has_accounts: true,
           has_identity: true,
-        }
-      )).to.be.true;
+        })
+      ).to.be.true;
     });
 
     it('should handle unknown Layer webhook codes', async () => {
@@ -218,7 +219,12 @@ describe('Plaid Layer Integration', () => {
 
       await plaidService.handleLayerWebhook(webhookEvent);
 
-      expect(loggerStub.info.calledWith('Unknown Layer webhook code:', 'UNKNOWN_CODE')).to.be.true;
+      expect(
+        loggerStub.info.calledWith(
+          'Unknown Layer webhook code:',
+          'UNKNOWN_CODE'
+        )
+      ).to.be.true;
     });
 
     it('should handle Layer webhook processing errors', async () => {
@@ -233,7 +239,12 @@ describe('Plaid Layer Integration', () => {
 
       await plaidService.handleLayerWebhook(webhookEvent);
 
-      expect(loggerStub.error.calledWith('Error retrieving Layer session data:', mockError)).to.be.true;
+      expect(
+        loggerStub.error.calledWith(
+          'Error retrieving Layer session data:',
+          mockError
+        )
+      ).to.be.true;
     });
   });
 
@@ -282,7 +293,9 @@ describe('Plaid Layer Integration', () => {
         expires_at: '2024-12-31T23:59:59Z',
       };
 
-      sandbox.stub(plaidService, 'createSessionToken').resolves(mockSessionToken);
+      sandbox
+        .stub(plaidService, 'createSessionToken')
+        .resolves(mockSessionToken);
 
       const response = await request
         .post('/api/plaid/layer/session-token')
@@ -303,7 +316,9 @@ describe('Plaid Layer Integration', () => {
         identity: { names: ['John Doe'] },
       };
 
-      sandbox.stub(plaidService, 'getUserAccountSession').resolves(mockSessionData);
+      sandbox
+        .stub(plaidService, 'getUserAccountSession')
+        .resolves(mockSessionData);
 
       const response = await request
         .get('/api/plaid/layer/user-session/session-123')
@@ -320,7 +335,9 @@ describe('Plaid Layer Integration', () => {
         .expect(400);
 
       expect(response.body.success).to.be.false;
-      expect(response.body.message).to.include('Template ID and user ID are required');
+      expect(response.body.message).to.include(
+        'Template ID and user ID are required'
+      );
     });
 
     it('should handle Layer API errors gracefully', async () => {
@@ -337,7 +354,9 @@ describe('Plaid Layer Integration', () => {
         .expect(500);
 
       expect(response.body.success).to.be.false;
-      expect(response.body.message).to.include('Failed to create Layer session token');
+      expect(response.body.message).to.include(
+        'Failed to create Layer session token'
+      );
     });
   });
 });

@@ -245,8 +245,8 @@ GET /api/plaid/investments/auth/{accessToken}
         "subtype": "brokerage",
         "mask": "1234",
         "balances": {
-          "available": 10000.00,
-          "current": 10000.00,
+          "available": 10000.0,
+          "current": 10000.0,
           "iso_currency_code": "USD"
         },
         "numbers": {
@@ -258,8 +258,8 @@ GET /api/plaid/investments/auth/{accessToken}
             "account_id": "account_123",
             "security_id": "sec_123",
             "quantity": 100,
-            "price": 50.00,
-            "value": 5000.00
+            "price": 50.0,
+            "value": 5000.0
           }
         ]
       }

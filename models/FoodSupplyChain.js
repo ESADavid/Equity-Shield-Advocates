@@ -93,10 +93,12 @@ foodSupplyChainSchema.statics = {
   },
   getPortfolioAnalytics: async function (tenantId) {
     const chains = await this.find({ tenantId });
-    const totalValue = chains.reduce((sum, chain) => sum + Number(chain.currentValue), 0);
+    const totalValue = chains.reduce(
+      (sum, chain) => sum + Number(chain.currentValue),
+      0
+    );
     return { totalChains: chains.length, totalValue };
   },
 };
 
 export default mongoose.model('FoodSupplyChain', foodSupplyChainSchema);
-

@@ -14,7 +14,7 @@ async function runManualTests() {
   const results = {
     passed: [],
     failed: [],
-    warnings: []
+    warnings: [],
   };
 
   try {
@@ -37,13 +37,15 @@ async function runManualTests() {
       housingStatus: 'rented',
       educationLevel: 'student',
       disabilityStatus: false,
-      isActive: true
+      isActive: true,
     };
 
     const originalFindById = Citizen.findById;
     Citizen.findById = async () => mockCitizen;
 
-    const amount = await ubiService.calculateUBIAmount('507f1f77bcf86cd799439011');
+    const amount = await ubiService.calculateUBIAmount(
+      '507f1f77bcf86cd799439011'
+    );
     Citizen.findById = originalFindById;
 
     // Base: 2000 + dependents: 400 + housing: 300 + education: 200 = 3500
@@ -51,8 +53,12 @@ async function runManualTests() {
       results.passed.push('UBI amount calculation');
       console.log('✅ UBI amount calculation passed');
     } else {
-      results.failed.push(`UBI amount calculation (expected 3500, got ${amount})`);
-      console.log(`❌ UBI amount calculation failed: expected 3500, got ${amount}`);
+      results.failed.push(
+        `UBI amount calculation (expected 3500, got ${amount})`
+      );
+      console.log(
+        `❌ UBI amount calculation failed: expected 3500, got ${amount}`
+      );
     }
 
     // Test 3: JPMorgan Integration Structure
@@ -93,7 +99,10 @@ async function runManualTests() {
       return { _id: `payment-${callCount}`, citizenId: id, amount: 2000 };
     };
 
-    const bulkResults = await ubiService.processBulkPayments(['citizen-1', 'citizen-2']);
+    const bulkResults = await ubiService.processBulkPayments([
+      'citizen-1',
+      'citizen-2',
+    ]);
     ubiService.processPayment = originalProcessPayment;
 
     if (bulkResults.successful.length === 2 && bulkResults.total === 2) {
@@ -106,14 +115,19 @@ async function runManualTests() {
 
     // Test 6: Payroll Integration (Placeholder)
     console.log('\n6. Testing payroll integration...');
-    const payrollResult = await ubiService.recordInPayrollSystem('test-citizen', 2500, 'tx-123');
+    const payrollResult = await ubiService.recordInPayrollSystem(
+      'test-citizen',
+      2500,
+      'tx-123'
+    );
     if (payrollResult === true) {
       results.passed.push('Payroll integration structure');
       console.log('✅ Payroll integration structure passed');
-      results.warnings.push('Payroll integration is placeholder implementation');
+      results.warnings.push(
+        'Payroll integration is placeholder implementation'
+      );
       console.log('⚠️  Payroll integration requires full API implementation');
     }
-
   } catch (err) {
     results.failed.push('Test execution failed');
     console.log(`❌ Test execution failed: ${err.message}`);
@@ -126,23 +140,28 @@ async function runManualTests() {
 
   if (results.passed.length > 0) {
     console.log('\n✅ PASSED:');
-    results.passed.forEach(test => console.log(`   ✓ ${test}`));
+    results.passed.forEach((test) => console.log(`   ✓ ${test}`));
   }
 
   if (results.warnings.length > 0) {
     console.log('\n⚠️  WARNINGS:');
-    results.warnings.forEach(warning => console.log(`   ⚠ ${warning}`));
+    results.warnings.forEach((warning) => console.log(`   ⚠ ${warning}`));
   }
 
   if (results.failed.length > 0) {
     console.log('\n❌ FAILED:');
-    results.failed.forEach(test => console.log(`   ✗ ${test}`));
+    results.failed.forEach((test) => console.log(`   ✗ ${test}`));
   }
 
   const totalTests = results.passed.length + results.failed.length;
-  const passRate = totalTests > 0 ? ((results.passed.length / totalTests) * 100).toFixed(1) : 0;
+  const passRate =
+    totalTests > 0
+      ? ((results.passed.length / totalTests) * 100).toFixed(1)
+      : 0;
 
-  console.log(`\n📊 SUMMARY: ${results.passed.length}/${totalTests} tests passed (${passRate}%)`);
+  console.log(
+    `\n📊 SUMMARY: ${results.passed.length}/${totalTests} tests passed (${passRate}%)`
+  );
 
   if (results.failed.length === 0) {
     console.log('\n🎉 UBI INTEGRATION: PASSED ✅');

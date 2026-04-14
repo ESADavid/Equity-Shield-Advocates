@@ -7,32 +7,33 @@ class RecommendationService {
         'Diversify portfolio across multiple asset classes',
         'Consider long-term investment strategies',
         'Regular portfolio rebalancing recommended',
-        'Invest in stable, income-generating assets'
+        'Invest in stable, income-generating assets',
       ],
       education: [
         'Focus on STEM subjects for future opportunities',
         'Consider vocational training programs',
         'Pursue continuous learning and skill development',
-        'Explore online learning platforms'
+        'Explore online learning platforms',
       ],
       finance: [
         'Maintain emergency fund of 3-6 months expenses',
         'Reduce high-interest debt first',
         'Create a budget and track expenses',
-        'Build credit score through responsible borrowing'
+        'Build credit score through responsible borrowing',
       ],
       career: [
         'Network with industry professionals',
         'Develop soft skills alongside technical skills',
         'Seek mentorship opportunities',
-        'Consider career advancement through certifications'
-      ]
+        'Consider career advancement through certifications',
+      ],
     };
   }
 
   getRecommendations(category, userProfile = {}) {
     logger.info(`Using predefined recommendations for category: ${category}`);
-    const categoryRecs = this.recommendations[category] || this.recommendations.finance;
+    const categoryRecs =
+      this.recommendations[category] || this.recommendations.finance;
 
     // Simple personalization based on profile
     let personalized = [...categoryRecs];
@@ -46,13 +47,13 @@ class RecommendationService {
     }
 
     if (userProfile.riskTolerance === 'low') {
-      personalized = personalized.filter(rec => !rec.includes('high-risk'));
+      personalized = personalized.filter((rec) => !rec.includes('high-risk'));
     }
 
     return {
       recommendations: personalized.slice(0, 5), // Limit to 5
       category,
-      personalized: true
+      personalized: true,
     };
   }
 
@@ -79,7 +80,7 @@ class RecommendationService {
 
     return {
       recommendations,
-      priority: recommendations.length > 2 ? 'high' : 'medium'
+      priority: recommendations.length > 2 ? 'high' : 'medium',
     };
   }
 
@@ -90,9 +91,9 @@ class RecommendationService {
         'Sustainable and ESG investing',
         'Cryptocurrency education and awareness',
         'Remote work skill development',
-        'Digital literacy programs'
+        'Digital literacy programs',
       ],
-      basedOn: 'current market trends'
+      basedOn: 'current market trends',
     };
   }
 }

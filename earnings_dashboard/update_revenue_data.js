@@ -118,10 +118,7 @@ function integratePayroll(data) {
       ) {
         payrollTotal += payrollEntry.amount;
       } else {
-        warn(
-          'Invalid payroll entry amount detected, skipping:',
-          payrollEntry
-        );
+        warn('Invalid payroll entry amount detected, skipping:', payrollEntry);
       }
     }
     data.payrollTotal = payrollTotal;

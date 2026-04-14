@@ -267,6 +267,6 @@ node scripts/execute-phase5-scaling.cjs
 
 ---
 
-*"From the House of David, through the OWLBAN GROUP, we execute the vision of universal prosperity."*
+_"From the House of David, through the OWLBAN GROUP, we execute the vision of universal prosperity."_
 
 🏆 **END OF CLOUD DEPLOYMENT CHECKLIST** 🏆

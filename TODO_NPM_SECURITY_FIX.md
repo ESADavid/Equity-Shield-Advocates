@@ -1,7 +1,9 @@
 # NPM Security Audit Fix TODO
 
 ## Overview
+
 Fix 5 high vulnerabilities from `npm audit`:
+
 - semver via nodemon ✅ FIXED via update to ^3.1.14
 - tar via @mapbox/node-pre-gyp ✅ FIXED via overrides
 

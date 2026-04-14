@@ -16,7 +16,7 @@ class ComplianceMonitoringService {
     this.ALERT_THRESHOLDS = {
       highRisk: 10, // Alert if > 10 high-risk issues
       mediumRisk: 25, // Alert if > 25 medium-risk issues
-      lowRisk: 50 // Alert if > 50 low-risk issues
+      lowRisk: 50, // Alert if > 50 low-risk issues
     };
     this.COMPLIANCE_AREAS = [
       'data_privacy',
@@ -24,7 +24,7 @@ class ComplianceMonitoringService {
       'security_standards',
       'education_compliance',
       'payment_compliance',
-      'identity_verification'
+      'identity_verification',
     ];
 
     // Start monitoring loop
@@ -44,7 +44,9 @@ class ComplianceMonitoringService {
       }
     }, this.MONITORING_INTERVAL);
 
-    info(`Automated compliance monitoring started (interval: ${this.MONITORING_INTERVAL / 1000}s)`);
+    info(
+      `Automated compliance monitoring started (interval: ${this.MONITORING_INTERVAL / 1000}s)`
+    );
   }
 
   /**
@@ -65,10 +67,10 @@ class ComplianceMonitoringService {
           highRisk: 0,
           mediumRisk: 0,
           lowRisk: 0,
-          compliant: 0
+          compliant: 0,
         },
         alerts: [],
-        recommendations: []
+        recommendations: [],
       };
 
       // Run checks for each compliance area
@@ -79,9 +81,15 @@ class ComplianceMonitoringService {
 
           // Update summary
           results.summary.totalIssues += areaResult.issues.length;
-          results.summary.highRisk += areaResult.issues.filter(i => i.severity === 'high').length;
-          results.summary.mediumRisk += areaResult.issues.filter(i => i.severity === 'medium').length;
-          results.summary.lowRisk += areaResult.issues.filter(i => i.severity === 'low').length;
+          results.summary.highRisk += areaResult.issues.filter(
+            (i) => i.severity === 'high'
+          ).length;
+          results.summary.mediumRisk += areaResult.issues.filter(
+            (i) => i.severity === 'medium'
+          ).length;
+          results.summary.lowRisk += areaResult.issues.filter(
+            (i) => i.severity === 'low'
+          ).length;
 
           if (areaResult.status === 'compliant') {
             results.summary.compliant++;
@@ -90,7 +98,9 @@ class ComplianceMonitoringService {
           error(`Failed to check compliance area ${area}:`, err);
           results.areas[area] = {
             status: 'error',
-            issues: [{ severity: 'high', description: `Check failed: ${err.message}` }]
+            issues: [
+              { severity: 'high', description: `Check failed: ${err.message}` },
+            ],
           };
         }
       }
@@ -105,14 +115,19 @@ class ComplianceMonitoringService {
       results.duration = `${duration}ms`;
 
       // Log monitoring completion
-      await auditService.logActivity(userId || 'system', 'COMPLIANCE_MONITORING', {
-        results: results.summary,
-        duration
-      });
+      await auditService.logActivity(
+        userId || 'system',
+        'COMPLIANCE_MONITORING',
+        {
+          results: results.summary,
+          duration,
+        }
+      );
 
-      info(`Compliance monitoring completed: ${results.summary.totalIssues} issues found in ${duration}ms`);
+      info(
+        `Compliance monitoring completed: ${results.summary.totalIssues} issues found in ${duration}ms`
+      );
       return results;
-
     } catch (err) {
       error('Compliance monitoring failed:', err);
       throw err;
@@ -176,41 +191,46 @@ class ComplianceMonitoringService {
         $or: [
           { 'personalInfo.firstName': { $exists: false } },
           { 'personalInfo.lastName': { $exists: false } },
-          { 'contactInfo.email': { $exists: false } }
-        ]
+          { 'contactInfo.email': { $exists: false } },
+        ],
       });
 
       if (incompleteCitizens > 0) {
         issues.push({
           severity: 'medium',
           description: `${incompleteCitizens} citizens have incomplete personal information`,
-          recommendation: 'Complete citizen data collection'
+          recommendation: 'Complete citizen data collection',
         });
       }
 
       // Check for unencrypted sensitive data (placeholder - would need actual encryption checks)
       const unencryptedBanking = await Citizen.countDocuments({
         'bankingInfo.accountNumber': { $exists: true },
-        'verification.bankingVerified': false
+        'verification.bankingVerified': false,
       });
 
       if (unencryptedBanking > 0) {
         issues.push({
           severity: 'high',
           description: `${unencryptedBanking} citizens have unverified banking information`,
-          recommendation: 'Verify and secure banking data'
+          recommendation: 'Verify and secure banking data',
         });
       }
 
       return {
         status: issues.length === 0 ? 'compliant' : 'non_compliant',
         issues,
-        checkedAt: new Date()
+        checkedAt: new Date(),
       };
     } catch (err) {
       return {
         status: 'error',
-        issues: [{ severity: 'high', description: `Data privacy check failed: ${err.message}` }]
+        issues: [
+          {
+            severity: 'high',
+            description: `Data privacy check failed: ${err.message}`,
+          },
+        ],
       };
     }
   }
@@ -225,40 +245,45 @@ class ComplianceMonitoringService {
       // Check for payments without proper authorization
       const unauthorizedPayments = await UBIPayment.countDocuments({
         status: 'completed',
-        'metadata.approvedBy': { $exists: false }
+        'metadata.approvedBy': { $exists: false },
       });
 
       if (unauthorizedPayments > 0) {
         issues.push({
           severity: 'high',
           description: `${unauthorizedPayments} payments lack proper authorization`,
-          recommendation: 'Implement payment approval workflow'
+          recommendation: 'Implement payment approval workflow',
         });
       }
 
       // Check for suspicious payment patterns
       const largePayments = await UBIPayment.countDocuments({
         amount: { $gt: 50000 }, // Over $50k threshold
-        status: 'completed'
+        status: 'completed',
       });
 
       if (largePayments > 0) {
         issues.push({
           severity: 'medium',
           description: `${largePayments} unusually large payments detected`,
-          recommendation: 'Review large payment transactions'
+          recommendation: 'Review large payment transactions',
         });
       }
 
       return {
         status: issues.length === 0 ? 'compliant' : 'non_compliant',
         issues,
-        checkedAt: new Date()
+        checkedAt: new Date(),
       };
     } catch (err) {
       return {
         status: 'error',
-        issues: [{ severity: 'high', description: `Financial compliance check failed: ${err.message}` }]
+        issues: [
+          {
+            severity: 'high',
+            description: `Financial compliance check failed: ${err.message}`,
+          },
+        ],
       };
     }
   }
@@ -273,14 +298,14 @@ class ComplianceMonitoringService {
       // Check for citizens without biometric verification
       const unverifiedBiometrics = await Citizen.countDocuments({
         'verification.biometricVerified': false,
-        status: 'active'
+        status: 'active',
       });
 
       if (unverifiedBiometrics > 0) {
         issues.push({
           severity: 'medium',
           description: `${unverifiedBiometrics} active citizens lack biometric verification`,
-          recommendation: 'Complete biometric verification process'
+          recommendation: 'Complete biometric verification process',
         });
       }
 
@@ -290,12 +315,17 @@ class ComplianceMonitoringService {
       return {
         status: issues.length === 0 ? 'compliant' : 'non_compliant',
         issues,
-        checkedAt: new Date()
+        checkedAt: new Date(),
       };
     } catch (err) {
       return {
         status: 'error',
-        issues: [{ severity: 'high', description: `Security standards check failed: ${err.message}` }]
+        issues: [
+          {
+            severity: 'high',
+            description: `Security standards check failed: ${err.message}`,
+          },
+        ],
       };
     }
   }
@@ -310,14 +340,14 @@ class ComplianceMonitoringService {
       // Check for citizens not meeting education requirements
       const nonCompliant = await Citizen.countDocuments({
         'educationStatus.complianceStatus': 'non_compliant',
-        status: 'active'
+        status: 'active',
       });
 
       if (nonCompliant > 0) {
         issues.push({
           severity: 'high',
           description: `${nonCompliant} citizens are not meeting education requirements`,
-          recommendation: 'Enforce education compliance measures'
+          recommendation: 'Enforce education compliance measures',
         });
       }
 
@@ -325,28 +355,33 @@ class ComplianceMonitoringService {
       const approachingDeadline = await Citizen.countDocuments({
         'educationStatus.complianceStatus': 'in_progress',
         'educationStatus.complianceDeadline': {
-          $lte: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // Within 30 days
+          $lte: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Within 30 days
         },
-        status: 'active'
+        status: 'active',
       });
 
       if (approachingDeadline > 0) {
         issues.push({
           severity: 'medium',
           description: `${approachingDeadline} citizens approaching education deadline`,
-          recommendation: 'Monitor progress and provide support'
+          recommendation: 'Monitor progress and provide support',
         });
       }
 
       return {
         status: issues.length === 0 ? 'compliant' : 'non_compliant',
         issues,
-        checkedAt: new Date()
+        checkedAt: new Date(),
       };
     } catch (err) {
       return {
         status: 'error',
-        issues: [{ severity: 'high', description: `Education compliance check failed: ${err.message}` }]
+        issues: [
+          {
+            severity: 'high',
+            description: `Education compliance check failed: ${err.message}`,
+          },
+        ],
       };
     }
   }
@@ -362,41 +397,47 @@ class ComplianceMonitoringService {
       const failedPayments = await UBIPayment.countDocuments({
         status: 'failed',
         paymentDate: {
-          $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // Last 7 days
-        }
+          $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Last 7 days
+        },
       });
 
-      if (failedPayments > 10) { // More than 10 failed payments in a week
+      if (failedPayments > 10) {
+        // More than 10 failed payments in a week
         issues.push({
           severity: 'high',
           description: `${failedPayments} payment failures in the last week`,
-          recommendation: 'Investigate payment system issues'
+          recommendation: 'Investigate payment system issues',
         });
       }
 
       // Check for payments without blockchain verification
       const unverifiedBlockchain = await UBIPayment.countDocuments({
         status: 'completed',
-        blockchainHash: { $exists: false }
+        blockchainHash: { $exists: false },
       });
 
       if (unverifiedBlockchain > 0) {
         issues.push({
           severity: 'medium',
           description: `${unverifiedBlockchain} completed payments lack blockchain verification`,
-          recommendation: 'Ensure all payments are recorded on blockchain'
+          recommendation: 'Ensure all payments are recorded on blockchain',
         });
       }
 
       return {
         status: issues.length === 0 ? 'compliant' : 'non_compliant',
         issues,
-        checkedAt: new Date()
+        checkedAt: new Date(),
       };
     } catch (err) {
       return {
         status: 'error',
-        issues: [{ severity: 'high', description: `Payment compliance check failed: ${err.message}` }]
+        issues: [
+          {
+            severity: 'high',
+            description: `Payment compliance check failed: ${err.message}`,
+          },
+        ],
       };
     }
   }
@@ -412,28 +453,33 @@ class ComplianceMonitoringService {
       const unverified = await Citizen.countDocuments({
         $or: [
           { 'verification.identityVerified': false },
-          { 'verification.addressVerified': false }
+          { 'verification.addressVerified': false },
         ],
-        status: 'active'
+        status: 'active',
       });
 
       if (unverified > 0) {
         issues.push({
           severity: 'high',
           description: `${unverified} active citizens have incomplete verification`,
-          recommendation: 'Complete identity verification process'
+          recommendation: 'Complete identity verification process',
         });
       }
 
       return {
         status: issues.length === 0 ? 'compliant' : 'non_compliant',
         issues,
-        checkedAt: new Date()
+        checkedAt: new Date(),
       };
     } catch (err) {
       return {
         status: 'error',
-        issues: [{ severity: 'high', description: `Identity verification check failed: ${err.message}` }]
+        issues: [
+          {
+            severity: 'high',
+            description: `Identity verification check failed: ${err.message}`,
+          },
+        ],
       };
     }
   }
@@ -450,7 +496,7 @@ class ComplianceMonitoringService {
       alerts.push({
         level: 'critical',
         message: `${summary.highRisk} high-risk compliance issues detected`,
-        action: 'Immediate attention required'
+        action: 'Immediate attention required',
       });
     }
 
@@ -458,7 +504,7 @@ class ComplianceMonitoringService {
       alerts.push({
         level: 'warning',
         message: `${summary.mediumRisk} medium-risk compliance issues detected`,
-        action: 'Review and address issues'
+        action: 'Review and address issues',
       });
     }
 
@@ -466,7 +512,7 @@ class ComplianceMonitoringService {
       alerts.push({
         level: 'info',
         message: `${summary.lowRisk} low-risk compliance issues detected`,
-        action: 'Monitor and plan remediation'
+        action: 'Monitor and plan remediation',
       });
     }
 
@@ -484,13 +530,13 @@ class ComplianceMonitoringService {
     // Analyze each area for specific recommendations
     Object.entries(results.areas).forEach(([area, areaResult]) => {
       if (areaResult.issues && areaResult.issues.length > 0) {
-        areaResult.issues.forEach(issue => {
+        areaResult.issues.forEach((issue) => {
           if (issue.recommendation) {
             recommendations.push({
               area,
               priority: issue.severity,
               recommendation: issue.recommendation,
-              issue: issue.description
+              issue: issue.description,
             });
           }
         });
@@ -499,7 +545,9 @@ class ComplianceMonitoringService {
 
     // Sort by priority
     const priorityOrder = { high: 3, medium: 2, low: 1 };
-    recommendations.sort((a, b) => priorityOrder[b.priority] - priorityOrder[a.priority]);
+    recommendations.sort(
+      (a, b) => priorityOrder[b.priority] - priorityOrder[a.priority]
+    );
 
     return recommendations;
   }
@@ -520,8 +568,8 @@ class ComplianceMonitoringService {
           recipients: ['compliance_officers', 'system_administrators'],
           metadata: {
             alertLevel: alert.level,
-            monitoringResults: results.summary
-          }
+            monitoringResults: results.summary,
+          },
         });
       }
 
@@ -541,15 +589,16 @@ class ComplianceMonitoringService {
       // Critical issues require manual intervention
 
       // Example: Auto-flag suspicious activities for review
-      const suspiciousPayments = results.areas.payment_compliance?.issues?.filter(
-        issue => issue.description.includes('unusually large')
-      );
+      const suspiciousPayments =
+        results.areas.payment_compliance?.issues?.filter((issue) =>
+          issue.description.includes('unusually large')
+        );
 
       if (suspiciousPayments && suspiciousPayments.length > 0) {
         // Flag for manual review
         await auditService.logActivity('system', 'AUTO_REMEDIATION', {
           action: 'FLAGGED_SUSPICIOUS_PAYMENTS',
-          count: suspiciousPayments.length
+          count: suspiciousPayments.length,
         });
       }
 
@@ -571,7 +620,7 @@ class ComplianceMonitoringService {
         summary: lastMonitoring.summary,
         areas: Object.keys(lastMonitoring.areas).length,
         alerts: lastMonitoring.alerts.length,
-        recommendations: lastMonitoring.recommendations.length
+        recommendations: lastMonitoring.recommendations.length,
       };
     } catch (err) {
       error('Failed to get compliance statistics:', err);
@@ -590,7 +639,7 @@ class ComplianceMonitoringService {
       monitoringInterval: `${this.MONITORING_INTERVAL / 1000}s`,
       complianceAreas: this.COMPLIANCE_AREAS.length,
       alertThresholds: this.ALERT_THRESHOLDS,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     };
   }
 }

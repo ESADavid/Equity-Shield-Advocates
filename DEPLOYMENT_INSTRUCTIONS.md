@@ -21,6 +21,7 @@ chmod +x deploy-fast.sh
 ```
 
 **What makes it fast:**
+
 - Parallel environment validation
 - Optimized Docker multi-stage builds
 - Concurrent dependency checks
@@ -134,12 +135,12 @@ npm test
 
 ## Performance Comparison
 
-| Method | Deployment Time | Optimization |
-|--------|----------------|-------------|
-| Original | 15-20 minutes | Baseline |
-| Fast Script | 3-5 minutes | 75-80% faster |
-| Optimized Docker | 2-4 minutes | 80-85% faster |
-| PM2 Optimized | 1-3 minutes | 85-90% faster |
+| Method           | Deployment Time | Optimization  |
+| ---------------- | --------------- | ------------- |
+| Original         | 15-20 minutes   | Baseline      |
+| Fast Script      | 3-5 minutes     | 75-80% faster |
+| Optimized Docker | 2-4 minutes     | 80-85% faster |
+| PM2 Optimized    | 1-3 minutes     | 85-90% faster |
 
 ---
 

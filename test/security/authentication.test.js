@@ -41,8 +41,8 @@ describe('Authentication Security Tests', () => {
     test('should generate secure session tokens', () => {
       // Generate a more secure token with guaranteed length
       const token =
-        Math.random().toString(36).substring(2, 15) + 
-        Math.random().toString(36).substring(2, 15) + 
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15) +
         Date.now().toString(36);
 
       expect(token.length).toBeGreaterThan(20);

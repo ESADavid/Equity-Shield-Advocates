@@ -8,7 +8,7 @@ const permissionSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    
+
     // Permission Details
     name: {
       type: String,
@@ -41,7 +41,7 @@ const permissionSchema = new mongoose.Schema(
         'emergency',
       ],
     },
-    
+
     // Risk Level
     riskLevel: {
       type: String,
@@ -49,17 +49,19 @@ const permissionSchema = new mongoose.Schema(
       enum: ['low', 'medium', 'high', 'critical'],
       default: 'medium',
     },
-    
+
     // Security Requirements
     security: {
       requiresBiometric: {
         type: Boolean,
         default: false,
       },
-      biometricTypes: [{
-        type: String,
-        enum: ['fingerprint', 'facial', 'voice', 'behavioral'],
-      }],
+      biometricTypes: [
+        {
+          type: String,
+          enum: ['fingerprint', 'facial', 'voice', 'behavioral'],
+        },
+      ],
       minimumBiometrics: {
         type: Number,
         default: 1,
@@ -88,27 +90,37 @@ const permissionSchema = new mongoose.Schema(
         default: false,
       },
     },
-    
+
     // Time-Based Restrictions
     timeRestrictions: {
       enabled: {
         type: Boolean,
         default: false,
       },
-      allowedDays: [{
-        type: String,
-        enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
-      }],
+      allowedDays: [
+        {
+          type: String,
+          enum: [
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+          ],
+        },
+      ],
       allowedHours: {
-        start: String,  // HH:MM format
-        end: String,    // HH:MM format
+        start: String, // HH:MM format
+        end: String, // HH:MM format
       },
       timezone: {
         type: String,
         default: 'America/New_York',
       },
     },
-    
+
     // Context-Based Restrictions
     contextRestrictions: {
       enabled: {
@@ -125,28 +137,34 @@ const permissionSchema = new mongoose.Schema(
         type: Boolean,
         default: false,
       },
-      allowedDeviceTypes: [{
-        type: String,
-        enum: ['desktop', 'mobile', 'tablet', 'server'],
-      }],
+      allowedDeviceTypes: [
+        {
+          type: String,
+          enum: ['desktop', 'mobile', 'tablet', 'server'],
+        },
+      ],
       trustedDevicesOnly: {
         type: Boolean,
         default: false,
       },
     },
-    
+
     // Dependencies
     dependencies: {
-      requiredPermissions: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Permission',
-      }],
-      conflictingPermissions: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Permission',
-      }],
+      requiredPermissions: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Permission',
+        },
+      ],
+      conflictingPermissions: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Permission',
+        },
+      ],
     },
-    
+
     // Usage Limits
     usageLimits: {
       enabled: {
@@ -156,9 +174,9 @@ const permissionSchema = new mongoose.Schema(
       maxUsesPerDay: Number,
       maxUsesPerWeek: Number,
       maxUsesPerMonth: Number,
-      cooldownPeriod: Number,  // in seconds
+      cooldownPeriod: Number, // in seconds
     },
-    
+
     // Metadata
     isActive: {
       type: Boolean,
@@ -194,83 +212,105 @@ permissionSchema.methods = {
     if (!this.timeRestrictions.enabled) {
       return true;
     }
-    
-    const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-    if (this.timeRestrictions.allowedDays.length > 0 && 
-        !this.timeRestrictions.allowedDays.includes(dayName)) {
+
+    const dayName = date
+      .toLocaleDateString('en-US', { weekday: 'long' })
+      .toLowerCase();
+    if (
+      this.timeRestrictions.allowedDays.length > 0 &&
+      !this.timeRestrictions.allowedDays.includes(dayName)
+    ) {
       return false;
     }
-    
-    if (this.timeRestrictions.allowedHours.start && this.timeRestrictions.allowedHours.end) {
-      const currentTime = date.toLocaleTimeString('en-US', { 
-        hour12: false, 
-        hour: '2-digit', 
-        minute: '2-digit' 
+
+    if (
+      this.timeRestrictions.allowedHours.start &&
+      this.timeRestrictions.allowedHours.end
+    ) {
+      const currentTime = date.toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
       });
-      
-      if (currentTime < this.timeRestrictions.allowedHours.start || 
-          currentTime > this.timeRestrictions.allowedHours.end) {
+
+      if (
+        currentTime < this.timeRestrictions.allowedHours.start ||
+        currentTime > this.timeRestrictions.allowedHours.end
+      ) {
         return false;
       }
     }
-    
+
     return true;
   },
-  
+
   // Check if permission can be used from context
   isAllowedFromContext: function (context) {
     if (!this.contextRestrictions.enabled) {
       return { allowed: true };
     }
-    
+
     const reasons = [];
-    
+
     // Check IP range
     if (this.contextRestrictions.allowedIpRanges.length > 0) {
-      const ipAllowed = this.contextRestrictions.allowedIpRanges.some(range => {
-        // Simple check - in production, use proper IP range checking
-        return context.ipAddress && context.ipAddress.startsWith(range);
-      });
-      
+      const ipAllowed = this.contextRestrictions.allowedIpRanges.some(
+        (range) => {
+          // Simple check - in production, use proper IP range checking
+          return context.ipAddress && context.ipAddress.startsWith(range);
+        }
+      );
+
       if (!ipAllowed) {
         reasons.push('IP address not in allowed range');
       }
     }
-    
+
     // Check VPN requirement
     if (this.contextRestrictions.requiresVPN && !context.isVPN) {
       reasons.push('VPN connection required');
     }
-    
+
     // Check secure network
-    if (this.contextRestrictions.requiresSecureNetwork && !context.isSecureNetwork) {
+    if (
+      this.contextRestrictions.requiresSecureNetwork &&
+      !context.isSecureNetwork
+    ) {
       reasons.push('Secure network required');
     }
-    
+
     // Check device type
-    if (this.contextRestrictions.allowedDeviceTypes.length > 0 && 
-        !this.contextRestrictions.allowedDeviceTypes.includes(context.deviceType)) {
+    if (
+      this.contextRestrictions.allowedDeviceTypes.length > 0 &&
+      !this.contextRestrictions.allowedDeviceTypes.includes(context.deviceType)
+    ) {
       reasons.push('Device type not allowed');
     }
-    
+
     // Check trusted device
-    if (this.contextRestrictions.trustedDevicesOnly && !context.isTrustedDevice) {
+    if (
+      this.contextRestrictions.trustedDevicesOnly &&
+      !context.isTrustedDevice
+    ) {
       reasons.push('Trusted device required');
     }
-    
+
     return {
       allowed: reasons.length === 0,
       reasons,
     };
   },
-  
+
   // Get required biometric types
   getRequiredBiometrics: function () {
     if (!this.security.requiresBiometric) {
       return [];
     }
-    
-    return this.security.biometricTypes.slice(0, this.security.minimumBiometrics);
+
+    return this.security.biometricTypes.slice(
+      0,
+      this.security.minimumBiometrics
+    );
   },
 };
 
@@ -280,22 +320,22 @@ permissionSchema.statics = {
   findByCode: function (code, tenantId) {
     return this.findOne({ code: code.toUpperCase(), tenantId, isActive: true });
   },
-  
+
   // Find by category
   findByCategory: function (category, tenantId) {
     return this.find({ category, tenantId, isActive: true });
   },
-  
+
   // Find by risk level
   findByRiskLevel: function (riskLevel, tenantId) {
     return this.find({ riskLevel, tenantId, isActive: true });
   },
-  
+
   // Get all system permissions
   getSystemPermissions: function (tenantId) {
     return this.find({ tenantId, isSystemPermission: true, isActive: true });
   },
-  
+
   // Create default permissions
   createDefaultPermissions: async function (tenantId, createdBy) {
     const defaultPermissions = [
@@ -347,7 +387,7 @@ permissionSchema.statics = {
         },
         isSystemPermission: true,
       },
-      
+
       // Financial Permissions
       {
         name: 'View Accounts',
@@ -396,7 +436,7 @@ permissionSchema.statics = {
         },
         isSystemPermission: true,
       },
-      
+
       // Data Permissions
       {
         name: 'Read Sensitive Data',
@@ -446,7 +486,7 @@ permissionSchema.statics = {
         },
         isSystemPermission: true,
       },
-      
+
       // Operational Permissions
       {
         name: 'Deploy Code',
@@ -497,7 +537,7 @@ permissionSchema.statics = {
         isSystemPermission: true,
       },
     ];
-    
+
     const created = [];
     for (const perm of defaultPermissions) {
       try {
@@ -511,10 +551,13 @@ permissionSchema.statics = {
           created.push(permission);
         }
       } catch (error) {
-        logger.error(`Failed to create permission ${perm.code}:`, error.message);
+        logger.error(
+          `Failed to create permission ${perm.code}:`,
+          error.message
+        );
       }
     }
-    
+
     return created;
   },
 };

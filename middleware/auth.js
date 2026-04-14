@@ -392,9 +392,9 @@ export const validateAuthRequest = (schema) => {
 export const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        error: 'Authentication required' 
+        error: 'Authentication required',
       });
     }
 
@@ -406,11 +406,11 @@ export const authorize = (...roles) => {
         path: req.path,
       });
 
-      return res.status(403).json({ 
+      return res.status(403).json({
         success: false,
         error: 'Insufficient permissions',
         required: roles,
-        current: req.user.role
+        current: req.user.role,
       });
     }
 

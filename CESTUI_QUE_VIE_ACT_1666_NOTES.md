@@ -18,8 +18,7 @@ taken from Halsbury’s Statute Volume 20 (2009 reissue):
 In the normal form of a strict settlement (which by virtue of the Trusts of Land and
 Appointment of Trustees Act 1996, s 2, cannot in general be created on or after 1
 st
- January
-1997) a limitation to a life tenant invariably precedes one to a tenant in tail in order to
+January 1997) a limitation to a life tenant invariably precedes one to a tenant in tail in order to
 restrict the tenant in tail’s power to bar the entail. Save where there is a trust for sale, the
 land will fall within the Settled Land Act 1925 (see s1 of that act) and, if the life tenant is of
 full age, he will be the statutory tenant for life under s 19 of that Act, in whom the fee
@@ -201,126 +200,128 @@ A Law Dictionary, Adapted to the Constitution and Laws of the United States. By 
 Published 1856.
 cestui que trust
 n. (properly pronounced ses-tee kay, but lawyers popularly pronounce it setty kay) from old French.
-1) an old fashioned expression for the beneficiary of a trust. 2) "the one who trusts" or the person who
-will benefit from the trust and will receive payments or a future distribution from the trust's assets.
-(See: beneficiary)
-Copyright © 1981-2005 by Gerald N. Hill and Kathleen T. Hill. All Right reserved.
-cestui que trust
-an archaic term in English law for the beneficiary under a trust.
-CESTUI QUE TRUST, A barbarous phrase, to signify the beneficiary of an estate held in trust. He for
-whose benefit another person is enfeoffed or seised of land or tenements, or is possessed of personal
-property. The cestui que trust is entitled to receive the rents and profits of the land; he may direct
-such conveyances, consistent with the trust, deed or will, as he shall choose, and the trustee (q.v.) is
-bound to execute them: he may defend his title in the name of the trustee. 1 Cruise, Dig. tit. 12, c. 4,
-s. 4; vide Vin. Ab. Trust, U, W, and Y 1 Vern. 14; Dane's Ab. Index, h.t.: 1 Story, Eq. Jur. Sec. 321,
-note 1; Bouv. Inst. Index, h.t.
-cestui que vie CESTUI QUE VIE. He for whose life land is holden by another person; the latter is called
-tenant per auter vie, or tenant for another's life. Vide Dane's Ab. Index, h.t.
-enfeoff Related to enfeoffed: fealty, fief
-See: alienate, bequeath, convey, transfer
-Burton's Legal Thesaurus, 4E. Copyright © 2007 by William C. Burton. Used with permission of The
-McGraw-Hill Companies, Inc.
-enfeoff
-to invest with possession of a freehold estate in land.
-Collins Dictionary of Law © W.J. Stewart, 2006
-TO ENFEOFF. To make a gift of any corporeal hereditaments to another. Vide Feoffment.
-hereditament (redirected from corporeal hereditaments)
-Also found in: Dictionary, Thesaurus, Financial.
-Hereditament
-Anything that can be passed by an individual to heirs. There are two types of hereditaments:
-corporeal and incorporeal.
-A corporeal hereditament is a permanent tangible object that can be seen and handled and is
-confined to the land. Materials, such as coal, timber, stone, or a house are common examples of this
-type of hereditament.
-An incorporeal hereditament is an intangible right, which is not visible but is derived from real or
-Personal Property. An Easement is a classic example of this type of hereditament, since it is the right
-of one individual to use another's property and can be inherited.
-life land Land held by lease for the term of a life or lives.
-recital In Law, a recital (from the Latin word recitare, meaning: to read out)
-[1]
- consists of an account or repetition of the
-details of some act, proceeding or fact. Particularly, in law, that part of a legal document—such as a
-lease, which contains a statement of certain facts — which contains the purport for which the deed is
-made.
-[2]
-In EU law, a recital is a text that sets out reasons for the provisions of an act, while avoiding
-normative language and political argumentation.
-[3]
-By convention, recitals start with the word Whereas.
-A recital can, and should, be taken into account when interpreting the meaning of a contractual
-agreement.
-[4]
-redress Also found in: Dictionary, Thesaurus, Acronyms, Idioms, Wikipedia.
-Related to redress: thesaurus, legal redress
-Redress
-Compensation for injuries sustained; recovery or restitution for harm or injury; damages or
-equitable relief. Access to the courts to gain Reparation for a wrong.
-reversion Any future interest kept by a person who transfers property to another.
-A reversion occurs when a property owner makes an effective transfer of property to another but
-retains some future right to the property. For example, if Sara transfers a piece of property to Shane
-for life, Shane has the use of the property for the rest of his life. Upon his death, the property
-reverts, or goes back, to Sara, or if Sara has died, it goes to her heirs. Shane's interest in the
-property, in this example, is a life estate. Sara's ownership interest during Shane's life, and her right
-or the right of her heirs to take back the property upon Shane's death, are called reversionary
-interests.
-A reversion differs from a remainder because a reversion arises through the operation of law rather
-than by act of the parties. A remainder is a future interest that is created in some person other than
-the grantor or transferor, whereas a reversion creates a future interest in the grantor or his or her
-heirs. If Sara's transfer had been "to Shane for life, then to Lily," Lily's interest would be a
-remainder.
-reversion
-n. in real property, the return to the grantor or his/her heirs of real property after all interests in the
-property given to others has terminated. Examples: George Generous deeded property to the local
-hospital district for "use for health facilities only," and the hospital is eventually torn down and the
-property is now vacant. The property reverts to George's descendants; George wills the property to
-his sister's children only, who later died without children. When the last grandchild dies the
-property reverts to George's descendants.
-reversion is also called "reverter." (See: reverter)
-reversioner
-a person entitled to an estate in REVERSION.
-Collins Dictionary of Law © W.J. Stewart, 2006
-REVERSIONER, estates. One entitled to a reversion.
-2. Although not in actual possession, the reversioner having a vested interest in the reversion, is
-entitled to his action for an injury done to the inheritance. 4 Burr. 2141. The reversioner is entitled to
-the rent, and this important incident passes with a grant or assignment of the reversion. It is not
-inseparable from it, and may be severed and excepted out of the grant by special words. Co. Litt.
-143, a, 151, a, b Cruise, Digest, t. 17, s. 19.
-seised
-Related to seised: seizin
-seized (seised)
-n. 1) having ownership, commonly used in wills as "I give all the property of which I die seized as
-follows:...." 2) having taken possession of evidence for use in a criminal prosecution. 3) having
-taken property or a person by force. (See: seisin, seizure)
-tenement A comprehensive legal term for any type of property of a permanent nature—including land,
-houses, and other buildings as well as rights attaching thereto, such as the right to collect rent.
-In the law of EASEMENTS, a dominant tenement or estate is that for which the advantage or benefit
-of an easement exists; a servient tenement or estate is a tenement that is subject to the burden of an
-easement.
-The term tenement is also used in reference to a building with rooms or apartments that are leased
-for residential purposes. It is frequently defined by statute, and its meaning therefore varies from
-one jurisdiction to another.
-West's Encyclopedia of American Law, edition 2. Copyright 2008 The Gale Group, Inc. All rights
-reserved.
-tenement
-n. 1) a term found in older deeds or in boiler-plate deed language, which means any structure on real
-property. 2) old run-down urban apartment buildings with several floors reached by stairways. (See:
-structure)
-Copyright © 1981-2005 by Gerald N. Hill and Kathleen T. Hill. All Right reserved.
-See: estate, property
-Burton's Legal Thesaurus, 4E. Copyright © 2007 by William C. Burton. Used with permission of The
-McGraw-Hill Companies, Inc.
-tenement
-1 property held on tenure.
-2 a multi-storeyed flatted building in Scotland in which the flats are able to be owned individually
-with various rights over the common parts.
-Collins Dictionary of Law © W.J. Stewart, 2006
-TENEMENT, estates. In its most extensive signification tenement comprehends every thing which
-may be holden, provided it be of a permanent nature; and not only lands and inheritances which are
-holden, but also rents and profits a prendre of which a man has any frank tenement, and of which he
-may be seised ut de libero tenemento, are included under this term. Co. Litt. 6 a; 1 Tho. Co. Litt. 219;
-Pork. s. 114; 2 Bl. Com. 17. But the word tenements simply, without other circumstances, has never
-been construed to pass a fee. 10 Wheat. 204. In its more confined and vulgar acceptation, it means a
-house or building. Ibid. an 1 Prest. on Est. 8. Vide 4 Bing. 293; S C. l1 Eng. C. L. Rep. 207; 1 T. R.
-358; 3 T. R. 772; 3 East, R. 113; 5 East, R. 239; Burn's Just. Poor, 525 to 541; 1 B. & Adolph. 161;
-S. C. 20 Eng. C. L. Rep. 36 8; Com. Dig. Grant, E 2; Trespass, A 2; Wood's Inst. 120; Babington on
-Auctions, 211, 212.
+
+1. an old fashioned expression for the beneficiary of a trust. 2) "the one who trusts" or the person who
+   will benefit from the trust and will receive payments or a future distribution from the trust's assets.
+   (See: beneficiary)
+   Copyright © 1981-2005 by Gerald N. Hill and Kathleen T. Hill. All Right reserved.
+   cestui que trust
+   an archaic term in English law for the beneficiary under a trust.
+   CESTUI QUE TRUST, A barbarous phrase, to signify the beneficiary of an estate held in trust. He for
+   whose benefit another person is enfeoffed or seised of land or tenements, or is possessed of personal
+   property. The cestui que trust is entitled to receive the rents and profits of the land; he may direct
+   such conveyances, consistent with the trust, deed or will, as he shall choose, and the trustee (q.v.) is
+   bound to execute them: he may defend his title in the name of the trustee. 1 Cruise, Dig. tit. 12, c. 4,
+   s. 4; vide Vin. Ab. Trust, U, W, and Y 1 Vern. 14; Dane's Ab. Index, h.t.: 1 Story, Eq. Jur. Sec. 321,
+   note 1; Bouv. Inst. Index, h.t.
+   cestui que vie CESTUI QUE VIE. He for whose life land is holden by another person; the latter is called
+   tenant per auter vie, or tenant for another's life. Vide Dane's Ab. Index, h.t.
+   enfeoff Related to enfeoffed: fealty, fief
+   See: alienate, bequeath, convey, transfer
+   Burton's Legal Thesaurus, 4E. Copyright © 2007 by William C. Burton. Used with permission of The
+   McGraw-Hill Companies, Inc.
+   enfeoff
+   to invest with possession of a freehold estate in land.
+   Collins Dictionary of Law © W.J. Stewart, 2006
+   TO ENFEOFF. To make a gift of any corporeal hereditaments to another. Vide Feoffment.
+   hereditament (redirected from corporeal hereditaments)
+   Also found in: Dictionary, Thesaurus, Financial.
+   Hereditament
+   Anything that can be passed by an individual to heirs. There are two types of hereditaments:
+   corporeal and incorporeal.
+   A corporeal hereditament is a permanent tangible object that can be seen and handled and is
+   confined to the land. Materials, such as coal, timber, stone, or a house are common examples of this
+   type of hereditament.
+   An incorporeal hereditament is an intangible right, which is not visible but is derived from real or
+   Personal Property. An Easement is a classic example of this type of hereditament, since it is the right
+   of one individual to use another's property and can be inherited.
+   life land Land held by lease for the term of a life or lives.
+   recital In Law, a recital (from the Latin word recitare, meaning: to read out)
+   [1]
+   consists of an account or repetition of the
+   details of some act, proceeding or fact. Particularly, in law, that part of a legal document—such as a
+   lease, which contains a statement of certain facts — which contains the purport for which the deed is
+   made.
+   [2]
+   In EU law, a recital is a text that sets out reasons for the provisions of an act, while avoiding
+   normative language and political argumentation.
+   [3]
+   By convention, recitals start with the word Whereas.
+   A recital can, and should, be taken into account when interpreting the meaning of a contractual
+   agreement.
+   [4]
+   redress Also found in: Dictionary, Thesaurus, Acronyms, Idioms, Wikipedia.
+   Related to redress: thesaurus, legal redress
+   Redress
+   Compensation for injuries sustained; recovery or restitution for harm or injury; damages or
+   equitable relief. Access to the courts to gain Reparation for a wrong.
+   reversion Any future interest kept by a person who transfers property to another.
+   A reversion occurs when a property owner makes an effective transfer of property to another but
+   retains some future right to the property. For example, if Sara transfers a piece of property to Shane
+   for life, Shane has the use of the property for the rest of his life. Upon his death, the property
+   reverts, or goes back, to Sara, or if Sara has died, it goes to her heirs. Shane's interest in the
+   property, in this example, is a life estate. Sara's ownership interest during Shane's life, and her right
+   or the right of her heirs to take back the property upon Shane's death, are called reversionary
+   interests.
+   A reversion differs from a remainder because a reversion arises through the operation of law rather
+   than by act of the parties. A remainder is a future interest that is created in some person other than
+   the grantor or transferor, whereas a reversion creates a future interest in the grantor or his or her
+   heirs. If Sara's transfer had been "to Shane for life, then to Lily," Lily's interest would be a
+   remainder.
+   reversion
+   n. in real property, the return to the grantor or his/her heirs of real property after all interests in the
+   property given to others has terminated. Examples: George Generous deeded property to the local
+   hospital district for "use for health facilities only," and the hospital is eventually torn down and the
+   property is now vacant. The property reverts to George's descendants; George wills the property to
+   his sister's children only, who later died without children. When the last grandchild dies the
+   property reverts to George's descendants.
+   reversion is also called "reverter." (See: reverter)
+   reversioner
+   a person entitled to an estate in REVERSION.
+   Collins Dictionary of Law © W.J. Stewart, 2006
+   REVERSIONER, estates. One entitled to a reversion.
+
+2) Although not in actual possession, the reversioner having a vested interest in the reversion, is
+   entitled to his action for an injury done to the inheritance. 4 Burr. 2141. The reversioner is entitled to
+   the rent, and this important incident passes with a grant or assignment of the reversion. It is not
+   inseparable from it, and may be severed and excepted out of the grant by special words. Co. Litt.
+   143, a, 151, a, b Cruise, Digest, t. 17, s. 19.
+   seised
+   Related to seised: seizin
+   seized (seised)
+   n. 1) having ownership, commonly used in wills as "I give all the property of which I die seized as
+   follows:...." 2) having taken possession of evidence for use in a criminal prosecution. 3) having
+   taken property or a person by force. (See: seisin, seizure)
+   tenement A comprehensive legal term for any type of property of a permanent nature—including land,
+   houses, and other buildings as well as rights attaching thereto, such as the right to collect rent.
+   In the law of EASEMENTS, a dominant tenement or estate is that for which the advantage or benefit
+   of an easement exists; a servient tenement or estate is a tenement that is subject to the burden of an
+   easement.
+   The term tenement is also used in reference to a building with rooms or apartments that are leased
+   for residential purposes. It is frequently defined by statute, and its meaning therefore varies from
+   one jurisdiction to another.
+   West's Encyclopedia of American Law, edition 2. Copyright 2008 The Gale Group, Inc. All rights
+   reserved.
+   tenement
+   n. 1) a term found in older deeds or in boiler-plate deed language, which means any structure on real
+   property. 2) old run-down urban apartment buildings with several floors reached by stairways. (See:
+   structure)
+   Copyright © 1981-2005 by Gerald N. Hill and Kathleen T. Hill. All Right reserved.
+   See: estate, property
+   Burton's Legal Thesaurus, 4E. Copyright © 2007 by William C. Burton. Used with permission of The
+   McGraw-Hill Companies, Inc.
+   tenement
+   1 property held on tenure.
+   2 a multi-storeyed flatted building in Scotland in which the flats are able to be owned individually
+   with various rights over the common parts.
+   Collins Dictionary of Law © W.J. Stewart, 2006
+   TENEMENT, estates. In its most extensive signification tenement comprehends every thing which
+   may be holden, provided it be of a permanent nature; and not only lands and inheritances which are
+   holden, but also rents and profits a prendre of which a man has any frank tenement, and of which he
+   may be seised ut de libero tenemento, are included under this term. Co. Litt. 6 a; 1 Tho. Co. Litt. 219;
+   Pork. s. 114; 2 Bl. Com. 17. But the word tenements simply, without other circumstances, has never
+   been construed to pass a fee. 10 Wheat. 204. In its more confined and vulgar acceptation, it means a
+   house or building. Ibid. an 1 Prest. on Est. 8. Vide 4 Bing. 293; S C. l1 Eng. C. L. Rep. 207; 1 T. R.
+   358; 3 T. R. 772; 3 East, R. 113; 5 East, R. 239; Burn's Just. Poor, 525 to 541; 1 B. & Adolph. 161;
+   S. C. 20 Eng. C. L. Rep. 36 8; Com. Dig. Grant, E 2; Trespass, A 2; Wood's Inst. 120; Babington on
+   Auctions, 211, 212.

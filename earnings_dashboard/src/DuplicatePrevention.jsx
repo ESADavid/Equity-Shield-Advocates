@@ -8,7 +8,7 @@ function DuplicatePrevention({
   institutionId,
   accountFilters,
   showExistingConnections = true,
-  allowNewConnections = true
+  allowNewConnections = true,
 }) {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
@@ -43,7 +43,7 @@ function DuplicatePrevention({
 
   // Filter items by institution if specified
   const filteredItems = institutionId
-    ? items.filter(item => item.institutionId === institutionId)
+    ? items.filter((item) => item.institutionId === institutionId)
     : items;
 
   const handleItemSelect = (item) => {
@@ -60,12 +60,14 @@ function DuplicatePrevention({
   };
 
   const getInstitutionName = (item) => {
-    return item.institution?.name || item.institutionName || 'Unknown Institution';
+    return (
+      item.institution?.name || item.institutionName || 'Unknown Institution'
+    );
   };
 
   const getAccountSummary = (item) => {
     const accounts = item.accounts || [];
-    const accountTypes = [...new Set(accounts.map(acc => acc.type))];
+    const accountTypes = [...new Set(accounts.map((acc) => acc.type))];
     return `${accounts.length} account${accounts.length !== 1 ? 's' : ''} (${accountTypes.join(', ')})`;
   };
 
@@ -82,7 +84,10 @@ function DuplicatePrevention({
     return (
       <div className="duplicate-prevention-error">
         <p>Error loading existing connections: {error}</p>
-        <button onClick={() => window.location.reload()} className="btn btn-secondary">
+        <button
+          onClick={() => window.location.reload()}
+          className="btn btn-secondary"
+        >
           Retry
         </button>
       </div>
@@ -96,8 +101,7 @@ function DuplicatePrevention({
         <p>
           {institutionId
             ? `You already have connections to ${getInstitutionName(filteredItems[0] || {})}. Select an existing connection or create a new one.`
-            : 'Select an existing bank connection or connect a new account.'
-          }
+            : 'Select an existing bank connection or connect a new account.'}
         </p>
       </div>
 
@@ -119,12 +123,20 @@ function DuplicatePrevention({
                     {getAccountSummary(item)}
                   </div>
                   <div className="connection-status">
-                    <span className={`status-indicator ${item.status || 'active'}`}>
-                      {item.status === 'error' ? '⚠️ Error' :
-                       item.status === 'pending' ? '⏳ Pending' : '✅ Active'}
+                    <span
+                      className={`status-indicator ${item.status || 'active'}`}
+                    >
+                      {item.status === 'error'
+                        ? '⚠️ Error'
+                        : item.status === 'pending'
+                          ? '⏳ Pending'
+                          : '✅ Active'}
                     </span>
                     <span className="last-updated">
-                      Updated: {item.lastUpdated ? new Date(item.lastUpdated).toLocaleDateString() : 'Unknown'}
+                      Updated:{' '}
+                      {item.lastUpdated
+                        ? new Date(item.lastUpdated).toLocaleDateString()
+                        : 'Unknown'}
                     </span>
                   </div>
                 </div>
@@ -154,7 +166,9 @@ function DuplicatePrevention({
           <div className="new-connection-option">
             <div className="new-connection-info">
               <h4>Connect New Account</h4>
-              <p>Link a new bank account or connect to a different institution.</p>
+              <p>
+                Link a new bank account or connect to a different institution.
+              </p>
             </div>
             <button
               onClick={handleNewConnection}
@@ -168,11 +182,10 @@ function DuplicatePrevention({
 
       {filteredItems.length === 0 && (
         <div className="no-existing-connections">
-          <p>No existing connections found. Ready to connect your first account!</p>
-          <button
-            onClick={handleNewConnection}
-            className="btn btn-primary"
-          >
+          <p>
+            No existing connections found. Ready to connect your first account!
+          </p>
+          <button onClick={handleNewConnection} className="btn btn-primary">
             Get Started
           </button>
         </div>
@@ -180,7 +193,8 @@ function DuplicatePrevention({
 
       <div className="duplicate-prevention-footer">
         <small>
-          💡 Tip: Reusing existing connections is faster and more secure than creating duplicates.
+          💡 Tip: Reusing existing connections is faster and more secure than
+          creating duplicates.
         </small>
       </div>
     </div>

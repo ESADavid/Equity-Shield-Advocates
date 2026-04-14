@@ -8,7 +8,8 @@ module.exports = {
       autorestart: true,
       watch: false,
       max_memory_restart: '1G', // Lower memory limit for faster restarts
-      node_args: '--max-old-space-size=1024 --optimize-for-size --gc-interval=50', // Optimized GC
+      node_args:
+        '--max-old-space-size=1024 --optimize-for-size --gc-interval=50', // Optimized GC
       env: {
         NODE_ENV: 'development',
         PORT: 3000,
@@ -18,13 +19,15 @@ module.exports = {
         PORT: 3000,
         // Performance optimizations
         UV_THREADPOOL_SIZE: 128, // Increased for I/O intensive operations
-        NODE_OPTIONS: '--max-old-space-size=2048 --optimize-for-size --gc-interval=100 --enable-source-maps=false',
+        NODE_OPTIONS:
+          '--max-old-space-size=2048 --optimize-for-size --gc-interval=100 --enable-source-maps=false',
       },
       env_staging: {
         NODE_ENV: 'staging',
         PORT: 3001,
         UV_THREADPOOL_SIZE: 64,
-        NODE_OPTIONS: '--max-old-space-size=1024 --optimize-for-size --gc-interval=50',
+        NODE_OPTIONS:
+          '--max-old-space-size=1024 --optimize-for-size --gc-interval=50',
       },
       // Optimized logging
       error_file: './logs/pm2-error.log',
@@ -47,7 +50,8 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 3000,
         UV_THREADPOOL_SIZE: 128,
-        NODE_OPTIONS: '--max-old-space-size=2048 --optimize-for-size --gc-interval=100 --enable-source-maps=false --trace-warnings=false',
+        NODE_OPTIONS:
+          '--max-old-space-size=2048 --optimize-for-size --gc-interval=100 --enable-source-maps=false --trace-warnings=false',
         // Disable unnecessary features for speed
         DISABLE_V8_COMPILE_CACHE: 'false',
         V8_COMPILE_CACHE_SIZE: '50MB',
@@ -64,7 +68,8 @@ module.exports = {
       repo: 'git@github.com:your-org/oscar-broome-revenue.git',
       path: '/var/www/oscar-broome-revenue',
       'pre-deploy-local': '',
-      'post-deploy': 'npm ci --production && pm2 reload ecosystem.config.optimized.js --env production_optimized',
+      'post-deploy':
+        'npm ci --production && pm2 reload ecosystem.config.optimized.js --env production_optimized',
       'pre-setup': '',
     },
     staging: {
@@ -74,7 +79,8 @@ module.exports = {
       repo: 'git@github.com:your-org/oscar-broome-revenue.git',
       path: '/var/www/oscar-broome-revenue-staging',
       'pre-deploy-local': '',
-      'post-deploy': 'npm ci --production && pm2 reload ecosystem.config.optimized.js --env staging',
+      'post-deploy':
+        'npm ci --production && pm2 reload ecosystem.config.optimized.js --env staging',
       'pre-setup': '',
     },
   },

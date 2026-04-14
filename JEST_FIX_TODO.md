@@ -1,26 +1,31 @@
 # Jest Configuration Fix - TODO
 
 ## Phase 1: Fix Jest Configuration for ES Modules ✅
+
 - [x] Update babel.config.cjs to transform modules for Jest
 - [x] Update jest.config.cjs for proper ES module handling
 - [ ] Install missing babel-jest dependency
 - [ ] Update baseline-browser-mapping to latest version
 
 ## Phase 2: Console.log Replacement
+
 - [ ] Run console.log replacement script on 22 production files
 - [ ] Verify logger imports are correct
 
 ## Phase 3: Testing & Verification
+
 - [ ] Run Jest tests to verify configuration works
 - [ ] Fix any remaining test failures
 - [ ] Document the changes
 
 ## Files Modified:
+
 - babel.config.cjs
 - jest.config.cjs
 - package.json (pending)
 
 ## Production Files Needing Console.log Replacement (22 files):
+
 1. fix_markdown_lint.js
 2. GOD/azure-integrations.js
 3. GOD/foundry-vtt-integrations.js

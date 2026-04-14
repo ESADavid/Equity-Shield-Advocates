@@ -6,9 +6,12 @@ import express from 'express';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
-import { authenticateToken, authenticateRefreshToken, requireAdmin } from '../utils/authMiddleware.js';
+import {
+  authenticateToken,
+  authenticateRefreshToken,
+  requireAdmin,
+} from '../utils/authMiddleware.js';
 import { info, error } from '../utils/loggerWrapper.js';
-
 
 const router = express.Router();
 
@@ -29,7 +32,7 @@ const usersDB = {
     role: 'user',
     permissions: ['read'],
     department: 'finance',
-  }
+  },
 };
 
 // Zod schemas
@@ -68,7 +71,7 @@ const authenticateUser = async (email, password) => {
       role: user.role,
       permissions: user.permissions,
       department: user.department,
-    }
+    },
   };
 };
 
@@ -83,12 +86,12 @@ const adminOverride = async (overrideCode, targetEmail) => {
 const refreshAuthToken = (user) => {
   return {
     success: true,
-    token: generateAccessToken({ 
-      userId: user.id, 
-      email: user.email, 
+    token: generateAccessToken({
+      userId: user.id,
+      email: user.email,
       role: user.role,
       permissions: user.permissions,
-      department: user.department 
+      department: user.department,
     }),
   };
 };
@@ -116,12 +119,12 @@ router.post('/login', loginLimiter, async (req, res) => {
     }
 
     const user = authResult.user;
-    const token = generateAccessToken({ 
-      userId: user.id, 
-      email: user.email, 
+    const token = generateAccessToken({
+      userId: user.id,
+      email: user.email,
       role: user.role,
       permissions: user.permissions,
-      department: user.department 
+      department: user.department,
     });
     const refreshTokenStr = generateRefreshToken({ userId: user.id });
 
@@ -140,26 +143,31 @@ router.post('/login', loginLimiter, async (req, res) => {
 });
 
 // Admin override endpoint
-router.post('/admin-override', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    const parsed = adminOverrideSchema.safeParse(req.body);
-    if (!parsed.success) {
-      return res.status(400).json({
-        success: false,
-        message: 'Validation error',
-        errors: parsed.error.flatten(),
-      });
+router.post(
+  '/admin-override',
+  authenticateToken,
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const parsed = adminOverrideSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          success: false,
+          message: 'Validation error',
+          errors: parsed.error.flatten(),
+        });
+      }
+
+      const { overrideCode, targetEmail } = parsed.data;
+      const result = await adminOverride(overrideCode, targetEmail);
+
+      res.json(result);
+    } catch (err) {
+      error('Admin override error:', err);
+      res.status(500).json({ success: false, message: 'Server error' });
     }
-
-    const { overrideCode, targetEmail } = parsed.data;
-    const result = await adminOverride(overrideCode, targetEmail);
-
-    res.json(result);
-  } catch (err) {
-    error('Admin override error:', err);
-    res.status(500).json({ success: false, message: 'Server error' });
   }
-});
+);
 
 // Token refresh endpoint
 router.post('/refresh-token', authenticateRefreshToken, async (req, res) => {
@@ -212,4 +220,3 @@ router.get('/health', (req, res) => {
 });
 
 export default router;
-

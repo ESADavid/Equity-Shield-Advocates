@@ -5,10 +5,10 @@ function PrivateBankingControls({
   onStatusUpdate,
 }) {
   const statusMap = {
-    '0': 'Aktivní',
-    '1': 'Neaktivní',
-    '2': 'Pozastaveno',
-    '3': 'Zrušeno'
+    0: 'Aktivní',
+    1: 'Neaktivní',
+    2: 'Pozastaveno',
+    3: 'Zrušeno',
   };
 
   const [accounts, setAccounts] = useState([]);

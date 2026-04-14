@@ -11,7 +11,9 @@ class UBIPaymentService {
     this.jpmorganConfig = {
       clientId: process.env.JPMORGAN_CLIENT_ID,
       clientSecret: process.env.JPMORGAN_CLIENT_SECRET,
-      baseUrl: process.env.JPMORGAN_BASE_URL || 'https://api-mock.payments.jpmorgan.com',
+      baseUrl:
+        process.env.JPMORGAN_BASE_URL ||
+        'https://api-mock.payments.jpmorgan.com',
       organizationId: process.env.JPMORGAN_ORGANIZATION_ID,
       projectId: process.env.JPMORGAN_PROJECT_ID || 'DK2MQSR1FS7V',
       merchantId: process.env.JPMORGAN_MERCHANT_ID,
@@ -54,7 +56,10 @@ class UBIPaymentService {
     }
 
     // Add housing assistance if applicable
-    if (citizen.housingStatus === 'rented' || citizen.housingStatus === 'homeless') {
+    if (
+      citizen.housingStatus === 'rented' ||
+      citizen.housingStatus === 'homeless'
+    ) {
       amount += 300;
     }
 
@@ -107,7 +112,9 @@ class UBIPaymentService {
         { headers, timeout: 30000 }
       );
 
-      info(`JPMorgan payment created for citizen ${citizenId}: ${response.data.id}`);
+      info(
+        `JPMorgan payment created for citizen ${citizenId}: ${response.data.id}`
+      );
       return {
         paymentId: response.data.id,
         status: response.data.status,
@@ -115,8 +122,13 @@ class UBIPaymentService {
         orderId,
       };
     } catch (err) {
-      error('JPMorgan payment processing failed:', err.response?.data || err.message);
-      throw new Error(`JPMorgan payment failed: ${err.response?.data?.message || err.message}`);
+      error(
+        'JPMorgan payment processing failed:',
+        err.response?.data || err.message
+      );
+      throw new Error(
+        `JPMorgan payment failed: ${err.response?.data?.message || err.message}`
+      );
     }
   }
 
@@ -124,7 +136,9 @@ class UBIPaymentService {
     try {
       // This would integrate with the payroll system to record UBI as a special payroll entry
       // For now, we'll log the intent - full integration would require payroll system API
-      info(`Recording UBI payment in payroll system: Citizen ${citizenId}, Amount $${amount}, Payment ID ${paymentId}`);
+      info(
+        `Recording UBI payment in payroll system: Citizen ${citizenId}, Amount $${amount}, Payment ID ${paymentId}`
+      );
 
       // Placeholder for payroll system integration
       // const payrollRecord = {
@@ -137,7 +151,10 @@ class UBIPaymentService {
 
       return true;
     } catch (err) {
-      warn('Failed to record in payroll system, continuing with payment:', err.message);
+      warn(
+        'Failed to record in payroll system, continuing with payment:',
+        err.message
+      );
       return false;
     }
   }
@@ -147,7 +164,8 @@ class UBIPaymentService {
       info(`Starting UBI payment process for citizen: ${citizenId}`);
 
       // Convert string citizenId to ObjectId if needed
-      const citizenObjectId = typeof citizenId === 'string' ? citizenId : citizenId.toString();
+      const citizenObjectId =
+        typeof citizenId === 'string' ? citizenId : citizenId.toString();
 
       // Get citizen data
       const citizen = await Citizen.findById(citizenObjectId);
@@ -164,9 +182,9 @@ class UBIPaymentService {
       const recentPayment = await UBIPayment.findOne({
         citizenId: citizenObjectId,
         paymentDate: {
-          $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // Last 30 days
+          $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
         },
-        status: { $in: ['completed', 'processing'] }
+        status: { $in: ['completed', 'processing'] },
       });
 
       if (recentPayment) {
@@ -186,31 +204,39 @@ class UBIPaymentService {
           citizenName: citizen.name,
           citizenEmail: citizen.email,
           calculatedAt: new Date(),
-        }
+        },
       });
 
       await payment.save();
       info(`UBI payment record created: ${payment._id}`);
 
       // Process payment via JPMorgan
-      const jpmorganResult = await this.processPaymentViaJPMorgan(citizenId, amount, citizen);
+      const jpmorganResult = await this.processPaymentViaJPMorgan(
+        citizenId,
+        amount,
+        citizen
+      );
 
       // Update payment record with JPMorgan details
       payment.transactionId = jpmorganResult.paymentId;
-      payment.status = jpmorganResult.status === 'AUTHORIZED' ? 'completed' : 'processing';
+      payment.status =
+        jpmorganResult.status === 'AUTHORIZED' ? 'completed' : 'processing';
       payment.metadata.jpmorganOrderId = jpmorganResult.orderId;
       payment.metadata.authorizationCode = jpmorganResult.authorizationCode;
 
       await payment.save();
 
       // Record in payroll system (async - don't block on failure)
-      this.recordInPayrollSystem(citizenId, amount, jpmorganResult.paymentId).catch(err => {
+      this.recordInPayrollSystem(
+        citizenId,
+        amount,
+        jpmorganResult.paymentId
+      ).catch((err) => {
         warn('Payroll system recording failed:', err.message);
       });
 
       info(`UBI payment completed successfully: ${payment._id}`);
       return payment;
-
     } catch (err) {
       error('UBI payment processing failed:', err);
 
@@ -223,7 +249,7 @@ class UBIPaymentService {
           metadata: {
             error: err.message,
             failedAt: new Date(),
-          }
+          },
         });
       } catch (recordErr) {
         error('Failed to record payment failure:', recordErr);
@@ -267,7 +293,10 @@ class UBIPaymentService {
           const jpmorganStatus = response.data.status;
           if (jpmorganStatus === 'CAPTURED' || jpmorganStatus === 'SETTLED') {
             payment.status = 'completed';
-          } else if (jpmorganStatus === 'FAILED' || jpmorganStatus === 'VOIDED') {
+          } else if (
+            jpmorganStatus === 'FAILED' ||
+            jpmorganStatus === 'VOIDED'
+          ) {
             payment.status = 'failed';
           }
 
@@ -292,7 +321,9 @@ class UBIPaymentService {
       total: citizenIds.length,
     };
 
-    info(`Starting bulk UBI payment processing for ${citizenIds.length} citizens`);
+    info(
+      `Starting bulk UBI payment processing for ${citizenIds.length} citizens`
+    );
 
     for (const citizenId of citizenIds) {
       try {
@@ -311,7 +342,9 @@ class UBIPaymentService {
       }
     }
 
-    info(`Bulk UBI payment processing completed: ${results.successful.length} successful, ${results.failed.length} failed`);
+    info(
+      `Bulk UBI payment processing completed: ${results.successful.length} successful, ${results.failed.length} failed`
+    );
     return results;
   }
 }

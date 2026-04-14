@@ -1,8 +1,6 @@
 import request from 'supertest';
 import { app } from '../server-enhanced.js'; // Assume app export
 
-
-
 describe('Phase 3 Integration Tests - E2E Flows', () => {
   test('E2E flow: register citizen → UBI payment → partner onboard', async () => {
     // 1. Register citizen
@@ -15,7 +13,11 @@ describe('Phase 3 Integration Tests - E2E Flows', () => {
     // 2. Process UBI (assume auth for simplicity, mock if needed)
     const ubiRes = await request(app)
       .post('/api/citizen-portal/ubi-payment')
-      .send({ citizenId: citizenRes.body.citizenId, amount: 1000, month: '2024-01' });
+      .send({
+        citizenId: citizenRes.body.citizenId,
+        amount: 1000,
+        month: '2024-01',
+      });
     expect(ubiRes.status).toBe(200);
 
     // 3. Onboard partner

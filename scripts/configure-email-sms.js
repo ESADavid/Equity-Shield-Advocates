@@ -68,14 +68,17 @@ async function configureEmail() {
     case '3':
       config.email.EMAIL_PROVIDER = 'smtp';
       config.email.SMTP_HOST = await question('Enter SMTP Host: ');
-      config.email.SMTP_PORT = await question('Enter SMTP Port (default: 587): ');
+      config.email.SMTP_PORT = await question(
+        'Enter SMTP Port (default: 587): '
+      );
       if (!config.email.SMTP_PORT) {
         config.email.SMTP_PORT = '587';
       }
       config.email.SMTP_USER = await question('Enter SMTP Username/Email: ');
       config.email.SMTP_PASS = await question('Enter SMTP Password: ');
       const secure = await question('Use SSL/TLS? (y/n, default: n): ');
-      config.email.SMTP_SECURE = secure.toLowerCase() === 'y' ? 'true' : 'false';
+      config.email.SMTP_SECURE =
+        secure.toLowerCase() === 'y' ? 'true' : 'false';
       break;
 
     default:
@@ -239,9 +242,13 @@ function displaySummary() {
 
   logger.info('\n📧 Email Configuration:');
   if (Object.keys(config.email).length > 0) {
-    logger.info(`  Provider: ${config.email.EMAIL_PROVIDER || 'Not configured'}`);
+    logger.info(
+      `  Provider: ${config.email.EMAIL_PROVIDER || 'Not configured'}`
+    );
     logger.info(`  From: ${config.email.EMAIL_FROM || 'Not configured'}`);
-    logger.info(`  From Name: ${config.email.EMAIL_FROM_NAME || 'Not configured'}`);
+    logger.info(
+      `  From Name: ${config.email.EMAIL_FROM_NAME || 'Not configured'}`
+    );
   } else {
     logger.info('  Not configured');
   }

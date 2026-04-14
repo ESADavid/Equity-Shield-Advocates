@@ -133,7 +133,11 @@ class PlaidAnalyticsService {
   }
 
   // Track retry attempts
-  trackRetryAttempt(trackingId, attemptNumber, strategy = 'exponential_backoff') {
+  trackRetryAttempt(
+    trackingId,
+    attemptNumber,
+    strategy = 'exponential_backoff'
+  ) {
     this.conversionMetrics.retryAttempts++;
 
     const connection = this.activeConnections.get(trackingId);
@@ -155,7 +159,11 @@ class PlaidAnalyticsService {
   }
 
   // Track fallback success
-  trackFallbackSuccess(trackingId, originalInstitutionId, fallbackInstitutionId) {
+  trackFallbackSuccess(
+    trackingId,
+    originalInstitutionId,
+    fallbackInstitutionId
+  ) {
     this.conversionMetrics.fallbackSuccesses++;
 
     const connection = this.activeConnections.get(trackingId);
@@ -202,18 +210,26 @@ class PlaidAnalyticsService {
     const totalAttempts = this.conversionMetrics.linkTokensCreated;
     const totalSuccesses = this.conversionMetrics.successfulConnections;
 
-    this.conversionMetrics.conversionRate = totalAttempts > 0 ?
-      (totalSuccesses / totalAttempts) * 100 : 0;
+    this.conversionMetrics.conversionRate =
+      totalAttempts > 0 ? (totalSuccesses / totalAttempts) * 100 : 0;
 
     // Calculate average connection time from successful connections
-    const successfulConnections = Array.from(this.activeConnections.values())
-      .filter(conn => conn.stage === 'connection_successful' && conn.completedAt && conn.createdAt);
+    const successfulConnections = Array.from(
+      this.activeConnections.values()
+    ).filter(
+      (conn) =>
+        conn.stage === 'connection_successful' &&
+        conn.completedAt &&
+        conn.createdAt
+    );
 
     if (successfulConnections.length > 0) {
       const totalTime = successfulConnections.reduce(
-        (sum, conn) => sum + (conn.completedAt - conn.createdAt), 0
+        (sum, conn) => sum + (conn.completedAt - conn.createdAt),
+        0
       );
-      this.conversionMetrics.averageConnectionTime = totalTime / successfulConnections.length;
+      this.conversionMetrics.averageConnectionTime =
+        totalTime / successfulConnections.length;
     }
   }
 
@@ -227,7 +243,7 @@ class PlaidAnalyticsService {
       institutionHealth: Object.fromEntries(this.institutionHealth),
       topErrorTypes: Object.fromEntries(
         Array.from(this.conversionMetrics.errorTypes.entries())
-          .sort(([,a], [,b]) => b - a)
+          .sort(([, a], [, b]) => b - a)
           .slice(0, 10)
       ),
       timestamp: Date.now(),
@@ -240,7 +256,7 @@ class PlaidAnalyticsService {
   getInstitutionRecommendations(limit = 5) {
     return Array.from(this.institutionHealth.entries())
       .filter(([, stats]) => stats.attempts >= 5) // Minimum attempts for reliability
-      .sort(([,a], [,b]) => b.successRate - a.successRate)
+      .sort(([, a], [, b]) => b.successRate - a.successRate)
       .slice(0, limit)
       .map(([institutionId, stats]) => ({
         institutionId,
@@ -262,18 +278,28 @@ class PlaidAnalyticsService {
     return {
       stages,
       conversion_rates: {
-        token_exchange_rate: stages.link_tokens_created > 0 ?
-          (stages.public_tokens_exchanged / stages.link_tokens_created) * 100 : 0,
-        overall_conversion_rate: stages.link_tokens_created > 0 ?
-          (stages.connections_successful / stages.link_tokens_created) * 100 : 0,
-        success_rate: (stages.connections_successful + stages.connections_failed) > 0 ?
-          (stages.connections_successful / (stages.connections_successful + stages.connections_failed)) * 100 : 0,
+        token_exchange_rate:
+          stages.link_tokens_created > 0
+            ? (stages.public_tokens_exchanged / stages.link_tokens_created) *
+              100
+            : 0,
+        overall_conversion_rate:
+          stages.link_tokens_created > 0
+            ? (stages.connections_successful / stages.link_tokens_created) * 100
+            : 0,
+        success_rate:
+          stages.connections_successful + stages.connections_failed > 0
+            ? (stages.connections_successful /
+                (stages.connections_successful + stages.connections_failed)) *
+              100
+            : 0,
       },
     };
   }
 
   // Clean up old connection tracking data
-  cleanupOldData(maxAge = 24 * 60 * 60 * 1000) { // 24 hours
+  cleanupOldData(maxAge = 24 * 60 * 60 * 1000) {
+    // 24 hours
     const cutoff = Date.now() - maxAge;
     let cleaned = 0;
 
@@ -317,8 +343,11 @@ class PlaidAnalyticsService {
 const plaidAnalyticsService = new PlaidAnalyticsService();
 
 // Periodic cleanup of old data
-setInterval(() => {
-  plaidAnalyticsService.cleanupOldData();
-}, 60 * 60 * 1000); // Clean up every hour
+setInterval(
+  () => {
+    plaidAnalyticsService.cleanupOldData();
+  },
+  60 * 60 * 1000
+); // Clean up every hour
 
 export default plaidAnalyticsService;

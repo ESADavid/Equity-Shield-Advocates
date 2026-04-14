@@ -23,13 +23,13 @@ class RealTimeAnomalyDetectionService {
         type: 'high_amount',
         severity: 'medium',
         description: 'Transaction amount exceeds normal threshold',
-        confidence: 0.8
+        confidence: 0.8,
       });
     }
 
     // Check transaction frequency
-    const recentTransactions = userHistory.filter(t =>
-      Date.now() - t.timestamp < this.thresholds.timeWindow
+    const recentTransactions = userHistory.filter(
+      (t) => Date.now() - t.timestamp < this.thresholds.timeWindow
     );
 
     if (recentTransactions.length > this.thresholds.frequency) {
@@ -37,29 +37,32 @@ class RealTimeAnomalyDetectionService {
         type: 'high_frequency',
         severity: 'high',
         description: 'Unusual transaction frequency detected',
-        confidence: 0.9
+        confidence: 0.9,
       });
     }
 
     // Check geographic spread
-    const locations = new Set(recentTransactions.map(t => t.location));
+    const locations = new Set(recentTransactions.map((t) => t.location));
     if (locations.size > this.thresholds.geographicSpread) {
       anomalies.push({
         type: 'geographic_spread',
         severity: 'medium',
         description: 'Transactions from multiple geographic locations',
-        confidence: 0.7
+        confidence: 0.7,
       });
     }
 
     // Check for unusual patterns
-    const unusualPatterns = this.detectUnusualPatterns(transaction, userHistory);
+    const unusualPatterns = this.detectUnusualPatterns(
+      transaction,
+      userHistory
+    );
     anomalies.push(...unusualPatterns);
 
     return {
       anomalies,
       riskScore: this.calculateRiskScore(anomalies),
-      recommendation: this.generateRecommendation(anomalies)
+      recommendation: this.generateRecommendation(anomalies),
     };
   }
 
@@ -72,7 +75,7 @@ class RealTimeAnomalyDetectionService {
         type: 'round_amount',
         severity: 'low',
         description: 'Round number transaction amount',
-        confidence: 0.6
+        confidence: 0.6,
       });
     }
 
@@ -83,7 +86,7 @@ class RealTimeAnomalyDetectionService {
         type: 'unusual_timing',
         severity: 'low',
         description: 'Transaction at unusual hour',
-        confidence: 0.5
+        confidence: 0.5,
       });
     }
 
@@ -94,13 +97,13 @@ class RealTimeAnomalyDetectionService {
     const severityWeights = {
       high: 1.0,
       medium: 0.6,
-      low: 0.3
+      low: 0.3,
     };
 
     let totalScore = 0;
     let totalWeight = 0;
 
-    anomalies.forEach(anomaly => {
+    anomalies.forEach((anomaly) => {
       const weight = severityWeights[anomaly.severity] || 0.5;
       totalScore += anomaly.confidence * weight;
       totalWeight += weight;
@@ -114,8 +117,10 @@ class RealTimeAnomalyDetectionService {
       return 'Transaction appears normal - proceed with standard processing';
     }
 
-    const highSeverity = anomalies.filter(a => a.severity === 'high').length;
-    const mediumSeverity = anomalies.filter(a => a.severity === 'medium').length;
+    const highSeverity = anomalies.filter((a) => a.severity === 'high').length;
+    const mediumSeverity = anomalies.filter(
+      (a) => a.severity === 'medium'
+    ).length;
 
     if (highSeverity > 0) {
       return 'High risk detected - recommend manual review and potential hold';
@@ -135,7 +140,7 @@ class RealTimeAnomalyDetectionService {
       issues.push({
         type: 'high_cpu',
         severity: 'high',
-        description: 'CPU usage above 90%'
+        description: 'CPU usage above 90%',
       });
     }
 
@@ -143,7 +148,7 @@ class RealTimeAnomalyDetectionService {
       issues.push({
         type: 'high_memory',
         severity: 'medium',
-        description: 'Memory usage above 85%'
+        description: 'Memory usage above 85%',
       });
     }
 
@@ -151,14 +156,14 @@ class RealTimeAnomalyDetectionService {
       issues.push({
         type: 'high_error_rate',
         severity: 'high',
-        description: 'Error rate above 5%'
+        description: 'Error rate above 5%',
       });
     }
 
     return {
       status: issues.length > 0 ? 'warning' : 'healthy',
       issues,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -167,7 +172,7 @@ class RealTimeAnomalyDetectionService {
     const key = `${data.type}_${Date.now()}`;
     this.monitoringData.set(key, {
       ...data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Keep only last 1000 entries
@@ -182,12 +187,12 @@ class RealTimeAnomalyDetectionService {
     const summary = {
       totalEntries: this.monitoringData.size,
       recentAlerts: [],
-      systemStatus: 'monitoring'
+      systemStatus: 'monitoring',
     };
 
     // Get last 10 entries
     const entries = Array.from(this.monitoringData.values()).slice(-10);
-    summary.recentAlerts = entries.filter(entry => entry.type === 'alert');
+    summary.recentAlerts = entries.filter((entry) => entry.type === 'alert');
 
     return summary;
   }

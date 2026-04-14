@@ -38,8 +38,10 @@ const logger = winston.createLogger({
 });
 
 // Connect to MongoDB for biometric data
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/oscar-broome-revenue';
-mongoose.connect(MONGODB_URI)
+const MONGODB_URI =
+  process.env.MONGODB_URI || 'mongodb://localhost:27017/oscar-broome-revenue';
+mongoose
+  .connect(MONGODB_URI)
   .then(() => {
     logger.info('MongoDB connected successfully for biometric system');
   })
@@ -97,10 +99,10 @@ function getEarningsData() {
     // Apply growth to revenue streams
     const grownRevenueStreams = {};
     if (data.revenueStreams) {
-      Object.keys(data.revenueStreams).forEach(key => {
+      Object.keys(data.revenueStreams).forEach((key) => {
         grownRevenueStreams[key] = {
           ...data.revenueStreams[key],
-          amount: data.revenueStreams[key].amount * growthMultiplier
+          amount: data.revenueStreams[key].amount * growthMultiplier,
         };
       });
     }
@@ -115,7 +117,7 @@ function getEarningsData() {
         autoFleetDetails: [],
       },
       dailyGrowthRate: (dailyGrowthFactor - 1) * 100, // Percentage
-      growthMultiplier: growthMultiplier
+      growthMultiplier: growthMultiplier,
     };
   } catch (error) {
     // As per SonarLint, handle the error by logging it before returning null

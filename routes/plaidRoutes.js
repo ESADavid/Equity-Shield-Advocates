@@ -10,7 +10,21 @@ const router = express.Router();
 // Create link token for account linking
 router.post('/create-link-token', authenticateToken, async (req, res) => {
   try {
-    const { userId, products, oauth, redirectUri, countryCodes, language, user, webhook, linkCustomizationName, institutionId, accountFilters, paymentInitiation, mode } = req.body;
+    const {
+      userId,
+      products,
+      oauth,
+      redirectUri,
+      countryCodes,
+      language,
+      user,
+      webhook,
+      linkCustomizationName,
+      institutionId,
+      accountFilters,
+      paymentInitiation,
+      mode,
+    } = req.body;
 
     if (!userId) {
       return res.status(400).json({
@@ -26,13 +40,18 @@ router.post('/create-link-token', authenticateToken, async (req, res) => {
     if (language) options.language = language;
     if (user) options.user = user;
     if (webhook) options.webhook = webhook;
-    if (linkCustomizationName) options.linkCustomizationName = linkCustomizationName;
+    if (linkCustomizationName)
+      options.linkCustomizationName = linkCustomizationName;
     if (institutionId) options.institutionId = institutionId;
     if (accountFilters) options.accountFilters = accountFilters;
     if (paymentInitiation) options.paymentInitiation = paymentInitiation;
     if (mode) options.mode = mode;
 
-    const linkTokenData = await plaidService.createLinkToken(userId, products, options);
+    const linkTokenData = await plaidService.createLinkToken(
+      userId,
+      products,
+      options
+    );
 
     res.json({
       success: true,
@@ -119,41 +138,45 @@ router.get('/balances/:accessToken', authenticateToken, async (req, res) => {
 });
 
 // Get transactions
-router.get('/transactions/:accessToken', authenticateToken, async (req, res) => {
-  try {
-    const { accessToken } = req.params;
-    const { startDate, endDate, count, offset } = req.query;
+router.get(
+  '/transactions/:accessToken',
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { accessToken } = req.params;
+      const { startDate, endDate, count, offset } = req.query;
 
-    if (!startDate || !endDate) {
-      return res.status(400).json({
+      if (!startDate || !endDate) {
+        return res.status(400).json({
+          success: false,
+          message: 'Start date and end date are required',
+        });
+      }
+
+      const transactions = await plaidService.getTransactions(
+        accessToken,
+        startDate,
+        endDate,
+        {
+          count: Number.parseInt(count) || 100,
+          offset: Number.parseInt(offset) || 0,
+        }
+      );
+
+      res.json({
+        success: true,
+        data: transactions,
+      });
+    } catch (error) {
+      logger.error('Error getting transactions:', error);
+      res.status(500).json({
         success: false,
-        message: 'Start date and end date are required',
+        message: 'Failed to get transactions',
+        error: error.message,
       });
     }
-
-    const transactions = await plaidService.getTransactions(
-      accessToken,
-      startDate,
-      endDate,
-      {
-        count: Number.parseInt(count) || 100,
-        offset: Number.parseInt(offset) || 0,
-      }
-    );
-
-    res.json({
-      success: true,
-      data: transactions,
-    });
-  } catch (error) {
-    logger.error('Error getting transactions:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get transactions',
-      error: error.message,
-    });
   }
-});
+);
 
 // Get income information
 router.get('/income/:accessToken', authenticateToken, async (req, res) => {
@@ -198,25 +221,30 @@ router.get('/auth/:accessToken', authenticateToken, async (req, res) => {
 });
 
 // Get investments auth information (for ACATS transfers)
-router.get('/investments/auth/:accessToken', authenticateToken, async (req, res) => {
-  try {
-    const { accessToken } = req.params;
+router.get(
+  '/investments/auth/:accessToken',
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { accessToken } = req.params;
 
-    const investmentsAuth = await plaidService.getInvestmentsAuth(accessToken);
+      const investmentsAuth =
+        await plaidService.getInvestmentsAuth(accessToken);
 
-    res.json({
-      success: true,
-      data: investmentsAuth,
-    });
-  } catch (error) {
-    logger.error('Error getting investments auth:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get investments auth',
-      error: error.message,
-    });
+      res.json({
+        success: true,
+        data: investmentsAuth,
+      });
+    } catch (error) {
+      logger.error('Error getting investments auth:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get investments auth',
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 // Get investments holdings and transactions
 router.get('/investments/:accessToken', authenticateToken, async (req, res) => {
@@ -282,7 +310,10 @@ router.post('/enrich/transactions', authenticateToken, async (req, res) => {
     if (account_type) options.account_type = account_type;
     if (country_code) options.country_code = country_code;
 
-    const enrichedData = await plaidService.enrichTransactions(transactions, options);
+    const enrichedData = await plaidService.enrichTransactions(
+      transactions,
+      options
+    );
 
     res.json({
       success: true,
@@ -299,37 +330,41 @@ router.post('/enrich/transactions', authenticateToken, async (req, res) => {
 });
 
 // Verify account ownership (proof of funds)
-router.post('/verify-ownership/:accessToken/:accountId', authenticateToken, async (req, res) => {
-  try {
-    const { accessToken, accountId } = req.params;
-    const { amounts } = req.body;
+router.post(
+  '/verify-ownership/:accessToken/:accountId',
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { accessToken, accountId } = req.params;
+      const { amounts } = req.body;
 
-    if (!amounts || !Array.isArray(amounts)) {
-      return res.status(400).json({
+      if (!amounts || !Array.isArray(amounts)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Amounts array is required',
+        });
+      }
+
+      const verification = await plaidService.verifyAccountOwnership(
+        accessToken,
+        accountId,
+        amounts
+      );
+
+      res.json({
+        success: true,
+        data: verification,
+      });
+    } catch (error) {
+      logger.error('Error verifying account ownership:', error);
+      res.status(500).json({
         success: false,
-        message: 'Amounts array is required',
+        message: 'Failed to verify account ownership',
+        error: error.message,
       });
     }
-
-    const verification = await plaidService.verifyAccountOwnership(
-      accessToken,
-      accountId,
-      amounts
-    );
-
-    res.json({
-      success: true,
-      data: verification,
-    });
-  } catch (error) {
-    logger.error('Error verifying account ownership:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to verify account ownership',
-      error: error.message,
-    });
   }
-});
+);
 
 // Get identity information
 router.get('/identity/:accessToken', authenticateToken, async (req, res) => {
@@ -353,48 +388,57 @@ router.get('/identity/:accessToken', authenticateToken, async (req, res) => {
 });
 
 // Match user identity information against institution data
-router.post('/identity/match/:accessToken', authenticateToken, async (req, res) => {
-  try {
-    const { accessToken } = req.params;
-    const { legal_name, phone_number, email_address, address } = req.body;
+router.post(
+  '/identity/match/:accessToken',
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { accessToken } = req.params;
+      const { legal_name, phone_number, email_address, address } = req.body;
 
-    // Validate required user identity data
-    if (!legal_name && !phone_number && !email_address && !address) {
-      return res.status(400).json({
+      // Validate required user identity data
+      if (!legal_name && !phone_number && !email_address && !address) {
+        return res.status(400).json({
+          success: false,
+          message:
+            'At least one identity field (legal_name, phone_number, email_address, or address) is required',
+        });
+      }
+
+      // Validate address structure if provided
+      if (address && typeof address !== 'object') {
+        return res.status(400).json({
+          success: false,
+          message:
+            'Address must be an object with street, city, region, postal_code, and country fields',
+        });
+      }
+
+      const userIdentity = {};
+      if (legal_name) userIdentity.legal_name = legal_name;
+      if (phone_number) userIdentity.phone_number = phone_number;
+      if (email_address) userIdentity.email_address = email_address;
+      if (address) userIdentity.address = address;
+
+      const matchResult = await plaidService.identityMatch(
+        accessToken,
+        userIdentity
+      );
+
+      res.json({
+        success: true,
+        data: matchResult,
+      });
+    } catch (error) {
+      logger.error('Error matching identity:', error);
+      res.status(500).json({
         success: false,
-        message: 'At least one identity field (legal_name, phone_number, email_address, or address) is required',
+        message: 'Failed to match identity',
+        error: error.message,
       });
     }
-
-    // Validate address structure if provided
-    if (address && typeof address !== 'object') {
-      return res.status(400).json({
-        success: false,
-        message: 'Address must be an object with street, city, region, postal_code, and country fields',
-      });
-    }
-
-    const userIdentity = {};
-    if (legal_name) userIdentity.legal_name = legal_name;
-    if (phone_number) userIdentity.phone_number = phone_number;
-    if (email_address) userIdentity.email_address = email_address;
-    if (address) userIdentity.address = address;
-
-    const matchResult = await plaidService.identityMatch(accessToken, userIdentity);
-
-    res.json({
-      success: true,
-      data: matchResult,
-    });
-  } catch (error) {
-    logger.error('Error matching identity:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to match identity',
-      error: error.message,
-    });
   }
-});
+);
 
 // Remove item (disconnect account)
 router.delete('/item/:accessToken', authenticateToken, async (req, res) => {
@@ -531,121 +575,160 @@ router.post(
 );
 
 // Initiate SMS microdeposits for account verification
-router.post('/microdeposits/initiate/:accessToken/:accountId', authenticateToken, async (req, res) => {
-  try {
-    const { accessToken, accountId } = req.params;
+router.post(
+  '/microdeposits/initiate/:accessToken/:accountId',
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { accessToken, accountId } = req.params;
 
-    const result = await plaidService.initiateMicrodeposits(accessToken, accountId);
+      const result = await plaidService.initiateMicrodeposits(
+        accessToken,
+        accountId
+      );
 
-    res.json({
-      success: true,
-      data: result,
-    });
-  } catch (error) {
-    logger.error('Error initiating microdeposits:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to initiate microdeposits',
-      error: error.message,
-    });
-  }
-});
-
-// Verify SMS microdeposits with deposit amounts
-router.post('/microdeposits/verify/:accessToken/:accountId', authenticateToken, async (req, res) => {
-  try {
-    const { accessToken, accountId } = req.params;
-    const { amounts } = req.body;
-
-    if (!amounts || !Array.isArray(amounts)) {
-      return res.status(400).json({
+      res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      logger.error('Error initiating microdeposits:', error);
+      res.status(500).json({
         success: false,
-        message: 'Amounts array is required',
+        message: 'Failed to initiate microdeposits',
+        error: error.message,
       });
     }
-
-    const result = await plaidService.verifyMicrodeposits(accessToken, accountId, amounts);
-
-    res.json({
-      success: true,
-      data: result,
-    });
-  } catch (error) {
-    logger.error('Error verifying microdeposits:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to verify microdeposits',
-      error: error.message,
-    });
   }
-});
+);
+
+// Verify SMS microdeposits with deposit amounts
+router.post(
+  '/microdeposits/verify/:accessToken/:accountId',
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { accessToken, accountId } = req.params;
+      const { amounts } = req.body;
+
+      if (!amounts || !Array.isArray(amounts)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Amounts array is required',
+        });
+      }
+
+      const result = await plaidService.verifyMicrodeposits(
+        accessToken,
+        accountId,
+        amounts
+      );
+
+      res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      logger.error('Error verifying microdeposits:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to verify microdeposits',
+        error: error.message,
+      });
+    }
+  }
+);
 
 // Get microdeposits verification status
-router.get('/microdeposits/status/:accessToken/:accountId', authenticateToken, async (req, res) => {
-  try {
-    const { accessToken, accountId } = req.params;
+router.get(
+  '/microdeposits/status/:accessToken/:accountId',
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { accessToken, accountId } = req.params;
 
-    const status = await plaidService.getMicrodepositsStatus(accessToken, accountId);
+      const status = await plaidService.getMicrodepositsStatus(
+        accessToken,
+        accountId
+      );
 
-    res.json({
-      success: true,
-      data: status,
-    });
-  } catch (error) {
-    logger.error('Error getting microdeposits status:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get microdeposits status',
-      error: error.message,
-    });
+      res.json({
+        success: true,
+        data: status,
+      });
+    } catch (error) {
+      logger.error('Error getting microdeposits status:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get microdeposits status',
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 // Get transfer events (transfer event sync)
-router.get('/transfer-events/:accessToken', authenticateToken, async (req, res) => {
-  const { accessToken } = req.params;
-  try {
-    const { count, offset, eventTypes, transferId, accountId, transferType, originationAccountId, startDate, endDate } = req.query;
+router.get(
+  '/transfer-events/:accessToken',
+  authenticateToken,
+  async (req, res) => {
+    const { accessToken } = req.params;
+    try {
+      const {
+        count,
+        offset,
+        eventTypes,
+        transferId,
+        accountId,
+        transferType,
+        originationAccountId,
+        startDate,
+        endDate,
+      } = req.query;
 
-    const options = {
-      count: count ? parseInt(count) : 25,
-      offset: offset ? parseInt(offset) : 0,
-      eventTypes: eventTypes ? eventTypes.split(',') : undefined,
-      transferId,
-      accountId,
-      transferType,
-      originationAccountId,
-      startDate,
-      endDate,
-    };
+      const options = {
+        count: count ? parseInt(count) : 25,
+        offset: offset ? parseInt(offset) : 0,
+        eventTypes: eventTypes ? eventTypes.split(',') : undefined,
+        transferId,
+        accountId,
+        transferType,
+        originationAccountId,
+        startDate,
+        endDate,
+      };
 
-    // Remove undefined values
-    Object.keys(options).forEach(key => {
-      if (options[key] === undefined) {
-        delete options[key];
-      }
-    });
+      // Remove undefined values
+      Object.keys(options).forEach((key) => {
+        if (options[key] === undefined) {
+          delete options[key];
+        }
+      });
 
-    const tracker = transferEventsMonitor.recordRequest(accessToken, options);
+      const tracker = transferEventsMonitor.recordRequest(accessToken, options);
 
-    const transferEvents = await plaidService.getBankTransferEvents(accessToken, options);
+      const transferEvents = await plaidService.getBankTransferEvents(
+        accessToken,
+        options
+      );
 
-    tracker.success(transferEvents.length);
+      tracker.success(transferEvents.length);
 
-    res.json({
-      success: true,
-      data: transferEvents,
-    });
-  } catch (error) {
-    transferEventsMonitor.recordRequest(accessToken, req.query).error(error);
-    logger.error('Error getting transfer events:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get transfer events',
-      error: error.message,
-    });
+      res.json({
+        success: true,
+        data: transferEvents,
+      });
+    } catch (error) {
+      transferEventsMonitor.recordRequest(accessToken, req.query).error(error);
+      logger.error('Error getting transfer events:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get transfer events',
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 // List transfer sweeps
 router.get('/transfer-sweeps', authenticateToken, async (req, res) => {
@@ -683,12 +766,25 @@ router.get('/transfer-sweeps', authenticateToken, async (req, res) => {
 // Create a transfer
 router.post('/transfers', authenticateToken, async (req, res) => {
   try {
-    const { accessToken, accountId, amount, description, achClass, type, network, idempotencyKey, metadata, originatorClientId, user } = req.body;
+    const {
+      accessToken,
+      accountId,
+      amount,
+      description,
+      achClass,
+      type,
+      network,
+      idempotencyKey,
+      metadata,
+      originatorClientId,
+      user,
+    } = req.body;
 
     if (!accessToken || !accountId || !amount || !description) {
       return res.status(400).json({
         success: false,
-        message: 'Access token, account ID, amount, and description are required',
+        message:
+          'Access token, account ID, amount, and description are required',
       });
     }
 
@@ -705,7 +801,10 @@ router.post('/transfers', authenticateToken, async (req, res) => {
       user,
     };
 
-    const transfer = await plaidService.createTransfer(accessToken, transferData);
+    const transfer = await plaidService.createTransfer(
+      accessToken,
+      transferData
+    );
 
     res.json({
       success: true,
@@ -801,12 +900,24 @@ router.delete('/transfers/:transferId', authenticateToken, async (req, res) => {
 // Create transfer intent
 router.post('/transfer-intents', authenticateToken, async (req, res) => {
   try {
-    const { accessToken, accountId, amount, description, achClass, mode, network, idempotencyKey, metadata, user } = req.body;
+    const {
+      accessToken,
+      accountId,
+      amount,
+      description,
+      achClass,
+      mode,
+      network,
+      idempotencyKey,
+      metadata,
+      user,
+    } = req.body;
 
     if (!accessToken || !accountId || !amount || !description) {
       return res.status(400).json({
         success: false,
-        message: 'Access token, account ID, amount, and description are required',
+        message:
+          'Access token, account ID, amount, and description are required',
       });
     }
 
@@ -822,7 +933,10 @@ router.post('/transfer-intents', authenticateToken, async (req, res) => {
       user,
     };
 
-    const intent = await plaidService.createTransferIntent(accessToken, intentData);
+    const intent = await plaidService.createTransferIntent(
+      accessToken,
+      intentData
+    );
 
     res.json({
       success: true,
@@ -839,25 +953,29 @@ router.post('/transfer-intents', authenticateToken, async (req, res) => {
 });
 
 // Get transfer intent
-router.get('/transfer-intents/:intentId', authenticateToken, async (req, res) => {
-  try {
-    const { intentId } = req.params;
+router.get(
+  '/transfer-intents/:intentId',
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { intentId } = req.params;
 
-    const intent = await plaidService.getTransferIntent(intentId);
+      const intent = await plaidService.getTransferIntent(intentId);
 
-    res.json({
-      success: true,
-      data: intent,
-    });
-  } catch (error) {
-    logger.error('Error getting transfer intent:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get transfer intent',
-      error: error.message,
-    });
+      res.json({
+        success: true,
+        data: intent,
+      });
+    } catch (error) {
+      logger.error('Error getting transfer intent:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get transfer intent',
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 // List transfer intents
 router.get('/transfer-intents', authenticateToken, async (req, res) => {
@@ -878,7 +996,10 @@ router.get('/transfer-intents', authenticateToken, async (req, res) => {
       offset: offset ? parseInt(offset) : 0,
     };
 
-    const intents = await plaidService.listTransferIntents(accessToken, options);
+    const intents = await plaidService.listTransferIntents(
+      accessToken,
+      options
+    );
 
     res.json({
       success: true,
@@ -938,7 +1059,7 @@ router.get('/items', authenticateToken, async (req, res) => {
 
     const items = await Item.findByUser(userId, tenantId);
 
-    const publicItems = items.map(item => item.toPublicJSON());
+    const publicItems = items.map((item) => item.toPublicJSON());
 
     res.json({
       success: true,
@@ -1065,28 +1186,35 @@ router.put('/items/:itemId/tan', authenticateToken, async (req, res) => {
 });
 
 // Get items needing consent renewal
-router.get('/items/consent/renewal-needed', authenticateToken, async (req, res) => {
-  try {
-    const tenantId = req.user.tenantId;
-    const { daysAhead = 7 } = req.query;
+router.get(
+  '/items/consent/renewal-needed',
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const tenantId = req.user.tenantId;
+      const { daysAhead = 7 } = req.query;
 
-    const items = await Item.findItemsNeedingConsentRenewal(tenantId, parseInt(daysAhead));
+      const items = await Item.findItemsNeedingConsentRenewal(
+        tenantId,
+        parseInt(daysAhead)
+      );
 
-    const publicItems = items.map(item => item.toPublicJSON());
+      const publicItems = items.map((item) => item.toPublicJSON());
 
-    res.json({
-      success: true,
-      data: publicItems,
-    });
-  } catch (error) {
-    logger.error('Error getting items needing consent renewal:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get items needing consent renewal',
-      error: error.message,
-    });
+      res.json({
+        success: true,
+        data: publicItems,
+      });
+    } catch (error) {
+      logger.error('Error getting items needing consent renewal:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get items needing consent renewal',
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 // Get items with expired TAN
 router.get('/items/tan/expired', authenticateToken, async (req, res) => {
@@ -1095,7 +1223,7 @@ router.get('/items/tan/expired', authenticateToken, async (req, res) => {
 
     const items = await Item.findItemsWithExpiredTan(tenantId);
 
-    const publicItems = items.map(item => item.toPublicJSON());
+    const publicItems = items.map((item) => item.toPublicJSON());
 
     res.json({
       success: true,
@@ -1116,7 +1244,8 @@ router.get('/items/tan/expired', authenticateToken, async (req, res) => {
 // Create Layer session token
 router.post('/layer/session-token', authenticateToken, async (req, res) => {
   try {
-    const { templateId, userId, clientName, webhook, linkCustomizationName } = req.body;
+    const { templateId, userId, clientName, webhook, linkCustomizationName } =
+      req.body;
 
     if (!templateId || !userId) {
       return res.status(400).json({
@@ -1128,9 +1257,14 @@ router.post('/layer/session-token', authenticateToken, async (req, res) => {
     const options = {};
     if (clientName) options.clientName = clientName;
     if (webhook) options.webhook = webhook;
-    if (linkCustomizationName) options.linkCustomizationName = linkCustomizationName;
+    if (linkCustomizationName)
+      options.linkCustomizationName = linkCustomizationName;
 
-    const sessionTokenData = await plaidService.createSessionToken(templateId, userId, options);
+    const sessionTokenData = await plaidService.createSessionToken(
+      templateId,
+      userId,
+      options
+    );
 
     res.json({
       success: true,
@@ -1147,24 +1281,28 @@ router.post('/layer/session-token', authenticateToken, async (req, res) => {
 });
 
 // Get Layer user account session data
-router.get('/layer/user-session/:sessionId', authenticateToken, async (req, res) => {
-  try {
-    const { sessionId } = req.params;
+router.get(
+  '/layer/user-session/:sessionId',
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { sessionId } = req.params;
 
-    const sessionData = await plaidService.getUserAccountSession(sessionId);
+      const sessionData = await plaidService.getUserAccountSession(sessionId);
 
-    res.json({
-      success: true,
-      data: sessionData,
-    });
-  } catch (error) {
-    logger.error('Error getting Layer user session:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get Layer user session',
-      error: error.message,
-    });
+      res.json({
+        success: true,
+        data: sessionData,
+      });
+    } catch (error) {
+      logger.error('Error getting Layer user session:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get Layer user session',
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 export default router;

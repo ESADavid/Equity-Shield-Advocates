@@ -87,9 +87,18 @@ function Dashboard() {
       <div className="earnings-dashboard">
         <h1>Earnings Dashboard</h1>
         <div className="wealth-growth-info">
-          <p><strong>Daily Growth Rate:</strong> {earningsData.dailyGrowthRate?.toFixed(2)}%</p>
-          <p><strong>Growth Multiplier:</strong> {earningsData.growthMultiplier?.toFixed(4)}x</p>
-          <p className="wealth-message">💰 Your wealth increases daily! Check back tomorrow for even higher values.</p>
+          <p>
+            <strong>Daily Growth Rate:</strong>{' '}
+            {earningsData.dailyGrowthRate?.toFixed(2)}%
+          </p>
+          <p>
+            <strong>Growth Multiplier:</strong>{' '}
+            {earningsData.growthMultiplier?.toFixed(4)}x
+          </p>
+          <p className="wealth-message">
+            💰 Your wealth increases daily! Check back tomorrow for even higher
+            values.
+          </p>
         </div>
         <Bar options={options} data={data} />
       </div>
@@ -132,7 +141,10 @@ function Dashboard() {
         {activeView === 'plaid' && (
           <div className="plaid-integration-section">
             <h1>Bank Account Connection</h1>
-            <p>Connect your bank accounts securely using Plaid for proof of funds verification and income analysis.</p>
+            <p>
+              Connect your bank accounts securely using Plaid for proof of funds
+              verification and income analysis.
+            </p>
             <PlaidLink
               userId="oscar-broome-user"
               products={['transactions', 'balances', 'income']}
@@ -156,7 +168,8 @@ function Dashboard() {
                 <ul>
                   {connectedAccounts.map((account, index) => (
                     <li key={index}>
-                      <strong>{account.name}</strong> - {account.type} ({account.subtype}) - Balance: ${account.balances.current}
+                      <strong>{account.name}</strong> - {account.type} (
+                      {account.subtype}) - Balance: ${account.balances.current}
                     </li>
                   ))}
                 </ul>

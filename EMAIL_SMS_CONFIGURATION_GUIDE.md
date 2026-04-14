@@ -123,7 +123,6 @@ EMAIL_FROM_NAME=Your Company Name
    - Enable 2FA
 
 2. **Generate App Password**
-
    - Go to Security → App passwords
    - Generate password for "Mail"
 
@@ -158,7 +157,6 @@ EMAIL_FROM_NAME=Your Company Name
      - Auth Token
 
 3. **Get Phone Number**
-
    - Go to Phone Numbers → Buy a Number
    - Choose a number with SMS capabilities
    - Or use trial number for testing
@@ -237,10 +235,7 @@ const result = await emailService.testConnection();
 console.log(result);
 
 // Send test email
-await emailService.sendWelcomeEmail(
-  'test@example.com',
-  'John'
-);
+await emailService.sendWelcomeEmail('test@example.com', 'John');
 ```
 
 ### Test SMS Configuration
@@ -253,10 +248,7 @@ const result = await smsService.testConnection();
 console.log(result);
 
 // Send test SMS
-await smsService.sendVerificationCode(
-  '+1234567890',
-  '123456'
-);
+await smsService.sendVerificationCode('+1234567890', '123456');
 ```
 
 ### Run Comprehensive Tests
@@ -374,10 +366,14 @@ await smsService.sendPaymentNotification(phoneNumber, amount, reference);
 await smsService.sendCustomSMS(phoneNumber, message);
 
 // Send bulk SMS
-await smsService.sendBulkSMS([
-  { phoneNumber: '+1234567890', data: { name: 'John' } },
-  { phoneNumber: '+0987654321', data: { name: 'Jane' } }
-], 'template-name', { commonData: 'value' });
+await smsService.sendBulkSMS(
+  [
+    { phoneNumber: '+1234567890', data: { name: 'John' } },
+    { phoneNumber: '+0987654321', data: { name: 'Jane' } },
+  ],
+  'template-name',
+  { commonData: 'value' }
+);
 
 // Get delivery status
 const status = smsService.getDeliveryStatus(messageId);
@@ -402,8 +398,8 @@ await notificationService.sendNotification({
     citizenName: 'John Doe',
     paymentAmount: '1000',
     paymentDate: '2024-01-15',
-    reference: 'PAY-123456'
-  }
+    reference: 'PAY-123456',
+  },
 });
 
 // Update user preferences
@@ -411,13 +407,13 @@ notificationService.updatePreferences('user123', {
   email: true,
   sms: true,
   push: false,
-  inApp: true
+  inApp: true,
 });
 
 // Get notification history
 const history = notificationService.getNotificationHistory('user123', {
   status: 'sent',
-  limit: 50
+  limit: 50,
 });
 ```
 

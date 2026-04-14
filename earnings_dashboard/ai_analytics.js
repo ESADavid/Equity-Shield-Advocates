@@ -19,9 +19,9 @@ class SimpleTrendAnalysis {
     if (data.length < periods + 1) return 0;
 
     const recent = data.slice(-periods);
-    const trend = recent.map((val, idx) =>
-      idx > 0 ? val - recent[idx - 1] : 0
-    ).slice(1);
+    const trend = recent
+      .map((val, idx) => (idx > 0 ? val - recent[idx - 1] : 0))
+      .slice(1);
 
     return trend.reduce((a, b) => a + b, 0) / trend.length;
   }
@@ -156,8 +156,19 @@ export function getAnalytics() {
     currentRevenue,
     predictions: {
       nextMonth: predictions.nextMonth,
-      threeMonth: [predictions.nextMonth, predictions.threeMonth, predictions.threeMonth],
-      sixMonth: [predictions.nextMonth, predictions.threeMonth, predictions.sixMonth, predictions.sixMonth, predictions.sixMonth, predictions.sixMonth],
+      threeMonth: [
+        predictions.nextMonth,
+        predictions.threeMonth,
+        predictions.threeMonth,
+      ],
+      sixMonth: [
+        predictions.nextMonth,
+        predictions.threeMonth,
+        predictions.sixMonth,
+        predictions.sixMonth,
+        predictions.sixMonth,
+        predictions.sixMonth,
+      ],
       confidenceIntervals: [], // Simplified - no confidence intervals
     },
     anomalies,

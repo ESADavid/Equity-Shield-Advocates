@@ -42,4 +42,3 @@ describe('Universal Basic Income Service', () => {
     expect(Array.isArray(history)).toBe(true);
   });
 });
-

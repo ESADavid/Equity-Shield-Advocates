@@ -30,7 +30,12 @@ class InstitutionHealthService {
   }
 
   // Record an institution interaction
-  recordInstitutionInteraction(institutionId, success, responseTime, errorType = null) {
+  recordInstitutionInteraction(
+    institutionId,
+    success,
+    responseTime,
+    errorType = null
+  ) {
     if (!institutionId) return;
 
     const current = this.institutionStats.get(institutionId) || {
@@ -61,16 +66,24 @@ class InstitutionHealthService {
       current.lastFailureTime = Date.now();
 
       if (errorType) {
-        current.errorTypes.set(errorType, (current.errorTypes.get(errorType) || 0) + 1);
+        current.errorTypes.set(
+          errorType,
+          (current.errorTypes.get(errorType) || 0) + 1
+        );
       }
     }
 
     // Update response time
     current.totalResponseTime += responseTime;
-    current.averageResponseTime = current.totalResponseTime / current.totalAttempts;
+    current.averageResponseTime =
+      current.totalResponseTime / current.totalAttempts;
 
     // Update recent attempts (keep last 100)
-    current.recentAttempts.push({ success, timestamp: Date.now(), responseTime });
+    current.recentAttempts.push({
+      success,
+      timestamp: Date.now(),
+      responseTime,
+    });
     if (current.recentAttempts.length > 100) {
       current.recentAttempts.shift();
     }
@@ -108,23 +121,31 @@ class InstitutionHealthService {
     score += stats.successRate * 0.4;
 
     // Response time score (20% weight) - faster is better
-    const responseTimeScore = Math.max(0, 1 - (stats.averageResponseTime / 30000)); // 30 seconds max
+    const responseTimeScore = Math.max(
+      0,
+      1 - stats.averageResponseTime / 30000
+    ); // 30 seconds max
     score += responseTimeScore * 0.2;
 
     // Recent performance (20% weight) - last 10 attempts
     const recentAttempts = stats.recentAttempts.slice(-10);
     if (recentAttempts.length > 0) {
-      const recentSuccessRate = recentAttempts.filter(a => a.success).length / recentAttempts.length;
+      const recentSuccessRate =
+        recentAttempts.filter((a) => a.success).length / recentAttempts.length;
       score += recentSuccessRate * 0.2;
     }
 
     // Consecutive failures penalty (10% weight)
-    const consecutiveFailurePenalty = Math.min(stats.consecutiveFailures * 0.1, 0.1);
+    const consecutiveFailurePenalty = Math.min(
+      stats.consecutiveFailures * 0.1,
+      0.1
+    );
     score -= consecutiveFailurePenalty;
 
     // Recency bonus (10% weight) - recently successful institutions get slight boost
     const timeSinceLastSuccess = Date.now() - (stats.lastAttempt || 0);
-    const recencyBonus = timeSinceLastSuccess < this.healthThresholds.recentWindow ? 0.1 : 0;
+    const recencyBonus =
+      timeSinceLastSuccess < this.healthThresholds.recentWindow ? 0.1 : 0;
     score += recencyBonus;
 
     return Math.max(0, Math.min(1, score));
@@ -150,7 +171,8 @@ class InstitutionHealthService {
     // Recent performance check (last 5 attempts)
     const recentAttempts = stats.recentAttempts.slice(-5);
     if (recentAttempts.length >= 3) {
-      const recentSuccessRate = recentAttempts.filter(a => a.success).length / recentAttempts.length;
+      const recentSuccessRate =
+        recentAttempts.filter((a) => a.success).length / recentAttempts.length;
       if (recentSuccessRate < 0.5) {
         return false;
       }
@@ -187,7 +209,9 @@ class InstitutionHealthService {
   // Get top performing institutions
   getTopPerformingInstitutions(limit = 10, minAttempts = 5) {
     return Array.from(this.institutionStats.entries())
-      .filter(([, stats]) => stats.totalAttempts >= minAttempts && stats.isHealthy)
+      .filter(
+        ([, stats]) => stats.totalAttempts >= minAttempts && stats.isHealthy
+      )
       .sort(([, a], [, b]) => b.healthScore - a.healthScore)
       .slice(0, limit)
       .map(([institutionId, stats]) => ({
@@ -212,8 +236,12 @@ class InstitutionHealthService {
     }
 
     // Prioritize preferred institutions
-    const preferred = candidates.filter(([id]) => preferredInstitutions.includes(id));
-    const others = candidates.filter(([id]) => !preferredInstitutions.includes(id));
+    const preferred = candidates.filter(([id]) =>
+      preferredInstitutions.includes(id)
+    );
+    const others = candidates.filter(
+      ([id]) => !preferredInstitutions.includes(id)
+    );
 
     // Sort by health score
     const sortByHealth = (a, b) => b[1].healthScore - a[1].healthScore;
@@ -223,15 +251,25 @@ class InstitutionHealthService {
 
     // Combine results
     const recommendations = [
-      ...preferred.map(([id, stats]) => ({ institutionId: id, ...this.getInstitutionHealth(id), preferred: true })),
-      ...others.slice(0, 10).map(([id, stats]) => ({ institutionId: id, ...this.getInstitutionHealth(id), preferred: false })),
+      ...preferred.map(([id, stats]) => ({
+        institutionId: id,
+        ...this.getInstitutionHealth(id),
+        preferred: true,
+      })),
+      ...others
+        .slice(0, 10)
+        .map(([id, stats]) => ({
+          institutionId: id,
+          ...this.getInstitutionHealth(id),
+          preferred: false,
+        })),
     ];
 
     // Add recommended institutions that don't have stats yet
     const recommendedWithoutStats = Array.from(this.recommendedInstitutions)
-      .filter(id => !this.institutionStats.has(id))
+      .filter((id) => !this.institutionStats.has(id))
       .slice(0, 5)
-      .map(id => ({
+      .map((id) => ({
         institutionId: id,
         status: 'recommended',
         attempts: 0,
@@ -250,7 +288,12 @@ class InstitutionHealthService {
   // Get fallback institutions for when primary institution fails
   getFallbackInstitutions(primaryInstitutionId, limit = 3) {
     return Array.from(this.institutionStats.entries())
-      .filter(([id, stats]) => id !== primaryInstitutionId && stats.isHealthy && stats.totalAttempts >= 10)
+      .filter(
+        ([id, stats]) =>
+          id !== primaryInstitutionId &&
+          stats.isHealthy &&
+          stats.totalAttempts >= 10
+      )
       .sort(([, a], [, b]) => b.successRate - a.successRate)
       .slice(0, limit)
       .map(([id]) => id);
@@ -259,14 +302,19 @@ class InstitutionHealthService {
   // Get overall health statistics
   getHealthStatistics() {
     const allStats = Array.from(this.institutionStats.values());
-    const healthyCount = allStats.filter(s => s.isHealthy).length;
+    const healthyCount = allStats.filter((s) => s.isHealthy).length;
     const totalCount = allStats.length;
 
-    const avgSuccessRate = allStats.length > 0 ?
-      allStats.reduce((sum, s) => sum + s.successRate, 0) / allStats.length : 0;
+    const avgSuccessRate =
+      allStats.length > 0
+        ? allStats.reduce((sum, s) => sum + s.successRate, 0) / allStats.length
+        : 0;
 
-    const avgResponseTime = allStats.length > 0 ?
-      allStats.reduce((sum, s) => sum + s.averageResponseTime, 0) / allStats.length : 0;
+    const avgResponseTime =
+      allStats.length > 0
+        ? allStats.reduce((sum, s) => sum + s.averageResponseTime, 0) /
+          allStats.length
+        : 0;
 
     return {
       totalInstitutions: totalCount,
@@ -312,16 +360,23 @@ class InstitutionHealthService {
   }
 
   // Clean up old data
-  cleanupOldData(maxAge = 30 * 24 * 60 * 60 * 1000) { // 30 days
+  cleanupOldData(maxAge = 30 * 24 * 60 * 60 * 1000) {
+    // 30 days
     const cutoff = Date.now() - maxAge;
     let cleaned = 0;
 
     for (const [institutionId, stats] of this.institutionStats.entries()) {
       // Remove old recent attempts
-      stats.recentAttempts = stats.recentAttempts.filter(attempt => attempt.timestamp > cutoff);
+      stats.recentAttempts = stats.recentAttempts.filter(
+        (attempt) => attempt.timestamp > cutoff
+      );
 
       // If no recent data and low attempt count, consider removing
-      if (stats.recentAttempts.length === 0 && stats.totalAttempts < 10 && stats.lastAttempt < cutoff) {
+      if (
+        stats.recentAttempts.length === 0 &&
+        stats.totalAttempts < 10 &&
+        stats.lastAttempt < cutoff
+      ) {
         this.institutionStats.delete(institutionId);
         cleaned++;
       }
@@ -363,8 +418,11 @@ class InstitutionHealthService {
 const institutionHealthService = new InstitutionHealthService();
 
 // Periodic cleanup
-setInterval(() => {
-  institutionHealthService.cleanupOldData();
-}, 24 * 60 * 60 * 1000); // Daily cleanup
+setInterval(
+  () => {
+    institutionHealthService.cleanupOldData();
+  },
+  24 * 60 * 60 * 1000
+); // Daily cleanup
 
 export default institutionHealthService;

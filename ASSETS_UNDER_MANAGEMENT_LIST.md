@@ -13,7 +13,7 @@ This document provides a comprehensive breakdown of all assets under management 
 - **Grand Total AUM**: $2,595,550,000,000.00 (2.59555 Trillion USD)
 - **Sovereign Authority**: King Sachem Yochanan (100% control)
 - **Management Entity**: OWLBAN GROUP
-**Royal Authority**: House of David ✡️ & House of Capet ⚜️ & House of Logan
+  **Royal Authority**: House of David ✡️ & House of Capet ⚜️ & House of Logan
 - **Performance YTD**: +12.5%
 - **Annualized Performance**: +15.3%
 - **Risk-Adjusted Return**: Sharpe Ratio 1.8

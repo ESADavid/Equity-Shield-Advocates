@@ -20,6 +20,7 @@
 **Mission:** Establish Heaven on Earth
 
 **Divine Mandate:**
+
 > "By the grace of God and through the eternal covenants of the House of David and the royal authority of the House of Capet, King Sachem Yochanan leads the OWLBAN GROUP in establishing Heaven on Earth, distributing $379.5 billion annually to 11.5 million citizens, and transforming the world through divine justice and royal governance."
 
 ---
@@ -114,6 +115,7 @@
 - Foundation of divine kingship
 
 **Biblical Promise:**
+
 > "Your house and your kingdom will endure forever before me; your throne will be established forever." - 2 Samuel 7:16
 
 ### House of Capet

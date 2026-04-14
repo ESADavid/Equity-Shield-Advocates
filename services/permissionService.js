@@ -32,7 +32,7 @@ class PermissionService {
   async checkPermission(userId, permissionCode, tenantId, context = {}) {
     try {
       const permission = await Permission.findByCode(permissionCode, tenantId);
-      
+
       if (!permission) {
         logger.warn('Permission not found', { permissionCode, tenantId });
         return {
@@ -124,7 +124,7 @@ class PermissionService {
           userId,
           todayStart
         );
-        
+
         if (todayUsage >= limits.daily) {
           return {
             allowed: false,
@@ -138,13 +138,13 @@ class PermissionService {
         const weekStart = new Date(now);
         weekStart.setDate(now.getDate() - now.getDay());
         weekStart.setHours(0, 0, 0, 0);
-        
+
         const weeklyUsage = await this.getUsageCount(
           permission._id,
           userId,
           weekStart
         );
-        
+
         if (weeklyUsage >= limits.weekly) {
           return {
             allowed: false,
@@ -161,7 +161,7 @@ class PermissionService {
           userId,
           monthStart
         );
-        
+
         if (monthlyUsage >= limits.monthly) {
           return {
             allowed: false,
@@ -223,7 +223,7 @@ class PermissionService {
   async getRequiredBiometrics(permissionCode, tenantId) {
     try {
       const permission = await Permission.findByCode(permissionCode, tenantId);
-      
+
       if (!permission) {
         return [];
       }
@@ -252,7 +252,7 @@ class PermissionService {
   async grantPermission(userId, permissionCode, tenantId, grantedBy) {
     try {
       const permission = await Permission.findByCode(permissionCode, tenantId);
-      
+
       if (!permission) {
         throw new Error('Permission not found');
       }
@@ -287,7 +287,7 @@ class PermissionService {
   async revokePermission(userId, permissionCode, tenantId, revokedBy) {
     try {
       const permission = await Permission.findByCode(permissionCode, tenantId);
-      
+
       if (!permission) {
         throw new Error('Permission not found');
       }

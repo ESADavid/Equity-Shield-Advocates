@@ -10,7 +10,9 @@ const router = express.Router();
 router.post('/process/:citizenId', async (req, res, next) => {
   try {
     info(`Processing UBI payment request for citizen: ${req.params.citizenId}`);
-    const payment = await ubiPaymentService.processPayment(req.params.citizenId);
+    const payment = await ubiPaymentService.processPayment(
+      req.params.citizenId
+    );
     res.json({
       success: true,
       payment: {
@@ -21,7 +23,7 @@ router.post('/process/:citizenId', async (req, res, next) => {
         paymentDate: payment.paymentDate,
         transactionId: payment.transactionId,
         paymentMethod: payment.paymentMethod,
-      }
+      },
     });
   } catch (err) {
     error('UBI payment processing error:', err.message);
@@ -33,10 +35,13 @@ router.post('/process/:citizenId', async (req, res, next) => {
 router.get('/history/:citizenId', async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit) || 50;
-    const history = await ubiPaymentService.getPaymentHistory(req.params.citizenId, limit);
+    const history = await ubiPaymentService.getPaymentHistory(
+      req.params.citizenId,
+      limit
+    );
     res.json({
       success: true,
-      history: history.map(payment => ({
+      history: history.map((payment) => ({
         id: payment._id,
         citizenId: payment.citizenId,
         amount: payment.amount,
@@ -45,7 +50,7 @@ router.get('/history/:citizenId', async (req, res, next) => {
         transactionId: payment.transactionId,
         paymentMethod: payment.paymentMethod,
         citizen: payment.citizenId, // populated data
-      }))
+      })),
     });
   } catch (err) {
     error('UBI payment history retrieval error:', err.message);
@@ -56,7 +61,9 @@ router.get('/history/:citizenId', async (req, res, next) => {
 // Get payment status by payment ID
 router.get('/status/:paymentId', async (req, res, next) => {
   try {
-    const payment = await ubiPaymentService.getPaymentStatus(req.params.paymentId);
+    const payment = await ubiPaymentService.getPaymentStatus(
+      req.params.paymentId
+    );
     res.json({
       success: true,
       payment: {
@@ -68,7 +75,7 @@ router.get('/status/:paymentId', async (req, res, next) => {
         transactionId: payment.transactionId,
         paymentMethod: payment.paymentMethod,
         metadata: payment.metadata,
-      }
+      },
     });
   } catch (err) {
     error('UBI payment status retrieval error:', err.message);
@@ -79,7 +86,9 @@ router.get('/status/:paymentId', async (req, res, next) => {
 // Calculate UBI amount for a citizen (preview)
 router.get('/calculate/:citizenId', async (req, res, next) => {
   try {
-    const amount = await ubiPaymentService.calculateUBIAmount(req.params.citizenId);
+    const amount = await ubiPaymentService.calculateUBIAmount(
+      req.params.citizenId
+    );
     res.json({
       success: true,
       citizenId: req.params.citizenId,
@@ -122,7 +131,7 @@ router.post('/bulk-process', async (req, res, next) => {
         failed: results.failed.length,
         successfulPayments: results.successful,
         failedPayments: results.failed,
-      }
+      },
     });
   } catch (err) {
     error('Bulk UBI payment processing error:', err.message);
@@ -150,7 +159,7 @@ router.get('/stats', async (req, res, next) => {
     const totalPayments = await UBIPayment.countDocuments(matchFilter);
     const totalAmount = await UBIPayment.aggregate([
       { $match: matchFilter },
-      { $group: { _id: null, total: { $sum: '$amount' } } }
+      { $group: { _id: null, total: { $sum: '$amount' } } },
     ]);
 
     res.json({
@@ -158,9 +167,10 @@ router.get('/stats', async (req, res, next) => {
       stats: {
         totalPayments,
         totalAmount: totalAmount[0]?.total || 0,
-        averagePayment: totalPayments > 0 ? (totalAmount[0]?.total || 0) / totalPayments : 0,
+        averagePayment:
+          totalPayments > 0 ? (totalAmount[0]?.total || 0) / totalPayments : 0,
         period: { startDate, endDate },
-      }
+      },
     });
   } catch (err) {
     error('UBI payment stats retrieval error:', err.message);

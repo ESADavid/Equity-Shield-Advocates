@@ -64,11 +64,13 @@ const itemSchema = new mongoose.Schema(
     lastWebhookReceived: {
       type: Date,
     },
-    webhookEvents: [{
-      eventType: String,
-      timestamp: Date,
-      data: mongoose.Schema.Types.Mixed,
-    }],
+    webhookEvents: [
+      {
+        eventType: String,
+        timestamp: Date,
+        data: mongoose.Schema.Types.Mixed,
+      },
+    ],
   },
   {
     timestamps: true,

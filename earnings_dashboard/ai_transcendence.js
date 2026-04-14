@@ -38,7 +38,8 @@ class SimpleRevenueOptimization {
     const avgGrowth = this.calculateAverageGrowth(historicalData);
 
     for (let i = 1; i <= horizon; i++) {
-      const prediction = historicalData[historicalData.length - 1] * Math.pow(1 + avgGrowth, i);
+      const prediction =
+        historicalData[historicalData.length - 1] * Math.pow(1 + avgGrowth, i);
       predictions.push(Math.round(prediction));
     }
 
@@ -66,7 +67,8 @@ class SimpleRevenueOptimization {
     const decisions = this.makeDecisions(analysis);
     const optimized = this.executeOptimizations(decisions);
 
-    this.metrics.optimizationEfficiency = (optimized.projectedRevenue - currentRevenue) / currentRevenue;
+    this.metrics.optimizationEfficiency =
+      (optimized.projectedRevenue - currentRevenue) / currentRevenue;
     this.metrics.decisionsMade += decisions.actions.length;
 
     return {
@@ -89,7 +91,10 @@ class SimpleRevenueOptimization {
     const baseRisk = marketData.volatility || 0.1;
     return {
       overallRisk: baseRisk,
-      recommendations: baseRisk > 0.3 ? ['Seek divine guidance', 'Pray for protection'] : ['Continue with faith'],
+      recommendations:
+        baseRisk > 0.3
+          ? ['Seek divine guidance', 'Pray for protection']
+          : ['Continue with faith'],
     };
   }
 
@@ -103,7 +108,10 @@ class SimpleRevenueOptimization {
 
   analyzeOptimization(currentRevenue, marketConditions) {
     const predictions = this.predictRevenueSimple(currentRevenue, 6);
-    const riskAssessment = this.assessRiskSimple(currentRevenue, marketConditions);
+    const riskAssessment = this.assessRiskSimple(
+      currentRevenue,
+      marketConditions
+    );
 
     return {
       currentRevenue,
@@ -116,17 +124,22 @@ class SimpleRevenueOptimization {
 
   identifyOpportunities(marketConditions) {
     const opportunities = [];
-    if (marketConditions.growth > 0.05) opportunities.push('High growth market');
-    if (marketConditions.competition < 0.3) opportunities.push('Low competition');
-    if (marketConditions.innovation > 0.7) opportunities.push('Innovation opportunity');
+    if (marketConditions.growth > 0.05)
+      opportunities.push('High growth market');
+    if (marketConditions.competition < 0.3)
+      opportunities.push('Low competition');
+    if (marketConditions.innovation > 0.7)
+      opportunities.push('Innovation opportunity');
     return opportunities;
   }
 
   identifyThreats(marketConditions) {
     const threats = [];
-    if (marketConditions.volatility > 0.8) threats.push('High market volatility');
+    if (marketConditions.volatility > 0.8)
+      threats.push('High market volatility');
     if (marketConditions.regulation > 0.6) threats.push('Regulatory changes');
-    if (marketConditions.economicSlowdown > 0.5) threats.push('Economic slowdown');
+    if (marketConditions.economicSlowdown > 0.5)
+      threats.push('Economic slowdown');
     return threats;
   }
 
@@ -195,8 +208,14 @@ export async function getTranscendentPredictions(data, horizon = 12) {
   return await simpleRevenueOptimization.predictRevenueSimple(data, horizon);
 }
 
-export async function optimizeRevenueAutonomously(currentRevenue, marketConditions) {
-  return await simpleRevenueOptimization.optimizeRevenue(currentRevenue, marketConditions);
+export async function optimizeRevenueAutonomously(
+  currentRevenue,
+  marketConditions
+) {
+  return await simpleRevenueOptimization.optimizeRevenue(
+    currentRevenue,
+    marketConditions
+  );
 }
 
 export async function learnFromNewData(newData) {

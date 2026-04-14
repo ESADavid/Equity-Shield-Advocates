@@ -51,9 +51,7 @@ class MultiChannelNotificationService {
         });
         info('Email service initialized');
       } else {
-        warn(
-          'Email service not configured - set SMTP environment variables'
-        );
+        warn('Email service not configured - set SMTP environment variables');
       }
     } catch (error) {
       error('Error initializing email service:', error);
@@ -70,17 +68,29 @@ class MultiChannelNotificationService {
         name: 'UBI Payment Success',
         channels: ['email', 'sms', 'push', 'in-app'],
         subject: 'UBI Payment Processed Successfully',
-        emailBody: 
+        emailBody:
           '<h2>UBI Payment Confirmation</h2>' +
-          '<p>Dear ' + '{{citizenName}}' + ',</p>' +
+          '<p>Dear ' +
+          '{{citizenName}}' +
+          ',</p>' +
           '<p>Your Universal Basic Income payment has been processed successfully.</p>' +
-          '<p><strong>Amount:</strong> $' + '{{paymentAmount}}' + '</p>' +
-          '<p><strong>Payment Date:</strong> ' + '{{paymentDate}}' + '</p>' +
-          '<p><strong>Reference:</strong> ' + '{{reference}}' + '</p>' +
+          '<p><strong>Amount:</strong> $' +
+          '{{paymentAmount}}' +
+          '</p>' +
+          '<p><strong>Payment Date:</strong> ' +
+          '{{paymentDate}}' +
+          '</p>' +
+          '<p><strong>Reference:</strong> ' +
+          '{{reference}}' +
+          '</p>' +
           '<p>Thank you for being part of the Heaven on Earth initiative.</p>',
         smsBody:
-          'UBI Payment: $' + '{{paymentAmount}}' + ' processed successfully. Ref: ' + '{{reference}}',
-        pushBody: 'Your UBI payment of $' + '{{paymentAmount}}' + ' has been processed',
+          'UBI Payment: $' +
+          '{{paymentAmount}}' +
+          ' processed successfully. Ref: ' +
+          '{{reference}}',
+        pushBody:
+          'Your UBI payment of $' + '{{paymentAmount}}' + ' has been processed',
         priority: 'high',
       },
       {
@@ -88,15 +98,27 @@ class MultiChannelNotificationService {
         name: 'Education Course Enrollment',
         channels: ['email', 'push', 'in-app'],
         subject: 'Course Enrollment Confirmation',
-        emailBody: 
+        emailBody:
           '<h2>Course Enrollment Confirmed</h2>' +
-          '<p>Dear ' + '{{studentName}}' + ',</p>' +
+          '<p>Dear ' +
+          '{{studentName}}' +
+          ',</p>' +
           '<p>You have been successfully enrolled in:</p>' +
-          '<p><strong>Course:</strong> ' + '{{courseName}}' + '</p>' +
-          '<p><strong>Start Date:</strong> ' + '{{startDate}}' + '</p>' +
-          '<p><strong>Instructor:</strong> ' + '{{instructor}}' + '</p>' +
+          '<p><strong>Course:</strong> ' +
+          '{{courseName}}' +
+          '</p>' +
+          '<p><strong>Start Date:</strong> ' +
+          '{{startDate}}' +
+          '</p>' +
+          '<p><strong>Instructor:</strong> ' +
+          '{{instructor}}' +
+          '</p>' +
           '<p>Access your course materials in the education portal.</p>',
-        pushBody: 'Enrolled in ' + '{{courseName}}' + '. Start date: ' + '{{startDate}}',
+        pushBody:
+          'Enrolled in ' +
+          '{{courseName}}' +
+          '. Start date: ' +
+          '{{startDate}}',
         priority: 'medium',
       },
       {
@@ -104,15 +126,27 @@ class MultiChannelNotificationService {
         name: 'Compliance Alert',
         channels: ['email', 'sms', 'push'],
         subject: 'Compliance Alert - Action Required',
-        emailBody: 
+        emailBody:
           '<h2>Compliance Alert</h2>' +
-          '<p><strong>Alert Type:</strong> ' + '{{alertType}}' + '</p>' +
-          '<p><strong>Severity:</strong> ' + '{{severity}}' + '</p>' +
-          '<p><strong>Description:</strong> ' + '{{description}}' + '</p>' +
-          '<p><strong>Action Required:</strong> ' + '{{action}}' + '</p>' +
+          '<p><strong>Alert Type:</strong> ' +
+          '{{alertType}}' +
+          '</p>' +
+          '<p><strong>Severity:</strong> ' +
+          '{{severity}}' +
+          '</p>' +
+          '<p><strong>Description:</strong> ' +
+          '{{description}}' +
+          '</p>' +
+          '<p><strong>Action Required:</strong> ' +
+          '{{action}}' +
+          '</p>' +
           '<p>Please address this issue immediately.</p>',
         smsBody:
-          'COMPLIANCE ALERT: ' + '{{alertType}}' + ' - ' + '{{severity}}' + '. Action required.',
+          'COMPLIANCE ALERT: ' +
+          '{{alertType}}' +
+          ' - ' +
+          '{{severity}}' +
+          '. Action required.',
         pushBody: 'Compliance Alert: ' + '{{alertType}}',
         priority: 'critical',
       },
@@ -121,12 +155,20 @@ class MultiChannelNotificationService {
         name: 'Partner Update',
         channels: ['email', 'in-app'],
         subject: 'Partner Update - ' + '{{updateType}}',
-        emailBody: 
+        emailBody:
           '<h2>Partner Update</h2>' +
-          '<p>Dear ' + '{{partnerName}}' + ',</p>' +
-          '<p><strong>Update Type:</strong> ' + '{{updateType}}' + '</p>' +
-          '<p><strong>Details:</strong> ' + '{{details}}' + '</p>' +
-          '<p><strong>Date:</strong> ' + '{{updateDate}}' + '</p>' +
+          '<p>Dear ' +
+          '{{partnerName}}' +
+          ',</p>' +
+          '<p><strong>Update Type:</strong> ' +
+          '{{updateType}}' +
+          '</p>' +
+          '<p><strong>Details:</strong> ' +
+          '{{details}}' +
+          '</p>' +
+          '<p><strong>Date:</strong> ' +
+          '{{updateDate}}' +
+          '</p>' +
           '<p>Please review this update in your partner portal.</p>',
         pushBody: 'Partner Update: ' + '{{updateType}}',
         priority: 'medium',
@@ -136,12 +178,18 @@ class MultiChannelNotificationService {
         name: 'Citizen Welcome',
         channels: ['email', 'sms', 'push'],
         subject: 'Welcome to Heaven on Earth Initiative',
-        emailBody: 
+        emailBody:
           '<h2>Welcome to Heaven on Earth!</h2>' +
-          '<p>Dear ' + '{{citizenName}}' + ',</p>' +
+          '<p>Dear ' +
+          '{{citizenName}}' +
+          ',</p>' +
           '<p>Welcome to the Heaven on Earth initiative. Your registration is complete.</p>' +
-          '<p><strong>Citizen ID:</strong> ' + '{{citizenId}}' + '</p>' +
-          '<p><strong>Registration Date:</strong> ' + '{{registrationDate}}' + '</p>' +
+          '<p><strong>Citizen ID:</strong> ' +
+          '{{citizenId}}' +
+          '</p>' +
+          '<p><strong>Registration Date:</strong> ' +
+          '{{registrationDate}}' +
+          '</p>' +
           '<p>You now have access to:</p>' +
           '<ul>' +
           '<li>Universal Basic Income (UBI) Program</li>' +
@@ -150,7 +198,8 @@ class MultiChannelNotificationService {
           '<li>Community Resources</li>' +
           '</ul>' +
           '<p>Access your citizen portal to get started.</p>',
-        smsBody: 'Welcome to Heaven on Earth! Your Citizen ID: ' + '{{citizenId}}',
+        smsBody:
+          'Welcome to Heaven on Earth! Your Citizen ID: ' + '{{citizenId}}',
         pushBody: 'Welcome! Your registration is complete.',
         priority: 'high',
       },
@@ -163,9 +212,7 @@ class MultiChannelNotificationService {
       });
     }
 
-    info(
-      `Initialized ${defaultTemplates.length} notification templates`
-    );
+    info(`Initialized ${defaultTemplates.length} notification templates`);
   }
 
   /**
@@ -222,9 +269,7 @@ class MultiChannelNotificationService {
 
       // If scheduled, don't send immediately
       if (scheduledFor) {
-        info(
-          `Notification ${notificationId} scheduled for ${scheduledFor}`
-        );
+        info(`Notification ${notificationId} scheduled for ${scheduledFor}`);
         return {
           success: true,
           notificationId: notificationId,

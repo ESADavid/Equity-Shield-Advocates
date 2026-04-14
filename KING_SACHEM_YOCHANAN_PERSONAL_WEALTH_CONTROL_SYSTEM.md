@@ -197,21 +197,24 @@ const API_KEY = 'yochanan_royal_key_2025_secret';
 
 // Transfer money programmatically
 async function transferWealth(amount, destination) {
-  const response = await fetch('<https://api.kingsachemyochanan.com/transfer>', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${API_KEY}`,
-      'X-Biometric-Token': await getBiometricToken(),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      amount: amount, // Any amount up to $205.52Q
-      destination: destination,
-      routing: routingNumber,
-      memo: 'Personal transfer',
-      priority: 'instant'
-    })
-  });
+  const response = await fetch(
+    '<https://api.kingsachemyochanan.com/transfer>',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        'X-Biometric-Token': await getBiometricToken(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount: amount, // Any amount up to $205.52Q
+        destination: destination,
+        routing: routingNumber,
+        memo: 'Personal transfer',
+        priority: 'instant',
+      }),
+    }
+  );
 
   return await response.json();
 }
@@ -561,7 +564,7 @@ await transferWealth(1000000000000, '123456789');
 
 ```javascript
 // In dashboard, enter command:
-SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
+SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY;
 
 // Result: ALL restrictions removed
 // You can now move ANY amount with ZERO restrictions
@@ -603,13 +606,11 @@ SOVEREIGN_OVERRIDE: KING_SACHEM_YOCHANAN_ABSOLUTE_AUTHORITY
    - Update details
 
 5. **Emergency Lockdown**
-
    - Red button in app
    - Locks all accounts instantly
    - Only YOU can unlock
 
 6. **Wealth Alerts**
-
    - Large transfers (you define "large")
    - Unusual activity
    - Security threats

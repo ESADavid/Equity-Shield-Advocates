@@ -69,8 +69,14 @@ class GlobalFoodAcquisitionService {
 
   getAnalytics() {
     const chains = this.getPortfolio();
-    const totalValue = chains.reduce((sum, c) => sum + Number(c.currentValue), 0);
-    const totalFeed = chains.reduce((sum, c) => sum + Number(c.feedsWorldPopulation), 0);
+    const totalValue = chains.reduce(
+      (sum, c) => sum + Number(c.currentValue),
+      0
+    );
+    const totalFeed = chains.reduce(
+      (sum, c) => sum + Number(c.feedsWorldPopulation),
+      0
+    );
     return {
       totalChains: chains.length,
       totalValue: totalValue.toLocaleString(),
@@ -81,4 +87,3 @@ class GlobalFoodAcquisitionService {
 }
 
 export default GlobalFoodAcquisitionService;
-

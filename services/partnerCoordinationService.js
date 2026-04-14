@@ -11,7 +11,11 @@ export default class PartnerCoordinationService {
       const partner = new Partner({ ...data, audit: { createdBy: userId } });
       await partner.save();
       info(`Partner onboarded: ${partner.partnerId} by ${userId}`);
-      return { success: true, partnerId: partner.partnerId, message: 'Partner onboarded' };
+      return {
+        success: true,
+        partnerId: partner.partnerId,
+        message: 'Partner onboarded',
+      };
     } catch (err) {
       error('Partner onboarding failed:', err);
       return { success: false, error: err.message };
@@ -61,7 +65,11 @@ export default class PartnerCoordinationService {
       const partner = await Partner.findOne({ partnerId });
       if (!partner) return { success: false, error: 'Partner not found' };
       const projectId = 'PROJ-' + Date.now();
-      partner.projects.push({ ...projectData, projectId, assignedDate: new Date() });
+      partner.projects.push({
+        ...projectData,
+        projectId,
+        assignedDate: new Date(),
+      });
       await partner.save();
       info(`Project ${projectId} assigned to ${partnerId}`);
       return { success: true, projectId };
@@ -73,19 +81,24 @@ export default class PartnerCoordinationService {
 
   async updateProjectStatus(projectId, status, data, userId) {
     try {
-      const partner = await Partner.findOne({ 'projects.projectId': projectId });
+      const partner = await Partner.findOne({
+        'projects.projectId': projectId,
+      });
       if (!partner) return { success: false, error: 'Project not found' };
-      
-      const projectIndex = partner.projects.findIndex(p => p.projectId === projectId);
-      if (projectIndex === -1) return { success: false, error: 'Project not found' };
-      
-      partner.projects[projectIndex] = { 
-        ...partner.projects[projectIndex], 
-        status, 
-        ...data 
+
+      const projectIndex = partner.projects.findIndex(
+        (p) => p.projectId === projectId
+      );
+      if (projectIndex === -1)
+        return { success: false, error: 'Project not found' };
+
+      partner.projects[projectIndex] = {
+        ...partner.projects[projectIndex],
+        status,
+        ...data,
       };
       await partner.save();
-      
+
       info(`Project ${projectId} status updated to ${status} by ${userId}`);
       return { success: true, message: 'Project status updated' };
     } catch (err) {
@@ -98,7 +111,7 @@ export default class PartnerCoordinationService {
     try {
       const partner = await Partner.findOne({ partnerId });
       if (!partner) return { success: false, error: 'Partner not found' };
-      
+
       partner.communications.push({
         type: data.type || 'email',
         date: new Date(),
@@ -106,7 +119,7 @@ export default class PartnerCoordinationService {
         sentBy: userId,
       });
       await partner.save();
-      
+
       info(`Communication logged for ${partnerId} by ${userId}`);
       return { success: true };
     } catch (err) {
@@ -119,12 +132,14 @@ export default class PartnerCoordinationService {
     try {
       const partner = await Partner.findOne({ partnerId });
       if (!partner) return { success: false, error: 'Partner not found' };
-      
+
       partner.performance.rating = data.rating;
-      partner.performance.projectsCompleted = data.projectsCompleted || partner.performance.projectsCompleted;
-      partner.performance.onTimeDelivery = data.onTimeDelivery || partner.performance.onTimeDelivery;
+      partner.performance.projectsCompleted =
+        data.projectsCompleted || partner.performance.projectsCompleted;
+      partner.performance.onTimeDelivery =
+        data.onTimeDelivery || partner.performance.onTimeDelivery;
       await partner.save();
-      
+
       info(`Rating updated for ${partnerId}: ${data.rating} by ${userId}`);
       return { success: true };
     } catch (err) {
@@ -137,7 +152,7 @@ export default class PartnerCoordinationService {
     try {
       const partner = await Partner.findOne({ partnerId: workflowId });
       if (!partner) return { success: false, error: 'Partner not found' };
-      
+
       partner.metadata = partner.metadata || {};
       partner.metadata.workflow = partner.metadata.workflow || {};
       partner.metadata.workflow[stepId] = {
@@ -146,7 +161,7 @@ export default class PartnerCoordinationService {
         updatedAt: new Date(),
       };
       await partner.save();
-      
+
       info(`Workflow step ${stepId} updated for ${workflowId}`);
       return { success: true };
     } catch (err) {
@@ -161,21 +176,21 @@ export default class PartnerCoordinationService {
       const active = await Partner.countDocuments({ status: 'active' });
       const avgRating = await Partner.aggregate([
         { $match: { 'performance.rating': { $gt: 0 } } },
-        { $group: { _id: null, avg: { $avg: '$performance.rating' } } }
+        { $group: { _id: null, avg: { $avg: '$performance.rating' } } },
       ]);
-      
-      return { 
-        success: true, 
-        stats: { 
+
+      return {
+        success: true,
+        stats: {
           totalPartners: total,
           activePartners: active,
           avgRating: Math.round((avgRating[0]?.avg || 0) * 10) / 10,
           projectsActive: await Partner.aggregate([
             { $unwind: '$projects' },
             { $match: { 'projects.status': { $ne: 'completed' } } },
-            { $count: 'activeProjects' }
-          ]).then(res => res[0]?.activeProjects || 0)
-        } 
+            { $count: 'activeProjects' },
+          ]).then((res) => res[0]?.activeProjects || 0),
+        },
       };
     } catch (err) {
       error('Statistics failed:', err);

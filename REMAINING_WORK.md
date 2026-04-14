@@ -195,7 +195,7 @@
 - Deployment Execution: ❌ 0%
 - Infrastructure Provisioning: ❌ 0%
 - Validation: ❌ 0%
-**Overall Phase 5: ✅ 100% (scripts created & ready, execution pending infra access)**
+  **Overall Phase 5: ✅ 100% (scripts created & ready, execution pending infra access)**
 
 ---
 

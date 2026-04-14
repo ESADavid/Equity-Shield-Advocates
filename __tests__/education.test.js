@@ -16,7 +16,11 @@ describe('Education Service', () => {
 
   test('should enroll citizen in curriculum', async () => {
     const mockCitizenId = new mongoose.Types.ObjectId();
-    const result = await EducationService.enrollCitizen(mockCitizenId, 'military', 6);
+    const result = await EducationService.enrollCitizen(
+      mockCitizenId,
+      'military',
+      6
+    );
     expect(result.enrolled).toBe(true);
   });
 
@@ -39,4 +43,3 @@ describe('Education Service', () => {
     expect(report.averageProgress).toBeDefined();
   });
 });
-

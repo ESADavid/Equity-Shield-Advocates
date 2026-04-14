@@ -94,6 +94,7 @@ node test_plaid_service.js
 ```
 
 This will verify:
+
 - Service configuration
 - Link token creation (if credentials are set)
 - Mock mode fallback
@@ -130,6 +131,7 @@ If credentials aren't working:
 ## Support
 
 For Plaid API issues, contact Plaid support:
+
 - Website: https://plaid.com
 - Documentation: https://plaid.com/docs
 - Support: https://support.plaid.com

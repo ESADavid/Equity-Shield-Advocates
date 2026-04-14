@@ -5,12 +5,12 @@ class ComputerVisionService {
     this.validationRules = {
       document: {
         requiredFields: ['name', 'date', 'signature'],
-        formats: ['pdf', 'jpg', 'png']
+        formats: ['pdf', 'jpg', 'png'],
       },
       image: {
         maxSize: 5 * 1024 * 1024, // 5MB
-        allowedTypes: ['image/jpeg', 'image/png', 'image/gif']
-      }
+        allowedTypes: ['image/jpeg', 'image/png', 'image/gif'],
+      },
     };
   }
 
@@ -30,7 +30,7 @@ class ComputerVisionService {
 
     // Check required fields (simulated)
     const content = file.content || '';
-    this.validationRules.document.requiredFields.forEach(field => {
+    this.validationRules.document.requiredFields.forEach((field) => {
       if (!content.includes(field)) {
         errors.push(`Missing required field: ${field}`);
       }
@@ -39,17 +39,18 @@ class ComputerVisionService {
     return {
       valid: errors.length === 0,
       errors,
-      confidence: errors.length === 0 ? 0.95 : 0.1
+      confidence: errors.length === 0 ? 0.95 : 0.1,
     };
   }
 
   extractText(image) {
     logger.info('Using manual text extraction');
     // Simulate text extraction from image
-    const mockText = 'Extracted text from image: This is a sample document with important information.';
+    const mockText =
+      'Extracted text from image: This is a sample document with important information.';
     return {
       text: mockText,
-      confidence: 0.85
+      confidence: 0.85,
     };
   }
 
@@ -58,8 +59,8 @@ class ComputerVisionService {
     // Simulate identity verification
     return {
       verified: true,
-      confidence: 0.90,
-      details: 'Manual verification completed'
+      confidence: 0.9,
+      details: 'Manual verification completed',
     };
   }
 
@@ -79,7 +80,7 @@ class ComputerVisionService {
     return {
       anomalies,
       total: images.length,
-      anomalous: anomalies.length
+      anomalous: anomalies.length,
     };
   }
 }

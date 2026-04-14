@@ -13,7 +13,11 @@ const logger = require('../utils/logger');
 router.post('/enroll', authMiddleware, async (req, res) => {
   try {
     const { citizenId, curriculum, durationMonths } = req.body;
-    const result = await EducationService.enrollCitizen(citizenId, curriculum, durationMonths);
+    const result = await EducationService.enrollCitizen(
+      citizenId,
+      curriculum,
+      durationMonths
+    );
     res.json(result);
   } catch (error) {
     logger.error(`Education enrollment failed: ${error.message}`);
@@ -26,7 +30,10 @@ router.put('/progress/:citizenId', authMiddleware, async (req, res) => {
   try {
     const { citizenId } = req.params;
     const { progress } = req.body;
-    const education = await EducationService.updateProgress(citizenId, progress);
+    const education = await EducationService.updateProgress(
+      citizenId,
+      progress
+    );
     res.json(education);
   } catch (error) {
     logger.error(`Education progress update failed: ${error.message}`);
@@ -70,4 +77,3 @@ router.get('/report/:curriculum', authMiddleware, async (req, res) => {
 });
 
 module.exports = router;
-

@@ -26,7 +26,10 @@ router.post('/wisdom', async (req, res) => {
       });
     }
 
-    const wisdom = await divineAIService.getPersonalWisdom(decision, context || {});
+    const wisdom = await divineAIService.getPersonalWisdom(
+      decision,
+      context || {}
+    );
 
     info(`Divine AI: Provided personal wisdom for user ${req.user._id}`);
 

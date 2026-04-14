@@ -40,6 +40,7 @@ docker-compose up -d
 ## 📋 Pre-Flight Checklist
 
 Before running, ensure you have:
+
 - ✅ Node.js installed (v14+ recommended)
 - ✅ npm installed
 - ✅ Modern web browser (Chrome, Firefox, Edge)
@@ -84,6 +85,7 @@ heal universe       # Restore cosmic balance (advanced)
 ### 4. **AI Features**
 
 Click the buttons to:
+
 - 🔍 **Analyze Prayers**: Get insights on your prayer patterns
 - ⚖️ **Optimize Universe**: Balance celestial bodies
 - 💡 **Get Divine Advice**: Receive wisdom
@@ -241,15 +243,15 @@ npm test
 
 ## 📁 Important Files
 
-| File | Purpose |
-|------|---------|
-| `index.html` | Main application interface |
-| `script.js` | Core application logic |
-| `universe.js` | Universe simulation engine |
-| `server.js` | Express backend server |
-| `package.json` | Dependencies and scripts |
-| `README.md` | Full documentation |
-| `TODO.md` | Development roadmap |
+| File           | Purpose                    |
+| -------------- | -------------------------- |
+| `index.html`   | Main application interface |
+| `script.js`    | Core application logic     |
+| `universe.js`  | Universe simulation engine |
+| `server.js`    | Express backend server     |
+| `package.json` | Dependencies and scripts   |
+| `README.md`    | Full documentation         |
+| `TODO.md`      | Development roadmap        |
 
 ---
 
@@ -286,10 +288,10 @@ Edit `universe.js`:
 
 ```javascript
 const config = {
-  starCount: 100,        // Number of stars
-  planetCount: 5,        // Number of planets
-  particleSize: 2,       // Size of particles
-  animationSpeed: 1      // Animation speed
+  starCount: 100, // Number of stars
+  planetCount: 5, // Number of planets
+  particleSize: 2, // Size of particles
+  animationSpeed: 1, // Animation speed
 };
 ```
 
@@ -299,8 +301,8 @@ Edit `script.js`:
 
 ```javascript
 const divineResponses = [
-  "Your prayer has been heard...",
-  "Divine guidance is upon you...",
+  'Your prayer has been heard...',
+  'Divine guidance is upon you...',
   // Add your own responses
 ];
 ```
@@ -423,14 +425,14 @@ Your GOD application is working when:
 
 ## 🔱 Divine Commands Reference
 
-| Command | Effect | Role Required |
-|---------|--------|---------------|
-| `create star` | Add new star | All |
-| `create planet` | Add new planet | All |
-| `invoke god` | Divine presence | All |
-| `praise god` | Express worship | All |
-| `destroy planet` | Remove planet | Angel/Prophet |
-| `heal universe` | Cosmic balance | Prophet |
+| Command          | Effect          | Role Required |
+| ---------------- | --------------- | ------------- |
+| `create star`    | Add new star    | All           |
+| `create planet`  | Add new planet  | All           |
+| `invoke god`     | Divine presence | All           |
+| `praise god`     | Express worship | All           |
+| `destroy planet` | Remove planet   | Angel/Prophet |
+| `heal universe`  | Cosmic balance  | Prophet       |
 
 ---
 
@@ -478,4 +480,4 @@ npm run deploy          # Deploy to GitHub Pages
 
 ---
 
-*"In the beginning was the Code, and the Code was with God, and the Code was God."*
+_"In the beginning was the Code, and the Code was with God, and the Code was God."_

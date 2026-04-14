@@ -8,36 +8,36 @@ This analysis is based on the downloaded error data from the Plaid developer das
 
 The following table shows the top errors encountered in the Plaid integration:
 
-| Date       | Error Type          | Count | Description                          |
-|------------|---------------------|-------|--------------------------------------|
-| 2024-01-01 | Authentication Error| 150   | Failed login attempts due to invalid credentials |
-| 2024-01-01 | Network Timeout     | 120   | Connection timeouts during API calls |
-| 2024-01-01 | Database Connection | 95    | Failed to connect to database        |
-| 2024-02-01 | Authentication Error| 140   | Failed login attempts due to invalid credentials |
-| 2024-02-01 | Network Timeout     | 110   | Connection timeouts during API calls |
-| 2024-02-01 | Database Connection | 85    | Failed to connect to database        |
-| 2024-03-01 | Authentication Error| 130   | Failed login attempts due to invalid credentials |
-| 2024-03-01 | Network Timeout     | 100   | Connection timeouts during API calls |
-| 2024-03-01 | Database Connection | 75    | Failed to connect to database        |
-| 2024-04-01 | Authentication Error| 120   | Failed login attempts due to invalid credentials |
-| 2024-04-01 | Network Timeout     | 90    | Connection timeouts during API calls |
-| 2024-04-01 | Database Connection | 65    | Failed to connect to database        |
-| 2024-05-01 | Authentication Error| 110   | Failed login attempts due to invalid credentials |
-| 2024-05-01 | Network Timeout     | 80    | Connection timeouts during API calls |
-| 2024-05-01 | Database Connection | 55    | Failed to connect to database        |
-| 2024-06-01 | Authentication Error| 100   | Failed login attempts due to invalid credentials |
-| 2024-06-01 | Network Timeout     | 70    | Connection timeouts during API calls |
-| 2024-06-01 | Database Connection | 45    | Failed to connect to database        |
-| 2024-07-01 | Authentication Error| 90    | Failed login attempts due to invalid credentials |
-| 2024-07-01 | Network Timeout     | 60    | Connection timeouts during API calls |
-| 2024-07-01 | Database Connection | 35    | Failed to connect to database        |
+| Date       | Error Type           | Count | Description                                      |
+| ---------- | -------------------- | ----- | ------------------------------------------------ |
+| 2024-01-01 | Authentication Error | 150   | Failed login attempts due to invalid credentials |
+| 2024-01-01 | Network Timeout      | 120   | Connection timeouts during API calls             |
+| 2024-01-01 | Database Connection  | 95    | Failed to connect to database                    |
+| 2024-02-01 | Authentication Error | 140   | Failed login attempts due to invalid credentials |
+| 2024-02-01 | Network Timeout      | 110   | Connection timeouts during API calls             |
+| 2024-02-01 | Database Connection  | 85    | Failed to connect to database                    |
+| 2024-03-01 | Authentication Error | 130   | Failed login attempts due to invalid credentials |
+| 2024-03-01 | Network Timeout      | 100   | Connection timeouts during API calls             |
+| 2024-03-01 | Database Connection  | 75    | Failed to connect to database                    |
+| 2024-04-01 | Authentication Error | 120   | Failed login attempts due to invalid credentials |
+| 2024-04-01 | Network Timeout      | 90    | Connection timeouts during API calls             |
+| 2024-04-01 | Database Connection  | 65    | Failed to connect to database                    |
+| 2024-05-01 | Authentication Error | 110   | Failed login attempts due to invalid credentials |
+| 2024-05-01 | Network Timeout      | 80    | Connection timeouts during API calls             |
+| 2024-05-01 | Database Connection  | 55    | Failed to connect to database                    |
+| 2024-06-01 | Authentication Error | 100   | Failed login attempts due to invalid credentials |
+| 2024-06-01 | Network Timeout      | 70    | Connection timeouts during API calls             |
+| 2024-06-01 | Database Connection  | 45    | Failed to connect to database                    |
+| 2024-07-01 | Authentication Error | 90    | Failed login attempts due to invalid credentials |
+| 2024-07-01 | Network Timeout      | 60    | Connection timeouts during API calls             |
+| 2024-07-01 | Database Connection  | 35    | Failed to connect to database                    |
 
 ## Error Rate Trend
 
 The overall error rate has been decreasing over time:
 
 | Date       | Error Rate (%) |
-|------------|----------------|
+| ---------- | -------------- |
 | 2024-01-01 | 5.2            |
 | 2024-02-01 | 4.8            |
 | 2024-03-01 | 4.1            |

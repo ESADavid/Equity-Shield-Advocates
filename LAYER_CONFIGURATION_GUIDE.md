@@ -87,12 +87,12 @@ PLAID_LAYER_WEBHOOK_URL=https://your-domain.com/api/plaid/webhook
 
 Use these Plaid sandbox phone numbers for testing:
 
-| Phone Number | Description |
-| ------------- | ------------- |
-| 4155550000 | Missing all identity and bank data |
-| 4155550011 | Default number for testing |
-| 4155550012 | Missing PII; 3 connected banks |
-| 4155550015 | Standard profile with a single bank |
+| Phone Number | Description                         |
+| ------------ | ----------------------------------- |
+| 4155550000   | Missing all identity and bank data  |
+| 4155550011   | Default number for testing          |
+| 4155550012   | Missing PII; 3 connected banks      |
+| 4155550015   | Standard profile with a single bank |
 
 ### 3.2 Test Commands
 
@@ -125,13 +125,13 @@ const createSession = async (phoneNumber) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
       templateId: process.env.REACT_APP_PLAID_LAYER_TEMPLATE_ID,
       userId: userId,
-      clientName: 'OSCAR BROOME REVENUE'
-    })
+      clientName: 'OSCAR BROOME REVENUE',
+    }),
   });
 
   const { data } = await response.json();
@@ -188,7 +188,7 @@ logger.info('Layer event received:', {
   eventType: webhookCode,
   sessionId,
   itemId,
-  timestamp: new Date().toISOString()
+  timestamp: new Date().toISOString(),
 });
 ```
 

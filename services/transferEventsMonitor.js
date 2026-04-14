@@ -17,7 +17,7 @@ class TransferEventsMonitor {
       error: (error) => {
         // Transfer events request failed
         this.requests.delete(id);
-      }
+      },
     };
 
     this.requests.set(id, tracker);
@@ -27,7 +27,7 @@ class TransferEventsMonitor {
   getStats() {
     return {
       activeRequests: this.requests.size,
-      totalRequests: this.requests.size // Simplified
+      totalRequests: this.requests.size, // Simplified
     };
   }
 }

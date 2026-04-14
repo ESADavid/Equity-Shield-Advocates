@@ -53,19 +53,22 @@ await Permission.createDefaultPermissions('your-tenant-id', 'admin-user-id');
 
 ```javascript
 // POST /api/biometric/enroll/fingerprint
-const response = await fetch('http://localhost:4000/api/biometric/enroll/fingerprint', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer YOUR_JWT_TOKEN'
-  },
-  body: JSON.stringify({
-    finger: 'index',
-    hand: 'right',
-    template: 'base64_encoded_fingerprint_data',
-    quality: 85
-  })
-});
+const response = await fetch(
+  'http://localhost:4000/api/biometric/enroll/fingerprint',
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer YOUR_JWT_TOKEN',
+    },
+    body: JSON.stringify({
+      finger: 'index',
+      hand: 'right',
+      template: 'base64_encoded_fingerprint_data',
+      quality: 85,
+    }),
+  }
+);
 
 const result = await response.json();
 // { success: true, message: "Fingerprint enrolled successfully", quality: 85 }
@@ -75,17 +78,20 @@ const result = await response.json();
 
 ```javascript
 // POST /api/biometric/verify/fingerprint
-const response = await fetch('http://localhost:4000/api/biometric/verify/fingerprint', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer YOUR_JWT_TOKEN',
-    'X-Device-ID': 'device-123'
-  },
-  body: JSON.stringify({
-    template: 'base64_encoded_fingerprint_data'
-  })
-});
+const response = await fetch(
+  'http://localhost:4000/api/biometric/verify/fingerprint',
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer YOUR_JWT_TOKEN',
+      'X-Device-ID': 'device-123',
+    },
+    body: JSON.stringify({
+      template: 'base64_encoded_fingerprint_data',
+    }),
+  }
+);
 
 const result = await response.json();
 // { success: true, verified: true, message: "Fingerprint verified successfully" }
@@ -101,7 +107,8 @@ import { authenticate } from './middleware/auth.js';
 const router = express.Router();
 
 // Require fingerprint verification
-router.post('/transfer-money',
+router.post(
+  '/transfer-money',
   authenticate,
   requireBiometric(['fingerprint']),
   async (req, res) => {
@@ -111,7 +118,8 @@ router.post('/transfer-money',
 );
 
 // Require multiple biometrics
-router.post('/admin-action',
+router.post(
+  '/admin-action',
   authenticate,
   requireBiometric(['fingerprint', 'facial'], 2), // Require 2 biometrics
   async (req, res) => {
@@ -135,7 +143,7 @@ const permissionCheck = await permissionService.checkPermission(
     deviceType: 'desktop',
     isVPN: false,
     isSecureNetwork: true,
-    isTrustedDevice: true
+    isTrustedDevice: true,
   }
 );
 
@@ -156,18 +164,21 @@ if (permissionCheck.allowed) {
 
 ```javascript
 // POST /api/biometric/verify/multi
-const response = await fetch('http://localhost:4000/api/biometric/verify/multi', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer YOUR_JWT_TOKEN'
-  },
-  body: JSON.stringify({
-    fingerprint: 'fingerprint_template',
-    facial: 'facial_template',
-    voice: 'voice_template'
-  })
-});
+const response = await fetch(
+  'http://localhost:4000/api/biometric/verify/multi',
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer YOUR_JWT_TOKEN',
+    },
+    body: JSON.stringify({
+      fingerprint: 'fingerprint_template',
+      facial: 'facial_template',
+      voice: 'voice_template',
+    }),
+  }
+);
 
 const result = await response.json();
 /*
@@ -221,13 +232,13 @@ const deviceInfo = {
   os: 'Windows 11',
   screenResolution: `${screen.width}x${screen.height}`,
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-  language: navigator.language
+  language: navigator.language,
 };
 
 const result = await fetch('/api/biometric/device/register', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(deviceInfo)
+  body: JSON.stringify(deviceInfo),
 });
 
 const { deviceHash } = await result.json();
@@ -255,8 +266,8 @@ tail -f logs/biometric-middleware.log
 // GET /api/biometric/status
 const response = await fetch('http://localhost:4000/api/biometric/status', {
   headers: {
-    'Authorization': 'Bearer YOUR_JWT_TOKEN'
-  }
+    Authorization: 'Bearer YOUR_JWT_TOKEN',
+  },
 });
 
 const status = await response.json();
@@ -326,6 +337,7 @@ curl http://localhost:4000/api/biometric/status \
 ### Issue: "MongoDB connection error"
 
 **Solution:**
+
 ```bash
 # Check if MongoDB is running
 mongosh
@@ -340,12 +352,14 @@ docker run -d -p 27017:27017 mongo:latest
 ### Issue: "Biometric quality too low"
 
 **Solution:**
+
 - Ensure quality score is above threshold (60 for fingerprint, 70 for facial, 65 for voice)
 - Improve capture conditions (lighting, positioning, etc.)
 
 ### Issue: "Account is locked"
 
 **Solution:**
+
 ```javascript
 // Reset failed attempts (admin only)
 const biometricData = await BiometricData.findByUser(userId, tenantId);
@@ -355,12 +369,16 @@ await biometricData.resetFailedAttempts();
 ### Issue: "Permission denied"
 
 **Solution:**
+
 ```javascript
 // Check permission requirements
 const permission = await Permission.findByCode('SYSTEM_ADMIN', tenantId);
 console.log('Required biometrics:', permission.getRequiredBiometrics());
 console.log('Time restrictions:', permission.restrictions.timeRestrictions);
-console.log('Context restrictions:', permission.restrictions.contextRestrictions);
+console.log(
+  'Context restrictions:',
+  permission.restrictions.contextRestrictions
+);
 ```
 
 ## 📚 Additional Resources
@@ -386,5 +404,5 @@ The biometric system is now set up and ready to use. Start by enrolling your fir
 
 ---
 
-*Quick Start Guide - Biometric Authentication System*  
-*Last Updated: December 2024*
+_Quick Start Guide - Biometric Authentication System_  
+_Last Updated: December 2024_

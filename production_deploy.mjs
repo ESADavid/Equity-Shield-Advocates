@@ -229,7 +229,8 @@ class ProductionDeployer {
 
     try {
       // Test module imports (same way as server)
-      const merchantModule = await import('./earnings_dashboard/merchant_bill_pay.js');
+      const merchantModule =
+        await import('./earnings_dashboard/merchant_bill_pay.js');
       const merchantBillPay = merchantModule.default || merchantModule;
       this.log('Merchant bill pay module loaded successfully');
 

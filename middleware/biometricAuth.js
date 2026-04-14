@@ -31,7 +31,10 @@ if (process.env.NODE_ENV !== 'production') {
  * @param {Array<string>} biometricTypes - Required biometric types (e.g., ['fingerprint', 'facial'])
  * @param {number} minimumRequired - Minimum number of biometrics required
  */
-export function requireBiometric(biometricTypes = ['fingerprint'], minimumRequired = 1) {
+export function requireBiometric(
+  biometricTypes = ['fingerprint'],
+  minimumRequired = 1
+) {
   return async (req, res, next) => {
     try {
       if (!req.user || !req.user._id) {
@@ -46,14 +49,18 @@ export function requireBiometric(biometricTypes = ['fingerprint'], minimumRequir
 
       // Get biometric data from request headers or body
       const biometrics = {
-        fingerprint: req.headers['x-biometric-fingerprint'] || req.body.biometric_fingerprint,
+        fingerprint:
+          req.headers['x-biometric-fingerprint'] ||
+          req.body.biometric_fingerprint,
         facial: req.headers['x-biometric-facial'] || req.body.biometric_facial,
         voice: req.headers['x-biometric-voice'] || req.body.biometric_voice,
       };
 
       // Check if any biometrics were provided
-      const providedBiometrics = Object.keys(biometrics).filter(key => biometrics[key]);
-      
+      const providedBiometrics = Object.keys(biometrics).filter(
+        (key) => biometrics[key]
+      );
+
       if (providedBiometrics.length === 0) {
         return res.status(403).json({
           success: false,
@@ -70,12 +77,13 @@ export function requireBiometric(biometricTypes = ['fingerprint'], minimumRequir
         userAgent: req.headers['user-agent'],
       };
 
-      const verificationResult = await biometricAuthService.verifyMultipleBiometrics(
-        userId,
-        tenantId,
-        biometrics,
-        context
-      );
+      const verificationResult =
+        await biometricAuthService.verifyMultipleBiometrics(
+          userId,
+          tenantId,
+          biometrics,
+          context
+        );
 
       if (!verificationResult.overall) {
         logger.warn('Biometric verification failed', {
@@ -196,7 +204,12 @@ export function requirePermission(permissionCode) {
       });
 
       // Log permission usage
-      await permissionService.logPermissionUsage(userId, permissionCode, tenantId, context);
+      await permissionService.logPermissionUsage(
+        userId,
+        permissionCode,
+        tenantId,
+        context
+      );
 
       // Attach permission to request
       req.permission = permissionCheck.permission;
@@ -307,7 +320,11 @@ export function checkTimeRestrictions(allowedDays = [], allowedHours = {}) {
  * @param {Array<string>} biometricTypes - Required biometric types
  * @param {number} minimumBiometrics - Minimum number of biometrics required
  */
-export function requireBiometricPermission(permissionCode, biometricTypes = ['fingerprint'], minimumBiometrics = 1) {
+export function requireBiometricPermission(
+  permissionCode,
+  biometricTypes = ['fingerprint'],
+  minimumBiometrics = 1
+) {
   return [
     validateContext(),
     requireBiometric(biometricTypes, minimumBiometrics),

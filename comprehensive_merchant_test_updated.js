@@ -299,7 +299,7 @@ class MerchantEndpointTests {
       const isServerHealthy =
         healthResponse.data &&
         (healthResponse.data.status === 'healthy' ||
-         healthResponse.data.status === 'degraded');
+          healthResponse.data.status === 'degraded');
 
       if (isMockMode && isServerHealthy) {
         this.testSuite.addTest(

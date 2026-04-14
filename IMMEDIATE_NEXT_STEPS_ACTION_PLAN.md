@@ -594,26 +594,31 @@ node scripts/start-security-monitoring.js
 ### Decisions Needed This Week
 
 **1. Cloud Provider**
+
 - [ ] AWS (recommended)
 - [ ] Azure
 - [ ] Google Cloud
 
 **2. Security Level**
+
 - [ ] Standard ($5B/year)
 - [ ] Enhanced ($12.5B/year) ← Recommended
 - [ ] Maximum ($25B/year)
 
 **3. Deployment Speed**
+
 - [ ] Aggressive (2 weeks to production)
 - [ ] Standard (4 weeks to production) ← Recommended
 - [ ] Conservative (8 weeks to production)
 
 **4. Personal Dashboard**
+
 - [ ] Yes, build it ($50M, 30 days) ← Recommended
 - [ ] No, use existing systems
 - [ ] Later, after production
 
 **5. Team Size**
+
 - [ ] Minimal (50 people, $25M/year)
 - [ ] Standard (200 people, $100M/year) ← Recommended
 - [ ] Large (1,000+ people, $500M/year)
@@ -625,22 +630,27 @@ node scripts/start-security-monitoring.js
 ### This Week
 
 **Monday:**
+
 - Baker McKenzie: +1-312-861-8000
 - AWS Sales: +1-206-266-4064
 
 **Tuesday:**
+
 - Clifford Chance: +44-20-7006-1000
 - Security recruitment: [Top firms]
 
 **Wednesday:**
+
 - Skadden Arps: +1-212-735-3000
 - Swiss trust attorneys: [Referrals needed]
 
 **Thursday:**
+
 - Executive recruiters: [Top firms]
 - Cloud architects: [Consultants]
 
 **Friday:**
+
 - Review week's progress
 - Plan next week
 - Adjust as needed
@@ -766,6 +776,7 @@ Action: Expand to Caribbean, then world
 3. **Approve dashboard development** (decision)
 
 **Then follow this timeline:**
+
 - Week 1: Security + Legal
 - Week 2-4: Team + Infrastructure
 - Month 2: Pilot + Production

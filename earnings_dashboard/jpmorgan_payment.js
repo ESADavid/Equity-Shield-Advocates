@@ -19,8 +19,8 @@ router.get('/health', (req, res) => {
       'POST /jpmorgan/capture',
       'POST /jpmorgan/void',
       'GET /jpmorgan/transactions',
-      'POST /jpmorgan/webhook'
-    ]
+      'POST /jpmorgan/webhook',
+    ],
   });
 });
 
@@ -115,7 +115,11 @@ router.post('/create-payment', async (req, res) => {
     }
 
     // Check if credentials are configured for live API calls
-    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+    const hasCredentials =
+      JPMORGAN_CLIENT_ID &&
+      JPMORGAN_CLIENT_SECRET &&
+      JPMORGAN_MERCHANT_ID &&
+      JPMORGAN_TERMINAL_ID;
 
     if (!hasCredentials) {
       // Mock mode - return mock response
@@ -221,7 +225,11 @@ router.get('/payment-status/:paymentId', async (req, res) => {
     const { paymentId } = req.params;
 
     // Check if credentials are configured for live API calls
-    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+    const hasCredentials =
+      JPMORGAN_CLIENT_ID &&
+      JPMORGAN_CLIENT_SECRET &&
+      JPMORGAN_MERCHANT_ID &&
+      JPMORGAN_TERMINAL_ID;
 
     if (!hasCredentials || paymentId.startsWith('mock-')) {
       // Mock mode - return mock response
@@ -278,7 +286,11 @@ router.post('/refund', async (req, res) => {
     }
 
     // Check if credentials are configured for live API calls
-    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+    const hasCredentials =
+      JPMORGAN_CLIENT_ID &&
+      JPMORGAN_CLIENT_SECRET &&
+      JPMORGAN_MERCHANT_ID &&
+      JPMORGAN_TERMINAL_ID;
 
     if (!hasCredentials || paymentId.startsWith('mock-')) {
       // Mock mode - return mock response
@@ -325,10 +337,7 @@ router.post('/refund', async (req, res) => {
       refundDetails: response.data,
     });
   } catch (error) {
-    error(
-      'JPMorgan refund error:',
-      error.response?.data || error.message
-    );
+    error('JPMorgan refund error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to process refund',
@@ -350,7 +359,11 @@ router.post('/capture', async (req, res) => {
     }
 
     // Check if credentials are configured for live API calls
-    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+    const hasCredentials =
+      JPMORGAN_CLIENT_ID &&
+      JPMORGAN_CLIENT_SECRET &&
+      JPMORGAN_MERCHANT_ID &&
+      JPMORGAN_TERMINAL_ID;
 
     if (!hasCredentials || paymentId.startsWith('mock-')) {
       // Mock mode - return mock response
@@ -362,13 +375,15 @@ router.post('/capture', async (req, res) => {
         captureDetails: {
           id: mockCaptureId,
           paymentId: paymentId,
-          amount: amount ? {
-            value: amount,
-            currency: 'USD',
-          } : {
-            value: 100.0,
-            currency: 'USD',
-          },
+          amount: amount
+            ? {
+                value: amount,
+                currency: 'USD',
+              }
+            : {
+                value: 100.0,
+                currency: 'USD',
+              },
           status: 'COMPLETED',
           createdAt: new Date().toISOString(),
           mock: true,
@@ -400,10 +415,7 @@ router.post('/capture', async (req, res) => {
       captureDetails: response.data,
     });
   } catch (error) {
-    error(
-      'JPMorgan capture error:',
-      error.response?.data || error.message
-    );
+    error('JPMorgan capture error:', error.response?.data || error.message);
     res.status(500).json({
       success: false,
       error: 'Failed to capture payment',
@@ -425,7 +437,11 @@ router.post('/void', async (req, res) => {
     }
 
     // Check if credentials are configured for live API calls
-    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+    const hasCredentials =
+      JPMORGAN_CLIENT_ID &&
+      JPMORGAN_CLIENT_SECRET &&
+      JPMORGAN_MERCHANT_ID &&
+      JPMORGAN_TERMINAL_ID;
 
     if (!hasCredentials || paymentId.startsWith('mock-')) {
       // Mock mode - return mock response
@@ -479,7 +495,11 @@ router.get('/transactions', async (req, res) => {
     const { startDate, endDate, status, limit = 50 } = req.query;
 
     // Check if credentials are configured for live API calls
-    const hasCredentials = JPMORGAN_CLIENT_ID && JPMORGAN_CLIENT_SECRET && JPMORGAN_MERCHANT_ID && JPMORGAN_TERMINAL_ID;
+    const hasCredentials =
+      JPMORGAN_CLIENT_ID &&
+      JPMORGAN_CLIENT_SECRET &&
+      JPMORGAN_MERCHANT_ID &&
+      JPMORGAN_TERMINAL_ID;
 
     if (!hasCredentials) {
       // Mock mode - return mock response
@@ -494,8 +514,12 @@ router.get('/transactions', async (req, res) => {
             value: Math.floor(Math.random() * 500) + 50,
             currency: 'USD',
           },
-          status: ['AUTHORIZED', 'CAPTURED', 'COMPLETED'][Math.floor(Math.random() * 3)],
-          createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+          status: ['AUTHORIZED', 'CAPTURED', 'COMPLETED'][
+            Math.floor(Math.random() * 3)
+          ],
+          createdAt: new Date(
+            Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+          ).toISOString(),
           mock: true,
         });
       }
@@ -595,11 +619,7 @@ router.post(
           break;
 
         case 'payment.failed':
-          info(
-            'Payment failed:',
-            event.data.paymentId,
-            event.data.reason
-          );
+          info('Payment failed:', event.data.paymentId, event.data.reason);
           break;
 
         default:

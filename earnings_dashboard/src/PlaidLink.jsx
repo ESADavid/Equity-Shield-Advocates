@@ -28,7 +28,7 @@ function PlaidLink({
   onEvent, // Additional event handler
   // Update mode specific props
   itemId, // Required for update mode
-  updateModeTrigger // What triggered the update mode
+  updateModeTrigger, // What triggered the update mode
 }) {
   const [linkToken, setLinkToken] = useState(providedLinkToken || null);
   const [loading, setLoading] = useState(!providedLinkToken);
@@ -42,7 +42,11 @@ function PlaidLink({
 
     if (publicToken) {
       // SECURITY: Validate OAuth redirect parameters
-      if (!publicToken || typeof publicToken !== 'string' || publicToken.length < 10) {
+      if (
+        !publicToken ||
+        typeof publicToken !== 'string' ||
+        publicToken.length < 10
+      ) {
         setError('Invalid OAuth redirect parameters');
         return;
       }
@@ -70,10 +74,16 @@ function PlaidLink({
           }
 
           // Clear URL params
-          window.history.replaceState({}, document.title, window.location.pathname);
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
         } catch (err) {
           // SECURITY: Sanitize error messages to prevent XSS
-          const sanitizedError = err.message ? err.message.replace(/[<>'"&]/g, '') : 'OAuth redirect failed';
+          const sanitizedError = err.message
+            ? err.message.replace(/[<>'"&]/g, '')
+            : 'OAuth redirect failed';
           setError(sanitizedError);
         }
       };
@@ -97,19 +107,22 @@ function PlaidLink({
         // Add optional parameters
         if (institutionId) requestBody.institutionId = institutionId;
         if (accountFilters) requestBody.accountFilters = accountFilters;
-        if (paymentInitiation) requestBody.paymentInitiation = paymentInitiation;
+        if (paymentInitiation)
+          requestBody.paymentInitiation = paymentInitiation;
         if (redirectUri) requestBody.redirectUri = redirectUri;
         if (oauth !== undefined) requestBody.oauth = oauth;
         if (countryCodes) requestBody.countryCodes = countryCodes;
         if (language) requestBody.language = language;
         if (user) requestBody.user = user;
         if (webhook) requestBody.webhook = webhook;
-        if (linkCustomizationName) requestBody.linkCustomizationName = linkCustomizationName;
+        if (linkCustomizationName)
+          requestBody.linkCustomizationName = linkCustomizationName;
 
         // Add update mode specific parameters
         if (mode === 'update') {
           if (itemId) requestBody.itemId = itemId;
-          if (updateModeTrigger) requestBody.updateModeTrigger = updateModeTrigger;
+          if (updateModeTrigger)
+            requestBody.updateModeTrigger = updateModeTrigger;
         }
 
         const response = await fetch('/api/plaid/create-link-token', {
@@ -135,7 +148,21 @@ function PlaidLink({
     };
 
     fetchLinkToken();
-  }, [userId, products, mode, institutionId, accountFilters, paymentInitiation, redirectUri, providedLinkToken, countryCodes, language, user, webhook, linkCustomizationName]);
+  }, [
+    userId,
+    products,
+    mode,
+    institutionId,
+    accountFilters,
+    paymentInitiation,
+    redirectUri,
+    providedLinkToken,
+    countryCodes,
+    language,
+    user,
+    webhook,
+    linkCustomizationName,
+  ]);
 
   // Handle successful Plaid Link connection
   const handleOnSuccess = async (publicToken, metadata) => {
@@ -179,11 +206,17 @@ function PlaidLink({
   const handleOnEvent = (eventName, metadata) => {
     // SECURITY: Remove sensitive data logging in production
     if (process.env.NODE_ENV !== 'production') {
-      logger.info('Plaid Link Event:', { eventName, metadata: { ...metadata, account_id: '[REDACTED]' } });
+      logger.info('Plaid Link Event:', {
+        eventName,
+        metadata: { ...metadata, account_id: '[REDACTED]' },
+      });
     }
 
     // Handle specific events for error recovery
-    if (eventName === 'ERROR' && metadata?.error_code === 'ITEM_LOGIN_REQUIRED') {
+    if (
+      eventName === 'ERROR' &&
+      metadata?.error_code === 'ITEM_LOGIN_REQUIRED'
+    ) {
       logger.warn('ITEM_LOGIN_REQUIRED detected - update mode needed');
       // Could trigger update mode automatically here
     }
@@ -229,10 +262,7 @@ function PlaidLink({
             Retry
           </button>
           {exit && (
-            <button
-              onClick={() => exit()}
-              className="btn btn-secondary"
-            >
+            <button onClick={() => exit()} className="btn btn-secondary">
               Close
             </button>
           )}
@@ -252,15 +282,13 @@ function PlaidLink({
         {mode === 'update' ? 'Update Bank Connection' : 'Connect Bank Account'}
       </button>
       <p className="plaid-description">
-        Securely connect your bank account to verify funds and access financial data.
+        Securely connect your bank account to verify funds and access financial
+        data.
         {institutionId && ' (Institution pre-selected)'}
         {mode === 'update' && ' (Updating existing connection)'}
       </p>
       {exit && (
-        <button
-          onClick={() => exit()}
-          className="btn btn-link plaid-exit-btn"
-        >
+        <button onClick={() => exit()} className="btn btn-link plaid-exit-btn">
           Cancel Connection
         </button>
       )}

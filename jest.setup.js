@@ -8,17 +8,17 @@ const originalConsoleMethods = {
   log: console.log,
   info: console.info,
   warn: console.warn,
-  error: console.error
+  error: console.error,
 };
 
 const suppressedMethods = ['log', 'info'];
 const consoleMethods = {};
 
-suppressedMethods.forEach(method => {
+suppressedMethods.forEach((method) => {
   consoleMethods[method] = jest.fn();
 });
 
-Object.keys(originalConsoleMethods).forEach(method => {
+Object.keys(originalConsoleMethods).forEach((method) => {
   if (!consoleMethods[method]) {
     consoleMethods[method] = originalConsoleMethods[method];
   }
@@ -50,7 +50,13 @@ if (typeof globalThis !== 'undefined') {
 
 // Fix for jsdom
 globalThis.ResizeObserver = class ResizeObserver {
-  observe() { return; } // intentional no-op for jsdom test mock
-  unobserve() { return; } // intentional no-op for jsdom test mock
-  disconnect() { return; } // intentional no-op for jsdom test mock
+  observe() {
+    return;
+  } // intentional no-op for jsdom test mock
+  unobserve() {
+    return;
+  } // intentional no-op for jsdom test mock
+  disconnect() {
+    return;
+  } // intentional no-op for jsdom test mock
 };

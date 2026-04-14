@@ -255,12 +255,12 @@ spec:
   minReplicas: 3
   maxReplicas: 50
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
 ```
 
 ### Database Scaling
@@ -364,4 +364,4 @@ kubectl rollout undo deployment/oscar-broome-app --to-revision=2
 
 ---
 
-*This automation guide ensures consistent, reliable deployment of the Oscar Broome Revenue System across all environments.*
+_This automation guide ensures consistent, reliable deployment of the Oscar Broome Revenue System across all environments._

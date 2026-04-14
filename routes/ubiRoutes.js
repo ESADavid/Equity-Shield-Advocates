@@ -59,4 +59,3 @@ router.post('/suspend/:citizenId', authMiddleware, async (req, res) => {
 });
 
 module.exports = router;
-

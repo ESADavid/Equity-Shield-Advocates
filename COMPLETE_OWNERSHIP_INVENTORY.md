@@ -80,9 +80,9 @@
 #### JPMorgan Chase
 
 - **Routing Number**: 021000021
-- **Primary Operating Account**: ****-****-****-1234 ($25M)
-- **Treasury Management Account**: ****-****-****-5678 ($50M)
-- **Payroll Account**: ****-****-****-9012 (Operational)
+- **Primary Operating Account**: \***\*-\*\***-\*\*\*\*-1234 ($25M)
+- **Treasury Management Account**: \***\*-\*\***-\*\*\*\*-5678 ($50M)
+- **Payroll Account**: \***\*-\*\***-\*\*\*\*-9012 (Operational)
 - **Purpose**: Revenue collection, cash management, operations
 
 #### Capetain Cetriva Public-Private Bank

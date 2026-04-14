@@ -28,20 +28,20 @@ const systemsToFix = [
   'Partner system',
   'Citizen portal',
   'UBI payment system',
-  'notification routes'
+  'notification routes',
 ];
 
-systemsToFix.forEach(system => {
+systemsToFix.forEach((system) => {
   const errorPattern = new RegExp(
     `(logger\\.error\\('❌ Failed to load ${system}:',.*?\\);)\\s*process\\.exit\\(1\\);`,
     'g'
   );
-  
+
   const replacement = `$1\n  logger.info('   Server will continue without ${system} routes');`;
-  
+
   const before = content;
   content = content.replace(errorPattern, replacement);
-  
+
   if (content !== before) {
     console.log(`✓ Made ${system} non-fatal`);
     changesMade++;
@@ -49,8 +49,12 @@ systemsToFix.forEach(system => {
 });
 
 // Also make ITG system non-fatal
-const itgPattern = /(logger\.error\('❌ Failed to load ITG system:',.*?\);)\s*process\.exit\(1\);/g;
-content = content.replace(itgPattern, "$1\n  logger.info('   Server will continue without ITG routes');");
+const itgPattern =
+  /(logger\.error\('❌ Failed to load ITG system:',.*?\);)\s*process\.exit\(1\);/g;
+content = content.replace(
+  itgPattern,
+  "$1\n  logger.info('   Server will continue without ITG routes');"
+);
 if (content.match(/Server will continue without ITG routes/)) {
   console.log('✓ Made ITG system non-fatal');
   changesMade++;

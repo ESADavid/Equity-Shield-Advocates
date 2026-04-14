@@ -8,7 +8,7 @@ console.log('🧪 Testing server-enhanced.js startup...\n');
 
 const server = spawn('node', ['server-enhanced.js'], {
   stdio: 'pipe',
-  shell: true
+  shell: true,
 });
 
 let output = '';
@@ -27,15 +27,19 @@ server.stderr.on('data', (data) => {
 // Kill server after 3 seconds
 setTimeout(() => {
   server.kill();
-  
+
   console.log('\n📊 Test Results:');
   console.log('================');
-  
+
   if (errorOutput.includes('SyntaxError') || errorOutput.includes('Error:')) {
     console.log('❌ Server failed to start');
     console.log('Error:', errorOutput);
     process.exit(1);
-  } else if (output.includes('listening') || output.includes('started') || output.length > 0) {
+  } else if (
+    output.includes('listening') ||
+    output.includes('started') ||
+    output.length > 0
+  ) {
     console.log('✅ Server started successfully!');
     console.log('Output:', output);
     process.exit(0);

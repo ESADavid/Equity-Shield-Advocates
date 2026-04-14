@@ -9,9 +9,9 @@
 
 - **Phase 1 Code Quality**: Scripts ready (fix-env-encoding.cjs, replace-console-logs.js), ESLint/Jest setup running
 - **Phase 2 Services**: Enhanced (citizenPortalService.js, partnerCoordinationService.js, pmcIntegrationService.js)
-- **Phase 3 Testing**: COMPLETE (expanded tests, openapi.yaml enhanced, lint fixed) 
+- **Phase 3 Testing**: COMPLETE (expanded tests, openapi.yaml enhanced, lint fixed)
 - **Phase 4 Docs**: Trackers consolidated (TODO.md master)
-- **Phase 5 Deployment**: Scripts ready (execute-phase5-*.cjs)
+- **Phase 5 Deployment**: Scripts ready (execute-phase5-\*.cjs)
 
 **Jest/ESLint active in terminals. Run `cd project && node scripts/execute-phase5-staging.cjs` for live demo.**
 

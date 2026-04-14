@@ -7,62 +7,67 @@
 import mongoose from 'mongoose';
 import { info, error, warn } from '../utils/loggerWrapper.js';
 
-const ubiPaymentSchema = new mongoose.Schema({
-  citizenId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Citizen',
-    required: true,
-    index: true
+const ubiPaymentSchema = new mongoose.Schema(
+  {
+    citizenId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Citizen',
+      required: true,
+      index: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    paymentDate: {
+      type: Date,
+      default: Date.now,
+      index: true,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'processing', 'completed', 'failed', 'cancelled'],
+      default: 'pending',
+      index: true,
+    },
+    transactionId: {
+      type: String,
+      sparse: true,
+      index: true,
+    },
+    blockchainHash: {
+      type: String,
+      sparse: true,
+    },
+    paymentMethod: {
+      type: String,
+      enum: ['jpmorgan', 'direct', 'check', 'mobile_money'],
+      default: 'jpmorgan',
+    },
+    metadata: {
+      jpmorganOrderId: String,
+      authorizationCode: String,
+      lastStatusCheck: Date,
+      retryCount: { type: Number, default: 0 },
+      errorMessage: String,
+      processedBy: String,
+      approvedBy: String,
+    },
+    auditLog: [
+      {
+        action: String,
+        performedBy: String,
+        timestamp: { type: Date, default: Date.now },
+        details: mongoose.Schema.Types.Mixed,
+      },
+    ],
   },
-  amount: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  paymentDate: {
-    type: Date,
-    default: Date.now,
-    index: true
-  },
-  status: {
-    type: String,
-    enum: ['pending', 'processing', 'completed', 'failed', 'cancelled'],
-    default: 'pending',
-    index: true
-  },
-  transactionId: {
-    type: String,
-    sparse: true,
-    index: true
-  },
-  blockchainHash: {
-    type: String,
-    sparse: true
-  },
-  paymentMethod: {
-    type: String,
-    enum: ['jpmorgan', 'direct', 'check', 'mobile_money'],
-    default: 'jpmorgan'
-  },
-  metadata: {
-    jpmorganOrderId: String,
-    authorizationCode: String,
-    lastStatusCheck: Date,
-    retryCount: { type: Number, default: 0 },
-    errorMessage: String,
-    processedBy: String,
-    approvedBy: String
-  },
-  auditLog: [{
-    action: String,
-    performedBy: String,
-    timestamp: { type: Date, default: Date.now },
-    details: mongoose.Schema.Types.Mixed
-  }]
-}, {
-  timestamps: true,
-  collection: 'ubi_payments'
-});
+  {
+    timestamps: true,
+    collection: 'ubi_payments',
+  }
+);
 
 // Indexes for performance
 ubiPaymentSchema.index({ citizenId: 1, paymentDate: -1 });
@@ -70,12 +75,14 @@ ubiPaymentSchema.index({ status: 1, paymentDate: -1 });
 ubiPaymentSchema.index({ transactionId: 1 });
 
 // Virtual for payment age in days
-ubiPaymentSchema.virtual('ageInDays').get(function() {
-  return Math.floor((Date.now() - this.paymentDate.getTime()) / (1000 * 60 * 60 * 24));
+ubiPaymentSchema.virtual('ageInDays').get(function () {
+  return Math.floor(
+    (Date.now() - this.paymentDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
 });
 
 // Method to validate payment data
-ubiPaymentSchema.methods.validatePayment = function() {
+ubiPaymentSchema.methods.validatePayment = function () {
   if (this.amount <= 0) {
     throw new Error('Payment amount must be greater than 0');
   }
@@ -84,7 +91,11 @@ ubiPaymentSchema.methods.validatePayment = function() {
     throw new Error('Citizen ID is required');
   }
 
-  if (!['jpmorgan', 'direct', 'check', 'mobile_money'].includes(this.paymentMethod)) {
+  if (
+    !['jpmorgan', 'direct', 'check', 'mobile_money'].includes(
+      this.paymentMethod
+    )
+  ) {
     throw new Error('Invalid payment method');
   }
 
@@ -92,7 +103,11 @@ ubiPaymentSchema.methods.validatePayment = function() {
 };
 
 // Method to update payment status with audit trail
-ubiPaymentSchema.methods.updateStatus = function(newStatus, performedBy, details = {}) {
+ubiPaymentSchema.methods.updateStatus = function (
+  newStatus,
+  performedBy,
+  details = {}
+) {
   const oldStatus = this.status;
 
   if (oldStatus === newStatus) {
@@ -109,8 +124,8 @@ ubiPaymentSchema.methods.updateStatus = function(newStatus, performedBy, details
     details: {
       oldStatus,
       newStatus,
-      ...details
-    }
+      ...details,
+    },
   });
 
   info(`UBI Payment ${this._id} status updated: ${oldStatus} -> ${newStatus}`);
@@ -118,7 +133,10 @@ ubiPaymentSchema.methods.updateStatus = function(newStatus, performedBy, details
 };
 
 // Method to mark as failed with error details
-ubiPaymentSchema.methods.markAsFailed = function(errorMessage, performedBy = 'system') {
+ubiPaymentSchema.methods.markAsFailed = function (
+  errorMessage,
+  performedBy = 'system'
+) {
   this.status = 'failed';
   this.metadata.errorMessage = errorMessage;
   this.metadata.lastStatusCheck = new Date();
@@ -126,7 +144,7 @@ ubiPaymentSchema.methods.markAsFailed = function(errorMessage, performedBy = 'sy
   this.auditLog.push({
     action: 'PAYMENT_FAILED',
     performedBy,
-    details: { errorMessage }
+    details: { errorMessage },
   });
 
   error(`UBI Payment ${this._id} failed: ${errorMessage}`);
@@ -134,7 +152,7 @@ ubiPaymentSchema.methods.markAsFailed = function(errorMessage, performedBy = 'sy
 };
 
 // Method to retry payment
-ubiPaymentSchema.methods.retryPayment = function(performedBy = 'system') {
+ubiPaymentSchema.methods.retryPayment = function (performedBy = 'system') {
   if (this.status !== 'failed') {
     throw new Error('Can only retry failed payments');
   }
@@ -146,21 +164,25 @@ ubiPaymentSchema.methods.retryPayment = function(performedBy = 'system') {
   this.auditLog.push({
     action: 'PAYMENT_RETRY',
     performedBy,
-    details: { retryCount: this.metadata.retryCount }
+    details: { retryCount: this.metadata.retryCount },
   });
 
-  info(`UBI Payment ${this._id} queued for retry (attempt ${this.metadata.retryCount})`);
+  info(
+    `UBI Payment ${this._id} queued for retry (attempt ${this.metadata.retryCount})`
+  );
   return this.save();
 };
 
 // Method to check if payment can be retried
-ubiPaymentSchema.methods.canRetry = function() {
+ubiPaymentSchema.methods.canRetry = function () {
   const maxRetries = 3;
-  return this.status === 'failed' && (this.metadata.retryCount || 0) < maxRetries;
+  return (
+    this.status === 'failed' && (this.metadata.retryCount || 0) < maxRetries
+  );
 };
 
 // Method to get payment summary
-ubiPaymentSchema.methods.getSummary = function() {
+ubiPaymentSchema.methods.getSummary = function () {
   return {
     id: this._id,
     citizenId: this.citizenId,
@@ -172,28 +194,31 @@ ubiPaymentSchema.methods.getSummary = function() {
     blockchainHash: this.blockchainHash,
     ageInDays: this.ageInDays,
     retryCount: this.metadata.retryCount || 0,
-    lastUpdated: this.updatedAt
+    lastUpdated: this.updatedAt,
   };
 };
 
 // Static method to find payments by citizen
-ubiPaymentSchema.statics.findByCitizen = function(citizenId, limit = 50) {
+ubiPaymentSchema.statics.findByCitizen = function (citizenId, limit = 50) {
   return this.find({ citizenId })
     .sort({ paymentDate: -1 })
     .limit(limit)
-    .populate('citizenId', 'citizenId personalInfo.firstName personalInfo.lastName');
+    .populate(
+      'citizenId',
+      'citizenId personalInfo.firstName personalInfo.lastName'
+    );
 };
 
 // Static method to find failed payments for retry
-ubiPaymentSchema.statics.findFailedPaymentsForRetry = function() {
+ubiPaymentSchema.statics.findFailedPaymentsForRetry = function () {
   return this.find({
     status: 'failed',
-    'metadata.retryCount': { $lt: 3 }
+    'metadata.retryCount': { $lt: 3 },
   }).sort({ paymentDate: 1 });
 };
 
 // Static method to get payment statistics
-ubiPaymentSchema.statics.getPaymentStats = async function(startDate, endDate) {
+ubiPaymentSchema.statics.getPaymentStats = async function (startDate, endDate) {
   const matchStage = {};
   if (startDate && endDate) {
     matchStage.paymentDate = { $gte: startDate, $lte: endDate };
@@ -206,37 +231,38 @@ ubiPaymentSchema.statics.getPaymentStats = async function(startDate, endDate) {
         _id: '$status',
         count: { $sum: 1 },
         totalAmount: { $sum: '$amount' },
-        avgAmount: { $avg: '$amount' }
-      }
-    }
+        avgAmount: { $avg: '$amount' },
+      },
+    },
   ]);
 
   const result = {
     total: 0,
     byStatus: {},
     totalAmount: 0,
-    avgAmount: 0
+    avgAmount: 0,
   };
 
-  stats.forEach(stat => {
+  stats.forEach((stat) => {
     result.byStatus[stat._id] = {
       count: stat.count,
       totalAmount: stat.totalAmount,
-      avgAmount: Math.round(stat.avgAmount * 100) / 100
+      avgAmount: Math.round(stat.avgAmount * 100) / 100,
     };
     result.total += stat.count;
     result.totalAmount += stat.totalAmount;
   });
 
   if (result.total > 0) {
-    result.avgAmount = Math.round((result.totalAmount / result.total) * 100) / 100;
+    result.avgAmount =
+      Math.round((result.totalAmount / result.total) * 100) / 100;
   }
 
   return result;
 };
 
 // Pre-save middleware
-ubiPaymentSchema.pre('save', function(next) {
+ubiPaymentSchema.pre('save', function (next) {
   // Validate payment before saving
   try {
     this.validatePayment();
@@ -247,8 +273,10 @@ ubiPaymentSchema.pre('save', function(next) {
 });
 
 // Post-save middleware for logging
-ubiPaymentSchema.post('save', function(doc) {
-  info(`UBI Payment saved: ${doc._id} - Status: ${doc.status} - Amount: $${doc.amount}`);
+ubiPaymentSchema.post('save', function (doc) {
+  info(
+    `UBI Payment saved: ${doc._id} - Status: ${doc.status} - Amount: $${doc.amount}`
+  );
 });
 
 export default mongoose.model('UBIPayment', ubiPaymentSchema);

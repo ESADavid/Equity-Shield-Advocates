@@ -5,20 +5,23 @@ class EnhancedMLService {
     this.rules = {
       revenue: {
         threshold: 10000,
-        growth: 0.05
+        growth: 0.05,
       },
       risk: {
         high: 0.8,
         medium: 0.5,
-        low: 0.2
-      }
+        low: 0.2,
+      },
     };
   }
 
   predictRevenue(data) {
     logger.info('Using rule-based revenue prediction');
     const baseRevenue = data.currentRevenue || 0;
-    const growthFactor = baseRevenue > this.rules.revenue.threshold ? this.rules.revenue.growth : 0.02;
+    const growthFactor =
+      baseRevenue > this.rules.revenue.threshold
+        ? this.rules.revenue.growth
+        : 0.02;
     return baseRevenue * (1 + growthFactor);
   }
 
@@ -35,9 +38,9 @@ class EnhancedMLService {
     // Simple diversification rule
     const assets = data.assets || [];
     const total = assets.reduce((sum, asset) => sum + asset.value, 0);
-    return assets.map(asset => ({
+    return assets.map((asset) => ({
       ...asset,
-      allocation: total > 0 ? asset.value / total : 0
+      allocation: total > 0 ? asset.value / total : 0,
     }));
   }
 }

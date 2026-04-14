@@ -269,4 +269,3 @@ components:
 
 security:
   - bearerAuth: []
-

@@ -621,18 +621,18 @@ docs/training/quick-start-guides.md
 
 ### Development Time
 
-| Phase | Time | Priority |
-|-------|------|----------|
-| Code Quality | 3 hours | 🔴 CRITICAL |
-| Heaven on Earth | 36 hours | 🟡 HIGH |
-| E2E Testing | 28 hours | 🔴 CRITICAL |
-| Deployment Scripts | 7 hours | 🟡 HIGH |
-| Infrastructure | 2 days | 🔴 BLOCKER |
-| Monitoring | 8 hours | 🟡 HIGH |
-| Production Deploy | 4 days | 🔴 CRITICAL |
-| DR Testing | 8 hours | 🟡 HIGH |
-| Documentation | 15 hours | 🟢 MEDIUM |
-| **TOTAL** | **~30 days** | |
+| Phase              | Time         | Priority    |
+| ------------------ | ------------ | ----------- |
+| Code Quality       | 3 hours      | 🔴 CRITICAL |
+| Heaven on Earth    | 36 hours     | 🟡 HIGH     |
+| E2E Testing        | 28 hours     | 🔴 CRITICAL |
+| Deployment Scripts | 7 hours      | 🟡 HIGH     |
+| Infrastructure     | 2 days       | 🔴 BLOCKER  |
+| Monitoring         | 8 hours      | 🟡 HIGH     |
+| Production Deploy  | 4 days       | 🔴 CRITICAL |
+| DR Testing         | 8 hours      | 🟡 HIGH     |
+| Documentation      | 15 hours     | 🟢 MEDIUM   |
+| **TOTAL**          | **~30 days** |             |
 
 ### Resource Requirements
 

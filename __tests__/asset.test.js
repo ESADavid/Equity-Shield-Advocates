@@ -88,12 +88,20 @@ describe('PersonalAssetService', () => {
 
   test('updateAsset updates value and netWorth', async () => {
     // First add asset
-    const addData = { type: 'stock', symbol: 'TEST', quantity: 50, pricePerShare: 20, totalValue: 1000 };
+    const addData = {
+      type: 'stock',
+      symbol: 'TEST',
+      quantity: 50,
+      pricePerShare: 20,
+      totalValue: 1000,
+    };
     const addResult = await service.addAsset(citizenId, addData);
     assetId = addResult.assetId;
 
     // Update
-    const updateResult = await service.updateAsset(citizenId, assetId, { value: 2000 });
+    const updateResult = await service.updateAsset(citizenId, assetId, {
+      value: 2000,
+    });
     expect(updateResult.success).toBe(true);
 
     // Verify netWorth updated
@@ -103,7 +111,12 @@ describe('PersonalAssetService', () => {
 
   test('deleteAsset removes asset and updates netWorth', async () => {
     // Add asset
-    const addData = { type: 'car', make: 'Test', model: 'ModelX', currentValue: 30000 };
+    const addData = {
+      type: 'car',
+      make: 'Test',
+      model: 'ModelX',
+      currentValue: 30000,
+    };
     const addResult = await service.addAsset(citizenId, addData);
     assetId = addResult.assetId;
 
@@ -120,7 +133,14 @@ describe('PersonalAssetService', () => {
   test('netWorth virtual works on Citizen model', async () => {
     const citizenWithAssets = await Citizen.create({
       citizenId: 'NETWORTH-TEST',
-      personalInfo: { firstName: 'Net', lastName: 'Worth', dateOfBirth: new Date(), gender: 'other', nationalId: 'NW1', biometricHash: 'hash' },
+      personalInfo: {
+        firstName: 'Net',
+        lastName: 'Worth',
+        dateOfBirth: new Date(),
+        gender: 'other',
+        nationalId: 'NW1',
+        biometricHash: 'hash',
+      },
       contactInfo: { phone: '1', email: 'nw@test.com' },
       bankingInfo: { accountNumber: '1', routingNumber: '1', bankName: 'Test' },
       assets: [
@@ -134,13 +154,19 @@ describe('PersonalAssetService', () => {
 
 describe('Asset Routes', () => {
   test('GET /api/assets/:citizenId returns assets', async () => {
-    const res = await request.get(`/api/assets/${citizenId}`).set('Authorization', 'Bearer validtoken'); // Assume mock auth
+    const res = await request
+      .get(`/api/assets/${citizenId}`)
+      .set('Authorization', 'Bearer validtoken'); // Assume mock auth
     expect(res.status).toBe(200);
     expect(res.body.netWorth).toBe(0);
   });
 
   test('POST /api/assets/:citizenId adds asset', async () => {
-    const assetData = { type: 'patent', title: 'Test Patent', estimatedValue: 5000 };
+    const assetData = {
+      type: 'patent',
+      title: 'Test Patent',
+      estimatedValue: 5000,
+    };
     const res = await request
       .post(`/api/assets/${citizenId}`)
       .send(assetData)
@@ -149,4 +175,3 @@ describe('Asset Routes', () => {
     expect(res.body.assetId).toBeDefined();
   });
 });
-

@@ -16,7 +16,7 @@ export default class PrivateMilitaryService {
         type: 'strategic-pmc',
         pmcType, // 'academi', 'g4s', 'dyncorp', etc.
         capabilities: this.getCapabilities(pmcType),
-        status: 'onboarding'
+        status: 'onboarding',
       };
       const result = await this.partnerService.onboardPartner(data, 'system');
       info(`Strategic PMC ${companyName} (${pmcType}) onboarded`);
@@ -29,9 +29,9 @@ export default class PrivateMilitaryService {
 
   getCapabilities(pmcType) {
     const capabilities = {
-      'academi': ['training', 'security', 'logistics', 'extraction'],
-      'g4s': ['security', 'prison', 'cash', 'mining'],
-      'dyncorp': ['aviation', 'logistics', 'it', 'training']
+      academi: ['training', 'security', 'logistics', 'extraction'],
+      g4s: ['security', 'prison', 'cash', 'mining'],
+      dyncorp: ['aviation', 'logistics', 'it', 'training'],
     };
     return capabilities[pmcType] || [];
   }
@@ -42,21 +42,26 @@ export default class PrivateMilitaryService {
       type: opType,
       location,
       priority: 'high',
-      strategic: true
+      strategic: true,
     };
-    return await this.pmcService.createCoordinatedOperation(data, 'strategic-system');
+    return await this.pmcService.createCoordinatedOperation(
+      data,
+      'strategic-system'
+    );
   }
 
   async getStrategicDashboard() {
-    const partners = await this.partnerService.getPartners({ type: 'strategic-pmc' });
+    const partners = await this.partnerService.getPartners({
+      type: 'strategic-pmc',
+    });
     const operations = await this.pmcService.getOperations({ strategic: true });
     return {
       partners: partners.partners,
       operations: operations.operations,
       stats: {
         totalStrategicPartners: partners.count,
-        activeOperations: operations.count
-      }
+        activeOperations: operations.count,
+      },
     };
   }
 
@@ -64,4 +69,3 @@ export default class PrivateMilitaryService {
     return { status: 'healthy', service: 'privateMilitary' };
   }
 }
-

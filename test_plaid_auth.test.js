@@ -18,7 +18,9 @@ describe('Plaid Auth Enhancement Tests', () => {
 
   beforeAll(async () => {
     // Connect to test database
-    await mongoose.connect(process.env.MONGODB_TEST_URI || 'mongodb://localhost:27017/test');
+    await mongoose.connect(
+      process.env.MONGODB_TEST_URI || 'mongodb://localhost:27017/test'
+    );
 
     // Create test data
     testUserId = new mongoose.Types.ObjectId();
@@ -371,7 +373,9 @@ describe('Plaid Auth Enhancement Tests', () => {
       // Import and test route
       const { default: router } = await import('../routes/plaidRoutes.js');
 
-      expect(mockItem.updateConsentExpiration).toHaveBeenCalledWith(new Date('2024-12-31'));
+      expect(mockItem.updateConsentExpiration).toHaveBeenCalledWith(
+        new Date('2024-12-31')
+      );
     });
 
     test('should update TAN', async () => {
@@ -391,7 +395,10 @@ describe('Plaid Auth Enhancement Tests', () => {
       // Import and test route
       const { default: router } = await import('../routes/plaidRoutes.js');
 
-      expect(mockItem.updateTan).toHaveBeenCalledWith('NEW_TAN_123', new Date('2024-06-30'));
+      expect(mockItem.updateTan).toHaveBeenCalledWith(
+        'NEW_TAN_123',
+        new Date('2024-06-30')
+      );
     });
   });
 });

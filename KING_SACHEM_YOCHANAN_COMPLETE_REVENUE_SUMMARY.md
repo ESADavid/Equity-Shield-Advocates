@@ -22,12 +22,12 @@
 
 **Asset Class Allocation:**
 
-| Asset Class | Value | Percentage |
-|-------------|-------|------------|
-| **Equities** | $1,482,000,000,000.00 | 60% |
-| **Fixed Income** | $494,000,000,000.00 | 20% |
-| **Real Estate** | $370,500,000,000.00 | 15% |
-| **Alternative Investments** | $123,500,000,000.00 | 5% |
+| Asset Class                 | Value                 | Percentage |
+| --------------------------- | --------------------- | ---------- |
+| **Equities**                | $1,482,000,000,000.00 | 60%        |
+| **Fixed Income**            | $494,000,000,000.00   | 20%        |
+| **Real Estate**             | $370,500,000,000.00   | 15%        |
+| **Alternative Investments** | $123,500,000,000.00   | 5%         |
 
 **Performance:**
 
@@ -107,14 +107,14 @@
 
 **Recurring Annual Revenue:**
 
-| Source | Annual Amount |
-|--------|---------------|
-| **Asset Management Fees** | $46,312,500,000.00 |
-| **UBI Distribution** | $379,500,000,000.00 |
-| **Haiti Operations (Year 11+)** | $2,000,000,000.00 - $5,000,000,000.00 |
-| **AI Services** | $500,000,000.00 - $2,000,000,000.00 |
-| **Tax Revenue** | $200,000,000.00 - $3,000,000,000.00 |
-| **Biltmore Estate Hospitality Revenue** | $200,000,000.00 |
+| Source                                  | Annual Amount                         |
+| --------------------------------------- | ------------------------------------- |
+| **Asset Management Fees**               | $46,312,500,000.00                    |
+| **UBI Distribution**                    | $379,500,000,000.00                   |
+| **Haiti Operations (Year 11+)**         | $2,000,000,000.00 - $5,000,000,000.00 |
+| **AI Services**                         | $500,000,000.00 - $2,000,000,000.00   |
+| **Tax Revenue**                         | $200,000,000.00 - $3,000,000,000.00   |
+| **Biltmore Estate Hospitality Revenue** | $200,000,000.00                       |
 
 **Total Annual Revenue (Mature Operations):**
 **$428B - $435B+ per year**
@@ -166,12 +166,12 @@
 
 ### By Region
 
-| Region | Assets | Annual Return |
-|--------|--------|---------------|
-| **North America** | $2,035,000,000,000.00 | $242,400,000,000.00 |
-| **Europe** | $185,000,000,000.00 | $21,700,000,000.00 |
-| **Asia Pacific** | $185,000,000,000.00 | $34,100,000,000.00 |
-| **Emerging Markets** | $111,000,000,000.00 | $18,900,000,000.00 |
+| Region               | Assets                | Annual Return       |
+| -------------------- | --------------------- | ------------------- |
+| **North America**    | $2,035,000,000,000.00 | $242,400,000,000.00 |
+| **Europe**           | $185,000,000,000.00   | $21,700,000,000.00  |
+| **Asia Pacific**     | $185,000,000,000.00   | $34,100,000,000.00  |
+| **Emerging Markets** | $111,000,000,000.00   | $18,900,000,000.00  |
 
 ---
 
@@ -179,11 +179,11 @@
 
 ### Assets Under Management Growth
 
-| Year | Target AUM | Growth Rate |
-|------|------------|-------------|
-| **2025** | $3.0 Trillion | +21.5% |
+| Year     | Target AUM    | Growth Rate |
+| -------- | ------------- | ----------- |
+| **2025** | $3.0 Trillion | +21.5%      |
 | **2030** | $5.0 Trillion | +26.7% CAGR |
-| **2035** | $8.0 Trillion | +9.9% CAGR |
+| **2035** | $8.0 Trillion | +9.9% CAGR  |
 
 ### Revenue Growth Projections
 

@@ -9,42 +9,61 @@ async function testPlaidSandboxIntegration() {
   try {
     // Test 1: Create link token
     console.log('1. Testing Link Token Creation...');
-    const linkTokenData = await plaidService.createLinkToken('test-user-123', ['transactions', 'balances'], {
-      countryCodes: ['US'],
-      language: 'en',
-      user: {
-        client_user_id: 'test-user-123',
-        legal_name: 'Test User',
-        phone_number: '+1 234 567 8900',
-        email_address: 'test@example.com'
+    const linkTokenData = await plaidService.createLinkToken(
+      'test-user-123',
+      ['transactions', 'balances'],
+      {
+        countryCodes: ['US'],
+        language: 'en',
+        user: {
+          client_user_id: 'test-user-123',
+          legal_name: 'Test User',
+          phone_number: '+1 234 567 8900',
+          email_address: 'test@example.com',
+        },
       }
-    });
+    );
 
-    console.log('✅ Link token created successfully:', linkTokenData.link_token.substring(0, 20) + '...');
+    console.log(
+      '✅ Link token created successfully:',
+      linkTokenData.link_token.substring(0, 20) + '...'
+    );
 
     // Test 2: Simulate public token exchange (using sandbox endpoint)
     console.log('\n2. Testing Public Token Exchange...');
-    const publicToken = 'public-sandbox-' + Math.random().toString(36).substring(2);
+    const publicToken =
+      'public-sandbox-' + Math.random().toString(36).substring(2);
 
     const tokenData = await plaidService.exchangePublicToken(publicToken);
     console.log('✅ Public token exchanged successfully:', {
       access_token: tokenData.access_token.substring(0, 20) + '...',
-      item_id: tokenData.item_id
+      item_id: tokenData.item_id,
     });
 
     // Test 3: Get account balances
     console.log('\n3. Testing Account Balances...');
     const balances = await plaidService.getBalances(tokenData.access_token);
-    console.log('✅ Account balances retrieved:', balances.accounts?.length || 0, 'accounts');
+    console.log(
+      '✅ Account balances retrieved:',
+      balances.accounts?.length || 0,
+      'accounts'
+    );
 
     // Test 4: Get transactions
     console.log('\n4. Testing Transactions...');
-    const transactions = await plaidService.getTransactions(tokenData.access_token, {
-      start_date: '2023-01-01',
-      end_date: new Date().toISOString().split('T')[0],
-      count: 10
-    });
-    console.log('✅ Transactions retrieved:', transactions.transactions?.length || 0, 'transactions');
+    const transactions = await plaidService.getTransactions(
+      tokenData.access_token,
+      {
+        start_date: '2023-01-01',
+        end_date: new Date().toISOString().split('T')[0],
+        count: 10,
+      }
+    );
+    console.log(
+      '✅ Transactions retrieved:',
+      transactions.transactions?.length || 0,
+      'transactions'
+    );
 
     // Test 5: Test error handling
     console.log('\n5. Testing Error Handling...');
@@ -60,7 +79,7 @@ async function testPlaidSandboxIntegration() {
     console.log('✅ Service metrics:', {
       totalCalls: metrics.apiCalls,
       successRate: metrics.successRate.toFixed(2) + '%',
-      errorRate: metrics.errorRate.toFixed(2) + '%'
+      errorRate: metrics.errorRate.toFixed(2) + '%',
     });
 
     console.log('\n🎉 All Plaid Sandbox integration tests passed!');
@@ -73,7 +92,6 @@ async function testPlaidSandboxIntegration() {
     console.log('- Transactions: ✅');
     console.log('- Error handling: ✅');
     console.log('- Service metrics: ✅');
-
   } catch (error) {
     console.error('❌ Test failed:', error.message);
     console.error('Stack:', error.stack);

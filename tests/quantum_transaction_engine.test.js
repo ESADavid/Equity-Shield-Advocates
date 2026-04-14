@@ -1,5 +1,7 @@
 // Use CommonJS syntax compatible with Jest configuration
-const { QuantumTransactionEngine } = require('../quantum/quantumTransactionEngine.js');
+const {
+  QuantumTransactionEngine,
+} = require('../quantum/quantumTransactionEngine.js');
 const { expect } = require('chai');
 
 describe('Quantum Transaction Engine', () => {

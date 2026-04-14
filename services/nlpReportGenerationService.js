@@ -3,9 +3,12 @@ const logger = require('../config/logger');
 class NLPReportGenerationService {
   constructor() {
     this.templates = {
-      revenue: 'Revenue Report: Total revenue for the period is ${total}. Growth rate: ${growth}%. Key insights: ${insights}',
-      compliance: 'Compliance Report: All systems are ${status}. Recommendations: ${recommendations}',
-      performance: 'Performance Report: System uptime: ${uptime}%. Response time: ${responseTime}ms. Issues: ${issues}'
+      revenue:
+        'Revenue Report: Total revenue for the period is ${total}. Growth rate: ${growth}%. Key insights: ${insights}',
+      compliance:
+        'Compliance Report: All systems are ${status}. Recommendations: ${recommendations}',
+      performance:
+        'Performance Report: System uptime: ${uptime}%. Response time: ${responseTime}ms. Issues: ${issues}',
     };
   }
 

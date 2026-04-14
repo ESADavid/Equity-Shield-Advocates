@@ -128,13 +128,13 @@
 
 ### Current Deployment Time: ~15-20 minutes
 
-| Component | Current Time | Target Time | Improvement |
-|-----------|-------------|-------------|-------------|
-| Dependency Install | 5-7 min | 1-2 min | 70-80% faster |
-| Docker Build | 4-6 min | 1-2 min | 70-80% faster |
-| Validations | 2-3 min | 30-60 sec | 70-80% faster |
-| Server Startup | 2-3 min | 30-60 sec | 70-80% faster |
-| **Total** | **15-20 min** | **3-5 min** | **75-80% faster** |
+| Component          | Current Time  | Target Time | Improvement       |
+| ------------------ | ------------- | ----------- | ----------------- |
+| Dependency Install | 5-7 min       | 1-2 min     | 70-80% faster     |
+| Docker Build       | 4-6 min       | 1-2 min     | 70-80% faster     |
+| Validations        | 2-3 min       | 30-60 sec   | 70-80% faster     |
+| Server Startup     | 2-3 min       | 30-60 sec   | 70-80% faster     |
+| **Total**          | **15-20 min** | **3-5 min** | **75-80% faster** |
 
 ## Success Metrics
 

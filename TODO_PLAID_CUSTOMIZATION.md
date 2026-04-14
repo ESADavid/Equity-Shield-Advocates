@@ -1,6 +1,7 @@
 # Plaid Link Customization Implementation TODO
 
 ## Overview
+
 Implement advanced Plaid Link customizations based on the official documentation to enhance user experience and functionality.
 
 ## Tasks

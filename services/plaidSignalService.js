@@ -33,12 +33,13 @@ class PlaidSignalService {
           payment_method: transactionData.payment_method || {},
           payment_processor: transactionData.payment_processor,
           transaction_type: transactionData.transaction_type,
-          transaction_initiation_date: transactionData.transaction_initiation_date,
+          transaction_initiation_date:
+            transactionData.transaction_initiation_date,
         },
       };
 
       // Remove undefined values
-      Object.keys(request.transaction_data).forEach(key => {
+      Object.keys(request.transaction_data).forEach((key) => {
         if (request.transaction_data[key] === undefined) {
           delete request.transaction_data[key];
         }

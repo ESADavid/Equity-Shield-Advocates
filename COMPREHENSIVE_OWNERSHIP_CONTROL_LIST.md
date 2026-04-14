@@ -26,7 +26,7 @@
 
 - **Account Holder**: Oscar Broome
 - **Bank**: JPMorgan Chase
-- **Account Number**: ****-****-****-1234 (Last 4: 1234)
+- **Account Number**: \***\*-\*\***-\*\*\*\*-1234 (Last 4: 1234)
 - **Routing Number**: 021000021
 - **Purpose**: Primary revenue collection and operations
 
@@ -34,7 +34,7 @@
 
 - **Account Holder**: Oscar Broome
 - **Bank**: JPMorgan Chase
-- **Account Number**: ****-****-****-5678 (Last 4: 5678)
+- **Account Number**: \***\*-\*\***-\*\*\*\*-5678 (Last 4: 5678)
 - **Routing Number**: 021000021
 
 - **Purpose**: Cash management and investments
@@ -43,7 +43,7 @@
 
 - **Account Holder**: Oscar Broome
 - **Bank**: JPMorgan Chase
-- **Account Number**: ****-****-****-9012 (Last 4: 9012)
+- **Account Number**: \***\*-\*\***-\*\*\*\*-9012 (Last 4: 9012)
 - **Routing Number**: 021000021
 - **Purpose**: Payroll processing and employee payments
 

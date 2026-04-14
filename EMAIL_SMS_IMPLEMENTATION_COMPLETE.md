@@ -110,7 +110,9 @@ await notificationService.sendNotification({
   userId: 'user123',
   templateId: 'ubi-payment-success',
   channels: ['email', 'sms'],
-  data: { /* template data */ }
+  data: {
+    /* template data */
+  },
 });
 ```
 

@@ -21,14 +21,14 @@ const CONFIG = {
   workingCapital: 25000000, // $25M
   sovereign: 'King Sachem Yochanan',
   authority: 'House of David ✡️ & House of Capet ⚜️',
-  entity: 'OWLBAN GROUP 🦉'
+  entity: 'OWLBAN GROUP 🦉',
 };
 
 // Acquisition Phases
 const PHASES = {
   PHASE_1: 'Intelligence Gathering & Valuation',
   PHASE_2: 'Negotiation & Purchase',
-  PHASE_3: 'Transition & Operations'
+  PHASE_3: 'Transition & Operations',
 };
 
 // Current Phase Status
@@ -38,20 +38,20 @@ const phaseProgress = {
     dueDiligence: false,
     valuation: false,
     stakeholderAnalysis: false,
-    financialAudit: false
+    financialAudit: false,
   },
   [PHASES.PHASE_2]: {
     negotiation: false,
     financing: false,
     legalReview: false,
-    closing: false
+    closing: false,
   },
   [PHASES.PHASE_3]: {
     ownershipTransfer: false,
     staffRetention: false,
     systemIntegration: false,
-    operationalLaunch: false
-  }
+    operationalLaunch: false,
+  },
 };
 
 /**
@@ -68,43 +68,72 @@ class AcquisitionLogger {
     }
 
     // Log to file
-    const logFile = path.join(__dirname, '..', 'logs', 'biltmore-acquisition.log');
-    fs.appendFileSync(logFile, logEntry + '\n' + (data ? JSON.stringify(data, null, 2) + '\n' : ''));
+    const logFile = path.join(
+      __dirname,
+      '..',
+      'logs',
+      'biltmore-acquisition.log'
+    );
+    fs.appendFileSync(
+      logFile,
+      logEntry + '\n' + (data ? JSON.stringify(data, null, 2) + '\n' : '')
+    );
   }
 
-  static info(message, data = null) { this.log('info', message, data); }
-  static success(message, data = null) { this.log('success', message, data); }
-  static warning(message, data = null) { this.log('warning', message, data); }
-  static error(message, data = null) { this.log('error', message, data); }
+  static info(message, data = null) {
+    this.log('info', message, data);
+  }
+  static success(message, data = null) {
+    this.log('success', message, data);
+  }
+  static warning(message, data = null) {
+    this.log('warning', message, data);
+  }
+  static error(message, data = null) {
+    this.log('error', message, data);
+  }
 }
 
 /**
  * Due Diligence Engine
  */
-class DueDiligenceEngine { 
+class DueDiligenceEngine {
   static async gatherIntelligence() {
-    AcquisitionLogger.info('Initiating intelligence gathering for Biltmore Estate acquisition');
+    AcquisitionLogger.info(
+      'Initiating intelligence gathering for Biltmore Estate acquisition'
+    );
 
     try {
       // Public records analysis
       const publicRecords = await this.analyzePublicRecords();
-      AcquisitionLogger.success('Public records analysis completed', publicRecords);
+      AcquisitionLogger.success(
+        'Public records analysis completed',
+        publicRecords
+      );
 
       // Financial performance review
       const financials = await this.reviewFinancialPerformance();
-      AcquisitionLogger.success('Financial performance review completed', financials);
+      AcquisitionLogger.success(
+        'Financial performance review completed',
+        financials
+      );
 
       // Ownership structure mapping
       const ownership = await this.mapOwnershipStructure();
-      AcquisitionLogger.success('Ownership structure mapping completed', ownership);
+      AcquisitionLogger.success(
+        'Ownership structure mapping completed',
+        ownership
+      );
 
       // Market valuation assessment
       const valuation = await this.assessMarketValue();
-      AcquisitionLogger.success('Market valuation assessment completed', valuation);
+      AcquisitionLogger.success(
+        'Market valuation assessment completed',
+        valuation
+      );
 
       phaseProgress[PHASES.PHASE_1].dueDiligence = true;
       return { publicRecords, financials, ownership, valuation };
-
     } catch (error) {
       AcquisitionLogger.error('Intelligence gathering failed', error);
       throw error;
@@ -118,18 +147,18 @@ class DueDiligenceEngine {
         size: '8,000 acres',
         buildings: '250 rooms, 35 bedrooms, 43 bathrooms',
         historicalStatus: 'National Historic Landmark',
-        zoning: 'Commercial/Hospitality'
+        zoning: 'Commercial/Hospitality',
       },
       legalStatus: {
         ownership: 'Vanderbilt Family Trust',
         liens: 'None',
-        restrictions: 'Historic preservation covenants'
+        restrictions: 'Historic preservation covenants',
       },
       taxAssessment: {
         propertyValue: '$100,000,000',
         annualTaxes: '$2,500,000',
-        exemptions: 'Historic property tax relief'
-      }
+        exemptions: 'Historic property tax relief',
+      },
     };
   }
 
@@ -140,12 +169,12 @@ class DueDiligenceEngine {
         hospitality: '$60M',
         tours: '$25M',
         wineSales: '$15M',
-        events: '$10M'
+        events: '$10M',
       },
       operatingCosts: '$45,000,000',
       netIncome: '$55,000,000',
       debtObligations: '$10,000,000',
-      cashFlow: '$65,000,000'
+      cashFlow: '$65,000,000',
     };
   }
 
@@ -155,7 +184,7 @@ class DueDiligenceEngine {
       trustees: ['William A.V. Cecil III', 'Other family members'],
       beneficiaries: 'Vanderbilt descendants',
       management: 'Biltmore Company (professional management)',
-      keyStakeholders: ['CEO', 'Board members', 'Legal counsel']
+      keyStakeholders: ['CEO', 'Board members', 'Legal counsel'],
     };
   }
 
@@ -165,7 +194,7 @@ class DueDiligenceEngine {
       comparableSales: '$100M - $150M range',
       incomeApproach: '$120M (based on NOI)',
       replacementCost: '$200M+',
-      recommendedOffer: '$110,000,000'
+      recommendedOffer: '$110,000,000',
     };
   }
 }
@@ -184,7 +213,10 @@ class NegotiationEngine {
 
       // Contact intermediaries
       const intermediaries = await this.contactIntermediaries();
-      AcquisitionLogger.success('Intermediary contacts established', intermediaries);
+      AcquisitionLogger.success(
+        'Intermediary contacts established',
+        intermediaries
+      );
 
       // Present acquisition rationale
       const rationale = this.presentAcquisitionRationale();
@@ -192,7 +224,6 @@ class NegotiationEngine {
 
       phaseProgress[PHASES.PHASE_2].negotiation = true;
       return { offer, intermediaries, rationale };
-
     } catch (error) {
       AcquisitionLogger.error('Negotiation initiation failed', error);
       throw error;
@@ -203,9 +234,13 @@ class NegotiationEngine {
     return {
       basePrice: '$110,000,000',
       terms: 'Cash purchase, 30-day due diligence',
-      contingencies: ['Environmental assessment', 'Title insurance', 'Historic preservation compliance'],
+      contingencies: [
+        'Environmental assessment',
+        'Title insurance',
+        'Historic preservation compliance',
+      ],
       staffRetention: 'Guaranteed employment for all current staff',
-      transitionPeriod: '90 days with current management'
+      transitionPeriod: '90 days with current management',
     };
   }
 
@@ -214,17 +249,18 @@ class NegotiationEngine {
       legalCounsel: 'Selected from approved firm list',
       investmentBankers: 'JPMorgan Chase advisory team',
       realEstateAdvisors: 'Specialized historic property consultants',
-      communicationChannels: 'Established secure communication protocols'
+      communicationChannels: 'Established secure communication protocols',
     };
   }
 
   static presentAcquisitionRationale() {
     return {
       strategicValue: 'Iconic American landmark enhancing portfolio prestige',
-      financialBenefits: 'Strong cash flow, tax advantages, appreciation potential',
+      financialBenefits:
+        'Strong cash flow, tax advantages, appreciation potential',
       operationalSynergy: 'Complements existing hospitality assets',
       sovereignAuthority: 'Royal acquisition under King Sachem Yochanan',
-      staffCommitment: 'Full retention and improved benefits package'
+      staffCommitment: 'Full retention and improved benefits package',
     };
   }
 }
@@ -251,7 +287,6 @@ class FinancingEngine {
 
       phaseProgress[PHASES.PHASE_2].financing = true;
       return { jpmorganFacility, privateFunds, debtAcquisition };
-
     } catch (error) {
       AcquisitionLogger.error('Financing arrangement failed', error);
       throw error;
@@ -264,7 +299,7 @@ class FinancingEngine {
       interestRate: '4.5% fixed',
       term: '15 years',
       collateral: 'Biltmore Estate assets',
-      covenants: 'Standard commercial real estate terms'
+      covenants: 'Standard commercial real estate terms',
     };
   }
 
@@ -273,7 +308,7 @@ class FinancingEngine {
       amount: '$30,000,000',
       source: 'OWLBAN GROUP private wealth funds',
       purpose: 'Equity portion and working capital',
-      taxOptimization: 'Structured through tax-advantaged entities'
+      taxOptimization: 'Structured through tax-advantaged entities',
     };
   }
 
@@ -282,7 +317,7 @@ class FinancingEngine {
       existingDebt: '$10,000,000 (assumed in acquisition)',
       acquisitionStrategy: 'Leverage existing debt acquisition service',
       integrationStatus: 'Connected to Oscar Broome debt management system',
-      monitoring: 'Real-time debt service tracking'
+      monitoring: 'Real-time debt service tracking',
     };
   }
 }
@@ -292,7 +327,9 @@ class FinancingEngine {
  */
 class TransitionEngine {
   static async executeTransition() {
-    AcquisitionLogger.info('Executing ownership transition and operational continuity');
+    AcquisitionLogger.info(
+      'Executing ownership transition and operational continuity'
+    );
 
     try {
       // Ownership transfer
@@ -301,7 +338,10 @@ class TransitionEngine {
 
       // Staff retention program
       const staffProgram = await this.implementStaffRetention();
-      AcquisitionLogger.success('Staff retention program implemented', staffProgram);
+      AcquisitionLogger.success(
+        'Staff retention program implemented',
+        staffProgram
+      );
 
       // System integration
       const integration = await this.integrateSystems();
@@ -317,7 +357,6 @@ class TransitionEngine {
       phaseProgress[PHASES.PHASE_3].operationalLaunch = true;
 
       return { transfer, staffProgram, integration, launch };
-
     } catch (error) {
       AcquisitionLogger.error('Transition execution failed', error);
       throw error;
@@ -330,7 +369,7 @@ class TransitionEngine {
       recording: 'Filed with Buncombe County, NC',
       insurance: 'Title insurance obtained',
       possession: 'Immediate possession granted',
-      previousOwners: 'Removed from premises and operations'
+      previousOwners: 'Removed from premises and operations',
     };
   }
 
@@ -340,7 +379,7 @@ class TransitionEngine {
       compensation: 'Maintained or improved salary structures',
       benefits: 'Preserved existing benefit packages',
       training: 'Integrated with Oscar Broome systems',
-      communication: 'Transparent transition communication'
+      communication: 'Transparent transition communication',
     };
   }
 
@@ -350,7 +389,7 @@ class TransitionEngine {
       financialReporting: 'Integrated with accounting systems',
       securitySystems: 'Biometric access implemented',
       monitoring: '24/7 surveillance and threat detection',
-      compliance: 'All regulatory standards maintained'
+      compliance: 'All regulatory standards maintained',
     };
   }
 
@@ -360,7 +399,7 @@ class TransitionEngine {
       businessContinuity: 'All revenue streams maintained',
       managementTransition: 'New leadership smoothly integrated',
       qualityStandards: 'Luxury service excellence preserved',
-      performanceMetrics: 'Exceeding pre-acquisition benchmarks'
+      performanceMetrics: 'Exceeding pre-acquisition benchmarks',
     };
   }
 }
@@ -369,7 +408,9 @@ class TransitionEngine {
  * Main Acquisition Execution Function
  */
 async function executeAcquisition() {
-  AcquisitionLogger.info('=== BILTMORE ESTATE ACQUISITION EXECUTION STARTED ===');
+  AcquisitionLogger.info(
+    '=== BILTMORE ESTATE ACQUISITION EXECUTION STARTED ==='
+  );
   AcquisitionLogger.info(`Sovereign Authority: ${CONFIG.sovereign}`);
   AcquisitionLogger.info(`Royal Authority: ${CONFIG.authority}`);
   AcquisitionLogger.info(`Managing Entity: ${CONFIG.entity}`);
@@ -383,7 +424,8 @@ async function executeAcquisition() {
     // Phase 2: Negotiation & Purchase
     AcquisitionLogger.info(`Starting ${PHASES.PHASE_2}`);
     currentPhase = PHASES.PHASE_2;
-    const negotiations = await NegotiationEngine.initiateNegotiations(intelligence);
+    const negotiations =
+      await NegotiationEngine.initiateNegotiations(intelligence);
     const financing = await FinancingEngine.secureFinancing();
 
     // Phase 3: Transition & Operations
@@ -399,20 +441,30 @@ async function executeAcquisition() {
       financing,
       transition,
       completionDate: new Date().toISOString(),
-      status: 'ACQUISITION COMPLETE - OWNERS REMOVED, STAFF RETAINED'
+      status: 'ACQUISITION COMPLETE - OWNERS REMOVED, STAFF RETAINED',
     };
 
     // Save final report
-    const reportPath = path.join(__dirname, '..', 'BILTMORE_ACQUISITION_COMPLETION_REPORT.md');
+    const reportPath = path.join(
+      __dirname,
+      '..',
+      'BILTMORE_ACQUISITION_COMPLETION_REPORT.md'
+    );
     fs.writeFileSync(reportPath, generateCompletionReport(finalReport));
 
-    AcquisitionLogger.success('=== BILTMORE ESTATE ACQUISITION COMPLETED SUCCESSFULLY ===');
-    AcquisitionLogger.success('Owners removed, staff retained, operations continuing under new management');
+    AcquisitionLogger.success(
+      '=== BILTMORE ESTATE ACQUISITION COMPLETED SUCCESSFULLY ==='
+    );
+    AcquisitionLogger.success(
+      'Owners removed, staff retained, operations continuing under new management'
+    );
 
     return finalReport;
-
   } catch (error) {
-    AcquisitionLogger.error(`Acquisition failed at phase: ${currentPhase}`, error);
+    AcquisitionLogger.error(
+      `Acquisition failed at phase: ${currentPhase}`,
+      error
+    );
     throw error;
   }
 }
@@ -500,8 +552,12 @@ The Biltmore Estate has been successfully acquired and integrated into the Oscar
 if (require.main === module) {
   executeAcquisition()
     .then((_result) => {
-      AcquisitionLogger.success('\n🎉 Biltmore Estate Acquisition Completed Successfully!');
-      AcquisitionLogger.info('📋 See BILTMORE_ACQUISITION_COMPLETION_REPORT.md for details');
+      AcquisitionLogger.success(
+        '\n🎉 Biltmore Estate Acquisition Completed Successfully!'
+      );
+      AcquisitionLogger.info(
+        '📋 See BILTMORE_ACQUISITION_COMPLETION_REPORT.md for details'
+      );
       process.exit(0);
     })
     .catch((error) => {
@@ -516,5 +572,5 @@ module.exports = {
   NegotiationEngine,
   FinancingEngine,
   TransitionEngine,
-  AcquisitionLogger
+  AcquisitionLogger,
 };

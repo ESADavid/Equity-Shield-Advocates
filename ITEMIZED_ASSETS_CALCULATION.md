@@ -3,13 +3,16 @@
 ## TOTAL ASSETS CALCULATION
 
 ### Equities: $148,200,000,000,000.00
-- Calculation: 207,000,000,000,000.00 * 0.716 = 148,212,000,000,000.00 (rounded to 148,200,000,000,000.00)
+
+- Calculation: 207,000,000,000,000.00 \* 0.716 = 148,212,000,000,000.00 (rounded to 148,200,000,000,000.00)
 
 ### Fixed Income: $49,400,000,000,000.00
-- Calculation: 207,000,000,000,000.00 * 0.239 = 49,413,000,000,000.00 (rounded to 49,400,000,000,000.00)
+
+- Calculation: 207,000,000,000,000.00 \* 0.239 = 49,413,000,000,000.00 (rounded to 49,400,000,000,000.00)
 
 ### Real Estate: $4,955,100,000,000.00
-- Calculation: 207,000,000,000,000.00 * 0.024 = 4,968,000,000,000.00 (rounded to 4,955,000,000,000.00) + Biltmore Estate $100,000,000.00 = 4,955,100,000,000.00
+
+- Calculation: 207,000,000,000,000.00 \* 0.024 = 4,968,000,000,000.00 (rounded to 4,955,000,000,000.00) + Biltmore Estate $100,000,000.00 = 4,955,100,000,000.00
 
 #### Itemized Real Estate Assets
 
@@ -31,13 +34,15 @@
 
 **Real Estate Subtotal:** 100,000,000.00 + 2,000,000,000,000.00 + 1,500,000,000,000.00 + 1,355,000,000,000.00 = 4,856,100,000,000.00
 
-*Note: Additional real estate assets account for the remaining $99,000,000,000.00 to reach total.*
+_Note: Additional real estate assets account for the remaining $99,000,000,000.00 to reach total._
 
 ### Alternative Investments: $1,235,000,000,000.00
-- Calculation: 207,000,000,000,000.00 * 0.006 = 1,242,000,000,000.00 (rounded to 1,235,000,000,000.00)
+
+- Calculation: 207,000,000,000,000.00 \* 0.006 = 1,242,000,000,000.00 (rounded to 1,235,000,000,000.00)
 
 ### Shell Companies & Hidden Assets: $3,210,000,000,000.00
-- Calculation: 207,000,000,000,000.00 * 0.0155 = 3,208,500,000,000.00 (rounded to 3,210,000,000,000.00)
+
+- Calculation: 207,000,000,000,000.00 \* 0.0155 = 3,208,500,000,000.00 (rounded to 3,210,000,000,000.00)
 
 **Total AUM Verification:** 148,200,000,000,000.00 + 49,400,000,000,000.00 + 4,955,000,000,000.00 + 1,235,000,000,000.00 + 3,210,000,000,000.00 = 207,000,000,000,000.00 ✅
 
@@ -165,7 +170,7 @@
 
 **Total Shell Companies:** 2,250,000,000,000.00 + 1,300,000,000,000.00 + 350,000,000,000.00 + 700,000,000,000.00 + 1,800,000,000,000.00 = 6,400,000,000,000.00
 
-*Note: This exceeds the 3,210,000,000,000.00 in the breakdown due to additional hidden entities not included in the percentage calculation.*
+_Note: This exceeds the 3,210,000,000,000.00 in the breakdown due to additional hidden entities not included in the percentage calculation._
 
 ## BANKING ACCOUNTS ITEMIZED WITH BALANCES
 
@@ -173,21 +178,21 @@
 
 1. **JPMorgan Operating Account**
    - Holder: Oscar Broome
-   - Number: ****-****-****-1234
+   - Number: \***\*-\*\***-\*\*\*\*-1234
    - Routing: 021000021
    - Balance: $50,000,000,000.00
    - Purpose: Operations
 
 2. **JPMorgan Treasury Account**
    - Holder: Oscar Broome
-   - Number: ****-****-****-5678
+   - Number: \***\*-\*\***-\*\*\*\*-5678
    - Routing: 021000021
    - Balance: $75,000,000,000.00
    - Purpose: Cash management
 
 3. **JPMorgan Payroll Account**
    - Holder: Oscar Broome
-   - Number: ****-****-****-9012
+   - Number: \***\*-\*\***-\*\*\*\*-9012
    - Routing: 021000021
    - Balance: $25,000,000,000.00
    - Purpose: Payroll
@@ -277,28 +282,29 @@
 ### Total Revenue: $207,000,000,000,000.00
 
 ### Designer Compensation (100%): $207,000,000,000,000.00
-- Calculation: 207,000,000,000,000.00 * 1.0 = 207,000,000,000,000.00
+
+- Calculation: 207,000,000,000,000.00 \* 1.0 = 207,000,000,000,000.00
 
 ### Performance & Returns
 
 1. **Portfolio Return**: +15.3%
-   - Annual Gain: 207,000,000,000,000.00 * 0.153 = 31,671,000,000,000.00
+   - Annual Gain: 207,000,000,000,000.00 \* 0.153 = 31,671,000,000,000.00
 
 2. **YTD Performance**: +12.5%
-   - YTD Gain: 207,000,000,000,000.00 * 0.125 = 25,875,000,000,000.00
+   - YTD Gain: 207,000,000,000,000.00 \* 0.125 = 25,875,000,000,000.00
 
 3. **Sharpe Ratio**: 1.8 (excellent)
 
 4. **Maximum Drawdown**: -12.3%
-   - Max Loss: 207,000,000,000,000.00 * 0.123 = 25,461,000,000,000.00
+   - Max Loss: 207,000,000,000,000.00 \* 0.123 = 25,461,000,000,000.00
 
 ### Revenue Breakdown
 
 1. **Management Fees**: $18.5B
-   - Calculation: 207,000,000,000,000.00 * 0.00008937 ≈ 18,500,000,000.00
+   - Calculation: 207,000,000,000,000.00 \* 0.00008937 ≈ 18,500,000,000.00
 
 2. **Performance Fees**: $27.8B
-   - Calculation: 207,000,000,000,000.00 * 0.0001343 ≈ 27,800,000,000.00
+   - Calculation: 207,000,000,000,000.00 \* 0.0001343 ≈ 27,800,000,000.00
 
 3. **Total Annual Revenue**: $46.3B
    - Sum: 18,500,000,000.00 + 27,800,000,000.00 = 46,300,000,000.00
@@ -317,27 +323,28 @@
 ### Primary Markets
 
 1. **United States**: 74.9% ($155,343,000,000,000.00)
-   - Calculation: 207,000,000,000,000.00 * 0.749 = 155,343,000,000,000.00
+   - Calculation: 207,000,000,000,000.00 \* 0.749 = 155,343,000,000,000.00
 
 2. **Canada**: 7.5% ($15,525,000,000,000.00)
-   - Calculation: 207,000,000,000,000.00 * 0.075 = 15,525,000,000,000.00
+   - Calculation: 207,000,000,000,000.00 \* 0.075 = 15,525,000,000,000.00
 
 3. **Western Europe**: 6.0% ($12,420,000,000,000.00)
-   - Calculation: 207,000,000,000,000.00 * 0.06 = 12,420,000,000,000.00
+   - Calculation: 207,000,000,000,000.00 \* 0.06 = 12,420,000,000,000.00
 
 4. **Developed Asia**: 4.5% ($9,315,000,000,000.00)
-   - Calculation: 207,000,000,000,000.00 * 0.045 = 9,315,000,000,000.00
+   - Calculation: 207,000,000,000,000.00 \* 0.045 = 9,315,000,000,000.00
 
 5. **Emerging Asia**: 3.0% ($6,210,000,000,000.00)
-   - Calculation: 207,000,000,000,000.00 * 0.03 = 6,210,000,000,000.00
+   - Calculation: 207,000,000,000,000.00 \* 0.03 = 6,210,000,000,000.00
 
 **Geographic Total:** 155,343,000,000,000.00 + 15,525,000,000,000.00 + 12,420,000,000,000.00 + 9,315,000,000,000.00 + 6,210,000,000,000.00 = 198,813,000,000,000.00
 
-*Note: Remaining 8.1% ($16,826,700,000,000.00) in other global markets and hidden territories.*
+_Note: Remaining 8.1% ($16,826,700,000,000.00) in other global markets and hidden territories._
 
 ## FINAL VERIFICATION
 
 **Total Assets Accounted For:** $207,000,000,000,000.00
+
 - Shell Companies: $6,400,000,000,000.00
 - Banking Accounts: $300,000,000,000.00
 - Blockchain Assets: $70,250,000,000.00

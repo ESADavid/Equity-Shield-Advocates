@@ -56,10 +56,12 @@ class SMSConfig {
         template: '{{message}}',
       },
       payment: {
-        template: 'Payment of ${{amount}} processed successfully. Ref: {{reference}}',
+        template:
+          'Payment of ${{amount}} processed successfully. Ref: {{reference}}',
       },
       welcome: {
-        template: 'Welcome to Oscar Broome Revenue! Your account is now active.',
+        template:
+          'Welcome to Oscar Broome Revenue! Your account is now active.',
       },
     };
 
@@ -75,9 +77,7 @@ class SMSConfig {
 
     const provider = this.provider;
     if (!requiredConfigs[provider]) {
-      logger.warn(
-        `Unknown SMS provider: ${provider}, falling back to twilio`
-      );
+      logger.warn(`Unknown SMS provider: ${provider}, falling back to twilio`);
       this.provider = 'twilio';
       return;
     }

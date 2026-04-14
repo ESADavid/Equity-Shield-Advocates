@@ -24,7 +24,11 @@ const plaidMetrics = {
 };
 
 // Utility function for retry with exponential backoff
-async function retryWithBackoff(operation, operationName, config = RETRY_CONFIG) {
+async function retryWithBackoff(
+  operation,
+  operationName,
+  config = RETRY_CONFIG
+) {
   let lastError;
   const startTime = Date.now();
 
@@ -37,7 +41,8 @@ async function retryWithBackoff(operation, operationName, config = RETRY_CONFIG)
       plaidMetrics.apiCalls++;
       plaidMetrics.successfulCalls++;
       plaidMetrics.totalResponseTime += duration;
-      plaidMetrics.averageResponseTime = plaidMetrics.totalResponseTime / plaidMetrics.apiCalls;
+      plaidMetrics.averageResponseTime =
+        plaidMetrics.totalResponseTime / plaidMetrics.apiCalls;
 
       return result;
     } catch (error) {
@@ -48,15 +53,21 @@ async function retryWithBackoff(operation, operationName, config = RETRY_CONFIG)
       plaidMetrics.apiCalls++;
       plaidMetrics.failedCalls++;
       plaidMetrics.totalResponseTime += duration;
-      plaidMetrics.averageResponseTime = plaidMetrics.totalResponseTime / plaidMetrics.apiCalls;
+      plaidMetrics.averageResponseTime =
+        plaidMetrics.totalResponseTime / plaidMetrics.apiCalls;
       plaidMetrics.lastErrorTime = Date.now();
 
       // Track error types
       const errorType = error.response?.status || error.code || 'unknown';
-      plaidMetrics.errorsByType[errorType] = (plaidMetrics.errorsByType[errorType] || 0) + 1;
+      plaidMetrics.errorsByType[errorType] =
+        (plaidMetrics.errorsByType[errorType] || 0) + 1;
 
       // Don't retry on authentication errors or client errors (4xx)
-      if (error.response && error.response.status >= 400 && error.response.status < 500) {
+      if (
+        error.response &&
+        error.response.status >= 400 &&
+        error.response.status < 500
+      ) {
         logger.warn(`${operationName} failed with client error (no retry):`, {
           status: error.response.status,
           message: error.message,
@@ -68,11 +79,14 @@ async function retryWithBackoff(operation, operationName, config = RETRY_CONFIG)
 
       // Don't retry on the last attempt
       if (attempt === config.maxRetries) {
-        logger.error(`${operationName} failed after ${config.maxRetries + 1} attempts:`, {
-          error: error.message,
-          attempts: config.maxRetries + 1,
-          totalDuration: duration,
-        });
+        logger.error(
+          `${operationName} failed after ${config.maxRetries + 1} attempts:`,
+          {
+            error: error.message,
+            attempts: config.maxRetries + 1,
+            totalDuration: duration,
+          }
+        );
         throw error;
       }
 
@@ -84,13 +98,16 @@ async function retryWithBackoff(operation, operationName, config = RETRY_CONFIG)
 
       plaidMetrics.retryAttempts++;
 
-      logger.warn(`${operationName} failed, retrying in ${delay}ms (attempt ${attempt + 1}/${config.maxRetries + 1}):`, {
-        error: error.message,
-        delay,
-        duration,
-      });
+      logger.warn(
+        `${operationName} failed, retrying in ${delay}ms (attempt ${attempt + 1}/${config.maxRetries + 1}):`,
+        {
+          error: error.message,
+          delay,
+          duration,
+        }
+      );
 
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 
@@ -151,7 +168,11 @@ const plaidClient = new PlaidApi(configuration);
 
 class PlaidService {
   // Create link token for account linking
-  async createLinkToken(userId, products = ['auth', 'transactions', 'identity'], options = {}) {
+  async createLinkToken(
+    userId,
+    products = ['auth', 'transactions', 'identity'],
+    options = {}
+  ) {
     // Validate credentials on first call
     if (!this.credentialsValidated) {
       validatePlaidCredentials();
@@ -213,13 +234,16 @@ class PlaidService {
 
         // Add fallback flow options
         if (options.maskedNumberMatchEnabled !== undefined) {
-          request.investments_auth.masked_number_match_enabled = options.maskedNumberMatchEnabled;
+          request.investments_auth.masked_number_match_enabled =
+            options.maskedNumberMatchEnabled;
         }
         if (options.statedAccountNumberEnabled !== undefined) {
-          request.investments_auth.stated_account_number_enabled = options.statedAccountNumberEnabled;
+          request.investments_auth.stated_account_number_enabled =
+            options.statedAccountNumberEnabled;
         }
         if (options.manualEntryEnabled !== undefined) {
-          request.investments_auth.manual_entry_enabled = options.manualEntryEnabled;
+          request.investments_auth.manual_entry_enabled =
+            options.manualEntryEnabled;
         }
       }
 
@@ -231,7 +255,9 @@ class PlaidService {
       // Add update mode specific fields
       if (options.mode === 'update') {
         if (options.itemId) {
-          request.access_token = await this.getAccessTokenByItemId(options.itemId);
+          request.access_token = await this.getAccessTokenByItemId(
+            options.itemId
+          );
         }
         if (options.updateModeTrigger) {
           request.update = {
@@ -315,30 +341,45 @@ class PlaidService {
       });
 
       // Enhance accounts with Auth-specific metadata
-      const enhancedAccounts = response.data.accounts.map(account => {
+      const enhancedAccounts = response.data.accounts.map((account) => {
         const numbers = response.data.numbers || {};
 
         // Check if account uses tokenized account numbers (TANs)
         const achNumbers = numbers.ach || [];
-        const accountNumberData = achNumbers.find(num => num.account_id === account.account_id);
+        const accountNumberData = achNumbers.find(
+          (num) => num.account_id === account.account_id
+        );
 
         // Determine if this is a tokenized account number
-        const isTokenized = this.isTokenizedAccountNumber(accountNumberData?.account);
+        const isTokenized = this.isTokenizedAccountNumber(
+          accountNumberData?.account
+        );
 
         return {
           ...account,
           // Include tokenized account number flag
           is_tokenized_account_number: isTokenized,
           // Include persistent account ID for TAN-enabled accounts
-          persistent_account_id: isTokenized ? this.generatePersistentAccountId(account.account_id) : null,
+          persistent_account_id: isTokenized
+            ? this.generatePersistentAccountId(account.account_id)
+            : null,
           // Include consent expiration time if available
-          consent_expiration_time: response.data.consent_expiration_time || null,
+          consent_expiration_time:
+            response.data.consent_expiration_time || null,
           // Include all number types
           numbers: {
-            ach: achNumbers.filter(num => num.account_id === account.account_id),
-            eft: (numbers.eft || []).filter(num => num.account_id === account.account_id),
-            international: (numbers.international || []).filter(num => num.account_id === account.account_id),
-            bacs: (numbers.bacs || []).filter(num => num.account_id === account.account_id),
+            ach: achNumbers.filter(
+              (num) => num.account_id === account.account_id
+            ),
+            eft: (numbers.eft || []).filter(
+              (num) => num.account_id === account.account_id
+            ),
+            international: (numbers.international || []).filter(
+              (num) => num.account_id === account.account_id
+            ),
+            bacs: (numbers.bacs || []).filter(
+              (num) => num.account_id === account.account_id
+            ),
           },
         };
       });
@@ -514,7 +555,11 @@ class PlaidService {
     try {
       // SECURITY: Verify webhook signature to prevent spoofing
       const verificationKey = await this.getWebhookVerificationKey();
-      const isValidSignature = await this.verifyWebhookSignature(rawBody, signature, verificationKey);
+      const isValidSignature = await this.verifyWebhookSignature(
+        rawBody,
+        signature,
+        verificationKey
+      );
 
       if (!isValidSignature) {
         logger.error('Invalid webhook signature - possible spoofing attempt');
@@ -562,14 +607,23 @@ class PlaidService {
 
       switch (webhook_code) {
         case 'INITIAL_UPDATE':
-          logger.info('Initial transactions update received for item:', item_id);
+          logger.info(
+            'Initial transactions update received for item:',
+            item_id
+          );
           // Could trigger a sync or notification
           break;
         case 'HISTORICAL_UPDATE':
-          logger.info('Historical transactions update received for item:', item_id);
+          logger.info(
+            'Historical transactions update received for item:',
+            item_id
+          );
           break;
         case 'DEFAULT_UPDATE':
-          logger.info('Default transactions update received for item:', item_id);
+          logger.info(
+            'Default transactions update received for item:',
+            item_id
+          );
           break;
         case 'TRANSACTIONS_REMOVED':
           logger.info('Transactions removed for item:', item_id);
@@ -590,7 +644,10 @@ class PlaidService {
 
       switch (webhook_code) {
         case 'ERROR':
-          logger.error('Item error occurred:', { item_id, error: webhookEvent.error });
+          logger.error('Item error occurred:', {
+            item_id,
+            error: webhookEvent.error,
+          });
           // Could trigger update mode or notification
           break;
         case 'PENDING_DISCONNECT':
@@ -625,12 +682,18 @@ class PlaidService {
 
       switch (webhook_code) {
         case 'AUTOMATICALLY_VERIFIED':
-          logger.info('Auth automatically verified for item:', { item_id, account_id });
+          logger.info('Auth automatically verified for item:', {
+            item_id,
+            account_id,
+          });
           // Account numbers are now available and verified
           break;
 
         case 'VERIFICATION_EXPIRED':
-          logger.warn('Auth verification expired for item:', { item_id, account_id });
+          logger.warn('Auth verification expired for item:', {
+            item_id,
+            account_id,
+          });
           // Consent has expired, need to send user through update mode
           // TODO: Trigger update mode flow
           break;
@@ -647,21 +710,34 @@ class PlaidService {
           break;
 
         case 'NUMBER_VERIFIED':
-          logger.info('Auth number verified for item:', { item_id, account_id });
+          logger.info('Auth number verified for item:', {
+            item_id,
+            account_id,
+          });
           // Account number has been verified via micro-deposits
           break;
 
         case 'NUMBER_VERIFICATION_FAILED':
-          logger.warn('Auth number verification failed for item:', { item_id, account_id });
+          logger.warn('Auth number verification failed for item:', {
+            item_id,
+            account_id,
+          });
           // Micro-deposit verification failed
           break;
 
         default:
-          logger.info('Unknown auth webhook code:', { webhook_code, item_id, account_id });
+          logger.info('Unknown auth webhook code:', {
+            webhook_code,
+            item_id,
+            account_id,
+          });
       }
 
       // Handle PNC-specific TAN expiration logic
-      if (webhook_code === 'VERIFICATION_EXPIRED' || webhook_code === 'DEFAULT_UPDATE') {
+      if (
+        webhook_code === 'VERIFICATION_EXPIRED' ||
+        webhook_code === 'DEFAULT_UPDATE'
+      ) {
         // Check if this is a PNC item and handle TAN regeneration
         await this.handlePncTanExpiration(item_id, account_id);
       }
@@ -763,7 +839,8 @@ class PlaidService {
       if (options.transferId) request.transfer_id = options.transferId;
       if (options.accountId) request.account_id = options.accountId;
       if (options.transferType) request.transfer_type = options.transferType;
-      if (options.originationAccountId) request.origination_account_id = options.originationAccountId;
+      if (options.originationAccountId)
+        request.origination_account_id = options.originationAccountId;
       if (options.startDate) request.start_date = options.startDate;
       if (options.endDate) request.end_date = options.endDate;
 
@@ -829,39 +906,57 @@ class PlaidService {
         throw new Error('Invalid transfer data provided');
       }
 
-      if (!transferData.accountId || typeof transferData.accountId !== 'string') {
+      if (
+        !transferData.accountId ||
+        typeof transferData.accountId !== 'string'
+      ) {
         throw new Error('Valid account ID is required');
       }
 
-      if (!transferData.amount || typeof transferData.amount !== 'number' || transferData.amount <= 0) {
+      if (
+        !transferData.amount ||
+        typeof transferData.amount !== 'number' ||
+        transferData.amount <= 0
+      ) {
         throw new Error('Valid positive amount is required');
       }
 
-      if (transferData.amount > 10000) { // Example limit - adjust based on business rules
+      if (transferData.amount > 10000) {
+        // Example limit - adjust based on business rules
         throw new Error('Transfer amount exceeds maximum limit');
       }
 
       // First, evaluate the transaction using Plaid Signal (default ruleset includes real-time balance check)
-      const signalEvaluation = await plaidSignalService.evaluateTransaction(accessToken, {
-        client_transaction_id: transferData.idempotencyKey || crypto.randomUUID(),
-        amount: transferData.amount,
-        merchant_name: transferData.description || 'Transfer',
-        iso_currency_code: 'USD',
-        transaction_type: 'debit',
-        transaction_initiation_date: new Date().toISOString(),
-        user: transferData.user || {},
-      });
+      const signalEvaluation = await plaidSignalService.evaluateTransaction(
+        accessToken,
+        {
+          client_transaction_id:
+            transferData.idempotencyKey || crypto.randomUUID(),
+          amount: transferData.amount,
+          merchant_name: transferData.description || 'Transfer',
+          iso_currency_code: 'USD',
+          transaction_type: 'debit',
+          transaction_initiation_date: new Date().toISOString(),
+          user: transferData.user || {},
+        }
+      );
 
       // Check if any rules were triggered that would block the transfer
-      const triggeredRules = signalEvaluation.signals?.filter(signal => signal.triggered) || [];
-      const blockingRules = triggeredRules.filter(signal => signal.rule?.outcome === 'block' || signal.rule?.outcome === 'review');
+      const triggeredRules =
+        signalEvaluation.signals?.filter((signal) => signal.triggered) || [];
+      const blockingRules = triggeredRules.filter(
+        (signal) =>
+          signal.rule?.outcome === 'block' || signal.rule?.outcome === 'review'
+      );
 
       if (blockingRules.length > 0) {
         logger.warn('Transfer blocked by Plaid Signal rules:', {
           transferData,
           triggeredRules: blockingRules,
         });
-        throw new Error(`Transfer blocked by fraud detection rules: ${blockingRules.map(r => r.rule?.name).join(', ')}`);
+        throw new Error(
+          `Transfer blocked by fraud detection rules: ${blockingRules.map((r) => r.rule?.name).join(', ')}`
+        );
       }
 
       // Log successful signal evaluation
@@ -912,7 +1007,7 @@ class PlaidService {
       };
 
       // Remove undefined values
-      Object.keys(request).forEach(key => {
+      Object.keys(request).forEach((key) => {
         if (request[key] === undefined) {
           delete request[key];
         }
@@ -1008,7 +1103,7 @@ class PlaidService {
       };
 
       // Remove undefined values
-      Object.keys(request).forEach(key => {
+      Object.keys(request).forEach((key) => {
         if (request[key] === undefined) {
           delete request[key];
         }
@@ -1026,9 +1121,17 @@ class PlaidService {
   getMetrics() {
     return {
       ...plaidMetrics,
-      successRate: plaidMetrics.apiCalls > 0 ? (plaidMetrics.successfulCalls / plaidMetrics.apiCalls) * 100 : 0,
-      errorRate: plaidMetrics.apiCalls > 0 ? (plaidMetrics.failedCalls / plaidMetrics.apiCalls) * 100 : 0,
-      uptime: plaidMetrics.lastErrorTime ? Date.now() - plaidMetrics.lastErrorTime : null,
+      successRate:
+        plaidMetrics.apiCalls > 0
+          ? (plaidMetrics.successfulCalls / plaidMetrics.apiCalls) * 100
+          : 0,
+      errorRate:
+        plaidMetrics.apiCalls > 0
+          ? (plaidMetrics.failedCalls / plaidMetrics.apiCalls) * 100
+          : 0,
+      uptime: plaidMetrics.lastErrorTime
+        ? Date.now() - plaidMetrics.lastErrorTime
+        : null,
     };
   }
 
@@ -1046,7 +1149,9 @@ class PlaidService {
       // }
       // return item.access_token;
 
-      throw new Error(`getAccessTokenByItemId method needs to be implemented for item ID: ${itemId}`);
+      throw new Error(
+        `getAccessTokenByItemId method needs to be implemented for item ID: ${itemId}`
+      );
     } catch (error) {
       logger.error('Error getting access token by item ID:', error);
       throw error;
@@ -1077,7 +1182,7 @@ class PlaidService {
     ];
 
     // Check if the account number matches known TAN patterns
-    return tanPatterns.some(pattern => pattern.test(accountNumber));
+    return tanPatterns.some((pattern) => pattern.test(accountNumber));
   }
 
   // Generate persistent account ID for TAN-enabled accounts
@@ -1092,7 +1197,10 @@ class PlaidService {
   // Handle PNC TAN expiration and regeneration
   async handlePncTanExpiration(itemId, accountId) {
     try {
-      logger.info('Handling PNC TAN expiration for item:', { itemId, accountId });
+      logger.info('Handling PNC TAN expiration for item:', {
+        itemId,
+        accountId,
+      });
 
       // For PNC Items, we need to:
       // 1. Send the Item through update mode
@@ -1106,11 +1214,12 @@ class PlaidService {
       // - Refresh account data after update mode
       // - Update database with new TAN
 
-      logger.warn('PNC TAN expiration handling needs to be implemented with proper update mode flow');
+      logger.warn(
+        'PNC TAN expiration handling needs to be implemented with proper update mode flow'
+      );
 
       // TODO: Implement proper PNC TAN regeneration logic
       // This should integrate with your Item management system
-
     } catch (error) {
       logger.error('Error handling PNC TAN expiration:', error);
       throw error;
@@ -1205,17 +1314,23 @@ class PlaidService {
   // Enhanced error handling with user-friendly messages
   createUserFriendlyError(error, operation) {
     const errorMappings = {
-      'INVALID_ACCESS_TOKEN': 'Your bank connection has expired. Please reconnect your account.',
-      'ITEM_LOGIN_REQUIRED': 'Your bank requires re-authentication. Please reconnect your account.',
-      'INSUFFICIENT_FUNDS': 'Insufficient funds for this transaction.',
-      'ACCOUNT_LOCKED': 'Your bank account is temporarily locked. Please contact your bank.',
-      'RATE_LIMIT_EXCEEDED': 'Too many requests. Please try again in a moment.',
-      'PRODUCT_NOT_READY': 'Bank data is still being processed. Please try again later.',
-      'PRODUCTS_NOT_SUPPORTED': 'This feature is not supported by your bank.',
+      INVALID_ACCESS_TOKEN:
+        'Your bank connection has expired. Please reconnect your account.',
+      ITEM_LOGIN_REQUIRED:
+        'Your bank requires re-authentication. Please reconnect your account.',
+      INSUFFICIENT_FUNDS: 'Insufficient funds for this transaction.',
+      ACCOUNT_LOCKED:
+        'Your bank account is temporarily locked. Please contact your bank.',
+      RATE_LIMIT_EXCEEDED: 'Too many requests. Please try again in a moment.',
+      PRODUCT_NOT_READY:
+        'Bank data is still being processed. Please try again later.',
+      PRODUCTS_NOT_SUPPORTED: 'This feature is not supported by your bank.',
     };
 
     const plaidErrorCode = error.response?.data?.error_code;
-    const userMessage = errorMappings[plaidErrorCode] || 'An error occurred while processing your request. Please try again.';
+    const userMessage =
+      errorMappings[plaidErrorCode] ||
+      'An error occurred while processing your request. Please try again.';
 
     logger.error(`Plaid ${operation} error:`, {
       error: error.message,

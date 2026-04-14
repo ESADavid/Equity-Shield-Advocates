@@ -75,7 +75,7 @@ export class PayrollSystem {
         hourlyRate: 65.0,
         hoursWorked: 40,
         overtimeHours: 10,
-        taxRate: 0.30,
+        taxRate: 0.3,
         deductions: 200,
         bonuses: 750,
         accountNumber: '456789123',
@@ -99,7 +99,7 @@ export class PayrollSystem {
     }
 
     // Check if employee already exists
-    if (this.employees.find(e => e.id === employee.id)) {
+    if (this.employees.find((e) => e.id === employee.id)) {
       throw new Error('Employee with this ID already exists');
     }
 
@@ -108,7 +108,7 @@ export class PayrollSystem {
   }
 
   updateEmployee(employee: Employee): void {
-    const index = this.employees.findIndex(e => e.id === employee.id);
+    const index = this.employees.findIndex((e) => e.id === employee.id);
     if (index === -1) {
       throw new Error('Employee not found');
     }
@@ -118,7 +118,7 @@ export class PayrollSystem {
   }
 
   deleteEmployee(id: string): void {
-    const index = this.employees.findIndex(e => e.id === id);
+    const index = this.employees.findIndex((e) => e.id === id);
     if (index === -1) {
       throw new Error('Employee not found');
     }
@@ -180,7 +180,7 @@ export class PayrollSystem {
   }
 
   getEmployeeById(id: string): Employee | undefined {
-    return this.employees.find(e => e.id === id);
+    return this.employees.find((e) => e.id === id);
   }
 
   // Method to calculate payroll for a specific employee with custom parameters

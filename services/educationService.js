@@ -19,11 +19,13 @@ class EducationService {
     const educationRecord = new Education({
       citizenId,
       curriculum,
-      durationMonths
+      durationMonths,
     });
 
     await educationRecord.save();
-    logger.info(`Citizen ${citizenId} enrolled in ${curriculum} (${durationMonths} months)`);
+    logger.info(
+      `Citizen ${citizenId} enrolled in ${curriculum} (${durationMonths} months)`
+    );
     return { enrolled: true, educationId: educationRecord._id };
   }
 
@@ -33,7 +35,8 @@ class EducationService {
 
     education.progress = Math.min(100, Math.max(0, progress));
     education.completionDate = education.progress >= 100 ? new Date() : null;
-    education.complianceStatus = education.progress >= 100 ? 'compliant' : 'in-progress';
+    education.complianceStatus =
+      education.progress >= 100 ? 'compliant' : 'in-progress';
 
     await education.save();
 
@@ -49,7 +52,9 @@ class EducationService {
   }
 
   static async getComplianceReport(citizenId) {
-    const education = await Education.findOne({ citizenId }).populate('citizenId');
+    const education = await Education.findOne({ citizenId }).populate(
+      'citizenId'
+    );
     const citizen = await Citizen.findById(citizenId);
 
     return {
@@ -57,12 +62,14 @@ class EducationService {
       curriculum: education?.curriculum,
       progress: education?.progress || 0,
       complianceStatus: education?.complianceStatus || 'not-enrolled',
-      ubiSuspended: citizen?.ubiSuspended || false
+      ubiSuspended: citizen?.ubiSuspended || false,
     };
   }
 
   static async getNonCompliantCitizens() {
-    const nonCompliant = await Education.find({ complianceStatus: 'non-compliant' });
+    const nonCompliant = await Education.find({
+      complianceStatus: 'non-compliant',
+    });
     return nonCompliant;
   }
 
@@ -74,9 +81,9 @@ class EducationService {
           _id: null,
           total: { $sum: 1 },
           averageProgress: { $avg: '$progress' },
-          completed: { $sum: { $cond: [{ $gte: ['$progress', 100] }, 1, 0] } }
-        }
-      }
+          completed: { $sum: { $cond: [{ $gte: ['$progress', 100] }, 1, 0] } },
+        },
+      },
     ]);
 
     return stats[0] || { total: 0, averageProgress: 0, completed: 0 };
@@ -84,4 +91,3 @@ class EducationService {
 }
 
 module.exports = EducationService;
-

@@ -272,7 +272,8 @@ describe('Permission System', () => {
     });
 
     test('should get all permissions for tenant', async () => {
-      const permissions = await permissionService.getAllPermissions(testTenantId);
+      const permissions =
+        await permissionService.getAllPermissions(testTenantId);
 
       expect(Array.isArray(permissions)).toBe(true);
     });
@@ -325,12 +326,13 @@ describe('Integration Tests', () => {
 
     // 2. If biometric required, verify it
     if (permissionCheck.requiresBiometric) {
-      const biometricVerify = await biometricAuthService.verifyMultipleBiometrics(
-        testUserId,
-        testTenantId,
-        { fingerprint: 'test-template' },
-        { ipAddress: '192.168.1.1' }
-      );
+      const biometricVerify =
+        await biometricAuthService.verifyMultipleBiometrics(
+          testUserId,
+          testTenantId,
+          { fingerprint: 'test-template' },
+          { ipAddress: '192.168.1.1' }
+        );
       expect(biometricVerify.overall).toBe(true);
     }
   });

@@ -19,20 +19,24 @@ console.log('\n📍 Step 1: Killing processes on port 3000...');
 try {
   // Windows command to find and kill process on port 3000
   try {
-    const output = execSync('netstat -ano | findstr :3000', { encoding: 'utf-8' });
-    const lines = output.split('\n').filter(line => line.includes('LISTENING'));
-    
+    const output = execSync('netstat -ano | findstr :3000', {
+      encoding: 'utf-8',
+    });
+    const lines = output
+      .split('\n')
+      .filter((line) => line.includes('LISTENING'));
+
     if (lines.length > 0) {
       const pids = new Set();
-      lines.forEach(line => {
+      lines.forEach((line) => {
         const parts = line.trim().split(/\s+/);
         const pid = parts[parts.length - 1];
         if (pid && !isNaN(pid)) {
           pids.add(pid);
         }
       });
-      
-      pids.forEach(pid => {
+
+      pids.forEach((pid) => {
         try {
           execSync(`taskkill /F /PID ${pid}`, { stdio: 'inherit' });
           console.log(`✓ Killed process ${pid}`);
@@ -54,12 +58,15 @@ try {
 console.log('\n📍 Step 2: Fixing middleware/auth.js...');
 try {
   const authPath = path.join(process.cwd(), 'middleware', 'auth.js');
-  
+
   if (fs.existsSync(authPath)) {
     let content = fs.readFileSync(authPath, 'utf-8');
-    
+
     // Check if authorize function exists
-    if (!content.includes('export const authorize') && !content.includes('export { authorize }')) {
+    if (
+      !content.includes('export const authorize') &&
+      !content.includes('export { authorize }')
+    ) {
       // Add authorize middleware function
       const authorizeFunction = `
 
@@ -85,7 +92,7 @@ export const authorize = (...roles) => {
   };
 };
 `;
-      
+
       content += authorizeFunction;
       fs.writeFileSync(authPath, content);
       console.log('✓ Added authorize function to middleware/auth.js');
@@ -103,19 +110,19 @@ export const authorize = (...roles) => {
 console.log('\n📍 Step 3: Fixing routes/notificationRoutes.js...');
 try {
   const notifPath = path.join(process.cwd(), 'routes', 'notificationRoutes.js');
-  
+
   if (fs.existsSync(notifPath)) {
     let content = fs.readFileSync(notifPath, 'utf-8');
-    
+
     // Fix common syntax errors
     // Remove any stray dots or invalid tokens at the beginning
     content = content.replace(/^\s*\.\s*/gm, '');
-    
+
     // Ensure proper import statements
     if (!content.includes('import express from')) {
       content = `import express from 'express';\n${content}`;
     }
-    
+
     fs.writeFileSync(notifPath, content);
     console.log('✓ Fixed syntax in routes/notificationRoutes.js');
   } else {
@@ -131,27 +138,30 @@ console.log('\n📍 Step 4: Fixing Mongoose duplicate index warnings...');
 const modelsToFix = [
   { file: 'models/Citizen.js', field: 'personalInfo.nationalId' },
   { file: 'models/Course.js', field: 'title' },
-  { file: 'models/Transaction.js', field: 'transactionId' }
+  { file: 'models/Transaction.js', field: 'transactionId' },
 ];
 
 modelsToFix.forEach(({ file, field }) => {
   try {
     const modelPath = path.join(process.cwd(), file);
-    
+
     if (fs.existsSync(modelPath)) {
       let content = fs.readFileSync(modelPath, 'utf-8');
-      
+
       // Remove duplicate index: true from field definitions
       // Look for patterns like: fieldName: { type: ..., index: true, unique: true }
       // and remove the index: true since unique: true already creates an index
-      
-      const fieldPattern = new RegExp(`${field.split('.').pop()}:\\s*{[^}]*index:\\s*true[^}]*unique:\\s*true`, 'g');
+
+      const fieldPattern = new RegExp(
+        `${field.split('.').pop()}:\\s*{[^}]*index:\\s*true[^}]*unique:\\s*true`,
+        'g'
+      );
       if (fieldPattern.test(content)) {
         content = content.replace(/,?\s*index:\s*true,?/g, (match) => {
           // Only remove if there's also a unique: true
           return '';
         });
-        
+
         fs.writeFileSync(modelPath, content);
         console.log(`✓ Fixed duplicate index in ${file}`);
       } else {
@@ -209,6 +219,10 @@ try {
 console.log('\n' + '='.repeat(60));
 console.log('✅ SERVER STARTUP FIXES COMPLETE\n');
 console.log('Next steps:');
-console.log('1. Run: node scripts/check-port-3000.cjs (to verify port is free)');
-console.log('2. Run: node test_server_startup_simple.cjs (to test server startup)');
+console.log(
+  '1. Run: node scripts/check-port-3000.cjs (to verify port is free)'
+);
+console.log(
+  '2. Run: node test_server_startup_simple.cjs (to test server startup)'
+);
 console.log('');

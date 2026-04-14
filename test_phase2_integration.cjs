@@ -13,7 +13,7 @@ console.log('='.repeat(60));
 console.log('\n📋 Starting server to verify Phase 2 integration...\n');
 
 const serverProcess = spawn('node', ['server-enhanced.js'], {
-  env: { ...process.env, SKIP_DATABASE: 'true' }
+  env: { ...process.env, SKIP_DATABASE: 'true' },
 });
 
 let output = '';
@@ -21,13 +21,13 @@ let foundPhase2Routes = {
   partner: false,
   citizen: false,
   ubiPayment: false,
-  notification: false
+  notification: false,
 };
 
 serverProcess.stdout.on('data', (data) => {
   const text = data.toString();
   output += text;
-  
+
   // Check for Phase 2 route confirmations
   if (text.includes('Partner coordination system loaded')) {
     foundPhase2Routes.partner = true;
@@ -45,26 +45,34 @@ serverProcess.stdout.on('data', (data) => {
     foundPhase2Routes.notification = true;
     console.log('✅ Multi-channel notifications loaded');
   }
-  
+
   // Check if server started
   if (text.includes('Server running on port')) {
     console.log('\n✅ Server started successfully!\n');
-    
+
     // Give it a moment then check results
     setTimeout(() => {
       console.log('='.repeat(60));
       console.log('\n📊 PHASE 2 INTEGRATION RESULTS\n');
-      
-      const allLoaded = Object.values(foundPhase2Routes).every(v => v);
-      
+
+      const allLoaded = Object.values(foundPhase2Routes).every((v) => v);
+
       console.log('Phase 2 Routes Status:');
-      console.log(`  Partner System: ${foundPhase2Routes.partner ? '✅' : '❌'}`);
-      console.log(`  Citizen Portal: ${foundPhase2Routes.citizen ? '✅' : '❌'}`);
-      console.log(`  UBI Payments: ${foundPhase2Routes.ubiPayment ? '✅' : '❌'}`);
-      console.log(`  Notifications: ${foundPhase2Routes.notification ? '✅' : '❌'}`);
-      
+      console.log(
+        `  Partner System: ${foundPhase2Routes.partner ? '✅' : '❌'}`
+      );
+      console.log(
+        `  Citizen Portal: ${foundPhase2Routes.citizen ? '✅' : '❌'}`
+      );
+      console.log(
+        `  UBI Payments: ${foundPhase2Routes.ubiPayment ? '✅' : '❌'}`
+      );
+      console.log(
+        `  Notifications: ${foundPhase2Routes.notification ? '✅' : '❌'}`
+      );
+
       console.log('\n' + '='.repeat(60));
-      
+
       if (allLoaded) {
         console.log('\n🎉 PHASE 2 INTEGRATION: COMPLETE ✅');
         console.log('   All Phase 2 routes successfully integrated!\n');
@@ -72,7 +80,7 @@ serverProcess.stdout.on('data', (data) => {
         console.log('\n⚠️  PHASE 2 INTEGRATION: INCOMPLETE');
         console.log('   Some routes failed to load.\n');
       }
-      
+
       // Kill the server
       serverProcess.kill();
       process.exit(allLoaded ? 0 : 1);

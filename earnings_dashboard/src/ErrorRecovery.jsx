@@ -9,7 +9,7 @@ function ErrorRecovery({
   itemId,
   errorCode,
   errorMessage,
-  autoTriggerUpdate = true
+  autoTriggerUpdate = true,
 }) {
   const [showUpdateMode, setShowUpdateMode] = useState(false);
   const [recoveryAttempts, setRecoveryAttempts] = useState(0);
@@ -61,7 +61,7 @@ function ErrorRecovery({
 
       default:
         // For other errors, show retry option
-        setRecoveryAttempts(prev => prev + 1);
+        setRecoveryAttempts((prev) => prev + 1);
         break;
     }
   };
@@ -77,30 +77,40 @@ function ErrorRecovery({
   const handleUpdateExit = (err, metadata) => {
     if (err) {
       logger.error('Update mode failed:', err);
-      setRecoveryAttempts(prev => prev + 1);
+      setRecoveryAttempts((prev) => prev + 1);
     }
     onError && onError(err, metadata);
   };
 
   const getErrorMessage = (code, message) => {
     const errorMessages = {
-      'ITEM_LOGIN_REQUIRED': 'Your bank requires re-authentication. Please update your connection.',
-      'PENDING_DISCONNECT': 'Your bank connection is pending disconnection. Please reconnect.',
-      'PENDING_EXPIRATION': 'Your bank connection is expiring soon. Please refresh it.',
-      'USER_PERMISSION_REVOKED': 'Your bank permissions have been revoked. Please reconnect.',
-      'RATE_LIMIT_EXCEEDED': 'Too many requests. Please try again in a moment.',
-      'PRODUCT_NOT_READY': 'Bank data is still being processed. Please try again later.',
+      ITEM_LOGIN_REQUIRED:
+        'Your bank requires re-authentication. Please update your connection.',
+      PENDING_DISCONNECT:
+        'Your bank connection is pending disconnection. Please reconnect.',
+      PENDING_EXPIRATION:
+        'Your bank connection is expiring soon. Please refresh it.',
+      USER_PERMISSION_REVOKED:
+        'Your bank permissions have been revoked. Please reconnect.',
+      RATE_LIMIT_EXCEEDED: 'Too many requests. Please try again in a moment.',
+      PRODUCT_NOT_READY:
+        'Bank data is still being processed. Please try again later.',
     };
 
-    return errorMessages[code] || (message ? message.replace(/[<>'"&]/g, '') : 'An error occurred. Please try again.');
+    return (
+      errorMessages[code] ||
+      (message
+        ? message.replace(/[<>'"&]/g, '')
+        : 'An error occurred. Please try again.')
+    );
   };
 
   const getRecoveryAction = (code) => {
     const actions = {
-      'ITEM_LOGIN_REQUIRED': 'Update Connection',
-      'PENDING_DISCONNECT': 'Reconnect Account',
-      'PENDING_EXPIRATION': 'Refresh Connection',
-      'USER_PERMISSION_REVOKED': 'Reconnect Account',
+      ITEM_LOGIN_REQUIRED: 'Update Connection',
+      PENDING_DISCONNECT: 'Reconnect Account',
+      PENDING_EXPIRATION: 'Refresh Connection',
+      USER_PERMISSION_REVOKED: 'Reconnect Account',
     };
 
     return actions[code] || 'Retry';
@@ -129,7 +139,7 @@ function ErrorRecovery({
               borderRadius: '6px',
               color: 'white',
               fontWeight: 'bold',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             {getRecoveryAction(lastError?.code)}
@@ -146,7 +156,8 @@ function ErrorRecovery({
 
         <div className="error-recovery-info">
           <small>
-            This will securely reconnect your account without requiring you to re-enter your bank credentials.
+            This will securely reconnect your account without requiring you to
+            re-enter your bank credentials.
           </small>
         </div>
       </div>
@@ -164,7 +175,9 @@ function ErrorRecovery({
         <div className="error-actions">
           {recoveryAttempts < 3 && (
             <button
-              onClick={() => handleErrorRecovery(lastError.code, lastError.message)}
+              onClick={() =>
+                handleErrorRecovery(lastError.code, lastError.message)
+              }
               className="btn btn-primary"
             >
               {getRecoveryAction(lastError.code)}

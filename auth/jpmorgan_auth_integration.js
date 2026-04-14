@@ -27,7 +27,11 @@ export async function authenticateUser(email, password, mfaCode = null) {
     const passwordMatch = await user.comparePassword(password);
     if (!passwordMatch) {
       await user.incLoginAttempts();
-      return { success: false, message: 'Invalid credentials', requiresMfa: false };
+      return {
+        success: false,
+        message: 'Invalid credentials',
+        requiresMfa: false,
+      };
     }
 
     // Mock MFA (skip or simple check)
@@ -35,7 +39,11 @@ export async function authenticateUser(email, password, mfaCode = null) {
       return { success: false, message: 'MFA required', requiresMfa: true };
     }
     if (user.security.twoFactorEnabled && mfaCode !== '123456') {
-      return { success: false, message: 'Invalid MFA code', requiresMfa: false };
+      return {
+        success: false,
+        message: 'Invalid MFA code',
+        requiresMfa: false,
+      };
     }
 
     await user.resetLoginAttempts();
@@ -74,7 +82,11 @@ export async function adminOverride(overrideCode, targetEmail) {
   return {
     success: true,
     message: 'Admin override granted',
-    temporaryToken: jwt.sign({ email: targetEmail, override: true }, JWT_SECRET, { expiresIn: '1h' }),
+    temporaryToken: jwt.sign(
+      { email: targetEmail, override: true },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    ),
   };
 }
 
@@ -153,4 +165,3 @@ export function jpmorganAdminMiddleware(req, res, next) {
 }
 
 info('JPMorgan Auth Integration loaded (Mock mode)');
-

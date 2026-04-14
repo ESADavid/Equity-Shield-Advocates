@@ -56,7 +56,9 @@ async function testPlaidService() {
     // Test 4: Mock identity match verification
     console.log('\n🆔 Test 4: Testing identity match verification (mock)...');
     try {
-      console.log('ℹ️  Identity match verification requires real Plaid credentials');
+      console.log(
+        'ℹ️  Identity match verification requires real Plaid credentials'
+      );
       console.log(
         '   In production, this would match user-provided identity data against institution records'
       );
@@ -73,7 +75,9 @@ async function testPlaidService() {
       console.log('       "country": "US"');
       console.log('     }');
       console.log('   }');
-      console.log('   Expected response includes match scores for each field (0-100)');
+      console.log(
+        '   Expected response includes match scores for each field (0-100)'
+      );
     } catch (error) {
       console.log('❌ Identity match test failed:', error.message);
     }

@@ -426,9 +426,9 @@ class SMSService {
 
       // For Twilio, we can verify the account
       if (smsConfig.provider === 'twilio') {
-        const account = await this.client.api.accounts(
-          smsConfig.twilioAccountSid
-        ).fetch();
+        const account = await this.client.api
+          .accounts(smsConfig.twilioAccountSid)
+          .fetch();
 
         return {
           success: true,

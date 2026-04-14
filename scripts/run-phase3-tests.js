@@ -9,7 +9,11 @@ logger.info('🧪 Running Phase 3 Validation Suite...');
 
 try {
   logger.info('1. Running ESLint...');
-  execSync('npm run lint', { cwd: projectDir, encoding: 'utf8', stdio: 'inherit' });
+  execSync('npm run lint', {
+    cwd: projectDir,
+    encoding: 'utf8',
+    stdio: 'inherit',
+  });
   logger.info('✅ Lint passed');
 } catch (err) {
   logger.error('❌ Lint failed:', err.message);
@@ -27,11 +31,14 @@ try {
 
 try {
   logger.info('3. Running coverage...');
-  execSync('npm run test:coverage', { cwd: projectDir, encoding: 'utf8', stdio: 'inherit' });
+  execSync('npm run test:coverage', {
+    cwd: projectDir,
+    encoding: 'utf8',
+    stdio: 'inherit',
+  });
   logger.info('✅ Coverage report generated');
 } catch (err) {
   logger.error('⚠️ Coverage warning:', err.message);
 }
 
 logger.info('🎉 Phase 3 tests COMPLETE!');
-

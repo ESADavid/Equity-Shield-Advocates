@@ -15,24 +15,32 @@ class UniversalBasicIncomeService {
 
     // Check education compliance
     const education = await Education.findOne({ citizenId });
-if (education?.complianceStatus === 'non-compliant') {
+    if (education?.complianceStatus === 'non-compliant') {
       return { eligible: false, reason: 'Education non-compliance' };
     }
 
     // UBI base amount: $2750/month
-const amount = 2750;
+    const amount = 2750;
     return { eligible: true, amount, citizen: citizen._id };
   }
 
   static async processPayment(citizenId, month, amount) {
-    logger.info(`Processing UBI payment for citizen ${citizenId}, month ${month}, amount $${amount}`);
+    logger.info(
+      `Processing UBI payment for citizen ${citizenId}, month ${month}, amount $${amount}`
+    );
 
     // Simulate JPMorgan integration
-    const transactionId = await this.simulateJpmorganPayment(citizenId, amount, month);
+    const transactionId = await this.simulateJpmorganPayment(
+      citizenId,
+      amount,
+      month
+    );
 
     // Update citizen record
     await Citizen.findByIdAndUpdate(citizenId, {
-      $push: { ubiPayments: { transactionId, month, amount, status: 'completed' } }
+      $push: {
+        ubiPayments: { transactionId, month, amount, status: 'completed' },
+      },
     });
 
     logger.info(`UBI payment completed: ${transactionId}`);
@@ -50,15 +58,20 @@ const amount = 2750;
   }
 
   static async suspendUBI(citizenId, reason) {
-    await Citizen.findByIdAndUpdate(citizenId, { ubiSuspended: true, suspensionReason: reason });
+    await Citizen.findByIdAndUpdate(citizenId, {
+      ubiSuspended: true,
+      suspensionReason: reason,
+    });
     logger.warn(`UBI suspended for ${citizenId}: ${reason}`);
   }
 
   static async reinstateUBI(citizenId) {
-    await Citizen.findByIdAndUpdate(citizenId, { ubiSuspended: false, suspensionReason: null });
+    await Citizen.findByIdAndUpdate(citizenId, {
+      ubiSuspended: false,
+      suspensionReason: null,
+    });
     logger.info(`UBI reinstated for ${citizenId}`);
   }
 }
 
 module.exports = UniversalBasicIncomeService;
-

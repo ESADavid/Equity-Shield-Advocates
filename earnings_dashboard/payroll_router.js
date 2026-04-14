@@ -118,10 +118,7 @@ router.post('/process', async (req, res) => {
           quickbooksSync: syncResults,
         });
       } catch (qbInitError) {
-        logError(
-          'Failed to initialize QuickBooks integration:',
-          qbInitError
-        );
+        logError('Failed to initialize QuickBooks integration:', qbInitError);
         res.json({
           success: true,
           data: payrolls,

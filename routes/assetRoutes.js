@@ -52,4 +52,3 @@ router.delete('/:citizenId/:assetId', async (req, res) => {
 });
 
 export default router;
-

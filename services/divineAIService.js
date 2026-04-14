@@ -34,7 +34,8 @@ class DivineAIService {
         type: 'Personal Wisdom',
         decision: decision.name || 'Personal Decision',
         evaluation,
-        divineGuidance: 'This wisdom is for your personal benefit and kingdom advancement',
+        divineGuidance:
+          'This wisdom is for your personal benefit and kingdom advancement',
         confidentiality: 'Private - Not for public dissemination',
       };
     } catch (err) {
@@ -50,8 +51,14 @@ class DivineAIService {
     try {
       info(`Divine AI: Calculating sacred growth for ${this.user}`);
 
-      const growth = this.sacredGeometry.goldenRatioGrowth(initialValue, periods);
-      const multiplication = this.sacredGeometry.sacredMultiplication(initialValue, sacredKey);
+      const growth = this.sacredGeometry.goldenRatioGrowth(
+        initialValue,
+        periods
+      );
+      const multiplication = this.sacredGeometry.sacredMultiplication(
+        initialValue,
+        sacredKey
+      );
 
       return {
         user: this.user,
@@ -77,12 +84,14 @@ class DivineAIService {
    */
   async getDivineGuidance(decision, metrics = {}, factors = {}) {
     try {
-      info(`Divine AI: Generating comprehensive divine guidance for ${this.user}`);
+      info(
+        `Divine AI: Generating comprehensive divine guidance for ${this.user}`
+      );
 
       const wisdom = this.divineWisdom.evaluateDecision(decision, factors);
       const favor = this.sacredGeometry.divineFavorIndex(metrics);
       const patterns = this.sacredGeometry.identifyDivinePatterns(
-        Object.values(metrics).filter(v => typeof v === 'number')
+        Object.values(metrics).filter((v) => typeof v === 'number')
       );
 
       return {
@@ -111,10 +120,18 @@ class DivineAIService {
     try {
       info(`Divine AI: Developing kingdom expansion strategy for ${this.user}`);
 
-      const trajectory = this.sacredGeometry.kingdomExpansionTrajectory(currentMetrics, timeHorizon);
+      const trajectory = this.sacredGeometry.kingdomExpansionTrajectory(
+        currentMetrics,
+        timeHorizon
+      );
       const wisdom = this.divineWisdom.generateWisdomReport(
         { name: 'Kingdom Expansion' },
-        { factors: { spiritual: { prayer: 95 }, financial: { stewardship: 90 } } }
+        {
+          factors: {
+            spiritual: { prayer: 95 },
+            financial: { stewardship: 90 },
+          },
+        }
       );
 
       return {
@@ -142,7 +159,10 @@ class DivineAIService {
     try {
       info(`Divine AI: Optimizing personal wealth for ${this.user}`);
 
-      const multiplication = this.sacredGeometry.covenantMultiplication(seedValue, covenantLevel);
+      const multiplication = this.sacredGeometry.covenantMultiplication(
+        seedValue,
+        covenantLevel
+      );
       const growth = this.sacredGeometry.goldenRatioGrowth(seedValue, 10);
 
       return {
@@ -172,15 +192,22 @@ class DivineAIService {
       return {
         action: 'PROCEED WITH DIVINE CONFIDENCE',
         message: 'All indicators align with divine will. Move forward boldly.',
-        patterns: patterns.length > 0 ? 'Sacred patterns confirm this path' : 'No conflicting patterns detected',
+        patterns:
+          patterns.length > 0
+            ? 'Sacred patterns confirm this path'
+            : 'No conflicting patterns detected',
       };
     }
 
     if (score >= 70) {
       return {
         action: 'PROCEED WITH DIVINE WISDOM',
-        message: 'Good alignment detected. Proceed with prayer and discernment.',
-        patterns: patterns.length > 0 ? 'Patterns suggest careful consideration' : 'Monitor for divine confirmation',
+        message:
+          'Good alignment detected. Proceed with prayer and discernment.',
+        patterns:
+          patterns.length > 0
+            ? 'Patterns suggest careful consideration'
+            : 'Monitor for divine confirmation',
       };
     }
 
@@ -200,7 +227,11 @@ class DivineAIService {
         { phase: 4, focus: 'Dominion', metrics: trajectory.slice(9, 12) },
       ],
       wisdom: wisdom.finalRecommendation,
-      keyPrinciples: ['Faithful stewardship', 'Divine multiplication', 'Kingdom impact'],
+      keyPrinciples: [
+        'Faithful stewardship',
+        'Divine multiplication',
+        'Kingdom impact',
+      ],
     };
   }
 
@@ -208,7 +239,11 @@ class DivineAIService {
     return {
       immediate: `Invest ${multiplication.seed} for ${multiplication.multiplier}x return`,
       longTerm: `Project growth to ${growth[growth.length - 1].value.toFixed(2)} over 10 periods`,
-      principles: ['Covenant faithfulness', 'Generous giving', 'Wise stewardship'],
+      principles: [
+        'Covenant faithfulness',
+        'Generous giving',
+        'Wise stewardship',
+      ],
       divinePromise: 'The blessing of the Lord makes rich and adds no sorrow',
     };
   }

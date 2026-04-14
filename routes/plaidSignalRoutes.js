@@ -16,7 +16,10 @@ router.post('/signal/evaluate', authenticateToken, async (req, res) => {
       });
     }
 
-    const evaluation = await plaidSignalService.evaluateTransaction(accessToken, transactionData);
+    const evaluation = await plaidSignalService.evaluateTransaction(
+      accessToken,
+      transactionData
+    );
 
     res.json({
       success: true,
@@ -44,7 +47,10 @@ router.post('/signal/return', authenticateToken, async (req, res) => {
       });
     }
 
-    const result = await plaidSignalService.reportReturn(accessToken, returnData);
+    const result = await plaidSignalService.reportReturn(
+      accessToken,
+      returnData
+    );
 
     res.json({
       success: true,
@@ -72,7 +78,10 @@ router.post('/signal/decision/report', authenticateToken, async (req, res) => {
       });
     }
 
-    const result = await plaidSignalService.reportDecision(accessToken, decisionData);
+    const result = await plaidSignalService.reportDecision(
+      accessToken,
+      decisionData
+    );
 
     res.json({
       success: true,

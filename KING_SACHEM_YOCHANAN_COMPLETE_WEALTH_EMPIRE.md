@@ -78,12 +78,12 @@
 
 **Asset Class Allocation:**
 
-| Asset Class | Value | Percentage |
-|-------------|-------|------------|
-| **Equities** | $1,482,000,000,000.00 | 60% |
-| **Fixed Income** | $494,000,000,000.00 | 20% |
-| **Real Estate** | $370,500,000,000.00 | 15% |
-| **Alternative Investments** | $123,500,000,000.00 | 5% |
+| Asset Class                 | Value                 | Percentage |
+| --------------------------- | --------------------- | ---------- |
+| **Equities**                | $1,482,000,000,000.00 | 60%        |
+| **Fixed Income**            | $494,000,000,000.00   | 20%        |
+| **Real Estate**             | $370,500,000,000.00   | 15%        |
+| **Alternative Investments** | $123,500,000,000.00   | 5%         |
 
 **Performance:**
 
@@ -98,12 +98,12 @@
 
 **JPMorgan Chase Accounts:**
 
-| Account Type | Balance | Purpose |
-|--------------|---------|---------|
-| **Primary Operating** | $25,000,000.00 | Revenue collection |
-| **Treasury Management** | $50,000,000.00 | Cash management |
-| **Payroll Account** | Operational | Employee payments |
-| **Private Banking Reserve** | $17,500,000.00 | Emergency funds |
+| Account Type                | Balance        | Purpose            |
+| --------------------------- | -------------- | ------------------ |
+| **Primary Operating**       | $25,000,000.00 | Revenue collection |
+| **Treasury Management**     | $50,000,000.00 | Cash management    |
+| **Payroll Account**         | Operational    | Employee payments  |
+| **Private Banking Reserve** | $17,500,000.00 | Emergency funds    |
 
 **Total Banking:** $92,500,000.00
 
@@ -113,13 +113,13 @@
 
 **Active Revenue Sources:**
 
-| Source | Amount | Account |
-|--------|--------|---------|
-| **Sample Repo Revenue** | $617,090,945.00 | 987654321 |
-| **Owlban Investments** | $370,254,567.00 | 123123123 |
-| **Corporate Ventures** | $246,836,379.00 | 456456456 |
-| **David Leeper Revenue** | $0.00 | 111222333 |
-| **Sandra Broome Edwards** | $0.00 | 222333444 |
+| Source                    | Amount          | Account   |
+| ------------------------- | --------------- | --------- |
+| **Sample Repo Revenue**   | $617,090,945.00 | 987654321 |
+| **Owlban Investments**    | $370,254,567.00 | 123123123 |
+| **Corporate Ventures**    | $246,836,379.00 | 456456456 |
+| **David Leeper Revenue**  | $0.00           | 111222333 |
+| **Sandra Broome Edwards** | $0.00           | 222333444 |
 
 **Total Revenue Streams:** $1,234,181,891.00
 
@@ -176,15 +176,15 @@
 
 ### Total Assets & Revenue
 
-| Category | Amount |
-|----------|--------|
+| Category                           | Amount                  |
+| ---------------------------------- | ----------------------- |
 | **Off-the-Books Private Holdings** | $200,000,000,000,000.00 |
-| **Owlban Group Revenue** | $1,200,000,000,000.00 |
-| **Blackbox AI Revenue** | $1,800,000,000,000.00 |
-| **Assets Under Management** | $2,470,000,000,000.00 |
-| **Direct Banking Accounts** | $92,500,000.00 |
-| **Revenue Streams** | $1,234,181,891.00 |
-| **Partner Investments** | $50,000,000,000.00 |
+| **Owlban Group Revenue**           | $1,200,000,000,000.00   |
+| **Blackbox AI Revenue**            | $1,800,000,000,000.00   |
+| **Assets Under Management**        | $2,470,000,000,000.00   |
+| **Direct Banking Accounts**        | $92,500,000.00          |
+| **Revenue Streams**                | $1,234,181,891.00       |
+| **Partner Investments**            | $50,000,000,000.00      |
 
 ### GRAND TOTAL WEALTH
 
@@ -198,18 +198,18 @@
 
 ### Recurring Annual Revenue
 
-| Source | Annual Amount |
-|--------|---------------|
+| Source                                   | Annual Amount          |
+| ---------------------------------------- | ---------------------- |
 | **Off-the-Books Holdings Returns (10%)** | $20,000,000,000,000.00 |
-| **Owlban Group Operations** | $1,200,000,000,000.00 |
-| **Blackbox AI Operations** | $1,800,000,000,000.00 |
-| **Asset Management Fees** | $46,312,500,000.00 |
-| **Investment Returns (15.3%)** | $378,000,000,000.00 |
-| **UBI Distribution** | $379,500,000,000.00 |
-| **Haiti Operations (Mature)** | $2B - $5B |
-| **AI Services** | $500M - $2B |
-| **Tax Revenue** | $200M - $3B |
-| **Revenue Streams** | $1,234,181,891.00 |
+| **Owlban Group Operations**              | $1,200,000,000,000.00  |
+| **Blackbox AI Operations**               | $1,800,000,000,000.00  |
+| **Asset Management Fees**                | $46,312,500,000.00     |
+| **Investment Returns (15.3%)**           | $378,000,000,000.00    |
+| **UBI Distribution**                     | $379,500,000,000.00    |
+| **Haiti Operations (Mature)**            | $2B - $5B              |
+| **AI Services**                          | $500M - $2B            |
+| **Tax Revenue**                          | $200M - $3B            |
+| **Revenue Streams**                      | $1,234,181,891.00      |
 
 ### TOTAL ANNUAL REVENUE
 
@@ -247,12 +247,12 @@
 
 ### Assets by Region
 
-| Region | Assets | Percentage |
-|--------|--------|------------|
-| **North America** | $4,100,000,000,000.00 | 74.3% |
-| **Europe** | $550,000,000,000.00 | 10.0% |
-| **Asia Pacific** | $550,000,000,000.00 | 10.0% |
-| **Emerging Markets** | $321,326,681,891.00 | 5.7% |
+| Region               | Assets                | Percentage |
+| -------------------- | --------------------- | ---------- |
+| **North America**    | $4,100,000,000,000.00 | 74.3%      |
+| **Europe**           | $550,000,000,000.00   | 10.0%      |
+| **Asia Pacific**     | $550,000,000,000.00   | 10.0%      |
+| **Emerging Markets** | $321,326,681,891.00   | 5.7%       |
 
 ---
 

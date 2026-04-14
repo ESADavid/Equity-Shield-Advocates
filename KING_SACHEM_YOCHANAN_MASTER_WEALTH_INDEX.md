@@ -326,15 +326,15 @@ Source: HAITI_STRATEGIC_ACQUISITION_PLAN.md
 
 ### Total Assets Summary
 
-| Category | Amount | % of Total |
-|----------|--------|------------|
-| **Off-the-Books Private Holdings** | $200,000,000,000,000.00 | 97.30% |
-| **Owlban Group Revenue** | $1,200,000,000,000.00 | 0.58% |
-| **Blackbox AI Revenue** | $1,800,000,000,000.00 | 0.88% |
-| **Assets Under Management** | $2,470,000,000,000.00 | 1.20% |
-| **Direct Banking Accounts** | $92,500,000.00 | 0.00004% |
-| **Revenue Streams** | $1,234,181,891.00 | 0.0006% |
-| **Partner Investments** | $50,000,000,000.00 | 0.024% |
+| Category                           | Amount                  | % of Total |
+| ---------------------------------- | ----------------------- | ---------- |
+| **Off-the-Books Private Holdings** | $200,000,000,000,000.00 | 97.30%     |
+| **Owlban Group Revenue**           | $1,200,000,000,000.00   | 0.58%      |
+| **Blackbox AI Revenue**            | $1,800,000,000,000.00   | 0.88%      |
+| **Assets Under Management**        | $2,470,000,000,000.00   | 1.20%      |
+| **Direct Banking Accounts**        | $92,500,000.00          | 0.00004%   |
+| **Revenue Streams**                | $1,234,181,891.00       | 0.0006%    |
+| **Partner Investments**            | $50,000,000,000.00      | 0.024%     |
 
 ### GRAND TOTAL WEALTH
 
@@ -348,18 +348,18 @@ Source: HAITI_STRATEGIC_ACQUISITION_PLAN.md
 
 ### Recurring Annual Revenue
 
-| Source | Annual Amount | % of Total |
-|--------|---------------|------------|
-| **Off-the-Books Holdings Returns (10%)** | $20,000,000,000,000.00 | 84.0% |
-| **Owlban Group Operations** | $1,200,000,000,000.00 | 5.0% |
-| **Blackbox AI Operations** | $1,800,000,000,000.00 | 7.6% |
-| **Asset Management Fees** | $46,312,500,000.00 | 0.19% |
-| **Investment Returns (15.3%)** | $378,000,000,000.00 | 1.6% |
-| **UBI Distribution** | $379,500,000,000.00 | 1.6% |
-| **Haiti Operations (Mature)** | $2B - $5B | 0.01% |
-| **AI Services** | $500M - $2B | 0.01% |
-| **Tax Revenue** | $200M - $3B | 0.01% |
-| **Revenue Streams** | $1,234,181,891.00 | 0.005% |
+| Source                                   | Annual Amount          | % of Total |
+| ---------------------------------------- | ---------------------- | ---------- |
+| **Off-the-Books Holdings Returns (10%)** | $20,000,000,000,000.00 | 84.0%      |
+| **Owlban Group Operations**              | $1,200,000,000,000.00  | 5.0%       |
+| **Blackbox AI Operations**               | $1,800,000,000,000.00  | 7.6%       |
+| **Asset Management Fees**                | $46,312,500,000.00     | 0.19%      |
+| **Investment Returns (15.3%)**           | $378,000,000,000.00    | 1.6%       |
+| **UBI Distribution**                     | $379,500,000,000.00    | 1.6%       |
+| **Haiti Operations (Mature)**            | $2B - $5B              | 0.01%      |
+| **AI Services**                          | $500M - $2B            | 0.01%      |
+| **Tax Revenue**                          | $200M - $3B            | 0.01%      |
+| **Revenue Streams**                      | $1,234,181,891.00      | 0.005%     |
 
 ### TOTAL ANNUAL REVENUE
 

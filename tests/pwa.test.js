@@ -16,7 +16,10 @@ describe('Progressive Web App (PWA) Tests', () => {
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
       });
     } catch (error) {
-      console.warn('Puppeteer browser launch failed, skipping PWA tests:', error.message);
+      console.warn(
+        'Puppeteer browser launch failed, skipping PWA tests:',
+        error.message
+      );
       browser = null;
     }
   });

@@ -15,9 +15,7 @@ const isMockMode = !process.env.STRIPE_SECRET_KEY;
 if (process.env.STRIPE_SECRET_KEY) {
   stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 } else {
-  warn(
-    '⚠️  STRIPE_SECRET_KEY not found. Running in mock mode for testing.'
-  );
+  warn('⚠️  STRIPE_SECRET_KEY not found. Running in mock mode for testing.');
   // Create a mock Stripe object for testing
   stripe = {
     paymentIntents: {
@@ -362,10 +360,7 @@ async function handleMerchantWebhook(req, res) {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    logError(
-      'Merchant webhook signature verification failed:',
-      err.message
-    );
+    logError('Merchant webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -508,9 +503,7 @@ router.post(
     info('Merchant webhook - Mock mode:', isMockMode);
 
     if (isMockMode) {
-      info(
-        'Mock webhook received, processing without signature verification'
-      );
+      info('Mock webhook received, processing without signature verification');
       try {
         processMockWebhookEvent();
         return res.json({ received: true, mock: true });

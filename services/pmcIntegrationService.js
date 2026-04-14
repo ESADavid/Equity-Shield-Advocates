@@ -20,7 +20,9 @@ export default class PMCIntegrationService {
 
   async getOperations(filters = {}) {
     try {
-      const operations = await PMCOperation.find(filters).populate('partners assignedTo').limit(50);
+      const operations = await PMCOperation.find(filters)
+        .populate('partners assignedTo')
+        .limit(50);
       return { success: true, operations, count: operations.length };
     } catch (err) {
       error('Get operations failed:', err);
@@ -30,7 +32,9 @@ export default class PMCIntegrationService {
 
   async getOperation(operationId) {
     try {
-      const operation = await PMCOperation.findOne({ operationId }).populate('partners assignedTo');
+      const operation = await PMCOperation.findOne({ operationId }).populate(
+        'partners assignedTo'
+      );
       if (!operation) return { success: false, error: 'Operation not found' };
       return { success: true, operation };
     } catch (err) {
@@ -43,7 +47,7 @@ export default class PMCIntegrationService {
     try {
       const operation = await PMCOperation.findOne({ operationId });
       if (!operation) return { success: false, error: 'Operation not found' };
-      
+
       await operation.updateStatus(status, userId);
       info(`Operation ${operationId} status updated to ${status}`);
       return { success: true };
@@ -57,7 +61,7 @@ export default class PMCIntegrationService {
     try {
       const operation = await PMCOperation.findOne({ operationId });
       if (!operation) return { success: false, error: 'Operation not found' };
-      
+
       await operation.allocateResources(data);
       info(`Resources allocated to ${operationId} by ${userId}`);
       return { success: true };
@@ -71,7 +75,7 @@ export default class PMCIntegrationService {
     try {
       const operation = await PMCOperation.findOne({ operationId });
       if (!operation) return { success: false, error: 'Operation not found' };
-      
+
       await operation.addReport({
         type: reportType,
         date: new Date(),
@@ -112,16 +116,16 @@ export default class PMCIntegrationService {
     try {
       const total = await PMCOperation.countDocuments();
       const active = await PMCOperation.countDocuments({ status: 'active' });
-      
+
       return {
         success: true,
         stats: {
           totalOperations: total,
           activeOperations: active,
           avgPersonnel: await PMCOperation.aggregate([
-            { $group: { _id: null, avg: { $avg: '$resources.personnel' } } }
-          ]).then(res => Math.round(res[0]?.avg || 0)),
-        }
+            { $group: { _id: null, avg: { $avg: '$resources.personnel' } } },
+          ]).then((res) => Math.round(res[0]?.avg || 0)),
+        },
       };
     } catch (err) {
       error('PMC statistics failed:', err);
@@ -133,4 +137,3 @@ export default class PMCIntegrationService {
     return { status: 'healthy', mode: 'real-db-enhanced' };
   }
 }
-

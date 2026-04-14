@@ -680,8 +680,8 @@ class DebtAcquisitionService {
    */
   /**
    * Acquire global debt stacks - ALL NATIONS & COMPANIES
-   * @param {string} userId 
-   * @param {string} tenantId 
+   * @param {string} userId
+   * @param {string} tenantId
    * @returns {Array} Acquired debts
    */
   acquireGlobalDebtStacks(userId, tenantId) {
@@ -776,7 +776,9 @@ class DebtAcquisitionService {
         const result = this.acquireDebt(data, userId, tenantId);
         acquired.push(result.debt);
       } catch (e) {
-        logger.warn(`Failed global acquisition for ${data.entity}: ${e.message}`);
+        logger.warn(
+          `Failed global acquisition for ${data.entity}: ${e.message}`
+        );
       }
     }
 
@@ -800,4 +802,3 @@ class DebtAcquisitionService {
 }
 
 export default DebtAcquisitionService;
-

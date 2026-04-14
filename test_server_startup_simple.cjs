@@ -12,7 +12,7 @@ console.log('='.repeat(60));
 
 const serverProcess = spawn('node', ['server-enhanced.js'], {
   env: { ...process.env, SKIP_DATABASE: 'true' },
-  stdio: 'pipe'
+  stdio: 'pipe',
 });
 
 let hasStarted = false;
@@ -21,11 +21,11 @@ let hasError = false;
 serverProcess.stdout.on('data', (data) => {
   const text = data.toString();
   console.log(text);
-  
+
   if (text.includes('Server running on port')) {
     hasStarted = true;
     console.log('\n✅ SERVER STARTED SUCCESSFULLY!\n');
-    
+
     // Kill after confirming startup
     setTimeout(() => {
       serverProcess.kill();

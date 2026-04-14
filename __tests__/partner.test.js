@@ -17,9 +17,15 @@ describe('PartnerCoordinationService', () => {
   });
 
   test('onboardPartner success', async () => {
-    const data = { companyName: 'Academi', contactEmail: 'partner@academi.com' };
+    const data = {
+      companyName: 'Academi',
+      contactEmail: 'partner@academi.com',
+    };
     const userId = 'user123';
-    Partner.prototype.save.mockResolvedValue({ partnerId: 'PARTNER123', ...data });
+    Partner.prototype.save.mockResolvedValue({
+      partnerId: 'PARTNER123',
+      ...data,
+    });
 
     const result = await service.onboardPartner(data, userId);
 
@@ -29,7 +35,7 @@ describe('PartnerCoordinationService', () => {
   });
 
   test('onboardPartner error', async () => {
-const data = { companyName: 'Test' };
+    const data = { companyName: 'Test' };
     const userId = 'user123';
 
     Partner.mockImplementationOnce(() => {
@@ -53,11 +59,22 @@ const data = { companyName: 'Test' };
   });
 
   test('createPMCOperation via assignProject', async () => {
-    const opData = { partnerId: 'testPartner', type: 'training', location: 'Shilo' };
-    Partner.findOne.mockResolvedValue({ projects: [], save: jest.fn().mockResolvedValue() });
+    const opData = {
+      partnerId: 'testPartner',
+      type: 'training',
+      location: 'Shilo',
+    };
+    Partner.findOne.mockResolvedValue({
+      projects: [],
+      save: jest.fn().mockResolvedValue(),
+    });
     Partner.prototype.projects.push = jest.fn();
 
-    const result = await service.assignProject('testPartner', opData, 'user123');
+    const result = await service.assignProject(
+      'testPartner',
+      opData,
+      'user123'
+    );
 
     expect(result.success).toBe(true);
   });

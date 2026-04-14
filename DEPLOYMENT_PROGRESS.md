@@ -72,7 +72,7 @@
 
 ## 🚨 BLOCKERS & ISSUES
 
-*None identified at this time*
+_None identified at this time_
 
 ---
 

@@ -36,7 +36,8 @@ try {
   const routesContent = fs.readFileSync(routesPath, 'utf8');
 
   const hasOAuthRoute = routesContent.includes('/oauth/redirect');
-  const hasOAuthParams = routesContent.includes('oauth') && routesContent.includes('redirectUri');
+  const hasOAuthParams =
+    routesContent.includes('oauth') && routesContent.includes('redirectUri');
 
   if (hasOAuthRoute && hasOAuthParams) {
     console.log('✅ Routes support OAuth redirect handling');
@@ -52,10 +53,16 @@ try {
 // Test 3: Verify Frontend OAuth Support
 console.log('\nTest 3: Frontend OAuth Support');
 try {
-  const componentPath = path.join(__dirname, 'earnings_dashboard', 'src', 'PlaidLink.jsx');
+  const componentPath = path.join(
+    __dirname,
+    'earnings_dashboard',
+    'src',
+    'PlaidLink.jsx'
+  );
   const componentContent = fs.readFileSync(componentPath, 'utf8');
 
-  const hasOAuthProp = componentContent.includes('oauth=') || componentContent.includes('oauth ');
+  const hasOAuthProp =
+    componentContent.includes('oauth=') || componentContent.includes('oauth ');
   const hasRedirectUriProp = componentContent.includes('redirectUri');
 
   if (hasOAuthProp && hasRedirectUriProp) {
@@ -75,7 +82,7 @@ const requiredVars = ['PLAID_CLIENT_ID', 'PLAID_SECRET', 'PLAID_ENV'];
 const optionalVars = ['FRONTEND_URL'];
 
 let envConfigured = true;
-requiredVars.forEach(varName => {
+requiredVars.forEach((varName) => {
   if (!process.env[varName] || process.env[varName].includes('your_')) {
     console.log(`❌ ${varName} not properly configured`);
     envConfigured = false;
@@ -84,7 +91,7 @@ requiredVars.forEach(varName => {
   }
 });
 
-optionalVars.forEach(varName => {
+optionalVars.forEach((varName) => {
   if (!process.env[varName]) {
     console.log(`⚠️  ${varName} not set (optional)`);
   } else {
@@ -102,7 +109,9 @@ if (envConfigured) {
   console.log('   3. Use PlaidLink component with oauth=true');
   console.log('   4. Complete OAuth flow through supported institution');
 } else {
-  console.log('❌ Environment not configured - set PLAID_CLIENT_ID, PLAID_SECRET, PLAID_ENV');
+  console.log(
+    '❌ Environment not configured - set PLAID_CLIENT_ID, PLAID_SECRET, PLAID_ENV'
+  );
   console.log('   Get credentials from: https://dashboard.plaid.com/');
 }
 
@@ -112,8 +121,10 @@ try {
   const readmePath = path.join(__dirname, 'PLAID_INTEGRATION_README.md');
   const readmeContent = fs.readFileSync(readmePath, 'utf8');
 
-  const hasOAuthDocs = readmeContent.includes('OAuth') || readmeContent.includes('oauth');
-  const hasRedirectUriDocs = readmeContent.includes('redirect') && readmeContent.includes('URI');
+  const hasOAuthDocs =
+    readmeContent.includes('OAuth') || readmeContent.includes('oauth');
+  const hasRedirectUriDocs =
+    readmeContent.includes('redirect') && readmeContent.includes('URI');
 
   if (hasOAuthDocs && hasRedirectUriDocs) {
     console.log('✅ OAuth documentation present');

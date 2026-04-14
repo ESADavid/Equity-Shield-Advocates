@@ -5,10 +5,14 @@ class DivineFraudPreventionService {
   // Manual review flags for suspicious activities
   reviewFlags = {
     largeTransaction: 'Requires manual review for transactions over $10,000',
-    multipleAccounts: 'Multiple accounts from same individual - manual verification needed',
-    unusualPattern: 'Unusual transaction pattern detected - human review required',
-    identityMismatch: 'Identity verification mismatch - manual investigation needed',
-    highRiskLocation: 'Transaction from high-risk location - additional verification required'
+    multipleAccounts:
+      'Multiple accounts from same individual - manual verification needed',
+    unusualPattern:
+      'Unusual transaction pattern detected - human review required',
+    identityMismatch:
+      'Identity verification mismatch - manual investigation needed',
+    highRiskLocation:
+      'Transaction from high-risk location - additional verification required',
   };
 
   async analyzeTransaction(transactionData) {
@@ -18,7 +22,7 @@ class DivineFraudPreventionService {
     if (flags.length > 0) {
       warn(`Transaction flagged for manual review: ${transactionData.id}`, {
         flags,
-        transaction: transactionData
+        transaction: transactionData,
       });
 
       // Create manual review case
@@ -29,7 +33,7 @@ class DivineFraudPreventionService {
         riskLevel: 'REQUIRES_HUMAN_REVIEW',
         flags,
         reviewCaseId: reviewCase.id,
-        recommendation: 'Hold transaction pending manual review'
+        recommendation: 'Hold transaction pending manual review',
       };
     }
 
@@ -38,7 +42,7 @@ class DivineFraudPreventionService {
       fraudScore: 'LOW_RISK',
       riskLevel: 'APPROVED',
       flags: [],
-      recommendation: 'Proceed with transaction'
+      recommendation: 'Proceed with transaction',
     };
   }
 
@@ -89,17 +93,21 @@ class DivineFraudPreventionService {
       createdAt: new Date(),
       priority: this.determinePriority(flags),
       assignedTo: null, // Will be assigned by review team
-      notes: []
+      notes: [],
     };
 
-    info(`Created manual review case: ${reviewCase.id}`, { flags: flags.length });
+    info(`Created manual review case: ${reviewCase.id}`, {
+      flags: flags.length,
+    });
 
     // In a real system, this would be stored in a database
     return reviewCase;
   }
 
   determinePriority(flags) {
-    if (flags.some(flag => flag.includes('large') || flag.includes('multiple'))) {
+    if (
+      flags.some((flag) => flag.includes('large') || flag.includes('multiple'))
+    ) {
       return 'HIGH';
     }
     return 'MEDIUM';
@@ -111,17 +119,23 @@ class DivineFraudPreventionService {
     return {
       cases: [],
       total: 0,
-      message: 'Manual review system active - all suspicious transactions require human oversight'
+      message:
+        'Manual review system active - all suspicious transactions require human oversight',
     };
   }
 
   async approveTransaction(reviewCaseId, reviewerId, notes) {
-    info(`Transaction approved by reviewer ${reviewerId}: ${reviewCaseId}`, { notes });
+    info(`Transaction approved by reviewer ${reviewerId}: ${reviewCaseId}`, {
+      notes,
+    });
     return { status: 'APPROVED', reviewedBy: reviewerId, notes };
   }
 
   async rejectTransaction(reviewCaseId, reviewerId, reason, notes) {
-    warn(`Transaction rejected by reviewer ${reviewerId}: ${reviewCaseId}`, { reason, notes });
+    warn(`Transaction rejected by reviewer ${reviewerId}: ${reviewCaseId}`, {
+      reason,
+      notes,
+    });
     return { status: 'REJECTED', reviewedBy: reviewerId, reason, notes };
   }
 }

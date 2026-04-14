@@ -9,12 +9,12 @@ import BiometricData from './models/BiometricData.js';
 import Permission from './models/Permission.js';
 
 console.log('🧪 BIOMETRIC SYSTEM - THOROUGH TESTING\n');
-console.log('=' .repeat(60));
+console.log('='.repeat(60));
 
 const testResults = {
   passed: 0,
   failed: 0,
-  tests: []
+  tests: [],
 };
 
 function logTest(name, passed, error = null) {
@@ -30,20 +30,23 @@ function logTest(name, passed, error = null) {
 
 async function runTests() {
   console.log('\n📋 TEST SUITE 1: Model Structure Tests\n');
-  
+
   // Test 1: BiometricData Model Structure
   try {
-    const hasRequiredMethods = 
+    const hasRequiredMethods =
       typeof BiometricData.findByUser === 'function' &&
       typeof BiometricData.createForUser === 'function';
-    logTest('BiometricData model has required static methods', hasRequiredMethods);
+    logTest(
+      'BiometricData model has required static methods',
+      hasRequiredMethods
+    );
   } catch (error) {
     logTest('BiometricData model has required static methods', false, error);
   }
 
   // Test 2: Permission Model Structure
   try {
-    const hasRequiredMethods = 
+    const hasRequiredMethods =
       typeof Permission.findByCode === 'function' &&
       typeof Permission.createDefaultPermissions === 'function';
     logTest('Permission model has required static methods', hasRequiredMethods);
@@ -55,7 +58,7 @@ async function runTests() {
 
   // Test 3: BiometricAuthService Structure
   try {
-    const hasRequiredMethods = 
+    const hasRequiredMethods =
       typeof biometricAuthService.enrollFingerprint === 'function' &&
       typeof biometricAuthService.verifyFingerprint === 'function' &&
       typeof biometricAuthService.enrollFacial === 'function' &&
@@ -66,14 +69,17 @@ async function runTests() {
       typeof biometricAuthService.registerDevice === 'function' &&
       typeof biometricAuthService.verifyDevice === 'function' &&
       typeof biometricAuthService.getBiometricStatus === 'function';
-    logTest('BiometricAuthService has all required methods (10/10)', hasRequiredMethods);
+    logTest(
+      'BiometricAuthService has all required methods (10/10)',
+      hasRequiredMethods
+    );
   } catch (error) {
     logTest('BiometricAuthService has all required methods', false, error);
   }
 
   // Test 4: PermissionService Structure
   try {
-    const hasRequiredMethods = 
+    const hasRequiredMethods =
       typeof permissionService.checkPermission === 'function' &&
       typeof permissionService.getRequiredBiometrics === 'function' &&
       typeof permissionService.validateContext === 'function' &&
@@ -81,7 +87,10 @@ async function runTests() {
       typeof permissionService.revokePermission === 'function' &&
       typeof permissionService.getAllPermissions === 'function' &&
       typeof permissionService.initializeDefaultPermissions === 'function';
-    logTest('PermissionService has all required methods (7/7)', hasRequiredMethods);
+    logTest(
+      'PermissionService has all required methods (7/7)',
+      hasRequiredMethods
+    );
   } catch (error) {
     logTest('PermissionService has all required methods', false, error);
   }
@@ -90,14 +99,23 @@ async function runTests() {
 
   // Test 5: Biometric Middleware
   try {
-    const { requireBiometric, requirePermission, validateContext, checkTimeRestrictions, requireBiometricPermission } = await import('./middleware/biometricAuth.js');
-    const hasAllMiddleware = 
+    const {
+      requireBiometric,
+      requirePermission,
+      validateContext,
+      checkTimeRestrictions,
+      requireBiometricPermission,
+    } = await import('./middleware/biometricAuth.js');
+    const hasAllMiddleware =
       typeof requireBiometric === 'function' &&
       typeof requirePermission === 'function' &&
       typeof validateContext === 'function' &&
       typeof checkTimeRestrictions === 'function' &&
       typeof requireBiometricPermission === 'function';
-    logTest('Biometric middleware exports all functions (5/5)', hasAllMiddleware);
+    logTest(
+      'Biometric middleware exports all functions (5/5)',
+      hasAllMiddleware
+    );
   } catch (error) {
     logTest('Biometric middleware exports all functions', false, error);
   }
@@ -117,13 +135,16 @@ async function runTests() {
 
   // Test 7: Server Integration
   try {
-    const serverContent = await import('fs').then(fs => 
+    const serverContent = await import('fs').then((fs) =>
       fs.promises.readFile('./earnings_dashboard/server.js', 'utf-8')
     );
     const hasBiometricRoutes = serverContent.includes('biometricRoutes');
     const hasMongoose = serverContent.includes('mongoose');
     const hasBiometricMount = serverContent.includes('/api/biometric');
-    logTest('Server integrates biometric routes', hasBiometricRoutes && hasMongoose && hasBiometricMount);
+    logTest(
+      'Server integrates biometric routes',
+      hasBiometricRoutes && hasMongoose && hasBiometricMount
+    );
   } catch (error) {
     logTest('Server integrates biometric routes', false, error);
   }
@@ -150,7 +171,9 @@ async function runTests() {
     const crypto = await import('crypto');
     const testTemplate = 'test-biometric-template';
     const salt = crypto.randomBytes(32).toString('hex');
-    const hash = crypto.pbkdf2Sync(testTemplate, salt, 100000, 64, 'sha512').toString('hex');
+    const hash = crypto
+      .pbkdf2Sync(testTemplate, salt, 100000, 64, 'sha512')
+      .toString('hex');
     logTest('PBKDF2 hashing works correctly', hash.length === 128);
   } catch (error) {
     logTest('PBKDF2 hashing works correctly', false, error);
@@ -170,9 +193,9 @@ async function runTests() {
       './routes/biometricRoutes.js',
       './test/biometric/biometric-system.test.js',
       './BIOMETRIC_SYSTEM_COMPLETION_REPORT.md',
-      './BIOMETRIC_QUICK_START_GUIDE.md'
+      './BIOMETRIC_QUICK_START_GUIDE.md',
     ];
-    
+
     let allExist = true;
     for (const file of requiredFiles) {
       if (!fs.existsSync(file)) {
@@ -180,7 +203,10 @@ async function runTests() {
         console.log(`   Missing: ${file}`);
       }
     }
-    logTest(`All required files exist (${requiredFiles.length} files)`, allExist);
+    logTest(
+      `All required files exist (${requiredFiles.length} files)`,
+      allExist
+    );
   } catch (error) {
     logTest('All required files exist', false, error);
   }
@@ -190,14 +216,25 @@ async function runTests() {
   // Test 11: Documentation Completeness
   try {
     const fs = await import('fs');
-    const completionReport = fs.readFileSync('./BIOMETRIC_SYSTEM_COMPLETION_REPORT.md', 'utf-8');
-    const quickStart = fs.readFileSync('./BIOMETRIC_QUICK_START_GUIDE.md', 'utf-8');
-    
-    const hasAPIEndpoints = completionReport.includes('POST   /api/biometric/enroll/fingerprint');
+    const completionReport = fs.readFileSync(
+      './BIOMETRIC_SYSTEM_COMPLETION_REPORT.md',
+      'utf-8'
+    );
+    const quickStart = fs.readFileSync(
+      './BIOMETRIC_QUICK_START_GUIDE.md',
+      'utf-8'
+    );
+
+    const hasAPIEndpoints = completionReport.includes(
+      'POST   /api/biometric/enroll/fingerprint'
+    );
     const hasQuickStartExamples = quickStart.includes('Quick Setup');
     const hasSecurityFeatures = completionReport.includes('AES-256-GCM');
-    
-    logTest('Documentation is complete and comprehensive', hasAPIEndpoints && hasQuickStartExamples && hasSecurityFeatures);
+
+    logTest(
+      'Documentation is complete and comprehensive',
+      hasAPIEndpoints && hasQuickStartExamples && hasSecurityFeatures
+    );
   } catch (error) {
     logTest('Documentation is complete and comprehensive', false, error);
   }
@@ -207,18 +244,22 @@ async function runTests() {
   console.log(`Total Tests: ${testResults.passed + testResults.failed}`);
   console.log(`✅ Passed: ${testResults.passed}`);
   console.log(`❌ Failed: ${testResults.failed}`);
-  console.log(`Success Rate: ${((testResults.passed / (testResults.passed + testResults.failed)) * 100).toFixed(1)}%`);
-  
+  console.log(
+    `Success Rate: ${((testResults.passed / (testResults.passed + testResults.failed)) * 100).toFixed(1)}%`
+  );
+
   if (testResults.failed > 0) {
     console.log('\n❌ FAILED TESTS:');
-    testResults.tests.filter(t => !t.passed).forEach(t => {
-      console.log(`   - ${t.name}`);
-      if (t.error) console.log(`     Error: ${t.error}`);
-    });
+    testResults.tests
+      .filter((t) => !t.passed)
+      .forEach((t) => {
+        console.log(`   - ${t.name}`);
+        if (t.error) console.log(`     Error: ${t.error}`);
+      });
   }
 
   console.log('\n' + '='.repeat(60));
-  
+
   if (testResults.failed === 0) {
     console.log('\n🎉 ALL TESTS PASSED! System is ready for production.\n');
   } else {
@@ -229,7 +270,7 @@ async function runTests() {
 }
 
 // Run tests
-runTests().catch(error => {
+runTests().catch((error) => {
   console.error('\n❌ Test suite failed to run:', error);
   process.exit(1);
 });

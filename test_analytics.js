@@ -1,9 +1,7 @@
 (async () => {
   const { getAnalytics } = await import('./earnings_dashboard/ai_analytics.js');
-  const {
-    getTranscendenceAnalytics,
-    optimizeRevenueAutonomously,
-  } = await import('./earnings_dashboard/ai_transcendence.js');
+  const { getTranscendenceAnalytics, optimizeRevenueAutonomously } =
+    await import('./earnings_dashboard/ai_transcendence.js');
 
   console.log('Testing Simple Trend Analytics...');
   try {
@@ -16,10 +14,7 @@
   console.log('\nTesting Simple Revenue Forecasting...');
   try {
     const transcendence = getTranscendenceAnalytics();
-    console.log(
-      'Forecasting result:',
-      JSON.stringify(transcendence, null, 2)
-    );
+    console.log('Forecasting result:', JSON.stringify(transcendence, null, 2));
   } catch (error) {
     console.error('Forecasting error:', error);
   }
