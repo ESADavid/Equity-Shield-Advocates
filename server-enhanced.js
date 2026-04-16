@@ -338,6 +338,17 @@ try {
   logger.info('   Server will continue without Divine AI routes');
 }
 
+// Import Blackbox Multi-Agent routes - BLACKBOX AI ORCHESTRATION
+let blackboxMultiAgentRouter;
+try {
+  const blackboxModule = await import('./routes/blackboxMultiAgentRoutes.js');
+  blackboxMultiAgentRouter = blackboxModule.default || blackboxModule;
+  logger.info('✅ Blackbox Multi-Agent system loaded successfully');
+} catch (error) {
+  logger.error('❌ Failed to load Blackbox Multi-Agent system:', error.message);
+  logger.info('   Server will continue without Blackbox routes');
+}
+
 // Security middleware
 app.use(
   helmet({
@@ -650,6 +661,15 @@ if (divineAIRouter) {
   logger.info('✅ Divine AI routes mounted at /api/divine-ai');
   logger.info('   🤖 Divine AI active - Personal benefit only');
   logger.info('   🔐 Private access - King Sachem Yochanan exclusive');
+}
+
+// Blackbox Multi-Agent API Routes - All Agents One Place
+if (blackboxMultiAgentRouter) {
+  app.use('/api/multi-agent', blackboxMultiAgentRouter);
+  logger.info('✅ Blackbox Multi-Agent routes mounted at /api/multi-agent');
+  logger.info('   🤖 Claude + Blackbox + 15+ agents orchestration active');
+  logger.info('   ⚡ Autonomous code execution + Judge layer comparison');
+  logger.info('   🔗 Repo: ' + (process.env.BLACKBOX_REPO_URL || 'default'));
 }
 
 // Partner API Routes - PHASE 2
