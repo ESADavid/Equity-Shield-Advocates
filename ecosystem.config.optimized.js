@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'oscar-broome-revenue-fast',
       script: 'server-enhanced.js',
-      instances: 'max', // Use all CPU cores for maximum performance
+instances: 2, // Safe desktop
       exec_mode: 'cluster', // Cluster mode for load balancing
       autorestart: true,
       watch: false,

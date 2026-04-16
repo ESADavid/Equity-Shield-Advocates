@@ -3,8 +3,8 @@ module.exports = {
     {
       name: 'oscar-broome-revenue',
       script: 'server-enhanced.js',
-      instances: 'max', // Use all CPU cores
-      exec_mode: 'cluster', // Cluster mode for load balancing
+instances: 2, // Safe desktop
+exec_mode: 'fork', // Safe desktop fork
       autorestart: true,
       watch: false,
       max_memory_restart: '2G', // Increased memory limit
@@ -17,8 +17,8 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 3000,
         // Production optimizations
-        UV_THREADPOOL_SIZE: 64, // Optimize for I/O operations
-        NODE_OPTIONS: '--max-old-space-size=4096', // 4GB heap in production
+UV_THREADPOOL_SIZE: 4, // Safe desktop
+--max-old-space-size=1024', // Safe 1GB desktop
       },
       env_staging: {
         NODE_ENV: 'staging',
