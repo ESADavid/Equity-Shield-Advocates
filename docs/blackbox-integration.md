@@ -2,7 +2,7 @@
 
 ## Setup
 
-1. Get API key: https://cloud.blackbox.ai → Profile → BLACKBOX API Token (bb_xxx)
+1. Get API key: <https://cloud.blackbox.ai> → Profile → BLACKBOX API Token (bb_xxx)
 2. Copy .env.example to .env and add your key:
 
 ```
@@ -11,11 +11,11 @@ BLACKBOX_REPO_URL=https://github.com/bsean/OSCAR-BROOME-REVENUE.git
 BLACKBOX_BRANCH=main
 ```
 
-3. Routes auto-mounted in server-enhanced.js at /api/multi-agent ✅
-4. Restart server: `npm start`
-5. Test UI button in Control Dashboard → "🤖 AI Multi-Agent Optimize"
-6. Run `node scripts/test-blackbox-multi-agent.js`
-7. Run `npm test` (includes blackbox-multiagent.test.js)
+1. Routes auto-mounted in server-enhanced.js at /api/multi-agent ✅
+2. Restart server: `npm start`
+3. Test UI button in Control Dashboard → "🤖 AI Multi-Agent Optimize"
+4. Run `node scripts/test-blackbox-multi-agent.js`
+5. Run `npm test` (includes blackbox-multiagent.test.js)
 
 ## Usage
 
