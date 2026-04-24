@@ -1,16 +1,11 @@
-# VSCode TypeScript/ESLint Error Fix Plan
+# TypeScript Error Fixes - authOverride.js (VSCode Compliance)
 
-## Steps to Complete:
+## Steps Completed ✓
+- [x] 1. Create types/express.d.ts (Express Request extensions)
 
-- [x] Step 1: Verified @types/express & @types/node already in package.json
-- [x] Step 2: Fixed app.js - removed unused logger import, added default logger for test code (fixed new TS errors)
-
-Current progress: Completed Steps 1-2, fixing app.js complete
-- [ ] Step 3: Fix middleware/authOverride.js - add JSDoc Express types
-- [ ] Step 4: Fix scripts/fix-logger-imports.js - add types, replace console.logs, fix ESLint
-- [ ] Step 5: Run eslint . --fix
-- [ ] Step 6: Verify no TS/ESLint errors (restart TS server)
-- [ ] Complete: All diagnostics resolved
-
-Current progress: Starting Step 1
+## Steps Remaining ☐
+- [ ] 2. Edit middleware/authOverride.js (fix req.auth→req.user, res.send return, overrideUser typing, Sonar negation)
+- [ ] 3. Run `npx tsc --noEmit` (type check)
+- [ ] 4. Run `npm run lint` 
+- [ ] 5. Test endpoints
 

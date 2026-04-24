@@ -3,7 +3,13 @@
  * Handles authorization for transaction override operations
  */
 
-import logger from 'utils/loggerWrapper.js';
+import logger from '../config/logger.js';
+
+/**
+ * @typedef {import('express').Request} ExpressRequest
+ * @typedef {import('express').Response} ExpressResponse
+ * @typedef {import('express').NextFunction} ExpressNextFunction
+ */
 
 // Enhanced auth configuration for override operations
 const overrideAuthConfig = {
@@ -18,19 +24,25 @@ const overrideAuthConfig = {
 
 // Role-based authorization
 const authorizeOverride = (roles = ['admin', 'override_manager']) => {
-  /** 
-   * @param {import('express').Request} req 
+  /**
+   * @param {import('express').Request} req
    * @param {import('express').Response} res 
    * @param {import('express').NextFunction} next 
    */
-    const user = req.auth?.user;
+  /**
+   * @param {ExpressRequest} req
+   * @param {ExpressResponse} res 
+   * @param {ExpressNextFunction} next 
+   */
+  return (req, res, next) => {
+    const user = req.user;
 
     if (!user) {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
     // Check if user has required role
-    if (!roles.includes(user)) {
+    if (user.role && !roles.includes(user.role)) {
       return res.status(403).json({
         error: 'Insufficient permissions for transaction override',
       });
@@ -38,20 +50,25 @@ const authorizeOverride = (roles = ['admin', 'override_manager']) => {
 
     // Add user info to request
     req.overrideUser = {
-      username: user,
-      role: user,
+      username: String(user._id),
+      role: user.role || 'user',
       timestamp: new Date().toISOString(),
     };
 
     next();
   };
+
 };
 
-// Audit logging middleware
+/**
+ * @param {ExpressRequest} req 
+ * @param {ExpressResponse} res 
+ * @param {ExpressNextFunction} next 
+ */
 const auditOverride = (req, res, next) => {
   const originalSend = res.send;
 
-  res.send = function (body) {
+  res.send = function (/** @type {any} body */ body) {
     // Log override attempt
     if (req.path.includes('/api/transactions/override')) {
       const auditEntry = {
@@ -68,10 +85,12 @@ const auditOverride = (req, res, next) => {
       logger.info('AUDIT:', auditEntry);
     }
 
-    originalSend.call(this, body);
+    return originalSend.call(this, body);
   };
+
 
   next();
 };
 
 export { overrideAuthConfig, authorizeOverride, auditOverride };
+
