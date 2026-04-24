@@ -46,8 +46,8 @@ async function fixFile(filePath) {
 }
 
 async function main() {
-  console.log('🔧 BULK FIXING LOGGER IMPORTS...');
-  console.log('Target: All *.js files -> utils/loggerWrapper.js');
+  logger.info('🔧 BULK FIXING LOGGER IMPORTS...');
+  logger.info('Target: All *.js files -> utils/loggerWrapper.js');
   const results = [];
   let totalChanges = 0;
 
@@ -59,24 +59,24 @@ async function main() {
     }
   }
 
-  console.log('\\n📊 RESULTS');
-  console.log(`Processed files: ${results.length}`);
-  console.log(`Import paths fixed: ${totalChanges}`);
+  logger.info('\\n📊 RESULTS');
+  logger.info(`Processed files: ${results.length}`);
+  logger.info(`Import paths fixed: ${totalChanges}`);
 
   const success = results.filter(r => r.changes > 0);
   const errors = results.filter(r => r.error);
 
   if (success.length > 0) {
-    console.log(`✅ Fixed ${success.length} files`);
-    success.forEach(r => console.log(`  ✓ ${r.file} (${r.changes} changes)`));
+    logger.info(`✅ Fixed ${success.length} files`);
+    success.forEach(r => logger.info(`  ✓ ${r.file} (${r.changes} changes)`));
   }
   if (errors.length > 0) {
-    console.log(`❌ Errors: ${errors.length}`);
-    errors.forEach(r => console.log(`  ✗ ${r.file}: ${r.error}`));
+    logger.info(`❌ Errors: ${errors.length}`);
+    errors.forEach(r => logger.info(`  ✗ ${r.file}: ${r.error}`));
   }
-  if (totalChanges === 0) console.log('ℹ️ No changes needed');
+  if (totalChanges === 0) logger.info('ℹ️ No changes needed');
 
-  console.log('\\n🎉 Bulk logger import fix complete!');
+  logger.info('\\n🎉 Bulk logger import fix complete!');
 }
 
 main().catch(console.error);
