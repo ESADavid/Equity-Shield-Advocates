@@ -27,7 +27,7 @@ async function* walk(dir) {
 async function fixFile(filePath) {
   try {
     const relativePath = './' + filePath.substring(rootDir.length + 1).replace(/\\/g, '/');
-    let content = await readFile(filePath, 'utf8');
+    const content = await readFile(filePath, 'utf8');
     const originalContent = content;
 
     // Regex: Capture quotes around relative paths to loggerWrapper.js
