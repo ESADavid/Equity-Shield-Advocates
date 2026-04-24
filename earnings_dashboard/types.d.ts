@@ -24,6 +24,10 @@ declare module 'cors' {
   export = cors;
 }
 
+declare module 'express-basic-auth' {
+  export default function basicAuth(options: any): import('express').RequestHandler;
+}
+
 declare module 'morgan' {
   import { RequestHandler } from 'express';
 

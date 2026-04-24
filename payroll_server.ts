@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
-const { logger } = require('./config/logger.js');
+import { logger } from './config/logger.js';
 import { payrollSystem } from './payrollSystem.js';
 
 const app = express();
