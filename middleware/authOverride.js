@@ -1,17 +1,28 @@
 /**
- * Transaction Override Authentication Middleware
+ * Transaction Override Authentication Middleware (JSDoc Typed)
  * Handles authorization for transaction override operations
+ * VSCode Compliance: JSDoc-only typing for .js file
  */
 
 import logger from '../config/logger.js';
 
 /**
- * @typedef {import('express').Request} ExpressRequest
- * @typedef {import('express').Response} ExpressResponse
- * @typedef {import('express').NextFunction} ExpressNextFunction
+ * @typedef {import('express').Request & {
+ *   user?: {
+ *     _id: string;
+ *     role?: string;
+ *   };
+ *   overrideUser?: {
+ *     username: string;
+ *     role: string;
+ *     timestamp: string;
+ *   };
+ * }} OverrideRequest
+ *
+ * @typedef {import('express').Response} Response
+ * @typedef {import('express').NextFunction} NextFunction
  */
 
-// Enhanced auth configuration for override operations
 const overrideAuthConfig = {
   users: {
     admin: 'securepassword',
@@ -22,33 +33,33 @@ const overrideAuthConfig = {
   realm: 'Transaction Override System',
 };
 
-// Role-based authorization
+/**
+ * Role-based authorization middleware factory
+ * @param {string[]} [roles=['admin','override_manager']] - Allowed roles
+ * @returns {import('express').RequestHandler}
+ */
 const authorizeOverride = (roles = ['admin', 'override_manager']) => {
   /**
-   * @param {import('express').Request} req
-   * @param {import('express').Response} res 
-   * @param {import('express').NextFunction} next 
-   */
-  /**
-   * @param {ExpressRequest} req
-   * @param {ExpressResponse} res 
-   * @param {ExpressNextFunction} next 
+   * @param {OverrideRequest} req - Extended request
+   * @param {Response} res - Express response
+   * @param {NextFunction} next - Next middleware
    */
   return (req, res, next) => {
+    /** @type {any} */
     const user = req.user;
 
     if (!user) {
-      return res.status(401).json({ error: 'Authentication required' });
+      res.status(401).json({ error: 'Authentication required' });
+      return;
     }
 
-    // Check if user has required role
     if (user.role && !roles.includes(user.role)) {
-      return res.status(403).json({
+      res.status(403).json({
         error: 'Insufficient permissions for transaction override',
       });
+      return;
     }
 
-    // Add user info to request
     req.overrideUser = {
       username: String(user._id),
       role: user.role || 'user',
@@ -57,40 +68,39 @@ const authorizeOverride = (roles = ['admin', 'override_manager']) => {
 
     next();
   };
-
 };
 
 /**
- * @param {ExpressRequest} req 
- * @param {ExpressResponse} res 
- * @param {ExpressNextFunction} next 
+ * Audit logging middleware for override endpoints
+ * @param {OverrideRequest} req
+ * @param {Response} res
+ * @param {NextFunction} next
  */
 const auditOverride = (req, res, next) => {
-  const originalSend = res.send;
+  const originalSend = res.send.bind(res);
 
-  res.send = function (/** @type {any} body */ body) {
-    // Log override attempt
+  res.send = function (/** @type {any} */ body) {
     if (req.path.includes('/api/transactions/override')) {
       const auditEntry = {
         action: req.method,
         endpoint: req.path,
         user: req.overrideUser?.username || 'unknown',
         ip: req.ip,
-        userAgent: req.get('User-Agent'),
+        userAgent: req.get('User-Agent') || 'unknown',
         timestamp: new Date().toISOString(),
         body: req.method !== 'GET' ? req.body : null,
       };
 
-      // In production, save to audit log
-      logger.info('AUDIT:', auditEntry);
+      logger.info('Transaction Override AUDIT', auditEntry);
     }
 
-    return originalSend.call(this, body);
+    return originalSend(body);
   };
-
 
   next();
 };
 
 export { overrideAuthConfig, authorizeOverride, auditOverride };
+
+
 
