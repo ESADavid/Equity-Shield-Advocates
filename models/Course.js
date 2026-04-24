@@ -5,7 +5,7 @@
  */
 
 import mongoose from 'mongoose';
-import { info, error, warn } from '../utils/loggerWrapper.js';
+import { info, error, warn } from 'utils/loggerWrapper.js';
 
 const courseSchema = new mongoose.Schema(
   {

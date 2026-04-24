@@ -6,7 +6,7 @@
  */
 
 import { readFileSync, writeFileSync } from 'fs';
-import { info, error as logError, warn } from '../utils/loggerWrapper.js';
+import { info, error as logError, warn } from 'utils/loggerWrapper.js';
 
 info('🔧 Fixing Remaining Phase 1 Issues');
 info('='.repeat(80));

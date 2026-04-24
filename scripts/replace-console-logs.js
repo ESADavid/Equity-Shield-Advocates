@@ -135,9 +135,9 @@ function replaceConsoleInFile(filePath, content) {
   // Add import if not present
   if (
     !newContent.includes('import') &&
-    !newContent.includes("from '../utils/loggerWrapper.js'")
+    !newContent.includes("from 'utils/loggerWrapper.js'")
   ) {
-    newContent = `import { info, error, warn, debug } from '../utils/loggerWrapper.js';\n\n${newContent}`;
+    newContent = `import { info, error, warn, debug } from 'utils/loggerWrapper.js';\n\n${newContent}`;
   }
 
   // Replace console statements

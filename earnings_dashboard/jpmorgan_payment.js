@@ -1,7 +1,7 @@
 import express from 'express';
 import crypto from 'node:crypto';
 import axios from 'axios';
-import { info, error } from '../utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 
 const router = express.Router();
 

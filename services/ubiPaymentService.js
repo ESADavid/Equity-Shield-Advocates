@@ -1,5 +1,5 @@
 // UBI Payment Service - Integrated with Payroll & JPMorgan
-import { info, error, warn } from '../utils/loggerWrapper.js';
+import { info, error, warn } from 'utils/loggerWrapper.js';
 import UBIPayment from '../models/UBIPayment.js';
 import Citizen from '../models/Citizen.js';
 import axios from 'axios';

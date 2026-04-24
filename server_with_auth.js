@@ -9,7 +9,7 @@ import rateLimit from 'express-rate-limit';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import logger from './utils/loggerWrapper.js';
+import logger from 'utils/loggerWrapper.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';

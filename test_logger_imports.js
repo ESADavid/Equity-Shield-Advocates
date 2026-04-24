@@ -7,7 +7,7 @@ console.log('🧪 Testing Logger Imports...\n');
 // Test 1: Import logger wrapper
 console.log('Test 1: Importing logger wrapper...');
 try {
-  const loggerModule = await import('./utils/loggerWrapper.js');
+  const loggerModule = await import('utils/loggerWrapper.js');
   console.log('✅ Logger wrapper imported successfully');
   console.log(
     '   Available methods:',
@@ -48,7 +48,7 @@ for (const service of servicesToTest) {
 // Test 3: Test logger functionality
 console.log('\nTest 3: Testing logger functionality...');
 try {
-  const { info, error, warn, debug } = await import('./utils/loggerWrapper.js');
+  const { info, error, warn, debug } = await import('utils/loggerWrapper.js');
 
   info('Test info message', { test: true });
   warn('Test warning message', { test: true });

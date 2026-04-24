@@ -6,7 +6,7 @@
  */
 
 import { readFileSync, writeFileSync } from 'fs';
-import { info, error as logError, warn } from '../utils/loggerWrapper.js';
+import { info, error as logError, warn } from 'utils/loggerWrapper.js';
 
 info('🔧 Phase 1: Fixing Critical ESLint Errors');
 info('='.repeat(80));

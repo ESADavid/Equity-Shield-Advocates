@@ -5,7 +5,7 @@
 
 import express from 'express';
 import blackboxService from '../services/blackboxMultiAgentService.js';
-import { info } from '../utils/loggerWrapper.js';
+import { info } from 'utils/loggerWrapper.js';
 
 const router = express.Router();
 

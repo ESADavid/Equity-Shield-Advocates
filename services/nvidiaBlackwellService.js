@@ -4,7 +4,7 @@
  * Provides quantum-enhanced AI/ML capabilities with Blackwell acceleration
  */
 import { randomBytes } from 'node:crypto';
-import logger from '../utils/loggerWrapper.js';
+import logger from 'utils/loggerWrapper.js';
 
 class NvidiaBlackwellService {
   constructor() {

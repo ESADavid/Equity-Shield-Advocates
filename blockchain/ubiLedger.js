@@ -4,7 +4,7 @@
  * Part of the OWLBAN GROUP Heaven on Earth Initiative
  */
 
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 import blockchainService from './blockchainService.js';
 import UBIPayment from '../models/UBIPayment.js';
 

@@ -1,4 +1,4 @@
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 
 /**
  * Script to mark the Rolls Royce Spectra Black Badge as delivered

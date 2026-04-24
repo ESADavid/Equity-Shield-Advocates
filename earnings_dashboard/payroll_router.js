@@ -1,7 +1,7 @@
 import express from 'express';
 import { payrollSystem } from '../payrollSystem.ts';
 import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration.js';
-import { info, error as logError } from '../utils/loggerWrapper.js';
+import { info, error as logError } from 'utils/loggerWrapper.js';
 
 const router = express.Router();
 

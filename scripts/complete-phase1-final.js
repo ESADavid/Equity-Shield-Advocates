@@ -9,7 +9,7 @@
  */
 
 import { execSync } from 'child_process';
-import { info, error, warn } from '../utils/loggerWrapper.js';
+import { info, error, warn } from 'utils/loggerWrapper.js';
 
 info('🚀 Phase 1: Code Quality Perfection - Final Completion');
 info('='.repeat(80));

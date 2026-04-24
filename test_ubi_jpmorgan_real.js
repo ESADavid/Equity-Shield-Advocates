@@ -5,7 +5,7 @@
 
 import ubiService from './services/ubiPaymentService.js';
 import Citizen from './models/Citizen.js';
-import { info, error } from './utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 
 async function testRealJPMorganIntegration() {
   console.log('🔗 Testing Real JPMorgan UBI Integration...\n');

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 
 /**
  * JPMorgan Credentials Setup Script

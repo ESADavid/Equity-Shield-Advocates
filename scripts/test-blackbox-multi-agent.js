@@ -3,7 +3,7 @@
  * Run: node scripts/test-blackbox-multi-agent.js
  */
 
-import { info } from '../utils/loggerWrapper.js';
+import { info } from 'utils/loggerWrapper.js';
 import blackboxService from '../services/blackboxMultiAgentService.js';
 
 async function testMultiAgent() {

@@ -3,8 +3,7 @@
  * Handles authorization for transaction override operations
  */
 
-import express from 'express';
-import basicAuth from 'express-basic-auth';
+import logger from 'utils/loggerWrapper.js';
 
 // Enhanced auth configuration for override operations
 const overrideAuthConfig = {
@@ -19,7 +18,11 @@ const overrideAuthConfig = {
 
 // Role-based authorization
 const authorizeOverride = (roles = ['admin', 'override_manager']) => {
-  return (req, res, next) => {
+  /** 
+   * @param {import('express').Request} req 
+   * @param {import('express').Response} res 
+   * @param {import('express').NextFunction} next 
+   */
     const user = req.auth?.user;
 
     if (!user) {

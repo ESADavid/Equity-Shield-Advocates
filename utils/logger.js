@@ -29,7 +29,7 @@ export {
   logPerformance,
   logBusinessEvent,
   child,
-} from './loggerWrapper.js';
+} from 'utils/loggerWrapper.js';
 
 // Default export for require() compatibility
 export default {

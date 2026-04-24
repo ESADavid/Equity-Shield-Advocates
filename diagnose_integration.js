@@ -4,7 +4,7 @@
  * Diagnostic script for JPMorgan-QuickBooks integration issues
  */
 
-import { info, error, warn, debug } from './utils/loggerWrapper.js';
+import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 import dotenv from 'dotenv';
 import axios from 'axios';
 

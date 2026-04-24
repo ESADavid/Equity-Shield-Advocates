@@ -9,7 +9,7 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
-import logger from './utils/loggerWrapper.js';
+import logger from 'utils/loggerWrapper.js';
 
 // Quantum imports
 import { QuantumEngine } from './quantum/quantumEngine.js';

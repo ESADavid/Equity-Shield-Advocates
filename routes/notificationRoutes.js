@@ -6,7 +6,7 @@
 
 import express from 'express';
 import MultiChannelNotificationService from '../services/multiChannelNotificationService.js';
-import logger from '../utils/loggerWrapper.js';
+import logger from 'utils/loggerWrapper.js';
 
 const router = express.Router();
 const notificationService = new MultiChannelNotificationService();

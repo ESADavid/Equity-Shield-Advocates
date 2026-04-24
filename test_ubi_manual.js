@@ -6,7 +6,7 @@
 import ubiService from './services/ubiPaymentService.js';
 import Citizen from './models/Citizen.js';
 import UBIPayment from './models/UBIPayment.js';
-import { info, error } from './utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 
 async function runManualTests() {
   console.log('🧪 Starting Manual UBI Integration Tests...\n');

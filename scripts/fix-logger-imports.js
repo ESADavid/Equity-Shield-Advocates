@@ -1,204 +1,82 @@
 /**
- * Script to add missing logger imports to files that were modified by replace-console-logs.js
- *
- * Usage: node scripts/fix-logger-imports.js
+ * Bulk Fix Logger Imports - ESM
+ * Replaces all relative loggerWrapper.js imports with absolute 'utils/loggerWrapper.js'
  */
 
-import fs from 'fs';
-import path from 'path';
+import { readdir, readFile, writeFile, stat } from 'fs/promises';
+import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { info, error } from '../utils/loggerWrapper.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const rootDir = resolve(__dirname, '..');
 
-// Files that need logger imports (from the replace-console-logs.js output)
-const filesToFix = [
-  'scripts/security-audit.js',
-  'server-enhanced.js',
-  'server-quantum.js',
-  'server-simple.js',
-  'server_with_auth.js',
-  'services/assetManagementService.js',
-  'services/debtAcquisitionService.js',
-  'services/haitiStrategicService.js',
-  'services/nvidiaBlackwellService.js',
-  'services/plaidService.js',
-  'services/privateBankingService.js',
-  'setup_credentials.js',
-  'setup_jpmorgan_credentials.js',
-  'simple_jpmorgan_validation.js',
-  'staging_deployment.js',
-];
-
-const stats = {
-  filesProcessed: 0,
-  filesFixed: 0,
-  filesSkipped: 0,
-  errors: 0,
-};
-
-/**
- * Determine the correct import path based on file location
- */
-function getLoggerImportPath(filePath) {
-  const depth = filePath.split('/').length - 1;
-  const prefix = depth === 0 ? './' : '../'.repeat(depth);
-  return `${prefix}utils/loggerWrapper.js`;
-}
-
-/**
- * Check if file already has logger import
- */
-function hasLoggerImport(content) {
-  return (
-    content.includes("from './utils/loggerWrapper.js'") ||
-    content.includes("from '../utils/loggerWrapper.js'") ||
-    content.includes("from '../../utils/loggerWrapper.js'") ||
-    content.includes("from '../../../utils/loggerWrapper.js'") ||
-    content.includes('import logger from') ||
-    content.includes('import { info, error, warn, debug } from')
-  );
-}
-
-/**
- * Check if file uses logger methods
- */
-function usesLogger(content) {
-  return (
-    content.includes('logger.info(') ||
-    content.includes('logger.error(') ||
-    content.includes('logger.warn(') ||
-    content.includes('logger.debug(')
-  );
-}
-
-/**
- * Add logger import to file
- */
-function addLoggerImport(content, importPath) {
-  // Find the best place to add the import
-  const lines = content.split('\n');
-  let insertIndex = 0;
-  let foundImports = false;
-
-  // Skip shebang if present
-  if (lines[0].startsWith('#!')) {
-    insertIndex = 1;
-  }
-
-  // Find the last import statement
-  for (let i = insertIndex; i < lines.length; i++) {
-    if (
-      lines[i].trim().startsWith('import ') ||
-      (lines[i].trim().startsWith('const ') && lines[i].includes('require('))
-    ) {
-      foundImports = true;
-      insertIndex = i + 1;
-    } else if (foundImports && lines[i].trim() === '') {
-      // Found empty line after imports
-      break;
-    } else if (
-      foundImports &&
-      !lines[i].trim().startsWith('import ') &&
-      !lines[i].trim().startsWith('//')
-    ) {
-      // Found non-import, non-comment line
-      break;
+async function* walk(dir) {
+  const entries = await readdir(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = join(dir, entry.name);
+    const statEntry = await stat(fullPath);
+    if (statEntry.isDirectory()) {
+      if (entry.name === 'node_modules' || entry.name === '.git') continue;
+      yield* walk(fullPath);
+    } else if (entry.name.endsWith('.js')) {
+      yield fullPath;
     }
   }
-
-  // Create the import statement
-  const importStatement = `import logger from '${importPath}';`;
-
-  // Insert the import
-  lines.splice(insertIndex, 0, importStatement);
-
-  // Add empty line after imports if not present
-  if (lines[insertIndex + 1] && lines[insertIndex + 1].trim() !== '') {
-    lines.splice(insertIndex + 1, 0, '');
-  }
-
-  return lines.join('\n');
 }
 
-/**
- * Process a single file
- */
-function processFile(filePath) {
-  const fullPath = path.resolve(process.cwd(), filePath);
-
-  if (!fs.existsSync(fullPath)) {
-    info(`⚠️  File not found: ${filePath}`);
-    stats.filesSkipped++;
-    return;
-  }
-
-  stats.filesProcessed++;
-
+async function fixFile(filePath) {
   try {
-    const content = fs.readFileSync(fullPath, 'utf8');
+    const relativePath = './' + filePath.substring(rootDir.length + 1).replace(/\\/g, '/');
+    let content = await readFile(filePath, 'utf8');
+    const originalContent = content;
 
-    // Check if file uses logger
-    if (!usesLogger(content)) {
-      info(`⏭️  ${filePath} - No logger usage found`);
-      stats.filesSkipped++;
-      return;
+    // Regex: Capture quotes around relative paths to loggerWrapper.js
+    const regex = /(['"])(?:\.\.?\/)+.*?loggerWrapper\.js\1/g;
+    const newContent = content.replace(regex, '$1utils/loggerWrapper.js$1');
+
+    if (newContent !== originalContent) {
+      await writeFile(filePath, newContent, 'utf8');
+      const changes = (content.match(regex) || []).length;
+      return { file: relativePath, changes };
     }
-
-    // Check if import already exists
-    if (hasLoggerImport(content)) {
-      info(`✅ ${filePath} - Already has logger import`);
-      stats.filesSkipped++;
-      return;
-    }
-
-    // Add logger import
-    const importPath = getLoggerImportPath(filePath);
-    const newContent = addLoggerImport(content, importPath);
-
-    // Write the file
-    fs.writeFileSync(fullPath, newContent, 'utf8');
-    info(`✅ ${filePath} - Added logger import`);
-    stats.filesFixed++;
+    return null;
   } catch (err) {
-    error(`❌ Error processing ${filePath}:`, err);
-    stats.errors++;
+    return { file: filePath.substring(rootDir.length + 1), error: err.message };
   }
 }
 
-/**
- * Main execution
- */
-function main() {
-  info('🔧 Logger Import Fix Script\n');
-  info('Adding missing logger imports to modified files...\n');
-  info('='.repeat(80));
+async function main() {
+  console.log('🔧 BULK FIXING LOGGER IMPORTS...');
+  console.log('Target: All *.js files -> utils/loggerWrapper.js');
+  const results = [];
+  let totalChanges = 0;
 
-  const startTime = Date.now();
-
-  for (const file of filesToFix) {
-    processFile(file);
+  for await (const filePath of walk(rootDir)) {
+    const result = await fixFile(filePath);
+    if (result) {
+      results.push(result);
+      if (result.changes !== undefined) totalChanges += result.changes;
+    }
   }
 
-  const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+  console.log('\\n📊 RESULTS');
+  console.log(`Processed files: ${results.length}`);
+  console.log(`Import paths fixed: ${totalChanges}`);
 
-  info('\n' + '='.repeat(80));
-  info('\n📊 Summary:');
-  info(`   Files processed: ${stats.filesProcessed}`);
-  info(`   Files fixed: ${stats.filesFixed}`);
-  info(`   Files skipped: ${stats.filesSkipped}`);
-  info(`   Errors: ${stats.errors}`);
-  info(`\n⏱️  Completed in ${duration}s`);
+  const success = results.filter(r => r.changes > 0);
+  const errors = results.filter(r => r.error);
 
-  if (stats.filesFixed > 0) {
-    info('\n✅ Logger imports have been added successfully!');
-    info('\n📝 Next Steps:');
-    info('   1. Review the changes');
-    info('   2. Run tests to verify everything works');
-    info('   3. Run ESLint to check for any issues');
+  if (success.length > 0) {
+    console.log(`✅ Fixed ${success.length} files`);
+    success.forEach(r => console.log(`  ✓ ${r.file} (${r.changes} changes)`));
   }
+  if (errors.length > 0) {
+    console.log(`❌ Errors: ${errors.length}`);
+    errors.forEach(r => console.log(`  ✗ ${r.file}: ${r.error}`));
+  }
+  if (totalChanges === 0) console.log('ℹ️ No changes needed');
+
+  console.log('\\n🎉 Bulk logger import fix complete!');
 }
 
-// Run the script
-main();
+main().catch(console.error);

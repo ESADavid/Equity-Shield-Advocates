@@ -1,4 +1,4 @@
-import { info, error } from '../utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 import Partner from '../models/Partner.js';
 
 export default class PartnerCoordinationService {

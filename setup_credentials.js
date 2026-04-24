@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 
 const fs = require('fs');
 const path = require('path');

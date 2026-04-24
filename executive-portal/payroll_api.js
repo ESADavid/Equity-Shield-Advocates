@@ -1,4 +1,4 @@
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 
 // Payroll API for Executive Dashboard
 // Simple mock API to provide employee data for payroll calculations

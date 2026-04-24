@@ -13,7 +13,7 @@
  * - Batch notifications
  */
 
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 import nodemailer from 'nodemailer';
 
 class MultiChannelNotificationService {

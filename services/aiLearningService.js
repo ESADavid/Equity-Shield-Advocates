@@ -1,5 +1,5 @@
 // Divine Learning Service - Manual Guidance Based on Sacred Wisdom
-import { info } from '../utils/loggerWrapper.js';
+import { info } from 'utils/loggerWrapper.js';
 
 class DivineLearningService {
   // Predefined divine curricula based on sacred wisdom

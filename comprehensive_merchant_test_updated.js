@@ -11,7 +11,7 @@ import axios from 'axios';
 import fs from 'node:fs';
 import path from 'node:path';
 import dotenv from 'dotenv';
-import { info, error as logError } from './utils/loggerWrapper.js';
+import { info, error as logError } from 'utils/loggerWrapper.js';
 
 dotenv.config();
 

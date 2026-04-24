@@ -7,7 +7,7 @@
 import express from 'express';
 import divineAIService from '../services/divineAIService.js';
 import { authenticate } from '../middleware/auth.js';
-import { info, error } from '../utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 
 const router = express.Router();
 

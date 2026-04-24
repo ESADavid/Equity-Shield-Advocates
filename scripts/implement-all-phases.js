@@ -10,7 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { info, error } from '../utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,7 +48,7 @@ function createFile(filePath, content) {
 // Phase 2 & 3 Files with Complete Working Code
 const files = {
   // UBI Payment Service
-  'services/ubiPaymentService.js': `import { info, error } from '../utils/loggerWrapper.js';
+  'services/ubiPaymentService.js': `import { info, error } from 'utils/loggerWrapper.js';
 import UBIPayment from '../models/UBIPayment.js';
 import Citizen from '../models/Citizen.js';
 
@@ -131,7 +131,7 @@ export default new UBIPaymentService();
   // UBI Payment Routes
   'routes/ubiPaymentRoutes.js': `import express from 'express';
 import ubiPaymentService from '../services/ubiPaymentService.js';
-import { info } from '../utils/loggerWrapper.js';
+import { info } from 'utils/loggerWrapper.js';
 
 const router = express.Router();
 
@@ -171,7 +171,7 @@ export default router;
 `,
 
   // Blockchain UBI Ledger
-  'blockchain/ubiLedger.js': `import { info, error } from '../utils/loggerWrapper.js';
+  'blockchain/ubiLedger.js': `import { info, error } from 'utils/loggerWrapper.js';
 import blockchainService from './blockchainService.js';
 
 class UBILedger {
@@ -259,7 +259,7 @@ export default mongoose.model('Course', courseSchema);
 `,
 
   // AI Learning Service
-  'services/aiLearningService.js': `import { info, error } from '../utils/loggerWrapper.js';
+  'services/aiLearningService.js': `import { info, error } from 'utils/loggerWrapper.js';
 
 class AILearningService {
   async generateRecommendations(studentId, progress) {
@@ -327,7 +327,7 @@ export default new AILearningService();
 `,
 
   // Compliance Monitoring Service
-  'services/complianceMonitoringService.js': `import { info, warn, error } from '../utils/loggerWrapper.js';
+  'services/complianceMonitoringService.js': `import { info, warn, error } from 'utils/loggerWrapper.js';
 
 class ComplianceMonitoringService {
   async monitorCompliance() {
@@ -420,7 +420,7 @@ export default new ComplianceMonitoringService();
 `,
 
   // Partner Coordination Service
-  'services/partnerCoordinationService.js': `import { info, error } from '../utils/loggerWrapper.js';
+  'services/partnerCoordinationService.js': `import { info, error } from 'utils/loggerWrapper.js';
 
 class PartnerCoordinationService {
   async onboardPartner(partnerData) {
@@ -471,7 +471,7 @@ export default new PartnerCoordinationService();
 `,
 
   // Citizen Portal Service
-  'services/citizenPortalService.js': `import { info, error } from '../utils/loggerWrapper.js';
+  'services/citizenPortalService.js': `import { info, error } from 'utils/loggerWrapper.js';
 
 class CitizenPortalService {
   async registerCitizen(citizenData) {

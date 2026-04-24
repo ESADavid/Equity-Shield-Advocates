@@ -13,7 +13,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
-import { info, error as logError } from './utils/loggerWrapper.js';
+import { info, error as logError } from 'utils/loggerWrapper.js';
 
 dotenv.config();
 

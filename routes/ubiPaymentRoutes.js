@@ -2,7 +2,7 @@
 import express from 'express';
 import ubiPaymentService from '../services/ubiPaymentService.js';
 import UBIPayment from '../models/UBIPayment.js';
-import { info, error } from '../utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 
 const router = express.Router();
 

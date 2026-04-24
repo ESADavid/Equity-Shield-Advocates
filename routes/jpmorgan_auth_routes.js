@@ -11,7 +11,7 @@ import {
   authenticateRefreshToken,
   requireAdmin,
 } from '../utils/authMiddleware.js';
-import { info, error } from '../utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 
 const router = express.Router();
 

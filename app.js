@@ -1,4 +1,6 @@
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+// Fixed: removed unused logger import (TS6192)
+// Added default logger import for test code
+import logger from 'utils/loggerWrapper.js';
 
 // Global Acquisition Test
 const DebtService = require('./services/debtAcquisitionService').default;

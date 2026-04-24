@@ -1,15 +1,16 @@
-# Console.log Cleanup Progress Tracker
+# VSCode TypeScript/ESLint Error Fix Plan
 
-## Plan Breakdown (Approved: PROCEED)
+## Steps to Complete:
 
-- [x] **Step 1:** Scan project for console.logs (572 files, 2352 in tests only)
-- [x] **Step 2:** Verify production files use loggerWrapper (app.js, server-enhanced.js, services/plaidService.js ✅)
-- [x] **Step 3:** Confirm 0 production replacements needed (script already ran)
-- [✅] **Step 4:** Final verification: lint + tests pass ✅
-  - Added tsconfig.json \"ignoreDeprecations\": \"6.0\" for baseUrl warning
-- [✅] **Step 5:** Git commit changes
-- [✅] **Step 6:** Update docs (CONSOLE_LOG_REPLACEMENT_COMPLETE.md ✅ created)
+- [x] Step 1: Verified @types/express & @types/node already in package.json
+- [x] Step 2: Fixed app.js - removed unused logger import, added default logger for test code (fixed new TS errors)
 
-**Status:** Production codebase clean. Tests preserved. Ready for commit.
+Current progress: Completed Steps 1-2, fixing app.js complete
+- [ ] Step 3: Fix middleware/authOverride.js - add JSDoc Express types
+- [ ] Step 4: Fix scripts/fix-logger-imports.js - add types, replace console.logs, fix ESLint
+- [ ] Step 5: Run eslint . --fix
+- [ ] Step 6: Verify no TS/ESLint errors (restart TS server)
+- [ ] Complete: All diagnostics resolved
 
-**Next:** Run `git add . && git commit -m "Complete console.log cleanup (0 changes)"`
+Current progress: Starting Step 1
+

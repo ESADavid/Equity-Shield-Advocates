@@ -1,4 +1,4 @@
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 
 ('use strict');
 Object.defineProperty(exports, '__esModule', { value: true });

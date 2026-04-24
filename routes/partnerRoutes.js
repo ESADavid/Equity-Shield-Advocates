@@ -7,7 +7,7 @@
 import express from 'express';
 import PartnerCoordinationService from '../services/partnerCoordinationService.js';
 import PMCIntegrationService from '../services/pmcIntegrationService.js';
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 
 const router = express.Router();
 const partnerService = new PartnerCoordinationService();

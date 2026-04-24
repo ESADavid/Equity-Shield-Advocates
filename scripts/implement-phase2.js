@@ -7,7 +7,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { info, error } from '../utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 
 info('🚀 Phase 2: Heaven on Earth - Rapid Implementation');
 info('='.repeat(80));
@@ -32,7 +32,7 @@ export default mongoose.model('UBIPayment', ubiPaymentSchema);
 `,
 
   'services/ubiPaymentService.js': `// UBI Payment Service
-import { info, error } from '../utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 import UBIPayment from '../models/UBIPayment.js';
 import Citizen from '../models/Citizen.js';
 
@@ -79,7 +79,7 @@ export default new UBIPaymentService();
   'routes/ubiPaymentRoutes.js': `// UBI Payment Routes
 import express from 'express';
 import ubiPaymentService from '../services/ubiPaymentService.js';
-import { info } from '../utils/loggerWrapper.js';
+import { info } from 'utils/loggerWrapper.js';
 
 const router = express.Router();
 
@@ -105,7 +105,7 @@ export default router;
 `,
 
   'blockchain/ubiLedger.js': `// UBI Blockchain Ledger
-import { info } from '../utils/loggerWrapper.js';
+import { info } from 'utils/loggerWrapper.js';
 import blockchainService from './blockchainService.js';
 
 class UBILedger {
@@ -149,7 +149,7 @@ export default mongoose.model('Course', courseSchema);
 `,
 
   'services/aiLearningService.js': `// AI Learning Service
-import { info } from '../utils/loggerWrapper.js';
+import { info } from 'utils/loggerWrapper.js';
 
 class AILearningService {
   async generateRecommendations(studentId, progress) {
@@ -180,7 +180,7 @@ export default new AILearningService();
 
   // Task 7-8: Compliance & Monitoring
   'services/complianceMonitoringService.js': `// Compliance Monitoring Service
-import { info, warn } from '../utils/loggerWrapper.js';
+import { info, warn } from 'utils/loggerWrapper.js';
 
 class ComplianceMonitoringService {
   async monitorCompliance() {
@@ -213,7 +213,7 @@ export default new ComplianceMonitoringService();
 
   // Task 9-11: Partner Integration
   'services/partnerCoordinationService.js': `// Partner Coordination Service
-import { info } from '../utils/loggerWrapper.js';
+import { info } from 'utils/loggerWrapper.js';
 
 class PartnerCoordinationService {
   async onboardPartner(partnerData) {
@@ -232,7 +232,7 @@ export default new PartnerCoordinationService();
 
   // Task 12-13: Citizen Portal
   'services/citizenPortalService.js': `// Citizen Portal Service
-import { info } from '../utils/loggerWrapper.js';
+import { info } from 'utils/loggerWrapper.js';
 
 class CitizenPortalService {
   async registerCitizen(citizenData) {

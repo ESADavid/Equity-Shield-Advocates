@@ -8,7 +8,7 @@
 
 import DivineWisdom from '../algorithms/divineWisdom.js';
 import SacredGeometry from '../algorithms/sacredGeometry.js';
-import { info, error } from '../utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 
 class DivineAIService {
   constructor() {

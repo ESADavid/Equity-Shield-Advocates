@@ -6,7 +6,7 @@
 
 import express from 'express';
 import CitizenPortalService from '../services/citizenPortalService.js';
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 
 const router = express.Router();
 const portalService = new CitizenPortalService();

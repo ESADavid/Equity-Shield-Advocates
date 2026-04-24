@@ -1,5 +1,5 @@
 // Divine Fraud Prevention Service - Manual Review System
-import { info, warn } from '../utils/loggerWrapper.js';
+import { info, warn } from 'utils/loggerWrapper.js';
 
 class DivineFraudPreventionService {
   // Manual review flags for suspicious activities

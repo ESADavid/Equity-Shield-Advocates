@@ -5,7 +5,7 @@
  */
 
 import { randomBytes } from 'node:crypto';
-import logger from '../utils/loggerWrapper.js';
+import logger from 'utils/loggerWrapper.js';
 
 class DebtAcquisitionService {
   constructor() {
