@@ -26,7 +26,20 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 class CacheService {
-  client = null;\n  isConnected = false;\n  metrics = {\n    hits: 0,\n    misses: 0,\n    sets: 0,\n    deletes: 0,\n    errors: 0,\n  };
+  constructor() {
+    this.client = null;
+    this.isConnected = false;
+    this.metrics = {
+      hits: 0,
+      misses: 0,
+      sets: 0,
+      deletes: 0,
+      errors: 0,
+    };
+    this.memoryCache = null;
+    this.memoryCacheTimeouts = new Map();
+    this.lastErrorTime = 0;
+  }
 
   async connect() {
     try {
@@ -297,7 +310,7 @@ class CacheService {
         status: 'connected',
         latency,
         dbSize,
-        info: info.split('\r\n').slice(0, 10), // First 10 lines of info
+        info: info.split('\\r\\n').slice(0, 10), // First 10 lines of info
         metrics: this.metrics,
       };
     } catch (error) {
