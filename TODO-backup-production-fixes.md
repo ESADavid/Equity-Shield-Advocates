@@ -1,6 +1,6 @@
 # Backup Production Fixes TODO
 
-## Plan Steps:
+## Plan Steps
 
 - [x] 1. Create this TODO.md
 - [x] 2. Fix module imports
@@ -15,4 +15,3 @@
 - [ ] 10. Lint and verify
 - [ ] 11. Test script
 - [ ] 12. Complete
-
