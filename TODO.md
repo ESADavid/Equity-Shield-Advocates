@@ -1,38 +1,44 @@
-# Linting & TS Error Fixes - Progress Tracker
-Generated: $(date)
+# ESLint Fixes Progress Tracker (Target: 0 warnings/errors)
+Status: In Progress | Plan: [Approved](#)
 
-Status: 🔄 In Progress (Phase 1: Code Quality)
+## Batch 1: Test Files - Remove console.logs (~500 fixes)
+- [ ] comprehensive_payroll_test.js
+- [ ] comprehensive_integration_test.js
+- [ ] comprehensive_merchant_test.js
+- [ ] comprehensive_blockchain_test.js
+- [ ] comprehensive_treasury_test.js
+- [ ] critical_path_test.js
+- [ ] performance_test.js
+- [ ] comprehensive_payroll_test_updated.js
+- [ ] All other *_test.js / comprehensive_*.js (use search_files if needed)
 
-## Current Task: Fix 101 TS Errors + 791 ESLint Issues
+## Batch 2: Unused Logger Vars (~50 fixes)
+- [ ] OWLBAN-GROUP-RECORDS/backend/server.js
+- [ ] fix_markdown_lint.js / .cjs
+- [ ] Partial logger files (script.js, etc.)
 
-### Planned Steps (from approved plan):
+## Batch 3: Cypress Fixes (~10)
+- [ ] owlbangroup.io/cypress/e2e/auth.cy.js
+- [ ] owlbangroup.io/cypress/support/e2e.js
+- [ ] owlbangroup.io/cypress/support/commands.js
+- [ ] accessibility.cy.js / error-scenarios.cy.js
 
-**✅ Step 1a: Fix .env encoding**
-- Run: `node scripts/fix-env-encoding.cjs`
+## Batch 4: require→import / no-require-imports (~10)
+- [ ] owlbangroup.io/script.js (showdown)
+- [ ] jest.setup.js / jest-environment-setup.js
+- [ ] docs/docusaurus.config*.js
 
-**🔄 Step 1b: Fix TS Errors (101 total)**
-- Resolve merge conflicts: commandActions.js, config.js
-- Remove shebangs: healthcheck.js, setup-db.js  
-- Fix template literals: implement-all-phases.js
-- Fix type assertions: backup-production.js
-- Files: 16 total (GOD/*, scripts/*, public/sw.js, routes/debtAcquisitionRoutes.js)
+## Batch 5: Parsing / no-undef / expressions (~20)
+- [ ] public/sw.js (unicode escape)
+- [ ] earnings_dashboard/src/ErrorRecovery.jsx (logger expr)
+- [ ] owlbangroup.io/script.js (fbq/gtag/showdown/update*)
+- [ ] routes/debtAcquisitionRoutes.js (parsing)
+- [ ] scripts/backup-production.js / implement-all-phases.js / setup-production-db.js
 
-**⏳ Step 1c: Auto ESLint fix**
-- Run: `npx eslint . --fix` (no-console, unused-vars)
+## Verification
+- [ ] Run `npx eslint . --max-warnings 0`
+- [ ] Run `npm test`
+- [ ] Create branch `blackboxai/eslint-fixes`, commit, gh pr
 
-**⏳ Step 1d: TS Validation**
-- Run: `npx tsc --noEmit`
-
-**⏳ Step 1e: Console replacement**
-- Add eslint-disable to tests OR run `node scripts/replace-console-logs.js`
-
-**Step 1f: Prettier**
-- `npm run format`
-
-## Next after fixes:
-- Phase 2 Testing Campaign
-- Phase 3 Missing files
-- Phase 4 Deployment prep
-
-**Priority:** Complete Phase 1 before proceeding.
+**Next:** Batch 1 test files (read + edit comprehensive_payroll_test.js first)
 

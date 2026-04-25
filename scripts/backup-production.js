@@ -1,3 +1,5 @@
+import { info, error, warn, debug } from 'utils/loggerWrapper.js';
+
 
 
 /**
@@ -35,7 +37,7 @@ class ProductionBackup {
       step: '🔧 ',
     }[type] || '📝 ';
 
-    console.log(`[${timestamp}] ${prefix}${message}`);
+    logger.info(`[${timestamp}] ${prefix}${message}`);
   }
 
   async ensureBackupDir() {
@@ -332,6 +334,6 @@ class ProductionBackup {
 // Execute backup
 const backup = new ProductionBackup();
 backup.run().catch((error) => {
-  console.error('Fatal error:', error instanceof Error ? error.message : String(error));
+  logger.error('Fatal error:', error instanceof Error ? error.message : String(error));
   process.exit(1);
 });

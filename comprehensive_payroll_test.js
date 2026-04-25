@@ -54,10 +54,10 @@ global.window = {
   },
   open: function () {},
   alert: function (msg) {
-    console.log('ALERT:', msg);
+  // ESLint: Removed console.log
   },
   confirm: function (msg) {
-    console.log('CONFIRM:', msg);
+  // ESLint: Removed console.log
     return true;
   },
 };
