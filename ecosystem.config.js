@@ -18,7 +18,7 @@ exec_mode: 'fork', // Safe desktop fork
         PORT: 3000,
         // Production optimizations
 UV_THREADPOOL_SIZE: 4, // Safe desktop
---max-old-space-size=1024', // Safe 1GB desktop
+        NODE_OPTIONS: '--max-old-space-size=1024', // Safe 1GB desktop
       },
       env_staging: {
         NODE_ENV: 'staging',

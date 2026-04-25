@@ -1,4 +1,5 @@
-import { info, error, warn, debug } from 'utils/loggerWrapper.js';
+import loggerWrapper from 'utils/loggerWrapper.js';
+const logger = loggerWrapper;
 
 ('use strict');
 /**

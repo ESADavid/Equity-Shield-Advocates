@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 
 #!/usr/bin/env node
