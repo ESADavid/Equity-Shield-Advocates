@@ -1,7 +1,8 @@
-// eslint-disable-next-line no-unused-vars
-import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 
-#!/usr/bin/env node
+
+/**
+ * Note: Shebang removed for TypeScript compatibility. Run with: node scripts/backup-production.js
+ */
 
 /**
  * Backup Production Database
@@ -20,6 +21,10 @@ class ProductionBackup {
     this.backupPath = path.join(this.backupDir, this.backupName);
   }
 
+  /**
+   * @param {string} message
+   * @param {string} [type='info']
+   */
   log(message, type = 'info') {
     const timestamp = new Date().toISOString();
     const prefix = {
@@ -30,7 +35,7 @@ class ProductionBackup {
       step: '🔧 ',
     }[type] || '📝 ';
 
-    logger.info(`[${timestamp}] ${prefix}${message}`);
+    console.log(`[${timestamp}] ${prefix}${message}`);
   }
 
   async ensureBackupDir() {
@@ -61,7 +66,7 @@ class ProductionBackup {
 
       return { path: dbBackupPath, size };
     } catch (error) {
-      this.log(`Database backup failed: ${error.message}`, 'error');
+      this.log(`Database backup failed: ${error instanceof Error ? error.message : String(error)}`, 'error');
       throw error;
     }
   }
@@ -114,7 +119,7 @@ class ProductionBackup {
           this.log(`Backed up ${item.description}: ${(size / 1024 / 1024).toFixed(2)} MB`);
         } catch (error) {
           if (item.optional) {
-            this.log(`Optional backup failed: ${item.description} - ${error.message}`, 'warning');
+          this.log(`Optional backup failed: ${item.description} - ${error instanceof Error ? error.message : String(error)}`, 'warning');
           } else {
             throw error;
           }
@@ -124,7 +129,7 @@ class ProductionBackup {
       this.log(`Files backup completed: ${(totalSize / 1024 / 1024).toFixed(2)} MB`, 'success');
       return { path: filesBackupPath, size: totalSize };
     } catch (error) {
-      this.log(`Files backup failed: ${error.message}`, 'error');
+      this.log(`Files backup failed: ${(error as Error).message}`, 'error');
       throw error;
     }
   }
@@ -160,6 +165,14 @@ class ProductionBackup {
     }
   }
 
+  /**
+   * @param {string} filePath
+   * @returns {Promise<string>}
+   */
+  /**
+   * @param {string} filePath
+   * @returns {Promise<string>}
+   */
   async calculateChecksum(filePath) {
     const crypto = require('crypto');
     const fileBuffer = fs.readFileSync(filePath);
@@ -168,17 +181,32 @@ class ProductionBackup {
     return hashSum.digest('hex');
   }
 
+  /**
+   * @param {string} source
+   * @param {string} target
+   */
+  /**
+   * @param {string} source
+   * @param {string} target
+   */
   async copyDirectory(source, target) {
     const { cp } = fs.promises;
     await cp(source, target, { recursive: true });
   }
 
+  /**
+   * @param {string} dirPath
+   * @returns {number}
+   */
+  /**
+   * @param {string} dirPath
+   * @returns {number}
+   */
   getDirectorySize(dirPath) {
     let totalSize = 0;
 
     function calculateSize(itemPath) {
       const stats = fs.statSync(itemPath);
-
       if (stats.isDirectory()) {
         const items = fs.readdirSync(itemPath);
         items.forEach((item) => {
@@ -193,6 +221,14 @@ class ProductionBackup {
     return totalSize;
   }
 
+  /**
+   * @param {string} filePath
+   * @returns {number}
+   */
+  /**
+   * @param {string} filePath
+   * @returns {number}
+   */
   getFileSize(filePath) {
     try {
       return fs.statSync(filePath).size;
@@ -201,6 +237,10 @@ class ProductionBackup {
     }
   }
 
+  /**
+   * @param {any} backupInfo
+   * @returns {Promise<object>}
+   */
   async createManifest(backupInfo) {
     const manifest = {
       id: this.backupName,
@@ -229,6 +269,15 @@ class ProductionBackup {
       // Create backup directory
       fs.mkdirSync(this.backupPath, { recursive: true });
 
+      /** @type {{components: {type: string; path: string; size: number}[], totalSize: number, archivePath?: string, checksum?: string, compressedSize?: number}} */
+      const backupInfo = {
+        components: [],
+        totalSize: 0,
+      };
+
+      // Backup database
+      const dbBackup = await this.backupDatabase();
+      /** @type {{components: {type: string; path: string; size: number}[], totalSize: number, archivePath?: string, checksum?: string, compressedSize?: number}} */
       const backupInfo = {
         components: [],
         totalSize: 0,
@@ -276,7 +325,7 @@ class ProductionBackup {
         manifest,
       };
     } catch (error) {
-      this.log(`❌ Production backup failed: ${error.message}`, 'error');
+      this.log(`❌ Production backup failed: ${error instanceof Error ? error.message : String(error)}`, 'error');
 
       // Cleanup on failure
       try {
@@ -284,7 +333,7 @@ class ProductionBackup {
           fs.rmSync(this.backupPath, { recursive: true, force: true });
         }
       } catch (cleanupError) {
-        this.log(`Failed to cleanup failed backup: ${cleanupError.message}`, 'warning');
+        this.log(`Failed to cleanup failed backup: ${(cleanupError as Error).message}`, 'warning');
       }
 
       throw error;
@@ -295,6 +344,6 @@ class ProductionBackup {
 // Execute backup
 const backup = new ProductionBackup();
 backup.run().catch((error) => {
-  logger.error('Fatal error:', error);
+  error('Fatal error:', error as Error);
   process.exit(1);
 });
