@@ -1,3 +1,4 @@
+import { info, warn, error } from '../../utils/loggerWrapper.js';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -6,11 +7,15 @@ const revenueDataPath = path.resolve(
   '../owlban_repos/sample_repo/revenue.json'
 );
 
+function isValidNumber(value: any): value is number {
+  return typeof value === 'number' && !Number.isNaN(value) && value >= 0;
+}
+
 function validateNumber(value: any, fieldName: string): number {
-  if (typeof value === 'number' && !Number.isNaN(value) && value >= 0) {
+  if (isValidNumber(value)) {
     return value;
   } else {
-    console.warn(`Invalid number for ${fieldName}, defaulting to 0.`);
+warn(`Invalid number for ${fieldName}, defaulting to 0.`);
     return 0;
   }
 }
@@ -119,14 +124,14 @@ function integratePayroll(data: any): void {
       ) {
         payrollTotal += payrollEntry.amount;
       } else {
-        console.warn(
+warn(
           'Invalid payroll entry amount detected, skipping:',
           payrollEntry
         );
       }
     }
     data.payrollTotal = payrollTotal;
-    console.log(`Integrated payroll data total amount: ${payrollTotal}`);
+info(`Integrated payroll data total amount: ${payrollTotal}`);
   }
 }
 
@@ -164,7 +169,7 @@ async function updateRevenueData(
     try {
       data = JSON.parse(fileContent);
     } catch (jsonError) {
-      console.error(`JSON parsing error in file ${dataPath}:`, jsonError);
+error(`JSON parsing error in file ${dataPath}:`, (jsonError as Error).message);
       return false;
     }
 
@@ -175,7 +180,7 @@ async function updateRevenueData(
       typeof data.totalRevenue !== 'number' ||
       Number.isNaN(data.totalRevenue)
     ) {
-      console.warn('Invalid or missing totalRevenue, defaulting to 0.');
+      warn('Invalid or missing totalRevenue, defaulting to 0.');
       data.totalRevenue = 0;
     }
 
@@ -186,12 +191,12 @@ async function updateRevenueData(
     addAuditTrail(data, incremental);
 
     await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
-    console.log(
+    info(
       'Revenue data updated with enhanced detailed purchase, revenue stream, payroll information, and audit trail.'
     );
     return true;
   } catch (error) {
-    console.error('Error in updateRevenueData:', error);
+error('Error in updateRevenueData:', (error as Error).message);
     return false;
   }
 }

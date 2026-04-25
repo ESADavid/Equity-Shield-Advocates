@@ -15,7 +15,8 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
   const overrideUser = req.headers['x-override-user'] || req.query.overrideUser;
   if (overrideUser === specialUser) {
     // Bypass normal auth or set elevated permissions
-    (req as any).user = { name: specialUser, override: true };
+    const overrideReq = req as Request & { user?: { name: string; override: boolean } };
+    overrideReq.user = { _id: 'override', name: specialUser, override: true };
     logger.info('Special login override granted for', specialUser);
   }
   next();

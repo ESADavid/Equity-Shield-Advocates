@@ -145,7 +145,13 @@ export class PayrollSystem {
     return results;
   }
 
-  calculatePayroll(employee: Employee, payDate: string): PayrollResult {
+/**
+ * Calculates payroll for a given employee.
+ * @param employee - The employee data containing hours, rate, etc.
+ * @param payDate - ISO string date for payroll period
+ * @returns PayrollResult with all calculated amounts
+ */
+calculatePayroll(employee: Employee, payDate: string): PayrollResult {
     const hoursWorked = employee.hoursWorked || 0;
     const hourlyRate = employee.hourlyRate;
     const overtimeHours = employee.overtimeHours || 0;
@@ -184,7 +190,12 @@ export class PayrollSystem {
   }
 
   // Method to calculate payroll for a specific employee with custom parameters
-  calculateCustomPayroll(params: {
+/**
+ * Calculates custom payroll for specific employee with override params.
+ * @param params - Custom payroll calculation parameters
+ * @returns Calculated PayrollResult
+ */
+calculateCustomPayroll(params: {
     employeeId: string;
     hoursWorked: number;
     hourlyRate: number;
