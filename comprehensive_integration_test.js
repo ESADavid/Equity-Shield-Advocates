@@ -3,6 +3,16 @@
  * Tests all API endpoints, edge cases, error handling, and integration scenarios
  */
 
+/** @typedef {string} UserId */
+/** @typedef {string} AccountId */
+/** @typedef {number} Amount */
+/** @typedef {string} AccountType */
+/** @typedef {string} Reason */
+/** @typedef {string} TestName */
+/** @typedef {Error} ErrorType */
+/** @typedef {import('./auth/login_override.js').TokenValidationResult} TokenValidationResult */
+
+
 import crypto from 'crypto';
 import {
   loginOverrideManager,
@@ -25,6 +35,12 @@ class AccountManager {
     this.transactions = new Map();
   }
 
+  /** 
+   * @param {UserId} userId 
+   * @param {AccountType} accountType 
+   * @param {Amount} [initialBalance]
+   * @returns {object}
+   */
   createAccount(userId, accountType, initialBalance = 0) {
     const accountId = `acc_${userId}_${Date.now()}`;
     const account = {
@@ -41,10 +57,18 @@ class AccountManager {
     return account;
   }
 
+  /** 
+   * @param {AccountId} accountId 
+   * @returns {object|null}
+   */
   getAccount(accountId) {
     return this.accounts.get(accountId);
   }
 
+  /** 
+   * @param {UserId} userId 
+   * @returns {object[]}
+   */
   getUserAccounts(userId) {
     return Array.from(this.accounts.values()).filter(
       (acc) => acc.userId === userId
@@ -344,7 +368,7 @@ async function testAccountManagementAPI() {
       savingsAccount.accountId,
       250.0
     );
-    if (updatedAccount && updatedAccount.balance === 1250.0) {
+    if (updatedAccount && updatedAccount.balance === 1250) {
       testResults.logPass('Balance Update API');
       console.log('   Balance updated to:', updatedAccount.balance);
     } else {
@@ -453,7 +477,7 @@ async function testAutoFinanceIntegration() {
     const updatedLoanAccount = accountManager.getAccount(
       autoLoanAccount.accountId
     );
-    if (updatedLoanAccount && updatedLoanAccount.balance === 24550.0) {
+    if (updatedLoanAccount && updatedLoanAccount.balance === 24550) {
       testResults.logPass('Account Balance After Payment');
       console.log('   Balance updated to:', updatedLoanAccount.balance);
     } else {
