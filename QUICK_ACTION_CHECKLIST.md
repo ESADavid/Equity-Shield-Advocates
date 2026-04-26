@@ -112,7 +112,7 @@ node test_server_startup_simple.cjs
 - [ ] Azure
 - [ ] Google Cloud
 
-**Decision:** ******\_\_\_******
+**Decision:** **\*\***\_\_\_**\*\***
 
 ---
 

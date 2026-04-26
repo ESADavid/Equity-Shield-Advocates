@@ -26,7 +26,8 @@ async function* walk(dir) {
 
 async function fixFile(filePath) {
   try {
-    const relativePath = './' + filePath.substring(rootDir.length + 1).replace(/\\/g, '/');
+    const relativePath =
+      './' + filePath.substring(rootDir.length + 1).replace(/\\/g, '/');
     const content = await readFile(filePath, 'utf8');
     const originalContent = content;
 
@@ -63,16 +64,16 @@ async function main() {
   logger.info(`Processed files: ${results.length}`);
   logger.info(`Import paths fixed: ${totalChanges}`);
 
-  const success = results.filter(r => r.changes > 0);
-  const errors = results.filter(r => r.error);
+  const success = results.filter((r) => r.changes > 0);
+  const errors = results.filter((r) => r.error);
 
   if (success.length > 0) {
     logger.info(`✅ Fixed ${success.length} files`);
-    success.forEach(r => logger.info(`  ✓ ${r.file} (${r.changes} changes)`));
+    success.forEach((r) => logger.info(`  ✓ ${r.file} (${r.changes} changes)`));
   }
   if (errors.length > 0) {
     logger.info(`❌ Errors: ${errors.length}`);
-    errors.forEach(r => logger.info(`  ✗ ${r.file}: ${r.error}`));
+    errors.forEach((r) => logger.info(`  ✗ ${r.file}: ${r.error}`));
   }
   if (totalChanges === 0) logger.info('ℹ️ No changes needed');
 

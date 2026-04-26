@@ -19,8 +19,8 @@ describe('Blackbox Multi-Agent API', () => {
       .send({
         prompt: 'Test Blackbox integration',
         selectedAgents: [
-          { agent: 'claude', model: 'blackboxai/anthropic/claude-sonnet-4.5' }
-        ]
+          { agent: 'claude', model: 'blackboxai/anthropic/claude-sonnet-4.5' },
+        ],
       })
       .expect(200);
 

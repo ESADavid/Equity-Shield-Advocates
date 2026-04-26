@@ -37,7 +37,7 @@ jsTsFiles.forEach((filePath) => {
       /console\.(log|warn|error|info)\s*\([^)]*\);?/g,
       (match) => {
         modified = true;
-        return `/* ${match.trim()} */ testPassed();`
+        return `/* ${match.trim()} */ testPassed();`;
       }
     );
   } else {
@@ -46,7 +46,7 @@ jsTsFiles.forEach((filePath) => {
       /console\.(log|warn|error|info|debug)\s*\([^)]*\);?/g,
       (match) => {
         modified = true;
-        return `/* ${match.trim()} */`
+        return `/* ${match.trim()} */`;
       }
     );
   }
@@ -58,4 +58,3 @@ jsTsFiles.forEach((filePath) => {
 });
 
 /* console.log('ESLint no-console fixes complete!'); */
-

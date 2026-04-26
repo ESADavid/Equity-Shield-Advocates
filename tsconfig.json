@@ -30,16 +30,6 @@
     "types": ["node", "jest"],
     "typeRoots": ["./node_modules/@types", "./types"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.jsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "coverage",
-    "*.config.js"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+  "exclude": ["node_modules", "dist", "coverage", "*.config.js"]
 }

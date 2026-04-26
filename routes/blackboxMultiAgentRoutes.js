@@ -45,7 +45,10 @@ router.post('/poll/:taskId', async (req, res) => {
   try {
     const { taskId } = req.params;
     const { pollInterval } = req.body;
-    const result = await blackboxService.pollTaskUntilComplete(taskId, pollInterval);
+    const result = await blackboxService.pollTaskUntilComplete(
+      taskId,
+      pollInterval
+    );
     res.json(result);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -64,4 +67,3 @@ router.post('/optimize', async (req, res) => {
 });
 
 export default router;
-

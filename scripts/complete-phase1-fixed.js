@@ -23,7 +23,7 @@ try {
 
   // Remove the conflicting *.js override
   const fixedConfig = eslintConfig.replace(
-    / {4}\{\n {6}files: \['\*\.js'\],\n {6}parser: 'espree',\n {6}parserOptions: \{\n {8}sourceType: 'script', \/\/ Allow require\(\) in \.js files\n {6}\},\n {6}rules: \{\n {8}'@typescript-eslint\/no-unused-vars': 'off',\n {8}'no-unused-vars': 'off',\n {6}\},\n {4}\},\n/,
+    / {4}\\{\n {6}files: \\['\\*\\.js'\\],\\n {6}parser: 'espree',\\n {6}parserOptions: \\{\\n {8}sourceType: 'script', \\/\\/ Allow require\\(\\) in \\.js files\\n {6}\\},\\n {6}rules: \\{\\n {8}'@typescript-eslint\\/no-unused-vars': 'off',\\n {8}'no-unused-vars': 'off',\\n {6}\\},\\n {4}\\},\\n/g,
     ''
   );
 
@@ -48,13 +48,14 @@ try {
   } catch (err) {
     const output = err.stdout || err.stderr || '';
     if (output.includes('Parsing error')) {
-      error('❌ ESLint parsing errors still present', err);
+      error('❌ ESLint parsing errors still present');
     } else {
-      info('✅ No parsing errors (warnings are acceptable)');
+      info('✅ No parsing errors (warnings acceptable)');
     }
   }
 } catch (err) {
-  error('❌ Error fixing ESLint configuration:', err);
+  const errorMsg = err instanceof Error ? err.message : String(err);
+  error('❌ Error fixing ESLint configuration:', errorMsg);
 }
 
 // Task #7: Validate TypeScript
@@ -65,6 +66,7 @@ try {
   execSync('tsc --noEmit', { stdio: 'inherit' });
   info('✅ TypeScript compilation validated - no errors!');
 } catch (err) {
+  const errorMsg = err instanceof Error ? err.message : String(err);
   error('❌ TypeScript compilation has errors - manual fix required');
   info('ℹ️  Run: tsc --noEmit to see errors');
 }
@@ -84,7 +86,8 @@ try {
     info('✅ Code formatted successfully!');
   }
 } catch (err) {
-  error('❌ Error running Prettier:', err);
+  const errorMsg = err instanceof Error ? err.message : String(err);
+  error('❌ Error running Prettier:', errorMsg);
   info('ℹ️  You may need to install prettier: npm install --save-dev prettier');
 }
 
@@ -97,3 +100,4 @@ info('   Run: npm run lint');
 info('   Run: tsc --noEmit');
 info('   Check: Code formatting');
 info('\nIf all checks pass, Phase 1 is 100% complete! 🎯');
+

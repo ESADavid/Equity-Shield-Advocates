@@ -7,7 +7,6 @@
 import app from './app.js';
 const PORT = process.env.PORT || 3000;
 
-
 // Resource limits for desktop
 process.env.UV_THREADPOOL_SIZE = '4';
 process.env.NODE_OPTIONS = '--max-old-space-size=1024 --optimize-for-size';

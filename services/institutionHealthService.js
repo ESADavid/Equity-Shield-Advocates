@@ -256,13 +256,11 @@ class InstitutionHealthService {
         ...this.getInstitutionHealth(id),
         preferred: true,
       })),
-      ...others
-        .slice(0, 10)
-        .map(([id, stats]) => ({
-          institutionId: id,
-          ...this.getInstitutionHealth(id),
-          preferred: false,
-        })),
+      ...others.slice(0, 10).map(([id, stats]) => ({
+        institutionId: id,
+        ...this.getInstitutionHealth(id),
+        preferred: false,
+      })),
     ];
 
     // Add recommended institutions that don't have stats yet

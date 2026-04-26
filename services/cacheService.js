@@ -75,9 +75,12 @@ class CacheService {
       });
 
       this.client.on('error', (error) => {
-        if (!this.lastErrorTime || Date.now() - this.lastErrorTime > 60000) { // Debounce 1min
+        if (!this.lastErrorTime || Date.now() - this.lastErrorTime > 60000) {
+          // Debounce 1min
           this.lastErrorTime = Date.now();
-          logger.error('Redis connection error (suppressed repeats)', { error: error.message });
+          logger.error('Redis connection error (suppressed repeats)', {
+            error: error.message,
+          });
         }
         this.isConnected = false;
         this.metrics.errors++;

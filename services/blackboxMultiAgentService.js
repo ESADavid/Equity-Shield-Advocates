@@ -12,7 +12,9 @@ const API_BASE = 'https://cloud.blackbox.ai/api/tasks';
 class BlackboxMultiAgentService {
   constructor() {
     this.apiKey = process.env.BLACKBOX_API_KEY;
-    this.repoUrl = process.env.BLACKBOX_REPO_URL || 'https://github.com/bsean/OSCAR-BROOME-REVENUE.git';
+    this.repoUrl =
+      process.env.BLACKBOX_REPO_URL ||
+      'https://github.com/bsean/OSCAR-BROOME-REVENUE.git';
     this.branch = process.env.BLACKBOX_BRANCH || 'main';
 
     if (!this.apiKey) {
@@ -22,7 +24,7 @@ class BlackboxMultiAgentService {
     this.axiosInstance = axios.create({
       baseURL: API_BASE,
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
     });
@@ -34,10 +36,13 @@ class BlackboxMultiAgentService {
    * @param {Array} selectedAgents - [{agent: 'claude', model: 'blackboxai/anthropic/claude-sonnet-4.5'}]
    * @returns {Promise} Task response with id/url
    */
-  async createMultiAgentTask(prompt, selectedAgents = [
-    { agent: 'claude', model: 'blackboxai/anthropic/claude-sonnet-4.5' },
-    { agent: 'blackbox', model: 'blackboxai/blackbox-pro' },
-  ]) {
+  async createMultiAgentTask(
+    prompt,
+    selectedAgents = [
+      { agent: 'claude', model: 'blackboxai/anthropic/claude-sonnet-4.5' },
+      { agent: 'blackbox', model: 'blackboxai/blackbox-pro' },
+    ]
+  ) {
     try {
       info(`Creating multi-agent task: ${prompt.substring(0, 100)}...`);
 
@@ -52,10 +57,10 @@ class BlackboxMultiAgentService {
 
       const response = await this.axiosInstance.post('/', payload);
       const task = response.data.task;
-      
+
       info(`✅ Multi-agent task created: ${task.id}`);
       info(`📊 URL: ${response.data.taskUrl}`);
-      
+
       return {
         success: true,
         taskId: task.id,
@@ -64,7 +69,10 @@ class BlackboxMultiAgentService {
         agents: task.selectedAgents,
       };
     } catch (err) {
-      error('❌ Multi-agent task creation failed:', err.response?.data || err.message);
+      error(
+        '❌ Multi-agent task creation failed:',
+        err.response?.data || err.message
+      );
       return { success: false, error: err.response?.data || err.message };
     }
   }
@@ -87,7 +95,7 @@ class BlackboxMultiAgentService {
 
   /**
    * Poll task until complete, compare agents
-   * @param {string} taskId 
+   * @param {string} taskId
    * @param {number} pollIntervalMs
    * @returns Final comparison
    */
@@ -109,7 +117,7 @@ class BlackboxMultiAgentService {
         return { success: false, error: `Task ${task.status}`, data: task };
       }
 
-      await new Promise(r => setTimeout(r, pollIntervalMs));
+      await new Promise((r) => setTimeout(r, pollIntervalMs));
     }
 
     return { success: false, error: 'Polling timeout' };
@@ -128,7 +136,9 @@ class BlackboxMultiAgentService {
       model: exec.model,
       status: exec.status,
       commits: exec.commits?.length || 0,
-      resultSummary: exec.result ? `${exec.result.substring(0, 200)}...` : 'No result',
+      resultSummary: exec.result
+        ? `${exec.result.substring(0, 200)}...`
+        : 'No result',
       rank: i + 1,
     }));
 
@@ -147,10 +157,11 @@ class BlackboxMultiAgentService {
   /**
    * Default optimization task for repo
    */
-  async optimizeRepo(prompt = 'Review and optimize all services for divine efficiency and performance. Focus on payroll, security, and acquisition services.') {
+  async optimizeRepo(
+    prompt = 'Review and optimize all services for divine efficiency and performance. Focus on payroll, security, and acquisition services.'
+  ) {
     return this.createMultiAgentTask(prompt);
   }
 }
 
 export default new BlackboxMultiAgentService();
-

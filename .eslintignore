@@ -1,36 +1,6 @@
-# Dependencies
 node_modules/
-.venv/
-
-# Build outputs
 dist/
 build/
 coverage/
-.next/
-
-# Separate projects that should have their own ESLint config
-GOD/
-FOUR-ERA-AI/
-David-Leeper-Jr-Revenue/
-OSCAR-BROOME-REVENUE/
-owlban_repos/
-
-# Generated files
 *.min.js
-*.bundle.js
-
-# Logs
-logs/
-*.log
-
-# Environment files
-.env
-.env.*
-
-# IDE
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
+!.eslintrc.cjs

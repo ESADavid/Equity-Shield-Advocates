@@ -15,7 +15,7 @@ function validateNumber(value: any, fieldName: string): number {
   if (isValidNumber(value)) {
     return value;
   } else {
-warn(`Invalid number for ${fieldName}, defaulting to 0.`);
+    warn(`Invalid number for ${fieldName}, defaulting to 0.`);
     return 0;
   }
 }
@@ -124,14 +124,11 @@ function integratePayroll(data: any): void {
       ) {
         payrollTotal += payrollEntry.amount;
       } else {
-warn(
-          'Invalid payroll entry amount detected, skipping:',
-          payrollEntry
-        );
+        warn('Invalid payroll entry amount detected, skipping:', payrollEntry);
       }
     }
     data.payrollTotal = payrollTotal;
-info(`Integrated payroll data total amount: ${payrollTotal}`);
+    info(`Integrated payroll data total amount: ${payrollTotal}`);
   }
 }
 
@@ -169,7 +166,10 @@ async function updateRevenueData(
     try {
       data = JSON.parse(fileContent);
     } catch (jsonError) {
-error(`JSON parsing error in file ${dataPath}:`, (jsonError as Error).message);
+      error(
+        `JSON parsing error in file ${dataPath}:`,
+        (jsonError as Error).message
+      );
       return false;
     }
 
@@ -196,7 +196,7 @@ error(`JSON parsing error in file ${dataPath}:`, (jsonError as Error).message);
     );
     return true;
   } catch (error) {
-error('Error in updateRevenueData:', (error as Error).message);
+    error('Error in updateRevenueData:', (error as Error).message);
     return false;
   }
 }

@@ -3,8 +3,8 @@ module.exports = {
     {
       name: 'oscar-broome-revenue',
       script: 'server-enhanced.js',
-instances: 2, // Safe desktop
-exec_mode: 'fork', // Safe desktop fork
+      instances: 2, // Safe desktop
+      exec_mode: 'fork', // Safe desktop fork
       autorestart: true,
       watch: false,
       max_memory_restart: '2G', // Increased memory limit
@@ -17,7 +17,7 @@ exec_mode: 'fork', // Safe desktop fork
         NODE_ENV: 'production',
         PORT: 3000,
         // Production optimizations
-UV_THREADPOOL_SIZE: 4, // Safe desktop
+        UV_THREADPOOL_SIZE: 4, // Safe desktop
         NODE_OPTIONS: '--max-old-space-size=1024', // Safe 1GB desktop
       },
       env_staging: {

@@ -10,7 +10,6 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2022,
     sourceType: 'module',
-    sourceType: 'module',
   },
   ignorePatterns: [
     '**/*.d.ts', // Ignore all TypeScript declaration files

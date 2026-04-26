@@ -137,22 +137,32 @@ function ControlDashboard({ controlStatus, onStatusUpdate }) {
             </button>
             <button
               className="action-btn ai"
-              style={{ background: 'linear-gradient(45deg, #8B5CF6, #06B6D4)', color: 'white' }}
+              style={{
+                background: 'linear-gradient(45deg, #8B5CF6, #06B6D4)',
+                color: 'white',
+              }}
               onClick={async () => {
                 try {
                   const response = await fetch('/api/multi-agent/optimize', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
-                      Authorization: 'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
+                      Authorization:
+                        'Basic ' + btoa('BSEAN4890@GMAIL.COM:TBROOME704'),
                     },
-                    body: JSON.stringify({ prompt: 'Optimize revenue systems for divine efficiency' })
+                    body: JSON.stringify({
+                      prompt: 'Optimize revenue systems for divine efficiency',
+                    }),
                   });
                   const result = await response.json();
                   if (result.success) {
-                    alert(`🤖 Blackbox AI task created: ${result.taskId}\nMonitor: ${result.taskUrl}`);
+                    alert(
+                      `🤖 Blackbox AI task created: ${result.taskId}\nMonitor: ${result.taskUrl}`
+                    );
                   } else {
-                    alert('AI task failed: ' + (result.error || 'Unknown error'));
+                    alert(
+                      'AI task failed: ' + (result.error || 'Unknown error')
+                    );
                   }
                 } catch (error) {
                   alert('AI integration error: ' + error.message);
