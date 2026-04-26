@@ -1,4 +1,4 @@
-import { info, error } from 'utils/loggerWrapper.js';
+import { info, error } from '../utils/loggerWrapper.js';
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'node:crypto';

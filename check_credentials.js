@@ -5,7 +5,7 @@
  */
 
 import { config } from 'dotenv';
-import { info } from 'utils/loggerWrapper.js';
+import { info } from './utils/loggerWrapper.js';
 
 config();
 
