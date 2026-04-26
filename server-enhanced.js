@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import dotenv from 'dotenv';
-import logger from 'utils/loggerWrapper.js';
+import logger from './utils/loggerWrapper.js';
 
 dotenv.config();
 

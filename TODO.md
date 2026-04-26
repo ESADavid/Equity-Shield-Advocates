@@ -1,21 +1,20 @@
-# TypeScript Fix TODO - Updated Progress
+# Server Startup Fix TODO
 
-## Plan Progress
-- [x] 1. Create TODO.md ✅ **DONE**
-- [ ] 2. Fix GOD/src/features/commands/commandActions.js (browser globals - needs Node.js fixes)
-- [ ] 3. Fix comprehensive_integration_test_fixed.js (6 errors)
-- [ ] 4. Fix comprehensive_payroll_test_fixed.js (5 errors)
-- [ ] 5. Fix GOD/healthcheck.js shebang (mixed require/import)
-- [x] 6. Fix GOD/jest.config.js merge conflicts (3 errors) ✅ **DONE**
-- [ ] 7. Remove shebangs from test files (~20 files)
-- [ ] 8. Fix public/sw.js template literals (5 errors)
-- [ ] 9. Fix routes/debtAcquisitionRoutes.js syntax (2 errors)
-- [ ] 10. Fix scripts/backup-production.js type assertions (4 errors)
-- [ ] 11. Fix remaining GOD/ merge conflicts (state.js, notifications.js, etc.)
-- [ ] 12. Run `npx tsc --noEmit` - verify 0 errors
-- [ ] 13. `npm run lint:fix`
-- [ ] 14. `npm audit fix`
-- [ ] 15. Complete ✅
+## Approved Plan Execution
 
-**Current Status**: 2/15 complete (13%)
-**Next Step**: Fix commandActions.js browser dependencies for Node.js
+### Step 1: Fix ESM Import in server-enhanced.js
+- [x] Replace `import logger from 'utils/loggerWrapper.js';` with `import logger from './utils/loggerWrapper.js';`
+
+### Step 2: Test Server Startup
+- [ ] Execute `node test_server_startup_simple.cjs`
+- [ ] Confirm "✅ SERVER STARTED SUCCESSFULLY!" message
+
+### Step 3: Verify Health Endpoint
+- [ ] curl http://localhost:3000/health or browser check
+
+### Step 4: Update Status
+- [ ] Mark complete and run production startup if needed
+
+Progress: 0/4 steps complete
+
+Last Updated: $(date)
