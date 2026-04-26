@@ -17,8 +17,8 @@ global.window = {
   alert: function (msg) {},
   confirm: function (msg) { return true; },
 };
-global.fetch = /* unchanged */;
-global.URL = /* unchanged */;
+global.fetch = jest.fn();
+global.URL = jest.fn();
 
 // Load payroll code (unchanged)
 const payrollCalculatorCode = fs.readFileSync(

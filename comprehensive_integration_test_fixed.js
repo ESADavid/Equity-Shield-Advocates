@@ -243,5 +243,5 @@ async function runComprehensiveTests() {
 
 runComprehensiveTests().catch(console.error);
 
-**SonarLint FIX COMPLETE - All .0 literals → integers**
+// SonarLint FIX COMPLETE - All .0 literals → integers
 
