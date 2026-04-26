@@ -30,19 +30,25 @@ const errors = [];
 for (const file of jsFiles) {
   try {
     let content = fs.readFileSync(file, 'utf8');
-    
+
     // Fix common patterns
     const fixes = [
       // Unterminated testPassed
-      [/\/\*\s*console\.log\(.+?testPassed\(\);/g, '// console.log disabled: testPassed'],
+      [
+        /\/\*\s*console\.log\(.+?testPassed\(\);/g,
+        '// console.log disabled: testPassed',
+      ],
       [/testPassed\(\);/g, '// testPassed'],
       // Arrow breaks
       [/map\(\(c\) \*\/ testPassed\(\); =>/g, 'map((c) =>'],
       [/every\(\(c\) \*\/ testPassed\(\); =>/g, 'every((c) =>'],
-      // Extra ); 
+      // Extra );
       [/\); \*\/ testPassed\(\);/g, ')'],
       // Shebang after import
-      [/import .+?\n\n#!\/usr\/bin\/env node/g, 'const logger = require("utils/loggerWrapper.js").info;'],
+      [
+        /import .+?\n\n#!\/usr\/bin\/env node/g,
+        'const logger = require("utils/loggerWrapper.js").info;',
+      ],
       // import.meta in cjs
       [/import\.meta\.url/g, '__filename'],
     ];

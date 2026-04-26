@@ -1,21 +1,18 @@
-# Syntax Error Fixes TODO
+# Syntax Fixes Progress Tracker
 
-## Overview
-Fix malformed console.log replacements causing Prettier/lint failures. Patterns: unterminated strings, extra parens, broken arrows.
+## Status: In Progress [ ] Complete
 
-## Steps
-- [ ] 1. Create scripts/fix-syntax-errors.js for global safe replacements
-- [ ] 2. performance_test.js: Fix template literals, remove import.meta check
-- [ ] 3. owlbangroup.io/test-industry-filtering.js: Fix map arrow breaks, unterminated
-- [ ] 4. public/sw.js: Escape \n in string
-- [ ] 5. scripts/backup-production.js: Remove shebang, fix logger
-- [ ] 6. routes/debtAcquisitionRoutes.js: Remove duplicate route block
-- [ ] 7. test_analytics_api.js: Fix logFail unterminated
-- [ ] 8. simple_jpmorgan_test.js: Fix unterminated quotes
-- [ ] 9. Fix remaining test_*.js via pattern or script
-- [ ] 10. `npx prettier --write .`
-- [ ] 11. `npm run lint`
-- [ ] 12. `node scripts/complete-phase1.js`
-- [ ] 13. Update this TODO
+### Step 1: Create this TODO [x]
+### Step 2: Fix HTML duplicate head/body (3 files)
+- [x] owlbangroup.io/src/frontend/index.html (fixed structure, styles need add back)
+- [ ] owlbangroup.io/src/login.html  
+- [ ] owlbangroup.io/src/reverse-mergers.html
 
-Progress: Starting step 1
+### Step 3: Fix JS broken comments (3 files)
+- [ ] owlbangroup.io/test-industry-filtering.js
+- [ ] performance_test.js
+- [ ] owlbangroup.io/src/test-azure-government-cli.js
+
+### Step 4: Search & fix remaining files [ ]
+### Step 5: Run linter validation [ ]
+### Step 6: Final verification & completion [ ]

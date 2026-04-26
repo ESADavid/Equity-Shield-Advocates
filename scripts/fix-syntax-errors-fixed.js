@@ -32,7 +32,7 @@ const errors = [];
 for (const file of jsFiles) {
   try {
     let content = readFileSync(file, 'utf8');
-    
+
     // Fix common patterns - simple regex
     const fixes = [
       [/testPassed\\(\\);/g, '// testPassed();'],
