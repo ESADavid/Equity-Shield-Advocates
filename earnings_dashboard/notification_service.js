@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import twilio from 'twilio';
-import { info, error } from 'utils/loggerWrapper.js';
+import { info, error } from '../../utils/loggerWrapper.js';
 
 // Notification service for real-time alerts
 class NotificationService {
