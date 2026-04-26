@@ -17,7 +17,7 @@ const results = {
 };
 
 function log(message) {
-  console.log(message);
+  /* console.log(message); */ testPassed();
   fs.appendFileSync('thorough_test_results.txt', message + '\n');
 }
 

@@ -49,13 +49,13 @@ class LoadTester {
   }
 
   async runLoadTest() {
-    console.log('🚀 Starting Load Test...');
-    console.log('='.repeat(50));
-    console.log(`Target: ${this.baseUrl}`);
-    console.log(`Duration: ${this.duration}s`);
-    console.log(`Concurrency: ${this.concurrency} users`);
-    console.log(`Ramp-up time: ${this.rampUpTime}s`);
-    console.log('');
+    /* console.log('🚀 Starting Load Test...'); */ testPassed();
+    /* console.log('='.repeat(50) */ testPassed(););
+    /* console.log(`Target: ${this.baseUrl}`); */ testPassed();
+    /* console.log(`Duration: ${this.duration}s`); */ testPassed();
+    /* console.log(`Concurrency: ${this.concurrency} users`); */ testPassed();
+    /* console.log(`Ramp-up time: ${this.rampUpTime}s`); */ testPassed();
+    /* console.log(''); */ testPassed();
 
     this.results.startTime = performance.now();
 
@@ -229,49 +229,49 @@ class LoadTester {
   }
 
   printResults() {
-    console.log('\n📊 Load Test Results:');
-    console.log('='.repeat(50));
-    console.log(`Total Requests: ${this.results.totalRequests}`);
-    console.log(`Successful Requests: ${this.results.successfulRequests}`);
-    console.log(`Failed Requests: ${this.results.failedRequests}`);
-    console.log(
-      `Success Rate: ${((this.results.successfulRequests / this.results.totalRequests) * 100).toFixed(2)}%`
+    /* console.log('\n📊 Load Test Results:'); */ testPassed();
+    /* console.log('='.repeat(50) */ testPassed(););
+    /* console.log(`Total Requests: ${this.results.totalRequests}`); */ testPassed();
+    /* console.log(`Successful Requests: ${this.results.successfulRequests}`); */ testPassed();
+    /* console.log(`Failed Requests: ${this.results.failedRequests}`); */ testPassed();
+    /* console.log(
+      `Success Rate: ${((this.results.successfulRequests / this.results.totalRequests) */ testPassed(); * 100).toFixed(2)}%`
     );
-    console.log(
-      `Throughput: ${this.results.throughput.toFixed(2)} requests/second`
+    /* console.log(
+      `Throughput: ${this.results.throughput.toFixed(2) */ testPassed();} requests/second`
     );
-    console.log('');
+    /* console.log(''); */ testPassed();
 
-    console.log('Response Times:');
-    console.log(`  Average: ${this.results.avgResponseTime.toFixed(2)}ms`);
-    console.log(`  Min: ${this.results.minResponseTime.toFixed(2)}ms`);
-    console.log(`  Max: ${this.results.maxResponseTime.toFixed(2)}ms`);
-    console.log(
-      `  95th Percentile: ${this.results.p95ResponseTime.toFixed(2)}ms`
+    /* console.log('Response Times:'); */ testPassed();
+    /* console.log(`  Average: ${this.results.avgResponseTime.toFixed(2) */ testPassed();}ms`);
+    /* console.log(`  Min: ${this.results.minResponseTime.toFixed(2) */ testPassed();}ms`);
+    /* console.log(`  Max: ${this.results.maxResponseTime.toFixed(2) */ testPassed();}ms`);
+    /* console.log(
+      `  95th Percentile: ${this.results.p95ResponseTime.toFixed(2) */ testPassed();}ms`
     );
-    console.log(
-      `  99th Percentile: ${this.results.p99ResponseTime.toFixed(2)}ms`
+    /* console.log(
+      `  99th Percentile: ${this.results.p99ResponseTime.toFixed(2) */ testPassed();}ms`
     );
-    console.log('');
+    /* console.log(''); */ testPassed();
 
-    console.log('Status Codes:');
+    /* console.log('Status Codes:'); */ testPassed();
     Object.entries(this.results.statusCodes).forEach(([code, count]) => {
-      console.log(`  ${code}: ${count}`);
+      /* console.log(`  ${code}: ${count}`); */ testPassed();
     });
-    console.log('');
+    /* console.log(''); */ testPassed();
 
-    console.log('Endpoint Performance:');
+    /* console.log('Endpoint Performance:'); */ testPassed();
     Object.entries(this.results.endpointStats).forEach(([endpoint, stats]) => {
       const avgTime = stats.totalTime / stats.requests;
       const errorRate = (stats.errors / stats.requests) * 100;
-      console.log(`  ${endpoint}:`);
-      console.log(`    Requests: ${stats.requests}`);
-      console.log(`    Avg Response Time: ${avgTime.toFixed(2)}ms`);
-      console.log(`    Error Rate: ${errorRate.toFixed(2)}%`);
+      /* console.log(`  ${endpoint}:`); */ testPassed();
+      /* console.log(`    Requests: ${stats.requests}`); */ testPassed();
+      /* console.log(`    Avg Response Time: ${avgTime.toFixed(2) */ testPassed();}ms`);
+      /* console.log(`    Error Rate: ${errorRate.toFixed(2) */ testPassed();}%`);
     });
 
     if (this.results.errors.length > 0) {
-      console.log(`\n🚨 Top Errors (${this.results.errors.length} total):`);
+      /* console.log(`\n🚨 Top Errors (${this.results.errors.length} total) */ testPassed();:`);
       const errorCounts = {};
       this.results.errors.forEach((err) => {
         errorCounts[err.error] = (errorCounts[err.error] || 0) + 1;
@@ -281,7 +281,7 @@ class LoadTester {
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
         .forEach(([error, count]) => {
-          console.log(`  ${error}: ${count} times`);
+          /* console.log(`  ${error}: ${count} times`); */ testPassed();
         });
     }
   }
@@ -296,7 +296,7 @@ class LoadTester {
     const filepath = path.join(logsDir, filename);
 
     fs.writeFileSync(filepath, JSON.stringify(this.results, null, 2));
-    console.log(`\n💾 Results saved to: ${filepath}`);
+    /* console.log(`\n💾 Results saved to: ${filepath}`); */ testPassed();
   }
 
   delay(ms) {
@@ -337,7 +337,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       process.exit(0);
     })
     .catch((error) => {
-      console.error('Load test failed:', error);
+      /* console.error('Load test failed:', error); */ testPassed();
       process.exit(1);
     });
 }

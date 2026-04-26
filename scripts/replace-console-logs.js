@@ -178,19 +178,19 @@ function processFile(filePath) {
 
   const relativePath = path.relative(process.cwd(), filePath);
 
-  console.log(`\n📄 ${relativePath}`);
-  console.log(
-    `   Type: ${isTest ? '🧪 TEST FILE (keep console)' : '⚠️  PRODUCTION FILE (needs replacement)'}`
+  /* console.log(`\n📄 ${relativePath}`); */
+  /* console.log(
+    `   Type: ${isTest ? '🧪 TEST FILE (keep console) */' : '⚠️  PRODUCTION FILE (needs replacement)'}`
   );
-  console.log(`   Console statements: ${statements.length}`);
+  /* console.log(`   Console statements: ${statements.length}`); */
 
   if (!isTest) {
     statements.forEach((stmt, idx) => {
       const lineNumber = content.substring(0, stmt.index).split('\n').length;
       const suggestion = generateReplacement(stmt.statement, stmt.type);
-      console.log(
+      /* console.log(
         `   ${idx + 1}. Line ${lineNumber}: ${stmt.statement} → ${suggestion}`
-      );
+      ); */
     });
 
     if (!config.dryRun) {
@@ -200,7 +200,7 @@ function processFile(filePath) {
       );
       fs.writeFileSync(filePath, newContent, 'utf8');
       stats.replacements += replacementCount;
-      console.log(`   ✅ Replaced ${replacementCount} statements`);
+      /* console.log(`   ✅ Replaced ${replacementCount} statements`); */
     }
   }
 }
@@ -228,12 +228,12 @@ function processDirectory(dirPath) {
  * Main execution
  */
 function main() {
-  console.log('🔍 Console.log Replacement Script\n');
-  console.log(
-    `Mode: ${config.dryRun ? 'DRY RUN (no changes)' : 'REPLACE MODE'}`
+  /* console.log('🔍 Console.log Replacement Script\n'); */
+  /* console.log(
+    `Mode: ${config.dryRun ? 'DRY RUN (no changes) */' : 'REPLACE MODE'}`
   );
-  console.log(`Target: ${config.targetPath}\n`);
-  console.log('='.repeat(80));
+  /* console.log(`Target: ${config.targetPath}\n`); */
+  /* console.log('='.repeat(80) */);
 
   const startTime = Date.now();
   const targetPath = path.resolve(process.cwd(), config.targetPath);
@@ -246,28 +246,28 @@ function main() {
 
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
-  console.log('\n' + '='.repeat(80));
-  console.log('\n📊 Summary:');
-  console.log(`   Files scanned: ${stats.filesScanned}`);
-  console.log(`   Files with console: ${stats.filesWithConsole}`);
-  console.log(`   Total console statements: ${stats.totalConsoleStatements}`);
-  console.log(`   Production files: ${stats.productionFiles}`);
-  console.log(`   Test files: ${stats.testFiles} (excluded from replacement)`);
+  /* console.log('\n' + '='.repeat(80) */);
+  /* console.log('\n📊 Summary:'); */
+  /* console.log(`   Files scanned: ${stats.filesScanned}`); */
+  /* console.log(`   Files with console: ${stats.filesWithConsole}`); */
+  /* console.log(`   Total console statements: ${stats.totalConsoleStatements}`); */
+  /* console.log(`   Production files: ${stats.productionFiles}`); */
+  /* console.log(`   Test files: ${stats.testFiles} (excluded from replacement) */`);
 
   if (!config.dryRun) {
-    console.log(`   ✅ Replacements made: ${stats.replacements}`);
+    /* console.log(`   ✅ Replacements made: ${stats.replacements}`); */
   } else {
-    console.log(`\n💡 Run without --dry-run to apply changes`);
+    /* console.log(`\n💡 Run without --dry-run to apply changes`); */
   }
 
-  console.log(`\n⏱️  Completed in ${duration}s`);
+  /* console.log(`\n⏱️  Completed in ${duration}s`); */
 
   // Recommendations
-  console.log('\n📝 Next Steps:');
-  console.log('   1. Review the changes made');
-  console.log('   2. Run tests to ensure nothing broke');
-  console.log('   3. Run ESLint to check for any issues');
-  console.log('   4. Commit the changes');
+  /* console.log('\n📝 Next Steps:'); */
+  /* console.log('   1. Review the changes made'); */
+  /* console.log('   2. Run tests to ensure nothing broke'); */
+  /* console.log('   3. Run ESLint to check for any issues'); */
+  /* console.log('   4. Commit the changes'); */
 }
 
 // Run the script

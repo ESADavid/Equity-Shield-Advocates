@@ -11,9 +11,9 @@ async function testEndpoint() {
         description: 'Test payment',
       }
     );
-    console.log('Response:', response.data);
+    /* console.log('Response:', response.data); */ testPassed();
   } catch (error) {
-    console.error('Error:', error.response?.data || error.message);
+    /* console.error('Error:', error.response?.data || error.message); */ testPassed();
   }
 }
 

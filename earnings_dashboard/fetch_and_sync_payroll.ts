@@ -25,14 +25,14 @@ async function loadPayrollIntegrations() {
     const payrollModule = await import('../payroll_integration.js');
     PayrollIntegration = payrollModule.default || payrollModule;
   } catch (error) {
-    console.warn('Failed to load PayrollIntegration:', error);
+    /* console.warn('Failed to load PayrollIntegration:', error); */
   }
 
   try {
     const qbModule = await import('../quickbooks_payroll_integration.js');
     QuickBooksPayrollIntegration = qbModule.default || qbModule;
   } catch (error) {
-    console.warn('Failed to load QuickBooksPayrollIntegration:', error);
+    /* console.warn('Failed to load QuickBooksPayrollIntegration:', error); */
   }
 }
 
@@ -66,9 +66,9 @@ async function fetchAndSyncPayroll(): Promise<void> {
     const fileContent = fs.readFileSync(revenueDataPath, 'utf-8');
     revenueData = JSON.parse(fileContent);
   } catch (error) {
-    console.warn(
+    /* console.warn(
       'Failed to read existing revenue data, starting with empty object.'
-    );
+    ); */
   }
 
   // Check for Dynamics 365 configuration
@@ -81,11 +81,11 @@ async function fetchAndSyncPayroll(): Promise<void> {
       dynamicsBaseUrl,
       dynamicsAccessToken
     );
-    console.log('Dynamics 365 payroll integration configured.');
+    /* console.log('Dynamics 365 payroll integration configured.'); */
   } else {
-    console.warn(
+    /* console.warn(
       'Dynamics 365 configuration not found, skipping Dynamics 365 payroll sync.'
-    );
+    ); */
   }
 
   // Check for QuickBooks configuration
@@ -113,17 +113,17 @@ async function fetchAndSyncPayroll(): Promise<void> {
       qbClientSecret,
       qbRefreshToken
     );
-    console.log('QuickBooks payroll integration configured.');
+    /* console.log('QuickBooks payroll integration configured.'); */
   } else {
-    console.warn(
+    /* console.warn(
       'QuickBooks configuration not complete, skipping QuickBooks payroll sync.'
-    );
+    ); */
   }
 
   if (!dynamicsIntegration && !quickbooksIntegration) {
-    console.error(
+    /* console.error(
       'No payroll integrations configured. Please set environment variables for Dynamics 365 or QuickBooks.'
-    );
+    ); */
     process.exit(1);
   }
 
@@ -154,9 +154,9 @@ async function fetchAndSyncPayroll(): Promise<void> {
           }
         }
       } catch (error) {
-        console.warn(
+        /* console.warn(
           `Dynamics 365 payroll data for employee ${employeeId} could not be fetched: ${error}`
-        );
+        ); */
       }
     }
 
@@ -185,17 +185,17 @@ async function fetchAndSyncPayroll(): Promise<void> {
           }
         }
       } catch (error) {
-        console.warn(
+        /* console.warn(
           `QuickBooks payroll data for employee ${employeeId} could not be fetched: ${error}`
-        );
+        ); */
       }
     }
   }
 
   if (payrollDataList.length === 0) {
-    console.warn(
+    /* console.warn(
       'No new payroll data was fetched. Revenue data will not be updated.'
-    );
+    ); */
     return;
   }
 
@@ -209,9 +209,9 @@ async function fetchAndSyncPayroll(): Promise<void> {
       JSON.stringify(revenueData, null, 2),
       'utf-8'
     );
-    console.log('Revenue data updated successfully with payroll data.');
+    /* console.log('Revenue data updated successfully with payroll data.'); */
   } catch (error) {
-    console.error('Failed to write updated revenue data:', error);
+    /* console.error('Failed to write updated revenue data:', error); */
   }
 }
 

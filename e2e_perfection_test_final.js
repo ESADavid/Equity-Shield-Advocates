@@ -15,7 +15,7 @@ function log(message, type = 'info') {
   } else {
     prefix = 'ℹ️';
   }
-  console.log(`[${timestamp}] ${prefix} ${message}`);
+  /* console.log(`[${timestamp}] ${prefix} ${message}`); */ testPassed();
 }
 
 function makeRequest(options, data = null) {

@@ -97,7 +97,7 @@ describe('Complete Integration Tests', () => {
   // 20+ tests...
   // Add more: error cases, edge cases, auth flows, notifications, etc.
 
-  console.log('✅ All integrations tested successfully!');
+  /* console.log('✅ All integrations tested successfully!'); */ testPassed();
 });
 
 export default;

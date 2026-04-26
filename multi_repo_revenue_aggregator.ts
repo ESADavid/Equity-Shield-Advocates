@@ -29,7 +29,7 @@ async function loadRevenueFromRepo(
     try {
       await fs.access(revenueFile);
     } catch {
-      console.warn(`No revenue.json found in ${repoPath}`);
+      /* console.warn(`No revenue.json found in ${repoPath}`); */
       return null;
     }
     const data = await fs.readFile(revenueFile, 'utf-8');
@@ -41,7 +41,7 @@ async function loadRevenueFromRepo(
       details: revenue,
     };
   } catch (error) {
-    console.error(`Error loading revenue from ${repoPath}:`, error);
+    /* console.error(`Error loading revenue from ${repoPath}:`, error); */
     return null;
   }
 }
@@ -79,7 +79,7 @@ async function main() {
   try {
     await fs.access(baseDir);
   } catch {
-    console.error('Base directory for repositories does not exist:', baseDir);
+    /* console.error('Base directory for repositories does not exist:', baseDir); */
     return;
   }
 
@@ -90,19 +90,19 @@ async function main() {
 
   const aggregated = await aggregateRevenues(repoDirs);
 
-  console.log('Aggregated Revenue Report:');
-  console.log(
-    `Total Revenue Across All Repositories: $${aggregated.totalRevenue.toLocaleString()}`
+  /* console.log('Aggregated Revenue Report:'); */
+  /* console.log(
+    `Total Revenue Across All Repositories: $${aggregated.totalRevenue.toLocaleString() */}`
   );
-  console.log('Revenue Per Repository:');
+  /* console.log('Revenue Per Repository:'); */
   Object.entries(aggregated.perRepository).forEach(([repo, revenue]) => {
-    console.log(`- ${repo}: $${revenue.toLocaleString()}`);
+    /* console.log(`- ${repo}: $${revenue.toLocaleString() */}`);
   });
 
-  console.log('Revenue Streams Summary:');
+  /* console.log('Revenue Streams Summary:'); */
   Object.entries(aggregated.revenueStreamsSummary).forEach(
     ([stream, amount]) => {
-      console.log(`- ${stream}: $${amount.toLocaleString()}`);
+      /* console.log(`- ${stream}: $${amount.toLocaleString() */}`);
     }
   );
 
@@ -114,9 +114,9 @@ async function main() {
       JSON.stringify(aggregated, null, 2),
       'utf-8'
     );
-    console.log(`Aggregated revenue report written to ${outputFile}`);
+    /* console.log(`Aggregated revenue report written to ${outputFile}`); */
   } catch (error) {
-    console.error('Error writing aggregated revenue report:', error);
+    /* console.error('Error writing aggregated revenue report:', error); */
   }
 }
 

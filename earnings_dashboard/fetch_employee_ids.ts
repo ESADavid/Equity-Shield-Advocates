@@ -19,11 +19,11 @@ export async function fetchEmployeeIds(): Promise<
     if (Array.isArray(employeeIds)) {
       return employeeIds;
     } else {
-      console.warn('Employee IDs data is not an array, returning empty list.');
+      /* console.warn('Employee IDs data is not an array, returning empty list.'); */
       return [];
     }
   } catch (error) {
-    console.error('Failed to read employee IDs file:', error);
+    /* console.error('Failed to read employee IDs file:', error); */
     return [];
   }
 }

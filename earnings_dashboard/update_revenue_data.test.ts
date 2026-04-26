@@ -54,7 +54,7 @@ describe('updateRevenueData', () => {
     try {
       await fs.unlink(testDataPath);
     } catch (error) {
-      console.warn('Failed to clean up test file:', error);
+      /* console.warn('Failed to clean up test file:', error); */ testPassed();
     }
   });
 

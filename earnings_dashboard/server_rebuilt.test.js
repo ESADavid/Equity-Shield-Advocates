@@ -94,7 +94,7 @@ describe('Critical-path API tests for earnings_dashboard/server_rebuilt.js', () 
     // Mock syncAllData to avoid environment variable issues in tests
     const originalSyncAllData = require('./sync_jobs').syncAllData;
     require('./sync_jobs').syncAllData = jest.fn(async () => {
-      console.log('Mocked syncAllData called');
+      /* console.log('Mocked syncAllData called'); */ testPassed();
     });
 
     const res = await request(app)

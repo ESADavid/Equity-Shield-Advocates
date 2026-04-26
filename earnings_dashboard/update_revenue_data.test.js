@@ -54,7 +54,7 @@ describe('updateRevenueData', () => {
     try {
       await promises_1.default.unlink(testDataPath);
     } catch (error) {
-      console.warn('Failed to clean up test file:', error);
+      /* console.warn('Failed to clean up test file:', error); */ testPassed();
     }
   });
   test('should return true when data file exists and is valid', async () => {

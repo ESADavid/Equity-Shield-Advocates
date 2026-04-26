@@ -5,17 +5,17 @@ import cron from 'node-cron';
 
 export async function syncAllData(): Promise<void> {
   try {
-    console.log('Starting full data synchronization...');
+    /* console.log('Starting full data synchronization...'); */
     await fetchAndSyncPayroll();
     await updateRevenueData();
-    console.log('Full data synchronization completed successfully.');
+    /* console.log('Full data synchronization completed successfully.'); */
   } catch (error) {
-    console.error('Error during full data synchronization:', error);
+    /* console.error('Error during full data synchronization:', error); */
   }
 }
 
 // Scheduled daily sync at 2:00 AM
 cron.schedule('0 2 * * *', () => {
-  console.log('Running scheduled daily data synchronization...');
+  /* console.log('Running scheduled daily data synchronization...'); */
   syncAllData();
 });

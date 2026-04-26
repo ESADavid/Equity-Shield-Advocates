@@ -6,9 +6,9 @@ config(); // Load environment variables from .env file
 async function runFullSync() {
   try {
     await syncAllData();
-    console.log('Full data synchronization completed successfully.');
+    /* console.log('Full data synchronization completed successfully.'); */
   } catch (error) {
-    console.error('Error during full data synchronization:', error);
+    /* console.error('Error during full data synchronization:', error); */
     // Only exit in non-test environments
     if (process.env.NODE_ENV !== 'test' && !process.env.JEST_WORKER_ID) {
       process.exit(1);

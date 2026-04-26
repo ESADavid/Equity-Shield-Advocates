@@ -45,9 +45,9 @@ class PayrollIntegration {
         return await fn();
       } catch (error) {
         lastError = error;
-        console.warn(
+        /* console.warn(
           `Attempt ${attempt} failed: ${error}. Retrying in ${delayMs}ms...`
-        );
+        ); */
         await new Promise((resolve) => setTimeout(resolve, delayMs));
       }
     }
@@ -62,7 +62,7 @@ class PayrollIntegration {
       if (!employee.accountNumber || !employee.routingNumber) {
         const message =
           'Missing bank account or routing number for direct deposit';
-        console.error(message);
+        /* console.error(message); */
         return { success: false, message };
       }
 
@@ -86,7 +86,7 @@ class PayrollIntegration {
       };
     } catch (error) {
       // Improved error handling with detailed logging
-      console.error('Error updating payroll data:', error);
+      /* console.error('Error updating payroll data:', error); */
       return {
         success: false,
         message: 'Failed to update payroll data',
@@ -109,7 +109,7 @@ class PayrollIntegration {
         data: response.data,
       };
     } catch (error) {
-      console.error('Error fetching payroll data:', error);
+      /* console.error('Error fetching payroll data:', error); */
       return {
         success: false,
         message: 'Failed to fetch payroll data',
@@ -125,7 +125,7 @@ class PayrollIntegration {
     try {
       if (!employee.accountNumber || !employee.routingNumber) {
         const message = 'Missing bank account or routing number for validation';
-        console.error(message);
+        /* console.error(message); */
         return { success: false, message };
       }
       // Simulate banking API validation call
@@ -138,7 +138,7 @@ class PayrollIntegration {
       }
       return { success: true, message: 'Direct deposit details validated' };
     } catch (error) {
-      console.error('Error validating direct deposit:', error);
+      /* console.error('Error validating direct deposit:', error); */
       return {
         success: false,
         message: 'Failed to validate direct deposit',
@@ -161,7 +161,7 @@ class PayrollIntegration {
       const status = statuses[Math.floor(Math.random() * statuses.length)];
       return { success: true, status };
     } catch (error) {
-      console.error('Error fetching transaction status:', error);
+      /* console.error('Error fetching transaction status:', error); */
       return {
         success: false,
         status: 'unknown',
@@ -182,7 +182,7 @@ class PayrollIntegration {
       // For demo, assume 10 transactions reconciled
       return { success: true, reconciledCount: 10 };
     } catch (error) {
-      console.error('Error during reconciliation:', error);
+      /* console.error('Error during reconciliation:', error); */
       return {
         success: false,
         reconciledCount: 0,

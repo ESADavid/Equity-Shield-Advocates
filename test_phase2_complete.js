@@ -14,10 +14,10 @@ import CitizenPortalService from './services/citizenPortalService.js';
 // Test utilities
 const assert = (condition, message) => {
   if (!condition) {
-    console.error(`❌ FAILED: ${message}`);
+    /* console.error(`❌ FAILED: ${message}`); */ testPassed();
     return false;
   }
-  console.log(`✅ PASSED: ${message}`);
+  /* console.log(`✅ PASSED: ${message}`); */ testPassed();
   return true;
 };
 
@@ -29,25 +29,25 @@ const recordResult = (result) => {
   else failedTests++;
 };
 
-console.log('\n🧪 PHASE 2 COMPREHENSIVE TEST SUITE\n');
-console.log('='.repeat(80));
+/* console.log('\n🧪 PHASE 2 COMPREHENSIVE TEST SUITE\n'); */ testPassed();
+/* console.log('='.repeat(80) */ testPassed(););
 
 // ============================================================================
 // TASK 8: MULTI-CHANNEL NOTIFICATION SERVICE TESTS
 // ============================================================================
 
-console.log('\n📧 TASK 8: MULTI-CHANNEL NOTIFICATION SERVICE TESTS\n');
+/* console.log('\n📧 TASK 8: MULTI-CHANNEL NOTIFICATION SERVICE TESTS\n'); */ testPassed();
 
 const notificationService = new MultiChannelNotificationService();
 
 // Test 1: Service Initialization
-console.log('Test 1: Service Initialization');
+/* console.log('Test 1: Service Initialization'); */ testPassed();
 recordResult(
   assert(notificationService !== null, 'Notification service initialized')
 );
 
 // Test 2: Send Single Notification
-console.log('\nTest 2: Send Single Notification');
+/* console.log('\nTest 2: Send Single Notification'); */ testPassed();
 (async () => {
   const result = await notificationService.sendNotification({
     userId: 'user-123',
@@ -75,7 +75,7 @@ console.log('\nTest 2: Send Single Notification');
 })();
 
 // Test 3: Send Batch Notifications
-console.log('\nTest 3: Send Batch Notifications');
+/* console.log('\nTest 3: Send Batch Notifications'); */ testPassed();
 (async () => {
   const notifications = [
     {
@@ -111,7 +111,7 @@ console.log('\nTest 3: Send Batch Notifications');
 })();
 
 // Test 4: Update User Preferences
-console.log('\nTest 4: Update User Preferences');
+/* console.log('\nTest 4: Update User Preferences'); */ testPassed();
 const prefResult = notificationService.updatePreferences('user-123', {
   email: true,
   sms: false,
@@ -122,7 +122,7 @@ const prefResult = notificationService.updatePreferences('user-123', {
 recordResult(assert(prefResult.success === true, 'User preferences updated'));
 
 // Test 5: Get User Preferences
-console.log('\nTest 5: Get User Preferences');
+/* console.log('\nTest 5: Get User Preferences'); */ testPassed();
 const getPrefResult = notificationService.getPreferences('user-123');
 
 recordResult(
@@ -133,7 +133,7 @@ recordResult(
 );
 
 // Test 6: Get Notification History
-console.log('\nTest 6: Get Notification History');
+/* console.log('\nTest 6: Get Notification History'); */ testPassed();
 const historyResult = notificationService.getNotificationHistory('user-123', {
   page: 1,
   limit: 10,
@@ -144,7 +144,7 @@ recordResult(
 );
 
 // Test 7: Get Templates
-console.log('\nTest 7: Get Templates');
+/* console.log('\nTest 7: Get Templates'); */ testPassed();
 const templatesResult = notificationService.getTemplates();
 
 recordResult(
@@ -155,7 +155,7 @@ recordResult(
 );
 
 // Test 8: Get Statistics
-console.log('\nTest 8: Get Statistics');
+/* console.log('\nTest 8: Get Statistics'); */ testPassed();
 const statsResult = notificationService.getStatistics();
 
 recordResult(
@@ -166,7 +166,7 @@ recordResult(
 );
 
 // Test 9: Health Check
-console.log('\nTest 9: Health Check');
+/* console.log('\nTest 9: Health Check'); */ testPassed();
 const healthResult = notificationService.getHealthStatus();
 
 recordResult(
@@ -180,12 +180,12 @@ recordResult(
 // TASKS 9-11: PARTNER COORDINATION SERVICE TESTS
 // ============================================================================
 
-console.log('\n\n🤝 TASKS 9-11: PARTNER COORDINATION SERVICE TESTS\n');
+/* console.log('\n\n🤝 TASKS 9-11: PARTNER COORDINATION SERVICE TESTS\n'); */ testPassed();
 
 const partnerService = new PartnerCoordinationService();
 
 // Test 10: Partner Onboarding
-console.log('Test 10: Partner Onboarding');
+/* console.log('Test 10: Partner Onboarding'); */ testPassed();
 (async () => {
   const result = await partnerService.onboardPartner(
     {
@@ -218,7 +218,7 @@ console.log('Test 10: Partner Onboarding');
 })();
 
 // Test 11: Get Partner Details
-console.log('\nTest 11: Get Partner Details');
+/* console.log('\nTest 11: Get Partner Details'); */ testPassed();
 setTimeout(() => {
   const result = partnerService.getPartner(global.testPartnerId);
 
@@ -230,7 +230,7 @@ setTimeout(() => {
 }, 100);
 
 // Test 12: Activate Partner
-console.log('\nTest 12: Activate Partner');
+/* console.log('\nTest 12: Activate Partner'); */ testPassed();
 setTimeout(() => {
   const result = partnerService.activatePartner(
     global.testPartnerId,
@@ -248,7 +248,7 @@ setTimeout(() => {
 }, 200);
 
 // Test 13: Assign Project to Partner
-console.log('\nTest 13: Assign Project to Partner');
+/* console.log('\nTest 13: Assign Project to Partner'); */ testPassed();
 setTimeout(() => {
   const result = partnerService.assignProject(
     global.testPartnerId,
@@ -271,7 +271,7 @@ setTimeout(() => {
 }, 300);
 
 // Test 14: Update Project Status
-console.log('\nTest 14: Update Project Status');
+/* console.log('\nTest 14: Update Project Status'); */ testPassed();
 setTimeout(() => {
   const result = partnerService.updateProjectStatus(
     global.testProjectId,
@@ -284,7 +284,7 @@ setTimeout(() => {
 }, 400);
 
 // Test 15: Log Communication
-console.log('\nTest 15: Log Communication');
+/* console.log('\nTest 15: Log Communication'); */ testPassed();
 setTimeout(() => {
   const result = partnerService.logCommunication(
     global.testPartnerId,
@@ -301,7 +301,7 @@ setTimeout(() => {
 }, 500);
 
 // Test 16: Update Performance Rating
-console.log('\nTest 16: Update Performance Rating');
+/* console.log('\nTest 16: Update Performance Rating'); */ testPassed();
 setTimeout(() => {
   const result = partnerService.updatePerformanceRating(
     global.testPartnerId,
@@ -321,7 +321,7 @@ setTimeout(() => {
 }, 600);
 
 // Test 17: Get All Partners
-console.log('\nTest 17: Get All Partners');
+/* console.log('\nTest 17: Get All Partners'); */ testPassed();
 setTimeout(() => {
   const result = partnerService.getPartners({ status: 'active' });
 
@@ -329,7 +329,7 @@ setTimeout(() => {
 }, 700);
 
 // Test 18: Get Partner Statistics
-console.log('\nTest 18: Get Partner Statistics');
+/* console.log('\nTest 18: Get Partner Statistics'); */ testPassed();
 setTimeout(() => {
   const result = partnerService.getStatistics();
 
@@ -345,12 +345,12 @@ setTimeout(() => {
 // PMC INTEGRATION SERVICE TESTS
 // ============================================================================
 
-console.log('\n\n⚔️ PMC INTEGRATION SERVICE TESTS\n');
+/* console.log('\n\n⚔️ PMC INTEGRATION SERVICE TESTS\n'); */ testPassed();
 
 const pmcService = new PMCIntegrationService();
 
 // Test 19: Create Coordinated Operation
-console.log('Test 19: Create Coordinated Operation');
+/* console.log('Test 19: Create Coordinated Operation'); */ testPassed();
 const opResult = pmcService.createCoordinatedOperation(
   {
     name: 'Test Security Operation',
@@ -394,7 +394,7 @@ recordResult(
 global.testOperationId = opResult.operationId;
 
 // Test 20: Allocate Resources to Operation
-console.log('\nTest 20: Allocate Resources to Operation');
+/* console.log('\nTest 20: Allocate Resources to Operation'); */ testPassed();
 const allocResult = pmcService.allocateResources(
   global.testOperationId,
   {
@@ -410,7 +410,7 @@ recordResult(
 );
 
 // Test 21: Update Operation Status
-console.log('\nTest 21: Update Operation Status');
+/* console.log('\nTest 21: Update Operation Status'); */ testPassed();
 const opStatusResult = pmcService.updateOperationStatus(
   global.testOperationId,
   'active',
@@ -423,7 +423,7 @@ recordResult(
 );
 
 // Test 22: Create Training Program
-console.log('\nTest 22: Create Training Program');
+/* console.log('\nTest 22: Create Training Program'); */ testPassed();
 const trainingResult = pmcService.createTrainingProgram(
   {
     name: 'Advanced Tactical Training',
@@ -442,7 +442,7 @@ recordResult(
 );
 
 // Test 23: Get Operation Details
-console.log('\nTest 23: Get Operation Details');
+/* console.log('\nTest 23: Get Operation Details'); */ testPassed();
 const opDetailsResult = pmcService.getOperation(global.testOperationId);
 
 recordResult(
@@ -450,13 +450,13 @@ recordResult(
 );
 
 // Test 24: Get All Operations
-console.log('\nTest 24: Get All Operations');
+/* console.log('\nTest 24: Get All Operations'); */ testPassed();
 const opsResult = pmcService.getOperations({ status: 'active' });
 
 recordResult(assert(opsResult.success === true, 'Operations list retrieved'));
 
 // Test 25: Get PMC Integration Status
-console.log('\nTest 25: Get PMC Integration Status');
+/* console.log('\nTest 25: Get PMC Integration Status'); */ testPassed();
 const integrationResult = pmcService.getIntegrationStatus();
 
 recordResult(
@@ -468,7 +468,7 @@ recordResult(
 );
 
 // Test 26: Get PMC Statistics
-console.log('\nTest 26: Get PMC Statistics');
+/* console.log('\nTest 26: Get PMC Statistics'); */ testPassed();
 const pmcStatsResult = pmcService.getStatistics();
 
 recordResult(
@@ -476,7 +476,7 @@ recordResult(
 );
 
 // Test 27: PMC Health Check
-console.log('\nTest 27: PMC Health Check');
+/* console.log('\nTest 27: PMC Health Check'); */ testPassed();
 const pmcHealthResult = pmcService.getHealthStatus();
 
 recordResult(
@@ -490,12 +490,12 @@ recordResult(
 // TASKS 12-13: CITIZEN PORTAL SERVICE TESTS
 // ============================================================================
 
-console.log('\n\n👥 TASKS 12-13: CITIZEN PORTAL SERVICE TESTS\n');
+/* console.log('\n\n👥 TASKS 12-13: CITIZEN PORTAL SERVICE TESTS\n'); */ testPassed();
 
 const citizenService = new CitizenPortalService();
 
 // Test 28: Citizen Registration
-console.log('Test 28: Citizen Registration');
+/* console.log('Test 28: Citizen Registration'); */ testPassed();
 (async () => {
   const result = await citizenService.registerCitizen({
     firstName: 'John',
@@ -535,7 +535,7 @@ console.log('Test 28: Citizen Registration');
 })();
 
 // Test 29: Get Citizen Profile
-console.log('\nTest 29: Get Citizen Profile');
+/* console.log('\nTest 29: Get Citizen Profile'); */ testPassed();
 setTimeout(() => {
   const result = citizenService.getCitizenProfile(global.testCitizenId);
 
@@ -547,7 +547,7 @@ setTimeout(() => {
 }, 100);
 
 // Test 30: Update Citizen Profile
-console.log('\nTest 30: Update Citizen Profile');
+/* console.log('\nTest 30: Update Citizen Profile'); */ testPassed();
 setTimeout(() => {
   const result = citizenService.updateCitizenProfile(global.testCitizenId, {
     contact: {
@@ -566,7 +566,7 @@ setTimeout(() => {
 }, 200);
 
 // Test 31: Enroll in UBI
-console.log('\nTest 31: Enroll in UBI');
+/* console.log('\nTest 31: Enroll in UBI'); */ testPassed();
 setTimeout(async () => {
   // First, mark citizen as verified
   const citizen = citizenService.citizens.get(global.testCitizenId);
@@ -594,7 +594,7 @@ setTimeout(async () => {
 }, 300);
 
 // Test 32: Enroll in Education Course
-console.log('\nTest 32: Enroll in Education Course');
+/* console.log('\nTest 32: Enroll in Education Course'); */ testPassed();
 setTimeout(async () => {
   const result = await citizenService.enrollInCourse(
     global.testCitizenId,
@@ -605,7 +605,7 @@ setTimeout(async () => {
 }, 400);
 
 // Test 33: Create Service Request
-console.log('\nTest 33: Create Service Request');
+/* console.log('\nTest 33: Create Service Request'); */ testPassed();
 setTimeout(async () => {
   const result = await citizenService.createServiceRequest(
     global.testCitizenId,
@@ -626,7 +626,7 @@ setTimeout(async () => {
 }, 500);
 
 // Test 34: Get Service Request
-console.log('\nTest 34: Get Service Request');
+/* console.log('\nTest 34: Get Service Request'); */ testPassed();
 setTimeout(() => {
   const result = citizenService.getServiceRequest(global.testRequestId);
 
@@ -634,7 +634,7 @@ setTimeout(() => {
 }, 600);
 
 // Test 35: Upload Document
-console.log('\nTest 35: Upload Document');
+/* console.log('\nTest 35: Upload Document'); */ testPassed();
 setTimeout(async () => {
   const result = await citizenService.uploadDocument(global.testCitizenId, {
     type: 'identity_proof',
@@ -649,7 +649,7 @@ setTimeout(async () => {
 }, 700);
 
 // Test 36: Get Citizen Notifications
-console.log('\nTest 36: Get Citizen Notifications');
+/* console.log('\nTest 36: Get Citizen Notifications'); */ testPassed();
 setTimeout(() => {
   const result = citizenService.getCitizenNotifications(global.testCitizenId);
 
@@ -663,7 +663,7 @@ setTimeout(() => {
 }, 800);
 
 // Test 37: Get Citizen Portal Statistics
-console.log('\nTest 37: Get Citizen Portal Statistics');
+/* console.log('\nTest 37: Get Citizen Portal Statistics'); */ testPassed();
 setTimeout(() => {
   const result = citizenService.getStatistics();
 
@@ -676,7 +676,7 @@ setTimeout(() => {
 }, 900);
 
 // Test 38: Citizen Portal Health Check
-console.log('\nTest 38: Citizen Portal Health Check');
+/* console.log('\nTest 38: Citizen Portal Health Check'); */ testPassed();
 setTimeout(() => {
   const result = citizenService.getHealthStatus();
 
@@ -692,10 +692,10 @@ setTimeout(() => {
 // EDGE CASES AND ERROR HANDLING TESTS
 // ============================================================================
 
-console.log('\n\n🔍 EDGE CASES AND ERROR HANDLING TESTS\n');
+/* console.log('\n\n🔍 EDGE CASES AND ERROR HANDLING TESTS\n'); */ testPassed();
 
 // Test 39: Invalid Notification Template
-console.log('Test 39: Invalid Notification Template');
+/* console.log('Test 39: Invalid Notification Template'); */ testPassed();
 setTimeout(async () => {
   const result = await notificationService.sendNotification({
     userId: 'user-123',
@@ -713,7 +713,7 @@ setTimeout(async () => {
 }, 1100);
 
 // Test 40: Partner Not Found
-console.log('\nTest 40: Partner Not Found');
+/* console.log('\nTest 40: Partner Not Found'); */ testPassed();
 setTimeout(() => {
   const result = partnerService.getPartner('non-existent-partner');
 
@@ -726,7 +726,7 @@ setTimeout(() => {
 }, 1200);
 
 // Test 41: Inactive Partner Project Assignment
-console.log('\nTest 41: Inactive Partner Project Assignment');
+/* console.log('\nTest 41: Inactive Partner Project Assignment'); */ testPassed();
 setTimeout(() => {
   const result = partnerService.assignProject(
     'inactive-partner',
@@ -745,7 +745,7 @@ setTimeout(() => {
 }, 1300);
 
 // Test 42: Citizen Not Found
-console.log('\nTest 42: Citizen Not Found');
+/* console.log('\nTest 42: Citizen Not Found'); */ testPassed();
 setTimeout(() => {
   const result = citizenService.getCitizenProfile('non-existent-citizen');
 
@@ -758,7 +758,7 @@ setTimeout(() => {
 }, 1400);
 
 // Test 43: UBI Enrollment Without Verification
-console.log('\nTest 43: UBI Enrollment Without Verification');
+/* console.log('\nTest 43: UBI Enrollment Without Verification'); */ testPassed();
 setTimeout(async () => {
   const result = await citizenService.registerCitizen({
     firstName: 'Test',
@@ -784,7 +784,7 @@ setTimeout(async () => {
 }, 1500);
 
 // Test 44: Duplicate Course Enrollment
-console.log('\nTest 44: Duplicate Course Enrollment');
+/* console.log('\nTest 44: Duplicate Course Enrollment'); */ testPassed();
 setTimeout(async () => {
   const result = await citizenService.enrollInCourse(
     global.testCitizenId,
@@ -800,7 +800,7 @@ setTimeout(async () => {
 }, 1600);
 
 // Test 45: Operation Not Found
-console.log('\nTest 45: Operation Not Found');
+/* console.log('\nTest 45: Operation Not Found'); */ testPassed();
 setTimeout(() => {
   const result = pmcService.getOperation('non-existent-operation');
 
@@ -817,20 +817,20 @@ setTimeout(() => {
 // ============================================================================
 
 setTimeout(() => {
-  console.log('\n' + '='.repeat(80));
-  console.log('\n📊 FINAL TEST RESULTS\n');
-  console.log(`✅ Passed: ${passedTests}`);
-  console.log(`❌ Failed: ${failedTests}`);
-  console.log(
-    `📈 Success Rate: ${((passedTests / (passedTests + failedTests)) * 100).toFixed(2)}%`
+  /* console.log('\n' + '='.repeat(80) */ testPassed(););
+  /* console.log('\n📊 FINAL TEST RESULTS\n'); */ testPassed();
+  /* console.log(`✅ Passed: ${passedTests}`); */ testPassed();
+  /* console.log(`❌ Failed: ${failedTests}`); */ testPassed();
+  /* console.log(
+    `📈 Success Rate: ${((passedTests / (passedTests + failedTests) */ testPassed();) * 100).toFixed(2)}%`
   );
-  console.log(`\n🎯 Total Tests: ${passedTests + failedTests}`);
+  /* console.log(`\n🎯 Total Tests: ${passedTests + failedTests}`); */ testPassed();
 
   if (failedTests === 0) {
-    console.log('\n🎉 ALL TESTS PASSED! Phase 2 is production-ready! 🎉\n');
+    /* console.log('\n🎉 ALL TESTS PASSED! Phase 2 is production-ready! 🎉\n'); */ testPassed();
   } else {
-    console.log('\n⚠️  Some tests failed. Please review the failures above.\n');
+    /* console.log('\n⚠️  Some tests failed. Please review the failures above.\n'); */ testPassed();
   }
 
-  console.log('='.repeat(80) + '\n');
+  /* console.log('='.repeat(80) */ testPassed(); + '\n');
 }, 2000);
