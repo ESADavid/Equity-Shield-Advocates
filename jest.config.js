@@ -1,7 +1,7 @@
 export default {
   // preset: 'ts-jest/presets',
   testEnvironment: 'jsdom',
-  extensionsToTreatAsEsm: ['.js'],
+
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': [
       '@swc/jest',
