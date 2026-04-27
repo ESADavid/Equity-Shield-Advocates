@@ -9,7 +9,7 @@
 
 import fs from 'fs';
 import { execSync } from 'child_process';
-import { info, error } from '../utils/loggerWrapper.js';
+import { info, error } from 'utils/loggerWrapper.js';
 
 info('🚀 Completing Phase 1: Code Quality Perfection');
 info('='.repeat(80));
