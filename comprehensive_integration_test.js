@@ -3,16 +3,6 @@
  * Tests all API endpoints, edge cases, error handling, and integration scenarios
  */
 
-/** @typedef {string} UserId */
-/** @typedef {string} AccountId */
-/** @typedef {number} Amount */
-/** @typedef {string} AccountType */
-/** @typedef {string} Reason */
-/** @typedef {string} TestName */
-/** @typedef {Error} ErrorType */
-/** @typedef {import('./auth/login_override.js').TokenValidationResult} TokenValidationResult */
-
-
 import crypto from 'crypto';
 import {
   loginOverrideManager,
@@ -28,9 +18,11 @@ import {
   OVERRIDE_REASONS,
 } from './auth/login_override.js';
 
+/* global testPassed */
+
 const testPassed = () => {};
-const logPass = (testName) => { /* PASS: ${testName} */ };
-const logFail = (testName, error) => { /* FAIL: ${testName}: ${error} */ };
+const logPass = (testName) => { /* PASS: ${testName} */ testPassed(); };
+const logFail = (testName, error) => { /* FAIL: ${testName}: ${error} */ testPassed(); };
 
 // Mock Account Management System
 class AccountManager {
@@ -39,12 +31,6 @@ class AccountManager {
     this.transactions = new Map();
   }
 
-  /** 
-   * @param {UserId} userId 
-   * @param {AccountType} accountType 
-   * @param {Amount} [initialBalance]
-   * @returns {object}
-   */
   createAccount(userId, accountType, initialBalance = 0) {
     const accountId = `acc_${userId}_${Date.now()}`;
     const account = {
@@ -61,18 +47,10 @@ class AccountManager {
     return account;
   }
 
-  /** 
-   * @param {AccountId} accountId 
-   * @returns {object|null}
-   */
   getAccount(accountId) {
     return this.accounts.get(accountId);
   }
 
-  /** 
-   * @param {UserId} userId 
-   * @returns {object[]}
-   */
   getUserAccounts(userId) {
     return Array.from(this.accounts.values()).filter(
       (acc) => acc.userId === userId
@@ -144,13 +122,13 @@ class TestResults {
 
   logPass(testName) {
     this.passed++;
-  logPass(testName); testPassed();
+    logPass(testName);
   }
 
   logFail(testName, error) {
     this.failed++;
     this.errors.push({ test: testName, error });
-    logFail(testName, error); testPassed();
+    logFail(testName, error);
   }
 
   summary() {
@@ -158,9 +136,8 @@ class TestResults {
     /* console.log(`✅ Passed: ${this.passed}`); */ testPassed();
     /* console.log(`❌ Failed: ${this.failed}`); */ testPassed();
     /* console.log(`📈 Total: ${this.passed + this.failed}`); */ testPassed();
-    /* console.log(
-      `📊 Success Rate: ${((this.passed / (this.passed + this.failed) */ testPassed();) * 100).toFixed(2)}%`
-    );
+    const successRate = ((this.passed / (this.passed + this.failed)) * 100).toFixed(2);
+    /* console.log(`📊 Success Rate: ${successRate}%`); */ testPassed();
 
     if (this.errors.length > 0) {
       /* console.log(`\n🔍 Failed Tests:`); */ testPassed();
@@ -685,7 +662,7 @@ function testAccountSecurity(accountId, userId) {
 // Run all comprehensive tests
 async function runComprehensiveTests() {
   /* console.log('🧪 Starting Comprehensive Integration Test Suite\n'); */ testPassed();
-  /* console.log('='.repeat(60) */ testPassed(););
+  /* console.log('='.repeat(60)); */ testPassed();
 
   await testAPIEndpoints();
   await testEdgeCases();
@@ -694,10 +671,11 @@ async function runComprehensiveTests() {
   await testSecurityFeatures();
   await testPerformance();
 
-  /* console.log('\n' + '='.repeat(60) */ testPassed(););
+  /* console.log('\n' + '='.repeat(60)); */ testPassed();
   testResults.summary();
 
   /* console.log('\n🏁 Comprehensive Integration Testing Completed!'); */ testPassed();
 }
 
 runComprehensiveTests().catch(console.error);
+

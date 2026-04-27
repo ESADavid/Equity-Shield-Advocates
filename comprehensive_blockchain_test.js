@@ -1,6 +1,8 @@
 import { getBlockchainService } from './blockchain/blockchainService.js';
-import { testPassed } from '../utils/testReporter.js';
+ // import { testPassed } from '../utils/testReporter.js';
 import { getBlockchainInstance } from './blockchain/blockchainLedger.js';
+
+ /* global testPassed */
 
 export async function runComprehensiveBlockchainTests() {
   /* console.log('Starting Comprehensive Blockchain Integration Tests'); */ testPassed();
@@ -185,3 +187,4 @@ export async function runComprehensiveBlockchainTests() {
 if (import.meta.url === `file://${process.argv[1]}`) {
   runComprehensiveBlockchainTests().catch(console.error);
 }
+
