@@ -13,19 +13,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, '..');
 
 /**
- * WalkResult interface for type checking
- * @typedef {Object} WalkResult
- * @property {string} file - Relative file path
- * @property {number} [changes] - Number of import changes
- * @property {string} [error] - Error message
+ * Result objects for file processing (JS compatible)
  */
 
 /**
  * Recursively walk directory yielding .js files
- * @param {string} dir - Directory path
- * @yields {string} File path
  */
-async function* walk(dir: string): AsyncGenerator<string> {
+async function* walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const fullPath = join(dir, entry.name);
@@ -41,10 +35,8 @@ async function* walk(dir: string): AsyncGenerator<string> {
 
 /**
  * Fix logger imports in single file
- * @param {string} filePath - Full file path
- * @returns {Object|null} Result or null if no changes
  */
-async function fixFile(filePath: string): Promise<FixResult | null> {
+async function fixFile(filePath) {
   try {
     const relativePath = './' + filePath.substring(rootDir.length + 1).replace(/\\/g, '/');
     const content = await readFile(filePath, 'utf8');
@@ -115,4 +107,3 @@ main().catch((error) => {
   logger.error('Fatal error during execution:', error);
   process.exit(1);
 });
-
