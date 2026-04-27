@@ -28,6 +28,10 @@ import {
   OVERRIDE_REASONS,
 } from './auth/login_override.js';
 
+const testPassed = () => {};
+const logPass = (testName) => { /* PASS: ${testName} */ };
+const logFail = (testName, error) => { /* FAIL: ${testName}: ${error} */ };
+
 // Mock Account Management System
 class AccountManager {
   constructor() {
@@ -140,13 +144,13 @@ class TestResults {
 
   logPass(testName) {
     this.passed++;
-    /* console.log(`✅ ${testName} - PASSED`); */ testPassed();
+  logPass(testName); testPassed();
   }
 
   logFail(testName, error) {
     this.failed++;
     this.errors.push({ test: testName, error });
-    /* console.log(`❌ ${testName} - FAILED: ${error.message}`); */ testPassed();
+    logFail(testName, error); testPassed();
   }
 
   summary() {

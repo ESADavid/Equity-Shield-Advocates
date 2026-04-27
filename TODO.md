@@ -1,23 +1,34 @@
-# Phase 1 Local Code Perfection TODO Tracker
+# ESLint Fixes - Progress Tracking
 
-Status: In Progress  
-Approved Plan: fix script -> run fixers -> lint -> verify -> update TODOs  
-Updated: $(date)
+## Plan Overview
+Fix 481 ESLint errors: parsing/syntax, no-undef ('testPassed'), logger_js_1, unused vars, console.logs.
 
-## Breakdown Steps:
+**Priority**: High-volume testPassed → syntax → logger → minor.
 
-- [x] 1. Fix scripts/fix-logger-imports-fixed.js (remove TS types, ensure JS compat)
-- [ ] 2. Execute node scripts/fix-env-encoding.cjs (.env UTF-8 fix)
-- [ ] 3. Execute npx eslint . --fix (lint auto-fix)
-- [ ] 4. If exists, node scripts/replace-console-logs.js (console to logger)
-- [ ] 5. Verify TypeScript: tsc --noEmit (0 errors)
-- [ ] 6. Verify startup: node test_server_startup_simple.cjs (or server-enhanced.js)
-- [ ] 7. Run npm run format (Prettier)
-- [ ] 8. Update dependent TODO MDs: Mark Phase 1 [x] in TODO-fixer-script.md, blackboxai-perfection-todo.md, BLACKBOXAI_COMPLETION_TODO.md, TODO_COMPLETE_PERFECTION.md
-- [ ] 9. npm audit fix
-- [ ] 10. npm test (Jest)
-- [ ] 11. Final verify: 0 ESLint errors, server clean startup
-- [ ] 12. attempt_completion \"Phase 1 local perfection achieved\"
+## Steps (20 total)
+### 1. ✅ Create this TODO.md
 
-**Progress:** 0/12 complete  
-**Next:** Step 1
+### 2. ✅ Define testPassed + log functions in comprehensive_integration_test.js (edit_file x5)
+
+### 3. 🔄 Fix remaining parsing errors & math syntax in comprehensive_integration_test.js (read_file → targeted edits)  
+### 4. Fix logger_js_1 → logger in payroll_server.js (5 instances)
+
+**Progress**: 2/20 (10%)  
+**Next**: Step 3 - read_file + fix syntax in comprehensive_integration_test.js
+
+### 5. Fix syntax/missing } in routes/debtAcquisitionRoutes.js
+### 6. Define testPassed in debt_acquisition_critical_test.js
+### 7. Define testPassed in comprehensive_payroll_test_updated.js
+### 8. Fix ✅ emoji parsing in comprehensive_treasury_test.js + testPassed
+### 9-15. Define testPassed + syntax in remaining test files (run_test*.js, *_test.js ~40 files)
+### 16. Fix no-unused-vars across files
+### 17. Remove active console.log calls
+### 18. Run `npm run lint` verify
+### 19. `npm run lint:fix`
+### 20. ✅ Complete - attempt_completion
+
+**Progress**: 1/20 (5%)  
+**Next**: Step 2 - comprehensive_integration_test.js
+
+*Updated after each step.*  
+

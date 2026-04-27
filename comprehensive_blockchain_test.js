@@ -1,8 +1,9 @@
 import { getBlockchainService } from './blockchain/blockchainService.js';
+import { testPassed } from '../utils/testReporter.js';
 import { getBlockchainInstance } from './blockchain/blockchainLedger.js';
 
 export async function runComprehensiveBlockchainTests() {
-  /* console.log('🔗 Starting Comprehensive Blockchain Integration Tests'); */ testPassed();
+  /* console.log('Starting Comprehensive Blockchain Integration Tests'); */ testPassed();
   /* console.log(
     '================================================================'
   ); */ testPassed();
@@ -21,10 +22,10 @@ export async function runComprehensiveBlockchainTests() {
     results.totalTests++;
     if (success) {
       results.passed++;
-      /* console.log(`✅ ${testName}: PASSED${message ? ' - ' + message : ''}`); */ testPassed();
+/* console.log(`PASSED: ${testName}${message ? ' - ' + message : ''}`); */ testPassed();
     } else {
       results.failed++;
-      /* console.log(`❌ ${testName}: FAILED${message ? ' - ' + message : ''}`); */ testPassed();
+      /* console.log(`FAILED: ${testName}${message ? ' - ' + message : ''}`); */ testPassed();
     }
     results.tests.push({ testName, success, message });
   }
@@ -163,7 +164,7 @@ export async function runComprehensiveBlockchainTests() {
   /* console.log(`✅ Passed: ${results.passed}`); */ testPassed();
   /* console.log(`❌ Failed: ${results.failed}`); */ testPassed();
   /* console.log(
-    `📈 Success Rate: ${((results.passed / results.totalTests) */ testPassed(); * 100).toFixed(2)}%`
+    `📈 Success Rate: ${((results.passed / results.totalTests) * 100).toFixed(2)}%`;
   );
   /* console.log(
     '================================================================'
