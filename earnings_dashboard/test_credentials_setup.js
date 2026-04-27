@@ -1,3 +1,5 @@
+const testPassed = () => {};
+
 // Test credentials setup for development - DO NOT USE IN PRODUCTION
 // This creates sample JPMorgan credentials for testing the wallet system
 

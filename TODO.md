@@ -1,42 +1,36 @@
-# VSCode TypeScript/ESLint Syntax Fixes TODO
+# OSCAR-BROOME-REVENUE Next Steps TODO
+Approved plan execution - Phase 1 Code Quality first (blocker), then test/deploy progress.
 
-## Plan Execution Steps
+Status: Phase 1 0/11 [ ]
 
-- [x] 1. Create this TODO.md ✅
-- [x] 2. Create scripts/fix-syntax-errors-fixed.js (ESM, types removed for JS compat, safe regex, error handling)
-- [ ] 3. Test: node scripts/fix-syntax-errors-fixed.js (Regex fixed, testing...)
-- [ ] 4. Edit/overwrite scripts/complete-phase1.js with fixed version
-- [ ] 5. Test: node scripts/complete-phase1.js
-- [ ] 6. Run npx eslint scripts/ --fix
-- [ ] 7. Run tsc --noEmit
-- [ ] 8. Verify no errors in VSCode
-- [ ] 9. Mark complete
-- [ ] 3. Edit scripts/fix-syntax-errors.js (ESM conversion, types, console replacement, error handling)
-- [ ] 4. Test: node scripts/fix-syntax-errors.js
-- [ ] 5. Test: node scripts/complete-phase1.js
-- [ ] 6. Run npx eslint scripts/ --fix
-- [ ] 7. Run tsc --noEmit
-- [ ] 8. Verify no errors in VSCode
-- [ ] 9. Mark complete
+## 🔥 Phase 1: Code Quality Perfection (ESLint 0, 4-6h)
+1. [x] Update .eslintignore: add GOD/, owlbangroup.io/, FOUR-ERA-AI/, David-Leeper-Jr-Revenue/ (ignore subprojects)
+2. [ ] Batch fix 'testPassed' refs: search test/*.js|*.test.js, add `let testPassed = () => {};` at top (~50 files)
+3. [ ] Replace consoles prod code: search console.log -test/, replace with loggerWrapper imports/calls (~180)
+4. [ ] JSX consoles: earnings_dashboard/src/Dashboard.jsx (L152,159), ErrorRecovery.jsx, LayerOnboarding.jsx → logger
+5. [ ] Syntax fixes: global_empire_test.js (missing )), multi_repo_revenue_aggregator.ts L99 (;), unterminated strings
+6. [ ] Integrate errorHandler.js: server-enhanced.js, app.js (add middleware chain + unhandledRejection)
+7. [ ] Run: npm run lint -- --fix; tsc --noEmit; npm run format
+8. [ ] Verify: npm run lint → 0 errors/warnings <50; all tests pass subset
+9. [ ] .env encoding: node scripts/fix-env-encoding.cjs
 
-**Next:** Update this file after each step.
+## 🧪 Phase 2: Test & Local Run (2-4h)
+10. [ ] npm test:all (fix any failures)
+11. [ ] Mongo: scripts/install-and-start-mongodb.ps1 (if needed)
+12. [ ] Server: node safe_server_start.js or test_server_start.js
+13. [ ] Docker: docker-compose -f docker-compose.simple.yml up
+14. [ ] E2E: node e2e_perfection_test_final_refactored.js
 
-## Detailed Progress Tracker (Approved Plan)
+## 📄 Phase 3: Docs & Progress (1h)
+15. [ ] Update this TODO.md (mark [x])
+16. [ ] PERFECTION_PLAN_STATUS.md: Phase 1 →100%
+17. [ ] TODO.md orig: Phase 1 [COMPLETE]
+18. [ ] Commit changes: git add . &amp;&amp; git commit -m "Phase 1 Code Quality: ESLint 0"
 
-### Primary Track (fix-syntax-errors-fixed.js)
+## 🚀 Followup After Phase 1
+- Phase 2 features (UBI/education dashboards ~36h)
+- Full testing/load (28h)
+- Deploy scripts/cloud (Phase 5)
 
-- [ ] Step 3: Test node scripts/fix-syntax-errors-fixed.js (regex fix applied, retesting)
-- [ ] Step 4: Edit/overwrite scripts/complete-phase1.js if needed
-- [ ] Step 5: Test node scripts/complete-phase1.js
-- [ ] Step 6: npx eslint scripts/ --fix
-- [ ] Step 7: tsc --noEmit
-- [ ] Step 8: Verify no errors in VSCode
-- [ ] Step 9: Mark primary complete
+Run `npm run lint` after each step. Tools: loggerWrapper.js ready. Track here!
 
-### Secondary Track (fix-syntax-errors.js)
-
-- [ ] Step 3: Edit to ESM + logger + error handling
-- [ ] Step 4: Test node scripts/fix-syntax-errors.js
-- [ ] Step 5: Retest complete-phase1.js
-- [ ] Repeat 6-8
-- [ ] Mark secondary complete

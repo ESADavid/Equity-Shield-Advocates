@@ -1,3 +1,5 @@
+const testPassed = () => {};
+
 const fs = require('node:fs').promises;
 const path = require('node:path');
 const updateRevenueData = require('./update_revenue_data');

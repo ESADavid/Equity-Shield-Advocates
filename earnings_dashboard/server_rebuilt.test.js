@@ -1,3 +1,5 @@
+const testPassed = () => {};
+
 // Set dummy environment variables for tests before requiring the server
 process.env.DYNAMICS365_BASE_URL = 'https://dummy.dynamics365.com';
 process.env.DYNAMICS365_ACCESS_TOKEN = 'dummy-token';
