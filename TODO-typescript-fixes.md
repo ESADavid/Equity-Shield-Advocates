@@ -1,6 +1,7 @@
 # TypeScript Fixes for comprehensive_integration_test_fixed.js
 
-## Steps:
+## Steps
+
 - [ ] Step 1: Remove unused imports (crypto and auth functions)
 - [ ] Step 2: Simplify logPass/logFail (remove unused params)
 - [ ] Step 3: Add JSDoc types to AccountManager methods
@@ -14,4 +15,3 @@
 - [ ] Step 11: Mark complete, attempt_completion
 
 Current: Starting Step 1-3 (multi-tool if needed, but batch in edit_file later)
-
