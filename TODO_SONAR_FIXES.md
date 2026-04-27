@@ -1,5 +1,8 @@
-# SonarLint Fixes Progress
+**SonarLint Fixes TODO**
 
-## Completed
-
-- ✅ public/sw.js: Replaced self with globalThis (lines 33, 39)\n- ✅ jest.setup.js: node:util (x2), eslint-disable no-console for mocking, ResizeObserver comments\n\n## Remaining\n- None (payroll_server.js compliant)
+1. [x] Edit comprehensive_integration_test_fixed.ts - add readonly to transactions property (DONE)
+2. [ ] Verify SonarLint on .ts 
+3. [ ] Investigate and fix comprehensive_integration_test_fixed.js issues (read failed)
+4. [ ] Run tests
+5. [ ] Full SonarLint scan
+6. [ ] Mark complete
