@@ -1,23 +1,30 @@
 /**
- * Bulk Fix Logger Imports - ESM (Fixed version)
+ * Bulk Fix Logger Imports - ESM (ESLint Compliant)
  * Replaces all relative loggerWrapper.js imports with absolute 'utils/loggerWrapper.js'
- * Fixed: Added console logging
+ * Fixed: Console replaced with loggerWrapper
  */
 
-import { readdir, readFile, writeFile, stat } from 'fs/promises';
+import { readdir, readFile, writeFile, stat } from 'node:fs/promises';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import logger from 'utils/loggerWrapper.js';
-
-interface WalkResult {
-  file: string;
-  changes?: number;
-  error?: string;
-}
-import { dirname, join, resolve } from 'path';
-import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, '..');
 
+/**
+ * WalkResult interface for type checking
+ * @typedef {Object} WalkResult
+ * @property {string} file - Relative file path
+ * @property {number} [changes] - Number of import changes
+ * @property {string} [error] - Error message
+ */
+
+/**
+ * Recursively walk directory yielding .js files
+ * @param {string} dir - Directory path
+ * @yields {string} File path
+ */
 async function* walk(dir: string): AsyncGenerator<string> {
   const entries = await readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
@@ -32,10 +39,14 @@ async function* walk(dir: string): AsyncGenerator<string> {
   }
 }
 
-async function fixFile(filePath: string): Promise<WalkResult | null> {
+/**
+ * Fix logger imports in single file
+ * @param {string} filePath - Full file path
+ * @returns {Object|null} Result or null if no changes
+ */
+async function fixFile(filePath: string): Promise<FixResult | null> {
   try {
-    const relativePath =
-      './' + filePath.substring(rootDir.length + 1).replace(/\\/g, '/');
+    const relativePath = './' + filePath.substring(rootDir.length + 1).replace(/\\/g, '/');
     const content = await readFile(filePath, 'utf8');
     const originalContent = content;
 
@@ -49,14 +60,19 @@ async function fixFile(filePath: string): Promise<WalkResult | null> {
       return { file: relativePath, changes };
     }
     return null;
-  } catch (err: unknown) {
+  } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     return { file: filePath.substring(rootDir.length + 1), error: errorMessage };
   }
 }
 
-async function main(): Promise<void> {
+/**
+ * Main execution function
+ */
+async function main() {
+  logger.info('🔧 BULK FIXING LOGGER IMPORTS...');
   logger.info('Target: All *.js files -> utils/loggerWrapper.js');
+  
   const results = [];
   let totalChanges = 0;
 
@@ -64,28 +80,39 @@ async function main(): Promise<void> {
     const result = await fixFile(filePath);
     if (result) {
       results.push(result);
-      if (result.changes !== undefined) totalChanges += result.changes;
+      if ('changes' in result) {
+        totalChanges += result.changes;
+      }
     }
   }
 
-  console.log('\n📊 RESULTS');
-  console.log(`Processed files: ${results.length}`);
-  console.log(`Import paths fixed: ${totalChanges}`);
+  logger.info('📊 RESULTS');
+  logger.info(`Processed files: ${results.length}`);
+  logger.info(`Import paths fixed: ${totalChanges}`);
 
-  const success = results.filter((r) => r.changes > 0);
-  const errors = results.filter((r) => r.error);
+  const success = results.filter((r) => 'changes' in r && r.changes > 0);
+  const errors = results.filter((r) => 'error' in r);
 
   if (success.length > 0) {
-    console.log(`✅ Fixed ${success.length} files`);
-    success.forEach((r) => console.log(`  ✓ ${r.file} (${r.changes} changes)`));
+    logger.info(`✅ Fixed ${success.length} files`);
+    success.forEach((r) => logger.info(`  ✓ ${r.file} (${r.changes} changes)`));
   }
+  
   if (errors.length > 0) {
-    console.log(`❌ Errors: ${errors.length}`);
-    errors.forEach((r) => console.log(`  ✗ ${r.file}: ${r.error}`));
+    logger.error(`❌ Errors: ${errors.length}`);
+    errors.forEach((r) => logger.error(`  ✗ ${r.file}: ${r.error}`));
   }
-  if (totalChanges === 0) console.log('ℹ️ No changes needed');
+  
+  if (totalChanges === 0) {
+    logger.info('ℹ️ No changes needed');
+  }
 
-  console.log('\n🎉 Bulk logger import fix complete!');
+  logger.info('🎉 Bulk logger import fix complete!');
 }
 
-main().catch(console.error);
+// Execute with proper error handling
+main().catch((error) => {
+  logger.error('Fatal error during execution:', error);
+  process.exit(1);
+});
+

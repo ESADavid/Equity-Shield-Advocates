@@ -1,16 +1,15 @@
-# Fix Logger Imports Script - TypeScript & ESLint Compliance
-Status: In Progress (Approved)
+# Fix TypeScript/SonarLint Errors in fix-logger-imports-fixed.js
 
-## Breakdown of Approved Plan:
-1. [ ] ✅ **Create TODO.md** - Track progress (current)
-2. [ ] **Edit scripts/fix-logger-imports-fixed.js**:
-   - Add logger import
-   - Replace 11 console statements with logger
-   - Add TypeScript interfaces/types
-   - Fix all implicit any and unknown types
-3. [ ] **Verify fixes** - Check no new ESLint/TS errors
-4. [ ] **Test execution** - Run `node scripts/fix-logger-imports-fixed.js`
-5. [ ] **Completion** - Update status, attempt_completion
+## Steps:
+- [ ] 1. Create this TODO.md
+- [ ] 2. Update Node.js built-in imports to use 'node:' prefix (fs/promises, path, url)
+- [ ] 3. Add explicit types: walk → AsyncGenerator<string>, fixFile → Promise<FixResult | null>, main results handling
+- [ ] 4. Fix string replaceAll(), remove unnecessary await on fixFile result, type results array
+- [ ] 5. Convert main() to top-level await
+- [ ] 6. Apply all edits to scripts/fix-logger-imports-fixed.js via edit_file
+- [ ] 7. Update TODO.md to mark completed
+- [ ] 8. Verify no new errors (optional: node --check or tsc)
+- [ ] 9. Task complete
 
-**Next Step**: Apply code edits to file
+**Status:** Starting implementation...
 
