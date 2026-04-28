@@ -7,6 +7,8 @@ import { readdir, readFile, writeFile, stat } from 'fs/promises';
 import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
+import logger from '../utils/loggerWrapper.js';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, '..');
 
@@ -47,7 +49,11 @@ async function fixFile(filePath) {
 }
 
 async function main() {
-  logger.info('🔧 BULK FIXING LOGGER IMPORTS...');
+  if (typeof logger === 'undefined') {
+    console.log('Logger not available, running without logging');
+  } else {
+    logger.info('🔧 BULK FIXING LOGGER IMPORTS...');
+  }
   logger.info('Target: All *.js files -> utils/loggerWrapper.js');
   const results = [];
   let totalChanges = 0;

@@ -66,8 +66,7 @@ function LayerOnboarding({
   }, [userId, templateId, clientName, webhook, linkCustomizationName]);
 
   // Handle Layer events
-  const handleOnEvent = (eventName, metadata) => {
-    console.log('Layer Event:', eventName, metadata);
+  const handleOnEvent = (eventName, metadata) => {\n    /* console.log('Layer Event:', eventName, metadata); */
 
     switch (eventName) {
       case 'LAYER_READY':

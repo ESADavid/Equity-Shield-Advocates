@@ -1,4 +1,4 @@
-import DebtAcquisitionService from './services/debtAcquisitionService.js';
+/* global testPassed */\nconst testPassed = () => {};\nimport DebtAcquisitionService from './services/debtAcquisitionService.js';
 
 /* console.log('=== DEBT ACQUISITION SERVICE - CRITICAL PATH TESTING ===\n'); */ testPassed();
 

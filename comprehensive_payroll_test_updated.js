@@ -1,4 +1,4 @@
-import axios from 'axios';
+/* global testPassed */\nconst testPassed = () => {};\nimport axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
