@@ -29,11 +29,11 @@ app.get('/api/payroll/employees', (_req, res) => {
     if (result.success) {
       res.json(result.data);
     } else {
-      logger.error("Error getting employees:", result.error);
+      logger.error('Error getting employees:', result.error);
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
-    logger.error("Error getting employees:", {
+    logger.error('Error getting employees:', {
       error: error.message,
       stack: error.stack,
     });
@@ -72,7 +72,7 @@ app.post('/api/payroll/employees', (req, res) => {
       }
     }
   } catch (error) {
-    logger.error("Error adding/updating employee:", {
+    logger.error('Error adding/updating employee:', {
       error: error.message,
       stack: error.stack,
     });
@@ -90,7 +90,7 @@ app.delete('/api/payroll/employees/:id', (req, res) => {
       res.status(400).json({ error: deleteResult.error });
     }
   } catch (error) {
-    logger.error("Error deleting employee:", {
+    logger.error('Error deleting employee:', {
       error: error.message,
       stack: error.stack,
     });
@@ -125,7 +125,7 @@ app.post('/api/payroll/process', (_req, res) => {
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
-    logger.error("Error processing payroll:", {
+    logger.error('Error processing payroll:', {
       error: error.message,
       stack: error.stack,
     });

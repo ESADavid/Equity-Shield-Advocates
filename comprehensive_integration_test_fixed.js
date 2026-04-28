@@ -3,13 +3,15 @@
  * Syntax errors repaired, ESLint compliant
  */
 
-
-
 /* global testPassed */
 
 const testPassed = () => {};
-const logPass = () => { testPassed(); };
-const logFail = () => { testPassed(); };
+const logPass = () => {
+  testPassed();
+};
+const logFail = () => {
+  testPassed();
+};
 
 // Mock Account Management System
 class AccountManager {
@@ -42,7 +44,9 @@ class AccountManager {
 
   /** @param {string} userId */
   getUserAccounts(userId) {
-    return Array.from(this.accounts.values()).filter((acc) => acc.userId === userId);
+    return Array.from(this.accounts.values()).filter(
+      (acc) => acc.userId === userId
+    );
   }
 
   /** @param {string} accountId @param {number} amount */
@@ -151,4 +155,3 @@ async function runComprehensiveTests() {
 }
 
 runComprehensiveTests().catch(console.error);
-

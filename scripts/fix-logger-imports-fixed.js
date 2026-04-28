@@ -38,7 +38,8 @@ async function* walk(dir) {
  */
 async function fixFile(filePath) {
   try {
-    const relativePath = './' + filePath.substring(rootDir.length + 1).replace(/\\/g, '/');
+    const relativePath =
+      './' + filePath.substring(rootDir.length + 1).replace(/\\/g, '/');
     const content = await readFile(filePath, 'utf8');
     const originalContent = content;
 
@@ -54,7 +55,10 @@ async function fixFile(filePath) {
     return null;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
-    return { file: filePath.substring(rootDir.length + 1), error: errorMessage };
+    return {
+      file: filePath.substring(rootDir.length + 1),
+      error: errorMessage,
+    };
   }
 }
 
@@ -64,7 +68,7 @@ async function fixFile(filePath) {
 async function main() {
   logger.info('🔧 BULK FIXING LOGGER IMPORTS...');
   logger.info('Target: All *.js files -> utils/loggerWrapper.js');
-  
+
   const results = [];
   let totalChanges = 0;
 
@@ -89,12 +93,12 @@ async function main() {
     logger.info(`✅ Fixed ${success.length} files`);
     success.forEach((r) => logger.info(`  ✓ ${r.file} (${r.changes} changes)`));
   }
-  
+
   if (errors.length > 0) {
     logger.error(`❌ Errors: ${errors.length}`);
     errors.forEach((r) => logger.error(`  ✗ ${r.file}: ${r.error}`));
   }
-  
+
   if (totalChanges === 0) {
     logger.info('ℹ️ No changes needed');
   }

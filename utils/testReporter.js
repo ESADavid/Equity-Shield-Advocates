@@ -24,4 +24,3 @@ export function logTest(testName, success, message = '') {
 
 // Global compatibility for older tests
 globalThis.testPassed = testPassed;
-

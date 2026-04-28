@@ -21,8 +21,12 @@ import {
 /* global testPassed */
 
 const testPassed = () => {};
-const logPass = (testName) => { /* PASS: ${testName} */ testPassed(); };
-const logFail = (testName, error) => { /* FAIL: ${testName}: ${error} */ testPassed(); };
+const logPass = (testName) => {
+  /* PASS: ${testName} */ testPassed();
+};
+const logFail = (testName, error) => {
+  /* FAIL: ${testName}: ${error} */ testPassed();
+};
 
 // Mock Account Management System
 class AccountManager {
@@ -136,7 +140,10 @@ class TestResults {
     /* console.log(`✅ Passed: ${this.passed}`); */ testPassed();
     /* console.log(`❌ Failed: ${this.failed}`); */ testPassed();
     /* console.log(`📈 Total: ${this.passed + this.failed}`); */ testPassed();
-    const successRate = ((this.passed / (this.passed + this.failed)) * 100).toFixed(2);
+    const successRate = (
+      (this.passed / (this.passed + this.failed)) *
+      100
+    ).toFixed(2);
     /* console.log(`📊 Success Rate: ${successRate}%`); */ testPassed();
 
     if (this.errors.length > 0) {
@@ -678,4 +685,3 @@ async function runComprehensiveTests() {
 }
 
 runComprehensiveTests().catch(console.error);
-

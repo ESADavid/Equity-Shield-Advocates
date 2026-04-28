@@ -46,7 +46,11 @@ class AccountManager {
    * @param {number} [initialBalance]
    * @returns {Account}
    */
-  createAccount(userId: string, accountType: string, initialBalance: number = 0): Account {
+  createAccount(
+    userId: string,
+    accountType: string,
+    initialBalance: number = 0
+  ): Account {
     const accountId = `acc_${userId}_${Date.now()}`;
     const account: Account = {
       accountId,
@@ -75,7 +79,9 @@ class AccountManager {
    * @returns {Account[]}
    */
   getUserAccounts(userId: string): Account[] {
-    return Array.from(this.accounts.values()).filter((acc) => acc.userId === userId);
+    return Array.from(this.accounts.values()).filter(
+      (acc) => acc.userId === userId
+    );
   }
 
   /**
@@ -184,22 +190,21 @@ class TestResults {
 
 async function runComprehensiveTests(): Promise<void> {
   const testResults = new TestResults();
-  
+
   // Example test usage
   const manager = new AccountManager();
   const account = manager.createAccount('user123', 'checking', 1000);
-  
+
   testResults.logPass();
-  
+
   try {
     manager.updateBalance(account.accountId, -100);
     testResults.logPass();
   } catch (error) {
     testResults.logFail('balance update', error as Error);
   }
-  
+
   testResults.summary();
 }
 
 runComprehensiveTests().catch(console.error);
-

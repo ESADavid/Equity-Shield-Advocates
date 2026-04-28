@@ -1,6 +1,6 @@
 const testPassed = () => {};
 
-'use strict';
+('use strict');
 const __importDefault = (mod) => {
   return mod && mod.__esModule ? mod : { default: mod };
 };
