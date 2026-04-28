@@ -1,32 +1,3 @@
-## Steps (Logical breakdown from approved plan)
-
-### 1. Safe CLI Fixes [x]
-- [x] node scripts/fix-env-encoding.cjs (UTF-8 .env)
-- [x] npx eslint . --fix (auto lint fixes)  
-- [x] npm audit fix --audit-level=moderate (safe deps)
-
-### 2. Logger/Console Replacement [ ]
-- [ ] Add testReporter imports + ESLint disable to ALL test files (*.test.js/ts/cjs)
-- [ ] Fix syntax/parsing errors in top test files (comprehensive_payroll_test*.js, critical_path_test.js, comprehensive_merchant_test.js, etc.)
-- [ ] Replace console.log → logger calls in non-test files (Dashboard.jsx, LayerOnboarding.jsx, scripts)
-- [ ] Fix payroll_server.js logger import
-- [ ] Update .eslintrc.cjs for no-console exceptions in tests
-- [ ] Run `npx eslint . --fix` verify fixes
-
-### 3. Error Handling Integration [ ]
-
-### 4. TS/Sonar Fixes [ ]
-
-### 5. Syntax/HTML Fixes [ ]
-
-### 6. Verification [ ]
-- [ ] node test_server_startup_simple.cjs
-- [ ] npx tsc --noEmit
-- [ ] npm test (minimal)
-
-### 7. Docs Finalization [ ]
-- [x] all TODO MDs
-- [ ] VSCode 0 diagnostics
-
-**Progress: 1/7**
-**Last Updated:** $(date)
+# Payroll Server Fix TODO&#10;&#10;- [x] 1. Edit payroll_server.js: Replace bad logger import with &#39;./utils/loggerWrapper.js&#39;&#10;- [ ] 2. Test: Run `node payroll_server.js` and confirm no import error&#10;- [ ] 3. Complete: Server starts successfully"
+</xai:function_call name="read_file">
+<parameter name="path">c:/Users/bsean/OneDrive/Documents/GitHub/OSCAR-BROOME-REVENUE/TODO.md

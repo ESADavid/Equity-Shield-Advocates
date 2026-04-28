@@ -4,7 +4,7 @@ const __importDefault = (mod) => (mod?.__esModule ? mod : { default: mod });
 Object.defineProperty(exports, '__esModule', { value: true });
 const express_1 = __importDefault(require('express'));
 const body_parser_1 = __importDefault(require('body-parser'));
-import { logger } from '../utils/logger.js';
+import logger from './utils/loggerWrapper.js';
 const payrollSystem_1 = require('./payrollSystem');
 const app = (0, express_1.default)();
 const port = 5000;
@@ -29,11 +29,14 @@ app.get('/api/payroll/employees', (_req, res) => {
     if (result.success) {
       res.json(result.data);
     } else {
-logger.error('Error getting employees:', result.error);
+      logger.error("Error getting employees:", result.error);
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
-logger.error('Error getting employees:', {\n      error: error.message,\n      stack: error.stack,\n    });
+    logger.error("Error getting employees:", {
+      error: error.message,
+      stack: error.stack,
+    });
     res.status(500).json({ error: 'Failed to get employees' });
   }
 });
@@ -69,7 +72,10 @@ app.post('/api/payroll/employees', (req, res) => {
       }
     }
   } catch (error) {
-logger.error('Error adding/updating employee:', {\n      error: error.message,\n      stack: error.stack,\n    });
+    logger.error("Error adding/updating employee:", {
+      error: error.message,
+      stack: error.stack,
+    });
     return res.status(400).json({ error: error.message });
   }
 });
@@ -84,7 +90,10 @@ app.delete('/api/payroll/employees/:id', (req, res) => {
       res.status(400).json({ error: deleteResult.error });
     }
   } catch (error) {
-logger.error('Error deleting employee:', {\n      error: error.message,\n      stack: error.stack,\n    });
+    logger.error("Error deleting employee:", {
+      error: error.message,
+      stack: error.stack,
+    });
     res.status(400).json({ error: error.message });
   }
 });
@@ -116,7 +125,7 @@ app.post('/api/payroll/process', (_req, res) => {
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
-    logger_js_1.logger.error('Error processing payroll:', {
+    logger.error("Error processing payroll:", {
       error: error.message,
       stack: error.stack,
     });
