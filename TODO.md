@@ -1,11 +1,15 @@
-# LayerOnboarding TypeScript Error Fix - TODO
+# TypeScript Fixes for LayerOnboarding.jsx - Progress Tracker
 
-## Plan Steps:
-- [ ] 1. Create this TODO.md
-- [ ] 2. Edit LayerOnboarding.jsx: Remove all JSDoc type comments/blocks
-- [ ] 3. Update TODO.md with completion status
-- [ ] 4. User: Reload VSCode (Ctrl+R) or TypeScript: Restart TS Server
-- [ ] 5. Verify 0 errors in Problems panel
-- [ ] 6. Optional: Run Layer tests (test_layer_integration.js)
+## Current Progress
+- [x] Plan approved by user
 
-**Status:** Starting edits...
+## Steps Remaining
+- [ ] 1. Create earnings_dashboard/package.json with React + types deps
+- [ ] 2. Create earnings_dashboard/types/layer.d.ts for Plaid/Layer window types
+- [ ] 3. Update earnings_dashboard/src/LayerOnboarding.jsx with full TypeScript types, remove unused code, fix logic issues
+- [ ] 4. cd earnings_dashboard &amp;&amp; npm install (install deps)
+- [ ] 5. Restart VS Code TypeScript server
+- [ ] 6. Verify no remaining TS errors
+- [ ] 7. Test Plaid Layer integration (sandbox)
+
+**Next step: 1-3 (file creates/updates)**
