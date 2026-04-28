@@ -42,3 +42,51 @@ declare module 'morgan' {
   function morgan(format: string, options?: MorganOptions): RequestHandler;
   export = morgan;
 }
+
+// React JSX Support
+declare namespace JSX {
+  interface IntrinsicElements {
+    [elemName: string]: any;
+  }
+}
+
+// Plaid Link / Layer Types
+declare module 'react-plaid-link' {
+  import { ComponentProps } from 'react';
+
+  interface PlaidLinkProps {
+    token: string;
+    onSuccess: (publicToken: string, metadata: Record<string, any>) => void;
+    onExit: (error: any, metadata: Record<string, any>) => void;
+    onEvent: (eventName: string, metadata?: Record<string, any>) => void;
+    children?: React.ReactNode;
+  }
+
+  export const usePlaidLink: () => {
+    open: () => void;
+    ready: () => void;
+  };
+
+  const PlaidLink: React.FC<PlaidLinkProps>;
+  export default PlaidLink;
+}
+
+// Plaid.create for Layer
+interface PlaidLayerHandler {
+  submit: (data: Record<string, string>) => void;
+  open: () => void;
+}
+
+interface Window {
+  layerHandler?: PlaidLayerHandler;
+}
+
+declare var Plaid: {
+  create: (config: {
+    token: string;
+    onSuccess: (publicToken: string, metadata: Record<string, any>) => void;
+    onExit: (err: unknown, metadata: Record<string, any>) => void;
+    onEvent?: (eventName: string, metadata?: Record<string, any>) => void;
+  }) => PlaidLayerHandler;
+};
+
