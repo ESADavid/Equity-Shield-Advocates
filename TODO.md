@@ -1,12 +1,34 @@
-# SonarLint Fix: Replace window with globalThis in LayerOnboarding.jsx - COMPLETE
+# OSCAR BROOME REVENUE - PERFECTION EXECUTION PLAN
+Status: EXECUTING (Approved)
 
-## Steps:
-- [x] 1. Create TODO.md (done)
-- [x] 2. Execute edit_file replacements for all window → globalThis
-- [x] 3. Verify no errors in tool response (edits succeeded)
-- [x] 4. Update TODO.md with completion
-- [ ] 5. Run ESLint/SonarLint verification command
-- [ ] 6. Test component (manual/browser)
-- [x] 7. Mark complete and attempt_completion
+## Current Step: 1/7 - Create Master TODO.md ✅
 
-All window → globalThis replacements applied successfully. Minor indentation auto-fixed by editor. Original SonarLint S7764 resolved.
+## MASTER TODO STEPS (BLACKBOXAI PERFECTION)
+
+### Phase 1: Prerequisites & Safe Fixes [ ]
+- [ ] npm install (deps)
+- [ ] npx eslint . --fix (linting)
+- [ ] npm audit fix (security)
+
+### Phase 2: Verification [ ]
+- [ ] node test_server_startup_simple.cjs (startup)
+- [ ] node server-enhanced.js (main server health/metrics/status)
+- [ ] node earnings_dashboard/server.js (dashboard)
+
+### Phase 3: Testing [ ]
+- [ ] npm test (Jest)
+- [ ] npx tsc --noEmit (TS check)
+
+### Phase 4: Update Trackers [ ]
+- [ ] Mark all TODO MDs complete ('Local 100%')
+- [ ] Update REMAINING_WORK.md, NEXT_STEPS_TODO.md
+
+### Phase 5: Demo Commands [ ]
+- [ ] node server-enhanced.js
+- [ ] curl http://localhost:3000/health
+
+## Progress
+- Step 1: TODO.md created ✅
+
+Updated: `date`
+
