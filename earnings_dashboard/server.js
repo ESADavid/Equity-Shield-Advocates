@@ -1,7 +1,7 @@
 // Convert server.js to ES module with import syntax
 
 import express from 'express';
-import cors from 'node:cors';
+import cors from 'cors';
 import fs from 'node:fs';
 import path from 'node:path';
 import expressBasicAuth from 'express-basic-auth';
