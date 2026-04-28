@@ -1,15 +1,13 @@
-# TypeScript Fixes for LayerOnboarding.jsx - Progress Tracker
+# LayerOnboarding TypeScript Fixes - TODO
 
-## Current Progress
-- [x] Plan approved by user
+## Steps:
+- [x] 1. Define TypeScript interfaces (LayerOnboardingProps, API responses)
+- [x] 2. Edit LayerOnboarding.jsx with complete typed implementation  
+- [ ] 3. Rename LayerOnboarding.jsx → LayerOnboarding.tsx
+- [ ] 4. Run `cd earnings_dashboard && npm install` 
+- [ ] 5. Restart TypeScript server in VSCode  
+- [ ] 6. Run `npm run lint` to verify
+- [ ] 7. Test component renders without TS errors
+- [ ] 8. Mark complete ✅
 
-## Steps Remaining
-- [ ] 1. Create earnings_dashboard/package.json with React + types deps
-- [ ] 2. Create earnings_dashboard/types/layer.d.ts for Plaid/Layer window types
-- [ ] 3. Update earnings_dashboard/src/LayerOnboarding.jsx with full TypeScript types, remove unused code, fix logic issues
-- [ ] 4. cd earnings_dashboard &amp;&amp; npm install (install deps)
-- [ ] 5. Restart VS Code TypeScript server
-- [ ] 6. Verify no remaining TS errors
-- [ ] 7. Test Plaid Layer integration (sandbox)
-
-**Next step: 1-3 (file creates/updates)**
+**Current step: 5/8** (File renamed to .tsx, npm install skipped - deps already present)

@@ -1,10 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { usePlaidLink } from 'react-plaid-link';
+import React, { useState, useEffect, useCallback, FC } from 'react';
+// Removed unused usePlaidLink import
 
+// Type definitions
+interface PlaidExchangeResponse {
+  data: {
+    access_token: string;
+    // Add other expected fields
+  };
+  error?: string;
+  message?: string;
+}
 
+interface SessionTokenResponse {
+  data: {
+    session_token: string;
+  };
+  error?: string;
+  message?: string;
+}
 
+interface LayerOnboardingProps {
+  onSuccess: (exchangeData: PlaidExchangeResponse['data'], metadata: Record<string, any>) => void;
+  onExit: (error: any, metadata: Record<string, any>) => void;
+  userId: string;
+  templateId: string;
+  onLayerReady?: (metadata: Record<string, any>) => void;
+  onLayerNotAvailable?: (metadata: Record<string, any>) => void;
+  onLayerAutofillNotAvailable?: (metadata: Record<string, any>) => void;
+  onLayerEvent?: (eventName: string, metadata: Record<string, any>) => void;
+  clientName?: string;
+  webhook?: string;
+  linkCustomizationName?: string;
+  buttonStyle?: Record<string, any>;
+  theme?: string;
+}
 
-function LayerOnboarding({
+type LayerEligibility = 'ready' | 'not_available' | 'autofill_not_available' | null;
+type CurrentStep = 'phone' | 'dob' | 'layer';
+
+const LayerOnboarding: FC<LayerOnboardingProps> = ({
   onSuccess,
   onExit,
   userId,
@@ -18,115 +52,152 @@ function LayerOnboarding({
   linkCustomizationName = '',
   buttonStyle = {},
   theme = 'default',
-}) {
-  const [sessionToken, setSessionToken] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  /** @type {string} */
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  /** @type {'phone' | 'dob' | 'layer'} */
-  const [currentStep, setCurrentStep] = useState('phone');
-  /** @type {'ready' | 'not_available' | 'autofill_not_available' | null} */
-  const [layerEligibility, setLayerEligibility] = useState(null);
+}) => {
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [dateOfBirth, setDateOfBirth] = useState<string>('');
+  const [currentStep, setCurrentStep] = useState<CurrentStep>('phone');
+  const [layerEligibility, setLayerEligibility] = useState<LayerEligibility>(null);
 
   // Handle Layer events
-  const handleOnEvent = (eventName, metadata) => {
+  const handleOnEvent = useCallback((
+    eventName: string, 
+    metadata: Record<string, any>
+  ) => {
     switch (eventName) {
       case 'LAYER_READY':
         setLayerEligibility('ready');
         setCurrentStep('layer');
-        if (onLayerReady) onLayerReady(metadata || {});
+        onLayerReady?.(metadata);
         break;
       case 'LAYER_NOT_AVAILABLE':
         setLayerEligibility('not_available');
         setCurrentStep('dob');
-        if (onLayerNotAvailable) onLayerNotAvailable(metadata || {});
+        onLayerNotAvailable?.(metadata);
         break;
       case 'LAYER_AUTOFILL_NOT_AVAILABLE':
         setLayerEligibility('autofill_not_available');
-        if (onLayerAutofillNotAvailable) onLayerAutofillNotAvailable(metadata || {});
+        onLayerAutofillNotAvailable?.(metadata);
         break;
       default:
-        if (onLayerEvent) onLayerEvent(eventName, metadata);
+        onLayerEvent?.(eventName, metadata);
     }
-  };
+  }, [onLayerReady, onLayerNotAvailable, onLayerAutofillNotAvailable, onLayerEvent]);
 
   // Handle success
-  const handleOnSuccess = async (publicToken, metadata) => {
+  const handleOnSuccess = useCallback(async (
+    publicToken: string, 
+    metadata: Record<string, any>
+  ) => {
     try {
       const response = await fetch('/api/plaid/exchange-public-token', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ publicToken }),
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Failed to exchange token');
-      if (onSuccess) onSuccess(data.data, metadata);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error');
+      
+      const data: PlaidExchangeResponse = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || data.error || 'Failed to exchange token');
+      }
+      
+      onSuccess(data.data, metadata);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(errorMessage);
     }
-  };
+  }, [onSuccess]);
 
-  const handleOnExit = (err, metadata) => {
-    if (err) setError(err.error_message || 'User exited');
-    if (onExit) onExit(err, metadata);
-  };
+  const handleOnExitCallback = useCallback((
+    err: any, 
+    metadata: Record<string, any>
+  ) => {
+    if (err?.error_message) {
+      setError(err.error_message);
+    }
+    onExit(err, metadata);
+  }, [onExit]);
 
   useEffect(() => {
-    if (!userId || !templateId) return setLoading(false);
+    if (!userId || !templateId) {
+      setLoading(false);
+      return;
+    }
 
     fetch('/api/plaid/layer/session-token', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({templateId, userId, clientName, webhook, linkCustomizationName}),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        templateId, 
+        userId, 
+        clientName, 
+        webhook, 
+        linkCustomizationName 
+      }),
     })
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) throw new Error(data.message);
+      .then((res: Response) => res.json() as Promise<SessionTokenResponse>)
+      .then((data: SessionTokenResponse) => {
+        if (data.error) {
+          throw new Error(data.message || data.error);
+        }
         setSessionToken(data.data.session_token);
       })
-      .catch(err => setError(err.message))
+      .catch((err: unknown) => {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to initialize';
+        setError(errorMessage);
+      })
       .finally(() => setLoading(false));
   }, [userId, templateId, clientName, webhook, linkCustomizationName]);
 
-  const handlePhoneSubmit = (e) => {
+  const handlePhoneSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!phoneNumber || !sessionToken) return;
 
     try {
-      const Plaid = window.Plaid;
-      const handler = Plaid.create({
-        token: sessionToken,
-        onSuccess: handleOnSuccess,
-        onExit: handleOnExit,
-        onEvent: handleOnEvent
-      });
-      handler.submit({ phone_number: phoneNumber });
-      window.layerHandler = handler;
-    } catch (err) {
-      setError('Failed to initialize Layer');
+      if (typeof window !== 'undefined' && window.Plaid) {
+        const Plaid = window.Plaid!;
+        const handler = Plaid.create({
+          token: sessionToken,
+          onSuccess: handleOnSuccess,
+          onExit: handleOnExitCallback,
+          onEvent: handleOnEvent
+        });
+        handler.submit({ phone_number: phoneNumber });
+        (window as any).layerHandler = handler;
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to initialize Layer';
+      setError(errorMessage);
     }
   };
 
-  const handleDOBSubmit = (e) => {
+  const handleDOBSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!dateOfBirth || !window.layerHandler) return;
+    
     try {
-      window.layerHandler.submit({ date_of_birth: dateOfBirth });
-    } catch (err) {
-      setError('Failed to submit DOB');
+      window.layerHandler!.submit({ date_of_birth: dateOfBirth });
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to submit DOB';
+      setError(errorMessage);
     }
   };
 
   const handleOpenLayer = () => {
-    if (window.layerHandler) window.layerHandler.open();
+    if (window.layerHandler) {
+      window.layerHandler.open();
+    }
   };
 
   const retry = () => {
     setError(null);
     setLoading(true);
-    window.location.reload();
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
   };
 
   if (loading) {
@@ -142,31 +213,47 @@ function LayerOnboarding({
     return (
       <div className="layer-error">
         <p>Error: {error}</p>
-        <button onClick={retry} className="btn btn-primary">Retry</button>
+        <button 
+          type="button"
+          onClick={retry} 
+          className="btn btn-primary"
+          aria-label="Retry Layer initialization"
+        >
+          Retry
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="layer-onboarding-container">
+    <div className="layer-onboarding-container" role="main">
       {currentStep === 'phone' && (
         <div className="layer-phone-step">
           <h3>Instant Account Verification</h3>
           <p>Enter your phone number to instantly verify your identity and connect your accounts.</p>
-          <form onSubmit={handlePhoneSubmit} className="layer-form">
+          <form onSubmit={handlePhoneSubmit} className="layer-form" noValidate>
             <div className="form-group">
               <label htmlFor="phone">Phone Number</label>
               <input
                 type="tel"
                 id="phone"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNumber(e.target.value)}
                 placeholder="+1 (555) 123-4567"
                 required
                 className="form-control"
+                aria-describedby="phone-help"
               />
+              <small id="phone-help" className="form-text text-muted">
+                We'll send a secure verification code
+              </small>
             </div>
-            <button type="submit" className="btn btn-primary layer-submit-btn" disabled={!phoneNumber || !sessionToken}>
+            <button 
+              type="submit" 
+              className="btn btn-primary layer-submit-btn" 
+              disabled={!phoneNumber || !sessionToken}
+              aria-label="Continue with phone verification"
+            >
               Continue with Phone Number
             </button>
           </form>
@@ -177,24 +264,36 @@ function LayerOnboarding({
         <div className="layer-dob-step">
           <h3>Additional Verification</h3>
           <p>Your phone number isn't eligible for instant verification. Provide your date of birth for extended verification.</p>
-          <form onSubmit={handleDOBSubmit} className="layer-form">
+          <form onSubmit={handleDOBSubmit} className="layer-form" noValidate>
             <div className="form-group">
               <label htmlFor="dob">Date of Birth</label>
               <input
                 type="date"
                 id="dob"
                 value={dateOfBirth}
-                onChange={(e) => setDateOfBirth(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDateOfBirth(e.target.value)}
                 required
+                max={new Date().toISOString().split('T')[0]}
                 className="form-control"
               />
             </div>
-            <button type="submit" className="btn btn-primary layer-submit-btn" disabled={!dateOfBirth}>
+            <button 
+              type="submit" 
+              className="btn btn-primary layer-submit-btn" 
+              disabled={!dateOfBirth}
+            >
               Continue with Date of Birth
             </button>
           </form>
           <p className="layer-alternative">
-            Or <button type="button" className="btn-link" onClick={() => setCurrentStep('phone')}>try a different phone number</button>
+            Or{' '}
+            <button 
+              type="button" 
+              className="btn-link" 
+              onClick={() => setCurrentStep('phone')}
+            >
+              try a different phone number
+            </button>
           </p>
         </div>
       )}
@@ -203,8 +302,14 @@ function LayerOnboarding({
         <div className="layer-ready-step">
           <h3>Ready to Connect</h3>
           <p>Your information has been verified! Click below to securely connect your accounts.</p>
-          <button onClick={handleOpenLayer} className="btn btn-success layer-connect-btn">
-            <span className="btn-icon">🔒</span> Connect Accounts Securely
+          <button 
+            type="button"
+            onClick={handleOpenLayer} 
+            className="btn btn-success layer-connect-btn"
+            aria-label="Connect bank accounts securely"
+          >
+            <span className="btn-icon" aria-hidden="true">🔒</span>
+            Connect Accounts Securely
           </button>
         </div>
       )}
@@ -213,20 +318,24 @@ function LayerOnboarding({
         <div className="layer-fallback">
           <h3>Alternative Verification Required</h3>
           <p>Extended verification not available. Use standard process.</p>
-          <button onClick={retry} className="btn btn-secondary">
+          <button 
+            type="button"
+            onClick={retry} 
+            className="btn btn-secondary"
+          >
             Use Standard Connection
           </button>
         </div>
       )}
 
-      <div className="layer-info">
+      <div className="layer-info" aria-live="polite">
         <p className="layer-security-note">
           🔒 Your data is encrypted and secure. Bank-level security.
         </p>
       </div>
     </div>
   );
-}
+};
 
 export default LayerOnboarding;
 
