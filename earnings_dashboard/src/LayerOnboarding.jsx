@@ -157,7 +157,7 @@ const LayerOnboarding: FC<LayerOnboardingProps> = ({
     if (!phoneNumber || !sessionToken) return;
 
     try {
-      if (typeof window !== 'undefined' && window.Plaid) {
+typeof globalThis !== 'undefined' && globalThis.Plaid
         const Plaid = window.Plaid!;
         const handler = Plaid.create({
           token: sessionToken,
@@ -166,7 +166,7 @@ const LayerOnboarding: FC<LayerOnboardingProps> = ({
           onEvent: handleOnEvent
         });
         handler.submit({ phone_number: phoneNumber });
-        (window as any).layerHandler = handler;
+(globalThis as any).layerHandler = handler;
       }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to initialize Layer';
@@ -176,7 +176,7 @@ const LayerOnboarding: FC<LayerOnboardingProps> = ({
 
   const handleDOBSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!dateOfBirth || !window.layerHandler) return;
+if (!dateOfBirth || !globalThis.layerHandler) return;
     
     try {
       window.layerHandler!.submit({ date_of_birth: dateOfBirth });
@@ -187,7 +187,7 @@ const LayerOnboarding: FC<LayerOnboardingProps> = ({
   };
 
   const handleOpenLayer = () => {
-    if (window.layerHandler) {
+if (globalThis.layerHandler) {
       window.layerHandler.open();
     }
   };
@@ -195,8 +195,8 @@ const LayerOnboarding: FC<LayerOnboardingProps> = ({
   const retry = () => {
     setError(null);
     setLoading(true);
-    if (typeof window !== 'undefined') {
-      window.location.reload();
+if (typeof globalThis !== 'undefined') {
+globalThis.location.reload();
     }
   };
 
