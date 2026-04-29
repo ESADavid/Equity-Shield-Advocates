@@ -155,7 +155,7 @@ function Dashboard() {
                 }
                 alert('Bank account connected successfully!');
               }}
-              onExit={(err, metadata) => {\n                /* console.log('Plaid Link Exit:', err, metadata); */
+              onExit={(err) => {
                 if (err) {
                   alert('Connection cancelled or failed');
                 }

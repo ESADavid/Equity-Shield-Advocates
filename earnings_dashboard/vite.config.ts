@@ -4,7 +4,9 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react()],  optimizeDeps: {
+    exclude: ['dashboard.html', 'wallet_frontend.html', 'src/index.html', 'src/index_new.html']
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
