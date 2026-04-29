@@ -1,13 +1,9 @@
-# Server Startup & Plaid Fix TODO
+# PSScriptAnalyzer Fix TODO
 
-## Current Status
-✅ Step 1 Complete: Analyzed files, confirmed invalid Plaid version ^20.24.1  
-✅ Step 2 Complete: package.json edited to Plaid ^0.10.4
+## Steps
 
-## Next Steps
-- [ ] Step 2: Edit package.json Plaid version
-- [ ] Step 3: npm install
-- [ ] Step 4: Test server startup
-- [ ] Step 5: Address sepolia/blockchain if needed post-server-start
-
-Last Updated: $(new Date().toISOString())
+- [x] Step 1: Create this TODO.md file
+- [x] Step 2: Edit start-servers.ps1 to use `$response4000.status` in Write-Host for port 4000 health check
+- [x] Step 3: Verify PSScriptAnalyzer warning is resolved (re-run in VSCode)
+- [x] Step 4: Test script execution (`./start-servers.ps1`)
+- [x] Completed
