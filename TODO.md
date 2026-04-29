@@ -1,16 +1,27 @@
-# PrivateBankingService.js Fix Progress
+# Server Startup Fix - Progress Tracker
 
-## Plan Steps:
-- [ ] 1. Create this TODO.md
-- [ ] 2. Fix imports (remove unused fs/path)
-- [ ] 3. Add protection methods (activateLiquidityProtection, sovereignOverride)
-- [ ] 4. Fix constructor (remove \\n, proper inits)
-- [ ] 5. Implement/fix all methods with types/JSDoc
-- [ ] 6. Syntax check: node -c services/privateBankingService.js
-- [ ] 7. Lint check: npx eslint services/privateBankingService.js
-- [ ] 8. Test instantiation
-- [ ] 9. VSCode error verification (0 errors)
-- [ ] 10. Complete!
+## Steps to Complete:
 
-**Current: Starting edits...**
+### 1. Create this TODO.md file ✅ (Done)
 
+### 2. Update root package.json
+- Add "plaid": "^2024.1.0" to dependencies
+- [ ] Pending
+
+### 3. Update earnings_dashboard/package.json
+- Add "type": "module"
+- [ ] Pending
+
+### 4. Install dependencies
+- Run `npm install` in root
+- [ ] Pending
+
+### 5. Test server startup
+- Run `node test_server_startup_simple.cjs`
+- Expect: Server starts successfully without Plaid error
+- [ ] Pending
+
+### 6. Mark complete
+- [ ] All steps done, server ready
+
+**Status: Starting implementation...**

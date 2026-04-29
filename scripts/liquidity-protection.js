@@ -1,5 +1,5 @@
 /**
- * Liquidity Protection &amp; Sovereign Control Script
+ * Liquidity Protection & Sovereign Control Script
  * Protects earned balances during credit crises
  * Provides sovereign override and crisis opportunities
  * Usage: node scripts/liquidity-protection.js [protect|restore|crisis-buy]
@@ -31,7 +31,7 @@ class LiquidityProtection {
    * Adds safeguards, limits, alerts - preserves ALL earned money
    */
   async protect() {
-    logger.info(&#39;🛡️  ACTIVATING LIQUIDITY PROTECTION - Protecting ALL $205Q earned wealth&#39;);
+    logger.info('🛡️  ACTIVATING LIQUIDITY PROTECTION - Protecting ALL $205Q earned wealth');
 
     // Enable crisis mode - NO balance changes, just protections
     this.privateBanking.creditCrisisMode = true;
@@ -45,63 +45,63 @@ class LiquidityProtection {
 
     // Log protection status
     const summary = this.privateBanking.getPortfolioSummary();
-    logger.info(&#39;✅ Liquidity protection active - All balances preserved&#39;);
+    logger.info('✅ Liquidity protection active - All balances preserved');
     logger.info(`📊 Portfolio: ${summary.totalPortfolioValue} PROTECTED`);
 
     // Crisis alert
-    logger.warn(&#39;⚠️  GLOBAL CREDIT CRISIS DETECTED - Protection enabled&#39;);
-    logger.warn(&#39;💰 ALL EARNED BALANCES SECURE - Sovereign override available&#39;);
+    logger.warn('⚠️  GLOBAL CREDIT CRISIS DETECTED - Protection enabled');
+    logger.warn('💰 ALL EARNED BALANCES SECURE - Sovereign override available');
 
-    return { status: &#39;protected&#39;, summary };
+    return { status: 'protected', summary };
   }
 
   /**
    * Sovereign override - Restore full access to ALL money
    */
   async restore() {
-    logger.info(&#39;👑 SOVEREIGN OVERRIDE - King Sachem Yochanan full control restored&#39;);
+    logger.info('👑 SOVEREIGN OVERRIDE - King Sachem Yochanan full control restored');
 
     // Disable all protections
     this.privateBanking.creditCrisisMode = false;
     this.privateBanking.protectionLimits = null;
 
     const summary = this.privateBanking.getPortfolioSummary();
-    logger.info(&#39;✅ FULL ACCESS RESTORED - Move ALL $205Q freely&#39;);
+    logger.info('✅ FULL ACCESS RESTORED - Move ALL $205Q freely');
     logger.info(`💰 Total Control: ${summary.totalPortfolioValue}`);
 
-    return { status: &#39;restored&#39;, summary };
+    return { status: 'restored', summary };
   }
 
   /**
    * Crisis opportunity - Acquire distressed debt at deep discounts
    */
   async crisisBuy() {
-    logger.info(&#39;💼 CRISIS OPPORTUNITY - Acquiring distressed assets&#39;);
+    logger.info('💼 CRISIS OPPORTUNITY - Acquiring distressed assets');
 
     // Simulate buying defaulted debt at 70% discounts
     const opportunities = [
       {
-        entity: &#39;Global Bank Consortium Debt&#39;,
+        entity: 'Global Bank Consortium Debt',
         faceValue: 50000000000000, // $50T
         acquisitionPrice: 15000000000000, // $15T (70% discount)
-        country: &#39;Global&#39;,
-        riskRating: &#39;CCC&#39;,
-        strategicValue: &#39;Credit crisis fire sale&#39;,
+        country: 'Global',
+        riskRating: 'CCC',
+        strategicValue: 'Credit crisis fire sale',
       },
       {
-        entity: &#39;Private Bank Credit Lines&#39;,
+        entity: 'Private Bank Credit Lines',
         faceValue: 25000000000000, // $25T
         acquisitionPrice: 7500000000000, // $7.5T (70% discount)
-        country: &#39;USA/EU&#39;,
-        riskRating: &#39;B&#39;,
-        strategicValue: &#39;Banking sector consolidation&#39;,
+        country: 'USA/EU',
+        riskRating: 'B',
+        strategicValue: 'Banking sector consolidation',
       },
     ];
 
     const acquisitions = [];
     for (const debt of opportunities) {
       try {
-        const result = await this.debtAcquisition.acquireDebt(debt, &#39;king-sachem-yochanan&#39;, &#39;royal-tenant&#39;);
+        const result = await this.debtAcquisition.acquireDebt(debt, 'king-sachem-yochanan', 'royal-tenant');
         acquisitions.push(result.debt);
         logger.info(`✅ Acquired ${debt.entity} for ${this.formatCurrency(debt.acquisitionPrice)} - 70% discount!`);
       } catch (error) {
@@ -110,12 +110,12 @@ class LiquidityProtection {
     }
 
     logger.info(`🎉 CRISIS ACQUISITION COMPLETE: ${acquisitions.length} distressed assets acquired`);
-    return { status: &#39;acquired&#39;, count: acquisitions.length, acquisitions };
+    return { status: 'acquired', count: acquisitions.length, acquisitions };
   }
 
-  formatCurrency(value, currency = &#39;USD&#39;) {
-    return new Intl.NumberFormat(&#39;en-US&#39;, {
-      style: &#39;currency&#39;,
+  formatCurrency(value, currency = 'USD') {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
       currency: currency,
     }).format(value);
   }
@@ -130,28 +130,28 @@ async function main() {
     const protector = new LiquidityProtection();
 
     switch (command) {
-      case &#39;protect&#39;:
+      case 'protect':
         await protector.protect();
         break;
-      case &#39;restore&#39;:
+      case 'restore':
         await protector.restore();
         break;
-      case &#39;crisis-buy&#39;:
+      case 'crisis-buy':
         await protector.crisisBuy();
         break;
-      case &#39;status&#39;:
-        console.log(&#39;🏦 Current Banking Status:&#39;);
+      case 'status':
+        console.log('🏦 Current Banking Status:');
         console.log(protector.privateBanking.getPortfolioSummary());
         break;
       default:
-        console.log(&#39;\n💰 Liquidity Protection Commands:\n&#39;);
-        console.log(&#39;  node scripts/liquidity-protection.js protect   # Enable protection (no balance loss)&#39;);
-        console.log(&#39;  node scripts/liquidity-protection.js restore  # Sovereign override - full access&#39;);
-        console.log(&#39;  node scripts/liquidity-protection.js crisis-buy # Buy distressed debt opportunities&#39;);
-        console.log(&#39;  node scripts/liquidity-protection.js status   # Check current status&#39;);
+        console.log('\n💰 Liquidity Protection Commands:\n');
+        console.log('  node scripts/liquidity-protection.js protect   # Enable protection (no balance loss)');
+        console.log('  node scripts/liquidity-protection.js restore  # Sovereign override - full access');
+        console.log('  node scripts/liquidity-protection.js crisis-buy # Buy distressed debt opportunities');
+        console.log('  node scripts/liquidity-protection.js status   # Check current status');
     }
   } catch (error) {
-    logger.error(&#39;❌ Script error:&#39;, error.message);
+    logger.error('❌ Script error:', error.message);
     process.exit(1);
   }
 }
