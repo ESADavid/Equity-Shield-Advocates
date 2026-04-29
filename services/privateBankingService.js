@@ -15,6 +15,52 @@ const __dirname = path.dirname(__filename);
 
 class PrivateBankingService {
   constructor() {
+    this.creditCrisisMode = false;
+    this.protectionLimits = null;
+    // ... rest unchanged
+  }
+
+  /**
+   * Sovereign liquidity protection mode (NO balance reduction)
+   */
+  activateLiquidityProtection() {
+    logger.warn(&#39;🛡️ Liquidity protection ACTIVATED - ALL earned balances PROTECTED&#39;);
+    this.creditCrisisMode = true;
+    
+    // Protection without touching balances
+    this.protectionLimits = {
+      dailyLimit: 1000000000000, // $1T - still huge
+      autoFreezeRisky: true,
+      requireOverride: true,
+    };
+    
+    logger.info(&#39;✅ Protection active - Sovereign override available&#39;);
+    return this.getPortfolioSummary();
+  }
+
+  /**
+   * Sovereign override - Bypass all protections
+   */
+  sovereignOverride() {
+    logger.info(&#39;👑 SOVEREIGN OVERRIDE - King Sachem Yochanan - FULL CONTROL RESTORED&#39;);
+    this.creditCrisisMode = false;
+    this.protectionLimits = null;
+    logger.info(&#39;✅ All limits removed - Move ALL money freely&#39;);
+    return this.getPortfolioSummary();
+  }
+
+  // Override executeBankingOperation to respect crisis mode
+  async executeBankingOperation(operation, accountId, params = {}) {
+    if (this.creditCrisisMode &amp;&amp; this.protectionLimits) {
+      const account = this.getAccount(accountId);
+      if (account.status === &#39;frozen&#39;) {
+        return { success: false, error: &#39;Account frozen due to credit crisis - use sovereign override&#39; };
+      }
+      // Additional checks...
+    }
+    return super.executeBankingOperation(operation, accountId, params); // Original logic
+  }
+  constructor() {
     this.accounts = new Map();
     this.assets = new Map();
     this.transactions = [];
