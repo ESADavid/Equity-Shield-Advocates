@@ -8,7 +8,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import logger from '../utils/loggerWrapper.js';
+import logger from 'utils/loggerWrapper.js';
 import PrivateBankingService from '../services/privateBankingService.js';
 import DebtAcquisitionService from '../services/debtAcquisitionService.js';
 

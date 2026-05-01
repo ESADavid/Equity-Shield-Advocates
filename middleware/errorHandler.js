@@ -5,7 +5,7 @@
  * @module middleware/errorHandler
  */
 
-import { error as logError, warn as logWarn } from '../utils/loggerWrapper.js';
+import { error as logError, warn as logWarn } from 'utils/loggerWrapper.js';
 
 /**
  * Custom Application Error class

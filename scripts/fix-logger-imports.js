@@ -7,7 +7,7 @@ import { readdir, readFile, writeFile, stat } from 'fs/promises';
 import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
-import logger from '../utils/loggerWrapper.js';
+import logger from 'utils/loggerWrapper.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, '..');

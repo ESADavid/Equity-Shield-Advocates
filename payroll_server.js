@@ -4,7 +4,7 @@ const __importDefault = (mod) => (mod?.__esModule ? mod : { default: mod });
 Object.defineProperty(exports, '__esModule', { value: true });
 const express_1 = __importDefault(require('express'));
 const body_parser_1 = __importDefault(require('body-parser'));
-import logger from './utils/loggerWrapper.js';
+import logger from 'utils/loggerWrapper.js';
 const payrollSystem_1 = require('./payrollSystem');
 const app = (0, express_1.default)();
 const port = 5000;
