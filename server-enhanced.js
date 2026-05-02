@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck
 
 import dotenv from 'dotenv';
 import logger from './utils/loggerWrapper.js';
@@ -393,7 +394,7 @@ app.use(
 );
 
 // Rate limiting with different tiers
-const createRateLimit = (windowMs, max, message) =>
+const createRateLimit = (windowMs: number, max: number, message: string) =>
   rateLimit({
     windowMs,
     max,
