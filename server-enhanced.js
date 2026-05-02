@@ -177,9 +177,8 @@ const notificationService = new NotificationService(io);
 // Import merchant bill pay system
 let merchantBillPay;
 try {
-  const merchantModule =
+  merchantBillPay =
     await import('./earnings_dashboard/merchant_bill_pay.js');
-  merchantBillPay = merchantModule.default || merchantModule;
   logger.info('✅ Merchant bill pay system loaded successfully');
 } catch (error) {
   logger.error('❌ Failed to load merchant bill pay system:', error.message);
