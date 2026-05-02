@@ -83,8 +83,9 @@ if (process.env.SKIP_DATABASE === 'true') {
   try {
     await database.connect();
     logger.info('✅ Database connected successfully');
-  } catch (error) {
-    logger.error('❌ Database connection failed:', error.message);
+} catch (error) {
+    const err = /** @type {Error} */ (error);
+    logger.error('❌ Database connection failed:', err.message);
     logger.info('💡 Enhanced database features available:');
     logger.info('   - Automatic retry with exponential backoff');
     logger.info('   - Connection pooling optimizations');
