@@ -5,6 +5,7 @@ import logger from './utils/loggerWrapper.js';
 
 dotenv.config();
 
+// @ts-ignore
 import express from 'express';
 import {
   errorHandler,
