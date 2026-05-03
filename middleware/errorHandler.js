@@ -5,25 +5,49 @@
  * @module middleware/errorHandler
  */
 
-import { error as logError, warn as logWarn } from 'utils/loggerWrapper.js';
+import { error as logError, warn as logWarn } from '../utils/loggerWrapper.js';
 
 /**
- * Custom Application Error class
+ * Custom Application Error class with additional properties
+ * @extends Error
  */
 export class AppError extends Error {
+  /** @type {number} */
+  statusCode;
+  /** @type {boolean} */
+  isOperational;
+  /** @type {string} */
+  timestamp;
+  /** @type {*} */
+  details;
+  /** @type {string} */
+  requestId;
+
+  /**
+   * @param {string} message - Error message
+   * @param {number} [statusCode=500] - HTTP status code
+   * @param {boolean} [isOperational=true] - Whether this is an operational error
+   */
   constructor(message, statusCode = 500, isOperational = true) {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = isOperational;
     this.timestamp = new Date().toISOString();
+    this.details = undefined;
+    this.requestId = undefined;
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
 /**
+ * Extended error type for database errors
+ * @typedef {Error & {code?: number, name?: string}} DatabaseError
+ */
+
+/**
  * Error classification helper
- * @param {number} statusCode - HTTP status code
- * @returns {string} Error type
+ * @param {number} statusCode
+ * @returns {string}
  */
 function classifyError(statusCode) {
   if (statusCode >= 500) return 'server_error';
@@ -33,14 +57,15 @@ function classifyError(statusCode) {
 
 /**
  * Format error response
- * @param {Error} err - Error object
- * @param {boolean} isDevelopment - Is development environment
- * @returns {Object} Formatted error response
+ * @param {AppError} err
+ * @param {boolean} isDevelopment
+ * @returns {Object}
  */
 function formatErrorResponse(err, isDevelopment) {
   const statusCode = err.statusCode || 500;
   const errorType = classifyError(statusCode);
 
+  /** @type {Object} */
   const response = {
     success: false,
     error: {
@@ -67,10 +92,11 @@ function formatErrorResponse(err, isDevelopment) {
 
 /**
  * Log error with context
- * @param {Error} err - Error object
- * @param {Object} req - Express request object
+ * @param {AppError} err
+ * @param {Object} req
  */
 function logErrorWithContext(err, req) {
+  /** @type {Object} */
   const errorContext = {
     message: err.message,
     statusCode: err.statusCode || 500,
@@ -80,7 +106,7 @@ function logErrorWithContext(err, req) {
     ip: req.ip,
     userAgent: req.get('user-agent'),
     userId: req.user?.id || req.user?.userId || 'anonymous',
-    requestId: req.id || req.headers['x-request-id'],
+    requestId: req.id || req.headers?.['x-request-id'],
     timestamp: new Date().toISOString(),
   };
 
@@ -90,7 +116,9 @@ function logErrorWithContext(err, req) {
   }
 
   // Log based on error severity
-  if (err.statusCode >= 500 || !err.isOperational) {
+  const statusCode = err.statusCode;
+  const isOperational = err.isOperational;
+  if (statusCode >= 500 || !isOperational) {
     logError('Server Error', errorContext);
   } else {
     logWarn('Client Error', errorContext);
@@ -99,12 +127,12 @@ function logErrorWithContext(err, req) {
 
 /**
  * Main error handler middleware
- * @param {Error} err - Error object
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next function
+ * @param {AppError} err
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
  */
-export function errorHandler(err, req, res, next) {
+export function errorHandler(err, req, res, _next) {
   // Set default status code if not set
   err.statusCode = err.statusCode || 500;
   err.isOperational =
@@ -125,9 +153,9 @@ export function errorHandler(err, req, res, next) {
 
 /**
  * Handle 404 Not Found errors
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next function
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
  */
 export function notFoundHandler(req, res, next) {
   const error = new AppError(
@@ -141,8 +169,8 @@ export function notFoundHandler(req, res, next) {
 /**
  * Async error wrapper
  * Wraps async route handlers to catch errors
- * @param {Function} fn - Async function to wrap
- * @returns {Function} Wrapped function
+ * @param {Function} fn
+ * @returns {Function}
  */
 export function asyncHandler(fn) {
   return (req, res, next) => {
@@ -152,8 +180,8 @@ export function asyncHandler(fn) {
 
 /**
  * Validation error handler
- * @param {Array} errors - Validation errors
- * @returns {AppError} Formatted validation error
+ * @param {Array<{message?: string, msg?: string}>} errors
+ * @returns {AppError}
  */
 export function validationError(errors) {
   const message = errors.map((err) => err.message || err.msg).join(', ');
@@ -164,8 +192,8 @@ export function validationError(errors) {
 
 /**
  * Database error handler
- * @param {Error} err - Database error
- * @returns {AppError} Formatted database error
+ * @param {DatabaseError} err
+ * @returns {AppError}
  */
 export function databaseError(err) {
   let message = 'Database operation failed';
@@ -194,8 +222,8 @@ export function databaseError(err) {
 
 /**
  * Authentication error handler
- * @param {string} message - Error message
- * @returns {AppError} Formatted authentication error
+ * @param {string} [message='Authentication failed']
+ * @returns {AppError}
  */
 export function authenticationError(message = 'Authentication failed') {
   return new AppError(message, 401, true);
@@ -203,8 +231,8 @@ export function authenticationError(message = 'Authentication failed') {
 
 /**
  * Authorization error handler
- * @param {string} message - Error message
- * @returns {AppError} Formatted authorization error
+ * @param {string} [message='Access denied']
+ * @returns {AppError}
  */
 export function authorizationError(message = 'Access denied') {
   return new AppError(message, 403, true);
@@ -212,14 +240,11 @@ export function authorizationError(message = 'Access denied') {
 
 /**
  * Payment error handler
- * @param {string} message - Error message
- * @param {Object} details - Error details
- * @returns {AppError} Formatted payment error
+ * @param {string} [message='Payment processing failed']
+ * @param {Object} [details={}]
+ * @returns {AppError}
  */
-export function paymentError(
-  message = 'Payment processing failed',
-  details = {}
-) {
+export function paymentError(message = 'Payment processing failed', details = {}) {
   const error = new AppError(message, 402, true);
   error.details = details;
   return error;
@@ -227,8 +252,8 @@ export function paymentError(
 
 /**
  * Rate limit error handler
- * @param {string} message - Error message
- * @returns {AppError} Formatted rate limit error
+ * @param {string} [message='Too many requests']
+ * @returns {AppError}
  */
 export function rateLimitError(message = 'Too many requests') {
   return new AppError(message, 429, true);
@@ -236,8 +261,8 @@ export function rateLimitError(message = 'Too many requests') {
 
 /**
  * Service unavailable error handler
- * @param {string} service - Service name
- * @returns {AppError} Formatted service error
+ * @param {string} [service='Service']
+ * @returns {AppError}
  */
 export function serviceUnavailableError(service = 'Service') {
   return new AppError(`${service} is temporarily unavailable`, 503, true);
@@ -250,14 +275,13 @@ export function serviceUnavailableError(service = 'Service') {
 export function unhandledRejectionHandler() {
   process.on('unhandledRejection', (reason, promise) => {
     logError('Unhandled Promise Rejection', {
-      reason: reason instanceof Error ? reason.message : reason,
+      reason: reason instanceof Error ? reason.message : String(reason),
       stack: reason instanceof Error ? reason.stack : undefined,
-      promise: promise.toString(),
+      promise: String(promise),
     });
 
     // In production, you might want to gracefully shutdown
     if (process.env.NODE_ENV === 'production') {
-      // Perform cleanup and exit
       process.exit(1);
     }
   });
@@ -282,7 +306,6 @@ export function uncaughtExceptionHandler() {
 
 /**
  * Setup all unhandled rejection and exception handlers
- * Convenience function to register both handlers at once
  */
 export function setupUnhandledRejectionHandlers() {
   unhandledRejectionHandler();
