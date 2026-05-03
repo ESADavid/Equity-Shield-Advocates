@@ -394,7 +394,7 @@ app.use(
 );
 
 // Rate limiting with different tiers
-const createRateLimit = (windowMs: number, max: number, message: string) =>
+const createRateLimit = (windowMs, max, message) =>
   rateLimit({
     windowMs,
     max,
@@ -578,7 +578,7 @@ app.get('/api/status', (req, res) => {
 
 // Merchant Bill Pay API Routes
 if (merchantBillPay?.router) {
-  app.use('/api/merchant', merchantBillPay.router);
+  app.use('/api/merchant', merchantBillPay?.router);
   logger.info('✅ Merchant bill pay routes mounted at /api/merchant');
 }
 
