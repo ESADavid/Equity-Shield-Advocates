@@ -1,10 +1,12 @@
 # Angel Coders Job Descriptions
 
 ## Core Developer
+
 **Base Pay: $175,000/year**  
 **Experience: Senior (5+ years)**
 
 ### Responsibilities
+
 - Build and maintain core platform features
 - Write clean, documented code in JavaScript/TypeScript
 - Participate in code reviews
@@ -12,6 +14,7 @@
 - Collaborate with product and design teams
 
 ### Requirements
+
 - 5+ years full-stack development
 - Expert in Node.js, Express, React
 - Experience with MongoDB, PostgreSQL
@@ -22,10 +25,12 @@
 ---
 
 ## Security Engineer  
+
 **Base Pay: $175,000/year**  
 **Experience: Senior (5+ years)**
 
 ### Responsibilities
+
 - Implement security protocols and compliance (PCI-DSS, SOC2)
 - Conduct security audits and vulnerability assessments
 - Design secure architecture patterns
@@ -33,6 +38,7 @@
 - Ensure data protection and encryption
 
 ### Requirements
+
 - 5+ years cybersecurity experience
 - Expert in OWASP Top 10
 - Security certifications (CISSP, CEH preferred)
@@ -42,10 +48,12 @@
 ---
 
 ## Integration Specialist
+
 **Base Pay: $175,000/year**  
 **Experience: Mid-Senior (3+ years)**
 
 ### Responsibilities
+
 - Implement and maintain API integrations (Plaid, JPMorgan, QuickBooks)
 - Build webhook handlers and event systems
 - Troubleshoot integration issues
@@ -53,6 +61,7 @@
 - Ensure data sync reliability
 
 ### Requirements
+
 - 3+ years API integration experience
 - Experience with third-party financial APIs
 - Strong debugging and troubleshooting skills
@@ -62,10 +71,12 @@
 ---
 
 ## DevOps Engineer
+
 **Base Pay: $175,000/year**  
 **Experience: Senior (5+ years)**
 
 ### Responsibilities
+
 - Manage cloud infrastructure (AWS, Kubernetes)
 - CI/CD pipeline maintenance
 - Monitor system health and performance
@@ -73,6 +84,7 @@
 - Ensure 99.9% uptime
 
 ### Requirements
+
 - 5+ years DevOps experience
 - Expert in AWS/GCP
 - Experience with Docker, Kubernetes
@@ -82,10 +94,12 @@
 ---
 
 ## AI/ML Engineer  
+
 **Base Pay: $175,000/year**  
 **Experience: Expert (7+ years)**
 
 ### Responsibilities
+
 - Design and implement AI services
 - Machine learning model development
 - Natural language processing
@@ -93,6 +107,7 @@
 - Optimize AI performance
 
 ### Requirements
+
 - 7+ years AI/ML experience
 - Expert in Python, TensorFlow, PyTorch
 - Large language model integration
@@ -102,6 +117,7 @@
 ---
 
 ## Benefits Package (All Roles)
+
 - Base salary: $175,000+
 - Equity/stock options
 - Health, dental, vision insurance

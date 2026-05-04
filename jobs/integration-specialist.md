@@ -40,4 +40,4 @@
 
 ## Apply
 
-**Email:** careers@oscarbroomerevenue.com
+**Email:** <careers@oscarbroomerevenue.com>

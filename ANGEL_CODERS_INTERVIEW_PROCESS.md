@@ -3,27 +3,32 @@
 ## Round 1: Technical Screen (30 minutes)
 
 ### General Questions
+
 1. Tell me about your experience with JavaScript/TypeScript and Node.js
 2. What's your preferred development environment and why?
 3. Describe your experience with RESTful APIs
 4. How do you approach debugging a difficult issue?
 
 ### Experience Questions
-5. Describe a complex system you built from scratch
-6. How do you ensure code quality and documentation?
-7. What's your experience with cloud platforms?
+
+1. Describe a complex system you built from scratch
+2. How do you ensure code quality and documentation?
+3. What's your experience with cloud platforms?
 
 ---
 
 ## Round 2: Technical Deep Dive (60 minutes)
 
 ### System Design
+
 1. Design a scalable payment processing system
 2. How would you handle 10x traffic increase?
 3. Describe your security-first approach to development
 
 ### Code Review
-4. Review this code sample:
+
+1. Review this code sample:
+
 ```javascript
 function processPayment(userId, amount) {
   const user = db.find(userId);
@@ -32,18 +37,21 @@ function processPayment(userId, amount) {
   return user.balance;
 }
 ```
-5. What security issues do you see?
-6. How would you fix them?
+
+1. What security issues do you see?
+2. How would you fix them?
 
 ### Problem Solving
-7. A webhook fails silently - how do you debug?
-8. Database connection times out - what's your approach?
+
+1. A webhook fails silently - how do you debug?
+2. Database connection times out - what's your approach?
 
 ---
 
 ## Round 3: Culture & Fit (30 minutes)
 
 ###价值观问题
+
 1. Why do you want to join our team?
 2. How do you handle disagreements with teammates?
 3. What's your ideal work environment?
@@ -51,15 +59,17 @@ function processPayment(userId, amount) {
 5. How do you stay current with technology?
 
 ### Scenario Questions
-6. A critical bug is found at 5pm on Friday - what's your approach?
-7. You disagree with a technical decision - what do you do?
-8. How do you mentor junior developers?
+
+1. A critical bug is found at 5pm on Friday - what's your approach?
+2. You disagree with a technical decision - what do you do?
+3. How do you mentor junior developers?
 
 ---
 
 ## Final: Executive Review (30 minutes)
 
 ### 商业理解
+
 1. Why is this role important to our mission?
 2. What's your understanding of our platform?
 3. How can you contribute to our growth?
