@@ -6,9 +6,9 @@
  * @usage: node scripts/system-health-check.js
  */
 
-import { readFileSync, existsSync, readdirSync, statSync } from 'fs';
-import { join, extname } from 'path';
-import { fileURLToPath } from 'url';
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { join, extname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const rootDir = join(__dirname, '..');
@@ -29,7 +29,9 @@ const colors = {
  * @param {string} message
  */
 function log(color, prefix, message) {
+  /* eslint-disable no-console */
   console.log(`${color}[${prefix}]${colors.reset} ${message}`);
+  /* eslint-enable no-console */
 }
 
 /**
@@ -84,8 +86,8 @@ function countFiles(dir, extensions = []) {
         count++;
       }
     }
-  } catch (e) {
-    // Ignore permission errors
+} catch {
+    // Ignore permission errors - no action needed for access denied
   }
   return count;
 }
