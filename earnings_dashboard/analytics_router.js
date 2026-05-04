@@ -1,5 +1,5 @@
 import express from 'express';
-import { error as logError } from 'utils/loggerWrapper.js';
+import { error as logError } from '../utils/loggerWrapper.js';
 import { getAnalytics } from './ai_analytics.js';
 import {
   getTranscendenceAnalytics,

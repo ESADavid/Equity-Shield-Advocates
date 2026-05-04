@@ -1,7 +1,7 @@
 // Simple Revenue Optimization - Restoring Divine Mission
 // Removed AI transcendence, focusing on divine guidance and manual optimization
 
-import { info } from 'utils/loggerWrapper.js';
+import { info } from '../utils/loggerWrapper.js';
 
 class SimpleRevenueOptimization {
   constructor() {

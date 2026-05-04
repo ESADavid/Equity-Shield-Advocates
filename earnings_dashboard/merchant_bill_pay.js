@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 import fs from 'node:fs';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { info, warn, error as logError } from 'utils/loggerWrapper.js';
+import { info, warn, error as logError } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
 
