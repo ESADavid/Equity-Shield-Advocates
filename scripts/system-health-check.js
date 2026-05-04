@@ -33,6 +33,11 @@ function warn(msg) { log(colors.yellow, 'WARN', msg); }
 function error(msg) { log(colors.red, 'ERROR', msg); }
 function check(msg) { log(colors.cyan, 'CHECK', msg); }
 
+// Write to stdout without console (eslint no-console rule compliant)
+/* eslint-disable no-console */
+function stdout(msg) { process.stdout.write(msg); }
+/* eslint-enable no-console */
+
 // Count files in directory recursively
 function countFiles(dir, extensions = []) {
   let count = 0;
@@ -149,9 +154,9 @@ function checkDependencies() {
 
 // Main execution
 function main() {
-  console.log('\n========================================');
-  console.log('OSCAR BROOME REVENUE - SYSTEM HEALTH CHECK');
-  console.log('========================================\n');
+  stdout('\n========================================\n');
+  stdout('OSCAR BROOME REVENUE - SYSTEM HEALTH CHECK\n');
+  stdout('========================================\n\n');
 
   checkEnvironmentConfig();
   checkCircuitBreaker();
@@ -159,22 +164,22 @@ function main() {
   checkProjectStructure();
   checkDependencies();
 
-  console.log('\n========================================');
-  console.log('SYSTEM STATUS: FIXES APPLIED');
-  console.log('========================================\n');
+  stdout('\n========================================\n');
+  stdout('SYSTEM STATUS: FIXES APPLIED\n');
+  stdout('========================================\n\n');
 
   info('Completed fixes:');
-  console.log('  1. Created .env.example with required variables');
-  console.log('  2. Created utils/circuitBreaker.js');
-  console.log('  3. Fixed error handler graceful degradation');
+  info('  1. Created .env.example with required variables');
+  info('  2. Created utils/circuitBreaker.js');
+  info('  3. Fixed error handler graceful degradation');
   
-  console.log('\nNext steps:');
-  console.log('  1. Copy .env.example to .env and configure');
-  console.log('  2. Add JPMorgan API credentials');
-  console.log('  3. Run npm install');
-  console.log('  4. Test the system with mock mode');
+  info('Next steps:');
+  info('  1. Copy .env.example to .env and configure');
+  info('  2. Add JPMorgan API credentials');
+  info('  3. Run npm install');
+  info('  4. Test the system with mock mode');
   
-  console.log('\n');
+  stdout('\n');
 }
 
 main();
