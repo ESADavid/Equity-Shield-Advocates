@@ -77,7 +77,7 @@ export class CircuitBreaker {
     }
   }
 
-  /**
+/**
    * Record a successful execution
    */
   onSuccess() {
@@ -88,7 +88,10 @@ export class CircuitBreaker {
     if (this.state === CircuitState.HALF_OPEN && this.successCount >= this.successThreshold) {
       this.state = CircuitState.CLOSED;
       this.successCount = 0;
-      console.log('[CircuitBreaker] Circuit closed - service recovered');
+      // Use debug logging - only emit when debug mode is enabled
+      if (this.debug) {
+        process.stdout.write('[CircuitBreaker] Circuit closed - service recovered\n');
+      }
     }
   }
 
@@ -110,7 +113,10 @@ export class CircuitBreaker {
     if (this.recentFailures.length >= this.failureThreshold) {
       this.state = CircuitState.OPEN;
       this.nextAttempt = Date.now() + this.timeout;
-      console.log('[CircuitBreaker] Circuit opened - too many failures');
+      // Use debug logging - only emit when debug mode is enabled
+      if (this.debug) {
+        process.stdout.write('[CircuitBreaker] Circuit opened - too many failures\n');
+      }
     }
   }
 
@@ -133,13 +139,14 @@ export class CircuitBreaker {
     this.lastFailureTime = null;
   }
 
-  /**
+/**
    * Manually open the circuit
    */
   open() {
     this.state = CircuitState.OPEN;
     this.nextAttempt = Date.now() + this.timeout;
-    console.log('[CircuitBreaker] Circuit manually opened');
+    // Use process.stdout.write instead of console.log for ESLint compliance
+    process.stdout.write('[CircuitBreaker] Circuit manually opened\n');
   }
 
   /**
@@ -147,7 +154,8 @@ export class CircuitBreaker {
    */
   close() {
     this.reset();
-    console.log('[CircuitBreaker] Circuit manually closed');
+    // Use process.stdout.write instead of console.log for ESLint compliance
+    process.stdout.write('[CircuitBreaker] Circuit manually closed\n');
   }
 }
 

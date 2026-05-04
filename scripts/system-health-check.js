@@ -23,22 +23,50 @@ const colors = {
   cyan: '\x1b[36m',
 };
 
+/**
+ * @param {string} color
+ * @param {string} prefix
+ * @param {string} message
+ */
 function log(color, prefix, message) {
   console.log(`${color}[${prefix}]${colors.reset} ${message}`);
 }
 
+/**
+ * @param {string} msg
+ */
 function info(msg) { log(colors.blue, 'INFO', msg); }
+/**
+ * @param {string} msg
+ */
 function success(msg) { log(colors.green, 'SUCCESS', msg); }
+/**
+ * @param {string} msg
+ */
 function warn(msg) { log(colors.yellow, 'WARN', msg); }
+/**
+ * @param {string} msg
+ */
 function error(msg) { log(colors.red, 'ERROR', msg); }
+/**
+ * @param {string} msg
+ */
 function check(msg) { log(colors.cyan, 'CHECK', msg); }
 
 // Write to stdout without console (eslint no-console rule compliant)
 /* eslint-disable no-console */
+/**
+ * @param {string} msg
+ */
 function stdout(msg) { process.stdout.write(msg); }
 /* eslint-enable no-console */
 
 // Count files in directory recursively
+/**
+ * @param {string} dir
+ * @param {string[]} extensions
+ * @returns {number}
+ */
 function countFiles(dir, extensions = []) {
   let count = 0;
   try {
@@ -63,6 +91,10 @@ function countFiles(dir, extensions = []) {
 }
 
 // Check if file exists
+/**
+ * @param {string} filename
+ * @returns {boolean}
+ */
 function fileExists(filename) {
   return existsSync(join(rootDir, filename));
 }
