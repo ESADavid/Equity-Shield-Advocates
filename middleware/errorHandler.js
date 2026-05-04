@@ -281,6 +281,7 @@ export function serviceUnavailableError(service = 'Service') {
 /**
  * Unhandled rejection handler
  * Should be registered at application level
+ * Now uses graceful degradation instead of hard exit
  */
 export function unhandledRejectionHandler() {
   process.on('unhandledRejection', (reason, promise) => {
@@ -290,9 +291,14 @@ export function unhandledRejectionHandler() {
       promise: String(promise),
     });
 
-    // In production, you might want to gracefully shutdown
+    // Graceful degradation - don't hard exit in production
+    // Instead, allow the process to continue with error logging
+    // This prevents cascade failures and allows for monitoring alerts
     if (process.env.NODE_ENV === 'production') {
-      process.exit(1);
+      // In production, emit a warning but don't exit
+      // The process will continue and can be monitored
+      // A proper monitoring system should detect and handle the issue
+      console.error('[WARNING] Unhandled Rejection in Production - Process Continuing');
     }
   });
 }
