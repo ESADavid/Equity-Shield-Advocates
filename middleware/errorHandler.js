@@ -8,6 +8,12 @@
 import { error as logError, warn as logWarn } from '../utils/loggerWrapper.js';
 
 /**
+ * @typedef {import('express').Request} Request
+ * @typedef {import('express').Response} Response
+ * @typedef {import('express').NextFunction} NextFunction
+ */
+
+/**
  * Custom Application Error class with additional properties
  * @extends Error
  */
@@ -20,7 +26,7 @@ export class AppError extends Error {
   timestamp;
   /** @type {unknown} */
   details;
-  /** @type {string} */
+  /** @type {string | undefined} */
   requestId;
 
   /**
@@ -59,13 +65,13 @@ function classifyError(statusCode) {
  * Format error response
  * @param {AppError} err
  * @param {boolean} isDevelopment
- * @returns {Object}
+ * @returns {{success: boolean, error: {type: string, message: string, statusCode: number, timestamp: string, stack?: string, details?: unknown, requestId?: string}}}
  */
 function formatErrorResponse(err, isDevelopment) {
   const statusCode = err.statusCode || 500;
   const errorType = classifyError(statusCode);
 
-  /** @type {Object} */
+  /** @type {{success: boolean, error: {type: string, message: string, statusCode: number, timestamp: string, stack?: string, details?: unknown, requestId?: string}}} */
   const response = {
     success: false,
     error: {
@@ -93,20 +99,20 @@ function formatErrorResponse(err, isDevelopment) {
 /**
  * Log error with context
  * @param {AppError} err
- * @param {Object} req
+ * @param {import('express').Request} req
  */
 function logErrorWithContext(err, req) {
-  /** @type {Object} */
+  /** @type {Object & {stack?: string}} */
   const errorContext = {
     message: err.message,
     statusCode: err.statusCode || 500,
-    method: req.method,
-    url: req.url,
-    path: req.path,
-    ip: req.ip,
-    userAgent: req.get('user-agent'),
+    method: req.method || 'UNKNOWN',
+    url: req.url || req.originalUrl || 'unknown',
+    path: req.path || 'unknown',
+    ip: req.ip || req.socket?.remoteAddress || req.connection?.remoteAddress || 'unknown',
+    userAgent: req.get ? req.get('user-agent') : 'unknown',
     userId: req.user?.id || req.user?.userId || 'anonymous',
-    requestId: req.id || req.headers?.['x-request-id'],
+    requestId: req.id || (req.headers ? req.headers['x-request-id'] : undefined) || 'unknown',
     timestamp: new Date().toISOString(),
   };
 
@@ -128,11 +134,11 @@ function logErrorWithContext(err, req) {
 /**
  * Main error handler middleware
  * @param {AppError} err
- * @param {Object} req
- * @param {Object} res
- * @param {Function} next
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
  */
-export function errorHandler(err, req, res, _next) {
+export function errorHandler(err, req, res, next) {
   // Set default status code if not set
   err.statusCode = err.statusCode || 500;
   err.isOperational =
@@ -153,17 +159,17 @@ export function errorHandler(err, req, res, _next) {
 
 /**
  * Handle 404 Not Found errors
- * @param {Object} req
- * @param {Object} res
- * @param {Function} next
+ * @param {import('express').Request} req
+ * @param {import('express').Response} _res
+ * @param {import('express').NextFunction} _next
  */
-export function notFoundHandler(req, res, next) {
+export function notFoundHandler(req, _res, _next) {
   const error = new AppError(
     `Route not found: ${req.method} ${req.originalUrl}`,
     404,
     true
   );
-  next(error);
+  _next(error);
 }
 
 /**
@@ -173,7 +179,11 @@ export function notFoundHandler(req, res, next) {
  * @returns {Function}
  */
 export function asyncHandler(fn) {
-  return (req, res, next) => {
+  return (
+    /** @type {import('express').Request} */ req,
+    /** @type {import('express').Response} */ res,
+    /** @type {import('express').NextFunction} */ next
+  ) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 }
