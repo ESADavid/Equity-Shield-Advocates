@@ -6,6 +6,7 @@
  */
 
 import { error as logError, warn as logWarn } from '../utils/loggerWrapper.js';
+import type { Request, Response, NextFunction } from 'express';
 
 /**
  * Custom Application Error class with additional properties
@@ -18,7 +19,7 @@ export class AppError extends Error {
   isOperational;
   /** @type {string} */
   timestamp;
-  /** @type {*} */
+  /** @type {unknown} */
   details;
   /** @type {string} */
   requestId;
