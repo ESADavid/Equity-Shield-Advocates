@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * DIVINE WISDOM DECISION MATRIX
  * King Sachem Yochanan ITG Algorithm
@@ -7,7 +6,7 @@
  * for strategic decision-making aligned with divine wisdom
  * @typedef {Object} Decision
  * @property {string} [name] - Decision name
- * @property {Object.<string, number>} [attributes] - Decision attributes keyed by principle
+ * @property {Record<string, number>} [attributes] - Decision attributes keyed by principle
  * @property {string} [description] - Decision description
  * @typedef {Object} DecisionContext
  * @property {number} [faith] - Faith alignment score (0-100)
@@ -25,7 +24,7 @@
  * @property {boolean} [peace] - Peace present flag
  * @property {number} [openDoors] - Number of open doors
  * @property {string} [expectedFruit] - Expected fruit type
- * @property {Object.<string, Object>} [factors] - Multi-factor scores
+ * @property {Record<string, MultiFactorScores>} [factors] - Multi-factor scores
  * @property {Array<{date: string, theme: string}>} [events] - Events for pattern recognition
  * @typedef {Object} PrincipleScore
  * @property {number} score - Score 0-100
@@ -48,7 +47,7 @@
  * @property {string} decision - Decision name
  * @property {string} timestamp - ISO timestamp
  * @property {string} king - King name
- * @property {Object.<string, PrincipleScore>} scores - Scores by principle
+ * @property {Record<string, PrincipleScore>} scores - Scores by principle
  * @property {number} overallScore - Overall score 0-100
  * @property {string} recommendation - Recommendation
  * @property {string} propheticInsight - Prophetic insight
@@ -56,6 +55,28 @@
  * @property {Warning[]} warnings - Warnings array
  * @property {Blessing[]} blessings - Blessings array
  * @property {WisdomLevel} wisdomLevel - Wisdom level
+ * @typedef {Object} MultiFactorScores
+ * @property {number} [prayer] - Prayer score
+ * @property {number} [peace] - Peace score
+ * @property {number} [confirmation] - Confirmation score
+ * @property {number} [alignment] - Alignment score
+ * @property {number} [stewardship] - Stewardship score
+ * @property {number} [provision] - Provision score
+ * @property {number} [sustainability] - Sustainability score
+ * @property {number} [unity] - Unity score
+ * @property {number} [counsel] - Counsel score
+ * @property {number} [accountability] - Accountability score
+ * @property {number} [kairos] - Kairos timing score
+ * @property {number} [readiness] - Readiness score
+ * @property {number} [urgency] - Urgency score
+ * @property {number} [season] - Season score
+ * @property {number} [kingdom] - Kingdom impact score
+ * @property {number} [people] - People impact score
+ * @property {number} [legacy] - Legacy impact score
+ * @property {number} [fruit] - Fruit impact score
+ * @typedef {Object} ProphecyEvent
+ * @property {string} date - Event date
+ * @property {string} theme - Event theme
  */
 
 /** @type {typeof import('./divineWisdom').default} */
