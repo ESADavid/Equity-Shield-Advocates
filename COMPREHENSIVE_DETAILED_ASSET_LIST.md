@@ -305,7 +305,7 @@
 | # | Credential | Value | Access Level |
 |---|------------|-------|--------------|
 | D2.1 | Username | oscar.broome | Full |
-| D2.2 | Email | oscar.broome@jpmorgan.com | Full |
+| D2.2 | Email | <oscar.broome@jpmorgan.com> | Full |
 | D2.3 | Password | SecurePass2024! | Full |
 | D2.4 | MFA | Enabled (TOTP) | Full |
 | D2.5 | Emergency Code | OSCAR_BROOME_EMERGENCY_2024 | Override |
@@ -398,6 +398,7 @@
 ### G1.4 King Sachem Yochanan ITG Service (services/kingSachemYochananITG.js)
 
 Full integration system combining:
+
 - Quantum-enhanced decision making
 - Blockchain-verified sovereignty
 - Sacred geometry optimization

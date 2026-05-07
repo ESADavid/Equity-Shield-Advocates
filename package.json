@@ -42,12 +42,12 @@
     "mongoose": "^8.23.1",
     "morgan": "^1.10.0",
     "nodemailer": "^8.0.5",
+    "plaid": "^23.0.0",
     "response-time": "^2.3.4",
     "socket.io": "^4.8.1",
     "twilio": "^5.13.1",
     "winston": "^3.19.0",
-    "zod": "^3.23.8",
-"plaid": "^23.0.0"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@swc/jest": "^0.2.39",

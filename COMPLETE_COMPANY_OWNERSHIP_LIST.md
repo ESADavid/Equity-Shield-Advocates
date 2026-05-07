@@ -89,7 +89,7 @@
 - **Type**: Sovereign Wealth Banking Institution
 - **Purpose**: International wealth operations
 - **Routing Number**: 123456789
-- **Accounts**: 
+- **Accounts**:
   - Owlban Group Account: $1.2 Quadrillion
   - Blackbox AI Account: $1.8 Quadrillion
 
