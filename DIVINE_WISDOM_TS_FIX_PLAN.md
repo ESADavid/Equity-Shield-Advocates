@@ -1,71 +1,79 @@
-# DivineWisdom.ts Type Fix Plan
+# DivineWisdom TS Fix Plan
 
-## Errors Summary
+## Information Gathered
 
-- 46 TypeScript errors (implicit any, index signatures, property existence)
-- 6 SonarLint suggestions (modern JS patterns)
+After analyzing the `algorithms/divineWisdom.js` file and the TODO requirements, I've identified the following issues that need fixing:
 
-## Fix Strategy
+### Current File Structure
+- JSDoc type definitions at top (lines 1-80) - need proper @typedef and type annotations
+- Class `DivineWisdom` with multiple methods requiring type fixes
+- JSDoc comments exist but lack proper TypeScript-style type annotations in function params
 
-Convert JavaScript to properly typed TypeScript by adding JSDoc type annotations and fixing pattern issues.
+### Issues Identified
 
-### Step 1: Add Type Definitions (JSDoc)
+1. **Index Signature Errors** (keyword, principle, key types):
+   - `alignmentIndicators[keyword]` - needs proper typing
+   - `kingdomPrinciples[principle]` - dynamic key access
+   - `factors[key]` - dynamic key access
+   - `e.theme` - needs proper type
 
-- Define interfaces for Decision, Context, Evaluation, Warning, Blessing, etc.
+2. **Property/Type Errors**:
+   - `warnings` should be `Warning[]`
+   - `blessings` should be `Blessing[]`
+   - `wisdomLevel` missing in Evaluation type
+   - `decision.attributes` needs proper typing
+
+3. **Implicit Any Parameters** - All function parameters need explicit types:
+   - `evaluateDecision(decision, context)`
+   - `evaluatePrinciple(decision, principle, context)`
+   - `checkKingdomAlignment(decision, principle)`
+   - All evaluate*Factor functions
+   - `recognizePropheticPatterns(events)`
+   - And more...
+
+4. **SonarLint Issues**:
+   - Line ~190: Replace `Object.prototype.hasOwnProperty.call()` with `Object.hasOwn()`
+   - Line ~498: Replace `!isNaN(d)` with `Number.isNaN(d)`
+   - Line ~509: Replace array `.includes()` with `Set` for sacredNumbers
+
+## Plan
+
+### Step 1: Add proper JSDoc type definitions at top of file
+- Convert existing @typedef blocks to proper TypeScript-compatible JSDoc
 - Add @param and @returns types to all functions
+- Ensure all custom types are properly defined
 
-### Step 2: Fix Implicit Any Parameters
+### Step 2: Fix index signature errors
+- Add proper type annotations for dynamic keys (keyword, principle, key)
+- Use string | number types where appropriate
 
-Add types to all function parameters marked with implicit any:
+### Step 3: Fix warnings/blessings array types
+- Ensure Warning[] and Blessing[] types are properly used
 
-- evaluateDecision(decision, context)
-- evaluatePrinciple(decision, principle, context)
-- checkKingdomAlignment(decision, principle)
-- getAlignmentLevel(score)
-- generateRecommendation(score)
-- getPropheticInsight(decision, context)
-- assessKingdomAlignment(score)
-- identifyWarnings(scores)
-- getWarningAction(principle)
-- identifyBlessings(scores)
-- getBlessingPromise(principle)
-- determineWisdomLevel(score)
-- multiFactorWisdomScore(factors)
-- evaluateSpiritualFactor(spiritual), FinancialFactor(financial), etc.
-- recognizePropheticPatterns(events)
-- generateWisdomReport(decision, context)
-- generateFinalRecommendation(evaluationScore, multiFactorScore)
-- generatePrayerPoints(evaluation)
-- getRelevantScripture(score)
+### Step 4: Fix wisdomLevel property in evaluation
+- Add wisdomLevel to Evaluation type definition
 
-### Step 3: Fix Index Signature Errors
+### Step 5: Fix decision.attributes type issues
+- Ensure Record<string, number> type is properly applied
 
-- Line 68: Fix scores[principle] access
-- Line 114-118: Fix decision.attributes access
-- Line 145: Fix alignmentIndicators[keyword]
-- Line 263, 298: Fix kingdomPrinciples[principle]
-- Line 333: Fix factors[key]
-- Line 405: Fix e.theme access
+### Step 6: Fix implicit any on all function parameters
+- Add explicit type annotations to ALL function parameters
+- This is the largest fix - many functions need parameter types
 
-### Step 4: Fix Property Existence
+### Step 7: Fix SonarLint issues
+- Replace `Object.prototype.hasOwnProperty.call()` with `Object.hasOwn()`
+- Replace `!isNaN(d)` with `Number.isNaN(d)`
+- Replace array includes with Set for sacredNumbers
 
-- Line 93: wisdomLevel property (already exists, type definition issue)
-- Line 353-356: Fix spiritual factor destructuring
+### Step 8: Test compilation
+- Run TypeScript compiler to verify all fixes
 
-### Step 5: Fix SonarLint Issues
+## Files to be Edited
 
-- Line 113: Use Object.hasOwn() instead of hasOwnProperty.call()
-- Line 117: Fix lone if statement in else block
-- Line 421: Use Number.isNaN() instead of isNaN
-- Line 432: Convert sacredNumbers array to Set
+- `algorithms/divineWisdom.js` - Main file requiring all fixes
 
-## Files to Edit
+## Followup Steps
 
-1. algorithms/divineWisdom.ts - Full fix with types
-
-## Implementation Order
-
-1. Read current JS file
-2. Create new TS file with all fixes
-3. Delete old JS file
-4. Test compilation
+1. After edits complete, run `npx tsc --noEmit` to verify TypeScript compilation
+2. Check for any remaining errors
+3. Update DIVINE_WISDOM_TODO.md with completion status
