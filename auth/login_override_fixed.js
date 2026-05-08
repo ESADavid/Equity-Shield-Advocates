@@ -7,7 +7,7 @@ const crypto = require('node:crypto');
 const fs = require('node:fs').promises;
 const path = require('node:path');
 const winston = require('winston');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 // Override logger

@@ -4,7 +4,7 @@
 
 import express from 'express';
 import { z } from 'zod';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 import {
   authenticateToken,
