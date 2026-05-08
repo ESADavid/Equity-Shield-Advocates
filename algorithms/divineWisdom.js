@@ -8,6 +8,9 @@
  * @property {string} [name] - Decision name
  * @property {Record<string, number>} [attributes] - Decision attributes keyed by principle
  * @property {string} [description] - Decision description
+ */
+
+/**
  * @typedef {Object} DecisionContext
  * @property {number} [faith] - Faith alignment score (0-100)
  * @property {number} [obedience] - Obedience alignment score (0-100)
@@ -25,24 +28,39 @@
  * @property {number} [openDoors] - Number of open doors
  * @property {string} [expectedFruit] - Expected fruit type
  * @property {Record<string, MultiFactorScores>} [factors] - Multi-factor scores
- * @property {Array<{date: string, theme: string}>} [events] - Events for pattern recognition
+ * @property {ProphecyEvent[]} [events] - Events for pattern recognition
+ */
+
+/**
  * @typedef {Object} PrincipleScore
  * @property {number} score - Score 0-100
  * @property {string} description - Principle description
  * @property {string} alignment - Alignment level
+ */
+
+/**
  * @typedef {Object} Warning
  * @property {string} principle - Principle name
  * @property {number} score - Score
  * @property {string} warning - Warning message
  * @property {string} action - Recommended action
+ */
+
+/**
  * @typedef {Object} Blessing
  * @property {string} principle - Principle name
  * @property {number} score - Score
  * @property {string} blessing - Blessing message
  * @property {string} promise - Promise message
+ */
+
+/**
  * @typedef {Object} WisdomLevel
  * @property {number} level - Wisdom level 1-7
  * @property {string} description - Level description
+ */
+
+/**
  * @typedef {Object} Evaluation
  * @property {string} decision - Decision name
  * @property {string} timestamp - ISO timestamp
@@ -55,6 +73,9 @@
  * @property {Warning[]} warnings - Warnings array
  * @property {Blessing[]} blessings - Blessings array
  * @property {WisdomLevel} wisdomLevel - Wisdom level
+ */
+
+/**
  * @typedef {Object} MultiFactorScores
  * @property {number} [prayer] - Prayer score
  * @property {number} [peace] - Peace score
@@ -74,6 +95,9 @@
  * @property {number} [people] - People impact score
  * @property {number} [legacy] - Legacy impact score
  * @property {number} [fruit] - Fruit impact score
+ */
+
+/**
  * @typedef {Object} ProphecyEvent
  * @property {string} date - Event date
  * @property {string} theme - Event theme

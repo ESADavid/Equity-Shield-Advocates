@@ -14,6 +14,7 @@
 ## Errors Detailed
 
 ### Index Signature Errors
+
 - [ ] Line 145: alignmentIndicators[keyword] - keyword type
 - [ ] Line 263: kingdomPrinciples[principle] - principle type  
 - [ ] Line 298: kingdomPrinciples[principle] - principle type
@@ -22,6 +23,7 @@
 - [ ] Line 410: factors[key] - key type
 
 ### Property/Type Errors
+
 - [ ] Line 166: warnings type - should be Warning[]
 - [ ] Line 167: blessings type - should be Blessing[]
 - [ ] Line 170: wisdomLevel doesn't exist
@@ -31,6 +33,7 @@
 - [ ] Lines 430-433: spiritual factor properties
 
 ### Implicit Any Parameters
+
 - [ ] Line 208: decision, principle parameters
 - [ ] Line 226: keyword parameter
 - [ ] Line 234, 242: score parameters
@@ -62,6 +65,7 @@
 - [ ] Line 628: score parameter
 
 ### SonarLint Issues
+
 - [ ] Line 190: Use Object.hasOwn()
 - [ ] Line 194: Fix lone if in else block
 - [ ] Line 194: Use optional chain
