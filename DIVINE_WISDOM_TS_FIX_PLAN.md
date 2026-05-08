@@ -30,27 +30,34 @@
 ## Fix Strategy
 
 ### Step 1: Add Proper Type Annotations
+
 Add JSDoc @param tags with proper types to all functions
 
 ### Step 2: Add Type Definitions at Top
+
 Create interface definitions for:
+
 - Decision interface
 - DecisionContext interface  
 - Scores interface
 
 ### Step 3: Fix Index Signatures
+
 Use proper type casting or index signatures
 
 ### Step 4: Fix SonarLint Issues
+
 - Use Object.hasOwn() for property checks
 - Use optional chaining
 - Convert sacredNumbers to Set
 - Use Number.isNaN
 
 ## Files to Edit
+
 - `algorithms/divineWisdom.js` - Main file with all fixes
 
 ## Implementation Order
+
 1. Add interface definitions at top of file
 2. Fix evaluatePrinciple method (line 234)
 3. Fix checkKingdomAlignment method (line 284)
