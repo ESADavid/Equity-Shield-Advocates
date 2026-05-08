@@ -165,6 +165,20 @@
 
 /** @type {typeof import('./divineWisdom').default} */
 class DivineWisdom {
+  /**
+   * @type {{ [key: string]: string }}
+   */
+  kingdomPrinciples;
+
+  /**
+   * @type {{ [key: string]: string[] }}
+   */
+  propheticIndicators;
+
+  /**
+   * @type {{ [key: number]: string }}
+   */
+  wisdomLevels;
   constructor() {
     // Kingdom principles for decision-making
     this.kingdomPrinciples = {
