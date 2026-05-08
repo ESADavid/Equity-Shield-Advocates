@@ -4,6 +4,7 @@
  *
  * Implements prophetic pattern recognition and kingdom principles
  * for strategic decision-making aligned with divine wisdom
+ *
  * @typedef {Object} Decision
  * @property {string} [name] - Decision name
  * @property {Record<string, number>} [attributes] - Decision attributes keyed by principle
@@ -101,6 +102,65 @@
  * @typedef {Object} ProphecyEvent
  * @property {string} date - Event date
  * @property {string} theme - Event theme
+ */
+
+/**
+ * @typedef {Object} SpiritualFactor
+ * @property {number} [prayer] - Prayer score
+ * @property {number} [peace] - Peace score
+ * @property {number} [confirmation] - Confirmation score
+ * @property {number} [alignment] - Alignment score
+ */
+
+/**
+ * @typedef {Object} FinancialFactor
+ * @property {number} [stewardship] - Stewardship score
+ * @property {number} [provision] - Provision score
+ * @property {number} [sustainability] - Sustainability score
+ * @property {number} [generosity] - Generosity score
+ */
+
+/**
+ * @typedef {Object} RelationalFactor
+ * @property {number} [unity] - Unity score
+ * @property {number} [counsel] - Counsel score
+ * @property {number} [accountability] - Accountability score
+ * @property {number} [impact] - Impact score
+ */
+
+/**
+ * @typedef {Object} TimingFactor
+ * @property {number} [kairos] - Kairos timing score
+ * @property {number} [readiness] - Readiness score
+ * @property {number} [urgency] - Urgency score
+ * @property {number} [season] - Season score
+ */
+
+/**
+ * @typedef {Object} ImpactFactor
+ * @property {number} [kingdom] - Kingdom impact score
+ * @property {number} [people] - People impact score
+ * @property {number} [legacy] - Legacy impact score
+ * @property {number} [fruit] - Fruit impact score
+ */
+
+/**
+ * @typedef {Object} MultiFactorContext
+ * @property {SpiritualFactor} [spiritual] - Spiritual factor metrics
+ * @property {FinancialFactor} [financial] - Financial factor metrics
+ * @property {RelationalFactor} [relational] - Relational factor metrics
+ * @property {TimingFactor} [timing] - Timing factor metrics
+ * @property {ImpactFactor} [impact] - Impact factor metrics
+ */
+
+/**
+ * Kingdom principles type
+ * @typedef {Object.<string, string>} KingdomPrinciples
+ */
+
+/**
+ * Alignment indicators type
+ * @typedef {Object.<string, string[]>} AlignmentIndicators
  */
 
 /** @type {typeof import('./divineWisdom').default} */
@@ -213,7 +273,7 @@ evaluatePrinciple(decision, principle, context) {
   // Adjust based on context
   let adjustment = 0;
 
-  if (Object.prototype.hasOwnProperty.call(context, principle)) {
+if (Object.hasOwn(context, principle)) {
     adjustment = context[principle] * 30; // Scale context input
   } else {
     // Use decision attributes if available
@@ -521,7 +581,7 @@ evaluateSpiritualFactor(spiritual) {
     }
 
     // Look for timing patterns
-    const dates = events.map((e) => new Date(e.date)).filter((d) => !isNaN(d));
+const dates = events.map((e) => new Date(e.date)).filter((d) => !Number.isNaN(d.getTime()));
     if (dates.length >= 2) {
       const intervals = [];
       for (let i = 1; i < dates.length; i++) {
