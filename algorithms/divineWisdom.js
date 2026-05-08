@@ -274,12 +274,12 @@ class DivineWisdom {
 
 /**
  * Evaluate a decision against a kingdom principle
- * @param {Object} decision - The decision object to evaluate
+ * @param {Decision} decision - The decision object to evaluate
  * @param {string} principle - The principle to evaluate against
- * @param {Object} context - Additional context for evaluation
+ * @param {DecisionContext} context - Additional context for evaluation
  * @returns {number} Score from 0-100
  */
-evaluatePrinciple(decision, principle, context) {
+evaluatePrinciple(decision: Decision, principle: string, context: DecisionContext): number {
   // ENHANCED: Simulate principle evaluation based on decision attributes
   // INCREASED: Higher base score for better divine protocol performance
   const baseScore = 85; // Default excellent alignment (increased from 70)
