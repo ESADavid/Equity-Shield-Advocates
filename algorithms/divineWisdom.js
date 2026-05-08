@@ -143,11 +143,12 @@ class DivineWisdom {
 
 /**
    * Evaluate decision using divine wisdom matrix
-   * @param {Decision} decision - The decision object to evaluate
-   * @param {DecisionContext} [context] - Additional context for evaluation
+   * @param { Decision} decision - The decision object to evaluate
+   * @param { DecisionContext} [context] - Additional context for evaluation
    * @returns {Evaluation}
    */
   evaluateDecision(decision, context = {}) {
+    /** @type {Evaluation} */
     const evaluation = {
       decision: decision.name || 'Unnamed Decision',
       timestamp: new Date().toISOString(),
@@ -159,6 +160,7 @@ class DivineWisdom {
       kingdomAlignment: '',
       warnings: [],
       blessings: [],
+      wisdomLevel: { level: 1, description: '' },
     };
 
     // Evaluate against each kingdom principle
