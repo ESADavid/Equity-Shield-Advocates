@@ -293,11 +293,9 @@ evaluatePrinciple(decision, principle, context) {
 
 if (Object.hasOwn(context, principle)) {
     adjustment = context[principle] * 30; // Scale context input
-  } else {
+  } else if (decision.attributes?.[principle]) {
     // Use decision attributes if available
-    if (decision.attributes && decision.attributes[principle]) {
-      adjustment = decision.attributes[principle] * 30;
-    }
+    adjustment = decision.attributes[principle] * 30;
   }
 
   // Apply blessed adjustment for kingdom-aligned decisions
@@ -610,9 +608,9 @@ const dates = events.map((e) => new Date(e.date)).filter((d) => !Number.isNaN(d.
       }
 
       // Check for sacred number intervals
-      const sacredNumbers = [3, 7, 12, 40, 50];
+const sacredNumbers = new Set([3, 7, 12, 40, 50]);
       intervals.forEach((interval) => {
-        if (sacredNumbers.includes(interval)) {
+        if (sacredNumbers.has(interval)) {
           patterns.push({
             type: 'Sacred Timing',
             interval,
