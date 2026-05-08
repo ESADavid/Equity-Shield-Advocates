@@ -11,10 +11,10 @@
 
 |Step|Description|Status|Verification|
 |------|-------------|--------|---------------|
-| 1 | Line 190: Use Object.hasOwn() | ✅ DONE | Code line 190: `if (Object.hasOwn(context, principle))` |
-| 2 | Line 194: Optional chaining + fix lone if | ✅ DONE | Code uses `decision.attributes?.[principle]` |
-| 3 | Line 498: Use Number.isNaN | ✅ DONE | Code line 498: `!Number.isNaN(d.getTime())` |
-| 4 | Line 509: Use Set for sacredNumbers | ✅ DONE | Code line 509: `new Set([3, 7, 12, 40, 50])` |
+|1|Line 190: Use Object.hasOwn()|✅ DONE|Code line 190: `if (Object.hasOwn(context, principle))`|
+|2|Line 194: Optional chaining + fix lone if|✅ DONE|Code uses `decision.attributes?.[principle]`|
+|3|Line 498: Use Number.isNaN|✅ DONE|Code line 498: `!Number.isNaN(d.getTime())`|
+|4|Line 509: Use Set for sacredNumbers|✅ DONE|Code line 509: `new Set([3, 7, 12, 40, 50])`|
 
 **Conclusion:** Batch 1 is already complete. The STATUS table should be updated to show "COMPLETED" with "4 completed".
 
