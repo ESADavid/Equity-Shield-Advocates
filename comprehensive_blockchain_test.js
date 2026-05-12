@@ -5,10 +5,7 @@ import { getBlockchainInstance } from './blockchain/blockchainLedger.js';
 const testPassed = () => {};
 
 export async function runComprehensiveBlockchainTests() {
-  // testPassed() - no-op for linting
-  /* console.log(
-    '================================================================'
-  ); */ testPassed();
+  testPassed();
 
   const blockchainService = getBlockchainService();
   const blockchain = getBlockchainInstance();
@@ -20,30 +17,31 @@ export async function runComprehensiveBlockchainTests() {
     tests: [],
   };
 
-  function logTest(testName, success, message = '') {
+  // eslint-disable-next-line no-unused-vars
+  function logTest(testName, success, message) {
     results.totalTests++;
     if (success) {
       results.passed++;
-      /* console.log(`PASSED: ${testName}${message ? ' - ' + message : ''}`); */ testPassed();
+      testPassed();
     } else {
       results.failed++;
-      /* console.log(`FAILED: ${testName}${message ? ' - ' + message : ''}`); */ testPassed();
+      testPassed();
     }
-    results.tests.push({ testName, success, message });
+    results.tests.push({ testName: testName, success: success, message: message });
   }
 
   try {
     // Test 1: Blockchain initialization
-    /* console.log('\n📋 Testing Blockchain Initialization...'); */ testPassed();
+    testPassed();
     const initialStats = blockchain.getStats();
     logTest(
       'Blockchain Initialization',
       initialStats.totalBlocks === 1,
-      `Genesis block created with ${initialStats.totalBlocks} blocks`
+      'Genesis block created with ' + initialStats.totalBlocks + ' blocks'
     );
 
     // Test 2: Record system event
-    /* console.log('\n📝 Testing System Event Recording...'); */ testPassed();
+    testPassed();
     const eventResult = await blockchainService.recordSystemEvent(
       'test_event',
       { testData: 'blockchain integration test' },
@@ -52,11 +50,11 @@ export async function runComprehensiveBlockchainTests() {
     logTest(
       'System Event Recording',
       eventResult.success,
-      `Event recorded with transaction ID: ${eventResult.transactionId}`
+      'Event recorded with transaction ID: ' + eventResult.transactionId
     );
 
     // Test 3: Record transaction override
-    /* console.log('\n🔄 Testing Transaction Override Recording...'); */ testPassed();
+    testPassed();
     const mockTransaction = {
       id: 'test-tx-123',
       fromAddress: 'user-wallet',
@@ -71,31 +69,31 @@ export async function runComprehensiveBlockchainTests() {
     logTest(
       'Transaction Override Recording',
       overrideResult.success,
-      `Override recorded with transaction ID: ${overrideResult.transactionId}`
+      'Override recorded with transaction ID: ' + overrideResult.transactionId
     );
 
     // Test 4: Get audit trail
-    /* console.log('\n🔍 Testing Audit Trail Retrieval...'); */ testPassed();
+    testPassed();
     const auditResult = await blockchainService.getAuditTrail(
       eventResult.transactionId
     );
     logTest(
       'Audit Trail Retrieval',
       auditResult.success && auditResult.auditTrail.length > 0,
-      `Retrieved ${auditResult.auditTrail.length} audit entries`
+      'Retrieved ' + auditResult.auditTrail.length + ' audit entries'
     );
 
     // Test 5: Blockchain statistics
-    /* console.log('\n📊 Testing Blockchain Statistics...'); */ testPassed();
+    testPassed();
     const statsResult = await blockchainService.getBlockchainStats();
     logTest(
       'Blockchain Statistics',
       statsResult.success && statsResult.stats.totalBlocks >= 3,
-      `Blockchain has ${statsResult.stats.totalBlocks} blocks`
+      'Blockchain has ' + statsResult.stats.totalBlocks + ' blocks'
     );
 
     // Test 6: Blockchain integrity verification
-    /* console.log('\n🔒 Testing Blockchain Integrity...'); */ testPassed();
+    testPassed();
     const verifyResult = await blockchainService.verifyBlockchainIntegrity();
     logTest(
       'Blockchain Integrity',
@@ -104,16 +102,16 @@ export async function runComprehensiveBlockchainTests() {
     );
 
     // Test 7: Audit report generation
-    /* console.log('\n📄 Testing Audit Report Generation...'); */ testPassed();
+    testPassed();
     const reportResult = await blockchainService.getAuditReport();
     logTest(
       'Audit Report Generation',
       reportResult.success,
-      `Generated report with ${reportResult.report.totalTransactions} transactions`
+      'Generated report with ' + reportResult.report.totalTransactions + ' transactions'
     );
 
     // Test 8: Merkle tree verification
-    /* console.log('\n🌳 Testing Merkle Tree Verification...'); */ testPassed();
+    testPassed();
     const latestBlock = blockchain.getLatestBlock();
     const isMerkleValid =
       latestBlock.merkleRoot ===
@@ -125,19 +123,18 @@ export async function runComprehensiveBlockchainTests() {
     );
 
     // Test 9: Proof of work validation
-    /* console.log('\n⛏️ Testing Proof of Work...'); */ testPassed();
+    testPassed();
     const hasValidPOW = latestBlock.hash.startsWith(
       '0'.repeat(blockchain.difficulty)
     );
     logTest(
       'Proof of Work Validation',
       hasValidPOW,
-      `Block hash starts with ${blockchain.difficulty} zeros`
+      'Block hash starts with ' + blockchain.difficulty + ' zeros'
     );
 
     // Test 10: Chain immutability
-    /* console.log('\n🔐 Testing Chain Immutability...'); */ testPassed();
-    const originalHash = blockchain.chain[1].hash;
+    testPassed();
     // Try to tamper with a block (this should fail verification)
     blockchain.chain[1].transactions[0].amount = 999999;
     const isStillValid = blockchain.isChainValid();
@@ -150,40 +147,25 @@ export async function runComprehensiveBlockchainTests() {
       'Blockchain correctly detected tampering'
     );
   } catch (error) {
-    /* console.error('❌ Test suite failed with error:', error); */ testPassed();
-    logTest('Test Suite Execution', false, error.message);
+    testPassed();
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logTest('Test Suite Execution', false, errorMessage);
   }
 
   // Final results
-  /* console.log(
-    '\n================================================================'
-  ); */ testPassed();
-  /* console.log('📊 COMPREHENSIVE BLOCKCHAIN TEST REPORT'); */ testPassed();
-  /* console.log(
-    '================================================================'
-  ); */ testPassed();
-  /* console.log(`Total Tests: ${results.totalTests}`); */ testPassed();
-  /* console.log(`✅ Passed: ${results.passed}`); */ testPassed();
-  /* console.log(`❌ Failed: ${results.failed}`); */ testPassed();
-  /* console.log(
-    `📈 Success Rate: ${((results.passed / results.totalTests) * 100).toFixed(2)}%`;
-  );
-  /* console.log(
-    '================================================================'
-  ); */ testPassed();
+  testPassed();
+  testPassed();
 
   if (results.failed === 0) {
-    /* console.log(
-      '🎉 All blockchain tests passed! The system is ready for production.'
-    ); */ testPassed();
+    testPassed();
   } else {
-    /* console.log('⚠️ Some tests failed. Please review the implementation.'); */ testPassed();
+    testPassed();
   }
 
   return results;
 }
 
 // Run tests if this file is executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === 'file://' + process.argv[1]) {
   runComprehensiveBlockchainTests().catch(console.error);
 }
