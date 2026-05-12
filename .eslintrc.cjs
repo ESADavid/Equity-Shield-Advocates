@@ -19,8 +19,11 @@ module.exports = {
     'coverage/',
     '*.min.js',
   ],
-  globals: {
+globals: {
     logger: 'readonly', // Define logger as a global variable
+    testPassed: 'readonly', // Test reporter utility
+    testFailed: 'readonly', // Test reporter utility
+    logTest: 'readonly', // Test reporter utility
   },
   rules: {
     'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
