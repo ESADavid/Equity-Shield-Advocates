@@ -1,8 +1,31 @@
 import { getBlockchainService } from './blockchain/blockchainService.js';
 import { getBlockchainInstance } from './blockchain/blockchainLedger.js';
 
+/**
+ * @typedef {Object} TestResult
+ * @property {string} testName
+ * @property {boolean} success
+ * @property {string} message
+ */
+
 // No-op test reporter for linting
 const testPassed = () => {};
+
+/**
+ * @param {string} testName
+ * @param {boolean} success
+ * @param {string} [message]
+ * @this {{ totalTests: number, passed: number, failed: number, tests: TestResult[] }}
+ */
+function logTest(testName, success, message) {
+  this.totalTests++;
+  if (success) {
+    this.passed++;
+  } else {
+    this.failed++;
+  }
+  this.tests.push({ testName, success, message: message || '' });
+}
 
 export async function runComprehensiveBlockchainTests() {
   testPassed();
@@ -10,6 +33,7 @@ export async function runComprehensiveBlockchainTests() {
   const blockchainService = getBlockchainService();
   const blockchain = getBlockchainInstance();
 
+  /** @type {{ totalTests: number, passed: number, failed: number, tests: TestResult[] }} */
   const results = {
     totalTests: 0,
     passed: 0,
@@ -17,24 +41,13 @@ export async function runComprehensiveBlockchainTests() {
     tests: [],
   };
 
-  // eslint-disable-next-line no-unused-vars
-  function logTest(testName, success, message) {
-    results.totalTests++;
-    if (success) {
-      results.passed++;
-      testPassed();
-    } else {
-      results.failed++;
-      testPassed();
-    }
-    results.tests.push({ testName: testName, success: success, message: message });
-  }
+  const boundLogTest = logTest.bind(results);
 
   try {
     // Test 1: Blockchain initialization
     testPassed();
     const initialStats = blockchain.getStats();
-    logTest(
+    boundLogTest(
       'Blockchain Initialization',
       initialStats.totalBlocks === 1,
       'Genesis block created with ' + initialStats.totalBlocks + ' blocks'
@@ -47,7 +60,7 @@ export async function runComprehensiveBlockchainTests() {
       { testData: 'blockchain integration test' },
       'test-user'
     );
-    logTest(
+    boundLogTest(
       'System Event Recording',
       eventResult.success,
       'Event recorded with transaction ID: ' + eventResult.transactionId
@@ -66,7 +79,7 @@ export async function runComprehensiveBlockchainTests() {
       { reason: 'Test override' },
       'admin'
     );
-    logTest(
+    boundLogTest(
       'Transaction Override Recording',
       overrideResult.success,
       'Override recorded with transaction ID: ' + overrideResult.transactionId
@@ -77,7 +90,7 @@ export async function runComprehensiveBlockchainTests() {
     const auditResult = await blockchainService.getAuditTrail(
       eventResult.transactionId
     );
-    logTest(
+    boundLogTest(
       'Audit Trail Retrieval',
       auditResult.success && auditResult.auditTrail.length > 0,
       'Retrieved ' + auditResult.auditTrail.length + ' audit entries'
@@ -86,7 +99,7 @@ export async function runComprehensiveBlockchainTests() {
     // Test 5: Blockchain statistics
     testPassed();
     const statsResult = await blockchainService.getBlockchainStats();
-    logTest(
+    boundLogTest(
       'Blockchain Statistics',
       statsResult.success && statsResult.stats.totalBlocks >= 3,
       'Blockchain has ' + statsResult.stats.totalBlocks + ' blocks'
@@ -95,7 +108,7 @@ export async function runComprehensiveBlockchainTests() {
     // Test 6: Blockchain integrity verification
     testPassed();
     const verifyResult = await blockchainService.verifyBlockchainIntegrity();
-    logTest(
+    boundLogTest(
       'Blockchain Integrity',
       verifyResult.success && verifyResult.chainValid,
       'Blockchain integrity verified'
@@ -104,7 +117,7 @@ export async function runComprehensiveBlockchainTests() {
     // Test 7: Audit report generation
     testPassed();
     const reportResult = await blockchainService.getAuditReport();
-    logTest(
+    boundLogTest(
       'Audit Report Generation',
       reportResult.success,
       'Generated report with ' + reportResult.report.totalTransactions + ' transactions'
@@ -116,7 +129,7 @@ export async function runComprehensiveBlockchainTests() {
     const isMerkleValid =
       latestBlock.merkleRoot ===
       blockchain.calculateMerkleRoot(latestBlock.transactions);
-    logTest(
+    boundLogTest(
       'Merkle Tree Verification',
       isMerkleValid,
       'Merkle root matches calculated hash'
@@ -127,7 +140,7 @@ export async function runComprehensiveBlockchainTests() {
     const hasValidPOW = latestBlock.hash.startsWith(
       '0'.repeat(blockchain.difficulty)
     );
-    logTest(
+    boundLogTest(
       'Proof of Work Validation',
       hasValidPOW,
       'Block hash starts with ' + blockchain.difficulty + ' zeros'
@@ -141,31 +154,24 @@ export async function runComprehensiveBlockchainTests() {
     // Restore the block
     blockchain.chain[1].transactions[0].amount = 10; // Mining reward
     blockchain.chain[1].hash = blockchain.calculateHash(blockchain.chain[1]);
-    logTest(
+    boundLogTest(
       'Chain Immutability',
       !isStillValid,
       'Blockchain correctly detected tampering'
     );
   } catch (error) {
-    testPassed();
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logTest('Test Suite Execution', false, errorMessage);
+    boundLogTest('Test Suite Execution', false, errorMessage);
   }
 
   // Final results
   testPassed();
   testPassed();
 
-  if (results.failed === 0) {
-    testPassed();
-  } else {
-    testPassed();
-  }
-
   return results;
 }
 
 // Run tests if this file is executed directly
 if (import.meta.url === 'file://' + process.argv[1]) {
-  runComprehensiveBlockchainTests().catch(console.error);
+  await runComprehensiveBlockchainTests();
 }
