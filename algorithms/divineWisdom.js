@@ -284,26 +284,50 @@ class DivineWisdom {
  * @returns {number} Score from 0-100
  */
 evaluatePrinciple(decision, principle, context) {
-  // ENHANCED: Simulate principle evaluation based on decision attributes
-  // INCREASED: Higher base score for better divine protocol performance
-  const baseScore = 85; // Default excellent alignment (increased from 70)
+  // TRUTHFUL: Use realistic baseline scores
+  // Lower default to 50 (neutral) - requires actual evidence for higher scores
+  const baseScore = 50; // Neutral baseline - no assumption of alignment
 
-  // Adjust based on context
+  // Adjust based on context (must have actual data)
   let adjustment = 0;
+  let hasActualData = false;
 
-  if (Object.hasOwn(context, principle)) {
+  if (Object.hasOwn(context, principle) && context[principle] !== undefined) {
     adjustment = context[principle] * 30; // Scale context input
-  } else if (decision.attributes?.[principle]) {
+    hasActualData = true;
+  } else if (decision.attributes?.[principle] !== undefined) {
     // Use decision attributes if available
     adjustment = decision.attributes[principle] * 30;
+    hasActualData = true;
   }
 
-  // Apply blessed adjustment for kingdom-aligned decisions
-  // This ensures higher scores for decisions made in faith
-  const blessingMultiplier = this.checkKingdomAlignment(decision, principle);
-  adjustment += blessingMultiplier;
+  // Apply kingdom alignment check only if we have decision data
+  if (decision.name || decision.description) {
+    const blessingMultiplier = this.checkKingdomAlignment(decision, principle);
+    adjustment += blessingMultiplier;
+  }
 
-return Math.min(100, Math.max(0, baseScore + adjustment));
+  // If no actual data, return base score with uncertainty
+  if (!hasActualData) {
+    return baseScore; // Return neutral score - no assumption
+  }
+
+  return Math.min(100, Math.max(0, baseScore + adjustment));
+}
+
+/**
+ * Check if we have sufficient data for confident evaluation
+ * @param {Decision} decision - The decision object
+ * @param {DecisionContext} context - The context
+ * @returns {boolean}
+ */
+hasSufficientData(decision, context) {
+  // Check if we have actual decision attributes or context data
+  const hasDecisionData = (decision.name || decision.description || 
+    (decision.attributes && Object.keys(decision.attributes).length > 0));
+  const hasContextData = context && Object.keys(context).length > 0;
+  
+  return hasDecisionData || hasContextData;
 }
 
   // NEW: Check if decision aligns with kingdom principles
@@ -527,47 +551,77 @@ return Math.min(100, Math.max(0, baseScore + adjustment));
  * @returns {number} Score from 0-100
  */
 evaluateSpiritualFactor(spiritual) {
-  // ENHANCED: Higher default scores for better divine protocol performance
+  // TRUTHFUL: Use realistic baseline - require actual data for high scores
+  const hasData = spiritual && Object.keys(spiritual).length > 0;
+  
+  if (!hasData) {
+    return 50; // Return neutral baseline - no assumption
+  }
+  
   const {
-    prayer = 80,
-    peace = 80,
-    confirmation = 80,
-    alignment = 80,
+    prayer = 50,
+    peace = 50,
+    confirmation = 50,
+    alignment = 50,
   } = spiritual;
   return (prayer + peace + confirmation + alignment) / 4;
 }
 
-  evaluateFinancialFactor(financial) {
-    // ENHANCED: Higher default scores for better divine protocol performance
+evaluateFinancialFactor(financial) {
+    // TRUTHFUL: Use realistic baseline - require actual data for high scores
+    const hasData = financial && Object.keys(financial).length > 0;
+    
+    if (!hasData) {
+      return 50; // Return neutral baseline - no assumption
+    }
+    
     const {
-      stewardship = 80,
-      provision = 80,
-      sustainability = 80,
-      generosity = 80,
+      stewardship = 50,
+      provision = 50,
+      sustainability = 50,
+      generosity = 50,
     } = financial;
     return (stewardship + provision + sustainability + generosity) / 4;
   }
 
   evaluateRelationalFactor(relational) {
-    // ENHANCED: Higher default scores for better divine protocol performance
+    // TRUTHFUL: Use realistic baseline - require actual data for high scores
+    const hasData = relational && Object.keys(relational).length > 0;
+    
+    if (!hasData) {
+      return 50; // Return neutral baseline - no assumption
+    }
+    
     const {
-      unity = 80,
-      counsel = 80,
-      accountability = 80,
-      impact = 80,
+      unity = 50,
+      counsel = 50,
+      accountability = 50,
+      impact = 50,
     } = relational;
     return (unity + counsel + accountability + impact) / 4;
   }
 
   evaluateTimingFactor(timing) {
-    // ENHANCED: Higher default scores for better divine protocol performance
-    const { kairos = 80, readiness = 80, urgency = 80, season = 80 } = timing;
+    // TRUTHFUL: Use realistic baseline - require actual data for high scores
+    const hasData = timing && Object.keys(timing).length > 0;
+    
+    if (!hasData) {
+      return 50; // Return neutral baseline - no assumption
+    }
+    
+    const { kairos = 50, readiness = 50, urgency = 50, season = 50 } = timing;
     return (kairos + readiness + urgency + season) / 4;
   }
 
   evaluateImpactFactor(impact) {
-    // ENHANCED: Higher default scores for better divine protocol performance
-    const { kingdom = 80, people = 80, legacy = 80, fruit = 80 } = impact;
+    // TRUTHFUL: Use realistic baseline - require actual data for high scores
+    const hasData = impact && Object.keys(impact).length > 0;
+    
+    if (!hasData) {
+      return 50; // Return neutral baseline - no assumption
+    }
+    
+    const { kingdom = 50, people = 50, legacy = 50, fruit = 50 } = impact;
     return (kingdom + people + legacy + fruit) / 4;
   }
 
