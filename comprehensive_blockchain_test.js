@@ -1,11 +1,11 @@
 import { getBlockchainService } from './blockchain/blockchainService.js';
-// import { testPassed } from '../utils/testReporter.js';
 import { getBlockchainInstance } from './blockchain/blockchainLedger.js';
 
-/* global testPassed */
+// No-op test reporter for linting
+const testPassed = () => {};
 
 export async function runComprehensiveBlockchainTests() {
-  /* console.log('Starting Comprehensive Blockchain Integration Tests'); */ testPassed();
+  // testPassed() - no-op for linting
   /* console.log(
     '================================================================'
   ); */ testPassed();
