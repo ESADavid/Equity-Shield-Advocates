@@ -67,21 +67,27 @@ function ErrorRecovery({
   };
 
 const handleUpdateSuccess = (data, metadata) => {
-    // eslint-disable-next-line no-unused-expressions
-    logger && logger.info('Update mode successful - connection restored');
+    if (logger) {
+      logger.info('Update mode successful - connection restored');
+    }
     setShowUpdateMode(false);
     setRecoveryAttempts(0);
     setLastError(null);
-    onSuccess && onSuccess(data, metadata);
+    if (onSuccess) {
+      onSuccess(data, metadata);
+    }
   };
 
   const handleUpdateExit = (err, metadata) => {
     if (err) {
-      // eslint-disable-next-line no-unused-expressions
-      logger && logger.error('Update mode failed:', err);
+      if (logger) {
+        logger.error('Update mode failed:', err);
+      }
       setRecoveryAttempts((prev) => prev + 1);
     }
-    onError && onError(err, metadata);
+    if (onError) {
+      onError(err, metadata);
+    }
   };
 
   const getErrorMessage = (code, message) => {

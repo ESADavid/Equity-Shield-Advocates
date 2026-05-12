@@ -153,7 +153,7 @@ onSuccess={(data, metadata) => {
                 if (data && data.accounts) {
                   setConnectedAccounts(data.accounts);
                 }
-                alert('Bank account connected successfully!');
+                console.warn('Bank account connected successfully!');
               }}
               onExit={(err) => {
                 if (err) {
