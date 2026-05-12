@@ -148,8 +148,8 @@ function Dashboard() {
             <PlaidLink
               userId="oscar-broome-user"
               products={['transactions', 'balances', 'income']}
-              onSuccess={(data, metadata) => {
-                console.log('Plaid Link Success:', data, metadata);
+onSuccess={(data, metadata) => {
+                // TODO: Replace with proper logger
                 if (data && data.accounts) {
                   setConnectedAccounts(data.accounts);
                 }

@@ -66,8 +66,9 @@ function ErrorRecovery({
     }
   };
 
-  const handleUpdateSuccess = (data, metadata) => {
-    logger.info('Update mode successful - connection restored');
+const handleUpdateSuccess = (data, metadata) => {
+    // eslint-disable-next-line no-unused-expressions
+    logger && logger.info('Update mode successful - connection restored');
     setShowUpdateMode(false);
     setRecoveryAttempts(0);
     setLastError(null);
@@ -76,7 +77,8 @@ function ErrorRecovery({
 
   const handleUpdateExit = (err, metadata) => {
     if (err) {
-      logger.error('Update mode failed:', err);
+      // eslint-disable-next-line no-unused-expressions
+      logger && logger.error('Update mode failed:', err);
       setRecoveryAttempts((prev) => prev + 1);
     }
     onError && onError(err, metadata);

@@ -1,44 +1,8 @@
-import React, { useState, useEffect, useCallback, FC } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // Removed unused usePlaidLink import
 
-// Type definitions
-interface PlaidExchangeResponse {
-  data: {
-    access_token: string;
-    // Add other expected fields
-  };
-  error?: string;
-  message?: string;
-}
-
-interface SessionTokenResponse {
-  data: {
-    session_token: string;
-  };
-  error?: string;
-  message?: string;
-}
-
-interface LayerOnboardingProps {
-  onSuccess: (exchangeData: PlaidExchangeResponse['data'], metadata: Record<string, any>) => void;
-  onExit: (error: any, metadata: Record<string, any>) => void;
-  userId: string;
-  templateId: string;
-  onLayerReady?: (metadata: Record<string, any>) => void;
-  onLayerNotAvailable?: (metadata: Record<string, any>) => void;
-  onLayerAutofillNotAvailable?: (metadata: Record<string, any>) => void;
-  onLayerEvent?: (eventName: string, metadata: Record<string, any>) => void;
-  clientName?: string;
-  webhook?: string;
-  linkCustomizationName?: string;
-  buttonStyle?: Record<string, any>;
-  theme?: string;
-}
-
-type LayerEligibility = 'ready' | 'not_available' | 'autofill_not_available' | null;
-type CurrentStep = 'phone' | 'dob' | 'layer';
-
-const LayerOnboarding: FC<LayerOnboardingProps> = ({
+// LayerOnboarding component - Plain JSX version
+const LayerOnboarding = ({
   onSuccess,
   onExit,
   userId,
@@ -53,44 +17,38 @@ const LayerOnboarding: FC<LayerOnboardingProps> = ({
   buttonStyle = {},
   theme = 'default',
 }) => {
-  const [sessionToken, setSessionToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [phoneNumber, setPhoneNumber] = useState<string>('');
-  const [dateOfBirth, setDateOfBirth] = useState<string>('');
-  const [currentStep, setCurrentStep] = useState<CurrentStep>('phone');
-  const [layerEligibility, setLayerEligibility] = useState<LayerEligibility>(null);
+  const [sessionToken, setSessionToken] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [currentStep, setCurrentStep] = useState('phone');
+  const [layerEligibility, setLayerEligibility] = useState(null);
 
   // Handle Layer events
-  const handleOnEvent = useCallback((
-    eventName: string, 
-    metadata: Record<string, any>
-  ) => {
+  const handleOnEvent = useCallback((eventName, metadata) => {
     switch (eventName) {
       case 'LAYER_READY':
         setLayerEligibility('ready');
         setCurrentStep('layer');
-        onLayerReady?.(metadata);
+        if (onLayerReady) onLayerReady(metadata);
         break;
       case 'LAYER_NOT_AVAILABLE':
         setLayerEligibility('not_available');
         setCurrentStep('dob');
-        onLayerNotAvailable?.(metadata);
+        if (onLayerNotAvailable) onLayerNotAvailable(metadata);
         break;
       case 'LAYER_AUTOFILL_NOT_AVAILABLE':
         setLayerEligibility('autofill_not_available');
-        onLayerAutofillNotAvailable?.(metadata);
+        if (onLayerAutofillNotAvailable) onLayerAutofillNotAvailable(metadata);
         break;
       default:
-        onLayerEvent?.(eventName, metadata);
+        if (onLayerEvent) onLayerEvent(eventName, metadata);
     }
   }, [onLayerReady, onLayerNotAvailable, onLayerAutofillNotAvailable, onLayerEvent]);
 
   // Handle success
-  const handleOnSuccess = useCallback(async (
-    publicToken: string, 
-    metadata: Record<string, any>
-  ) => {
+  const handleOnSuccess = useCallback(async (publicToken, metadata) => {
     try {
       const response = await fetch('/api/plaid/exchange-public-token', {
         method: 'POST',
@@ -98,24 +56,21 @@ const LayerOnboarding: FC<LayerOnboardingProps> = ({
         body: JSON.stringify({ publicToken }),
       });
       
-      const data: PlaidExchangeResponse = await response.json();
+      const data = await response.json();
       
       if (!response.ok) {
         throw new Error(data.message || data.error || 'Failed to exchange token');
       }
       
       onSuccess(data.data, metadata);
-    } catch (err: unknown) {
+    } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
     }
   }, [onSuccess]);
 
-  const handleOnExitCallback = useCallback((
-    err: any, 
-    metadata: Record<string, any>
-  ) => {
-    if (err?.error_message) {
+  const handleOnExitCallback = useCallback((err, metadata) => {
+    if (err && err.error_message) {
       setError(err.error_message);
     }
     onExit(err, metadata);
@@ -138,27 +93,27 @@ const LayerOnboarding: FC<LayerOnboardingProps> = ({
         linkCustomizationName 
       }),
     })
-      .then((res: Response) => res.json() as Promise<SessionTokenResponse>)
-      .then((data: SessionTokenResponse) => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.error) {
           throw new Error(data.message || data.error);
         }
         setSessionToken(data.data.session_token);
       })
-      .catch((err: unknown) => {
+      .catch((err) => {
         const errorMessage = err instanceof Error ? err.message : 'Failed to initialize';
         setError(errorMessage);
       })
       .finally(() => setLoading(false));
   }, [userId, templateId, clientName, webhook, linkCustomizationName]);
 
-  const handlePhoneSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePhoneSubmit = (e) => {
     e.preventDefault();
     if (!phoneNumber || !sessionToken) return;
 
     try {
-typeof globalThis !== 'undefined' && globalThis.Plaid
-        const Plaid = window.Plaid!;
+      if (typeof globalThis !== 'undefined' && globalThis.Plaid) {
+        const Plaid = window.Plaid;
         const handler = Plaid.create({
           token: sessionToken,
           onSuccess: handleOnSuccess,
@@ -166,28 +121,28 @@ typeof globalThis !== 'undefined' && globalThis.Plaid
           onEvent: handleOnEvent
         });
         handler.submit({ phone_number: phoneNumber });
-(globalThis as any).layerHandler = handler;
+        globalThis.layerHandler = handler;
       }
-    } catch (err: unknown) {
+    } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to initialize Layer';
       setError(errorMessage);
     }
   };
 
-  const handleDOBSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleDOBSubmit = (e) => {
     e.preventDefault();
-if (!dateOfBirth || !globalThis.layerHandler) return;
+    if (!dateOfBirth || !globalThis.layerHandler) return;
     
     try {
-      window.layerHandler!.submit({ date_of_birth: dateOfBirth });
-    } catch (err: unknown) {
+      window.layerHandler.submit({ date_of_birth: dateOfBirth });
+    } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to submit DOB';
       setError(errorMessage);
     }
   };
 
   const handleOpenLayer = () => {
-if (globalThis.layerHandler) {
+    if (globalThis.layerHandler) {
       window.layerHandler.open();
     }
   };
@@ -195,8 +150,8 @@ if (globalThis.layerHandler) {
   const retry = () => {
     setError(null);
     setLoading(true);
-if (typeof globalThis !== 'undefined') {
-globalThis.location.reload();
+    if (typeof globalThis !== 'undefined') {
+      globalThis.location.reload();
     }
   };
 
@@ -238,7 +193,7 @@ globalThis.location.reload();
                 type="tel"
                 id="phone"
                 value={phoneNumber}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNumber(e.target.value)}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="+1 (555) 123-4567"
                 required
                 className="form-control"
@@ -271,7 +226,7 @@ globalThis.location.reload();
                 type="date"
                 id="dob"
                 value={dateOfBirth}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDateOfBirth(e.target.value)}
+                onChange={(e) => setDateOfBirth(e.target.value)}
                 required
                 max={new Date().toISOString().split('T')[0]}
                 className="form-control"
@@ -338,4 +293,3 @@ globalThis.location.reload();
 };
 
 export default LayerOnboarding;
-
