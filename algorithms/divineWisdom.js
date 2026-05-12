@@ -291,7 +291,7 @@ evaluatePrinciple(decision, principle, context) {
   // Adjust based on context
   let adjustment = 0;
 
-if (Object.hasOwn(context, principle)) {
+  if (Object.hasOwn(context, principle)) {
     adjustment = context[principle] * 30; // Scale context input
   } else if (decision.attributes?.[principle]) {
     // Use decision attributes if available
@@ -303,7 +303,7 @@ if (Object.hasOwn(context, principle)) {
   const blessingMultiplier = this.checkKingdomAlignment(decision, principle);
   adjustment += blessingMultiplier;
 
-  return Math.min(100, Math.max(0, baseScore + adjustment));
+return Math.min(100, Math.max(0, baseScore + adjustment));
 }
 
   // NEW: Check if decision aligns with kingdom principles
