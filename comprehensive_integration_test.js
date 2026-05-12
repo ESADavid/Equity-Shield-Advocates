@@ -19,8 +19,6 @@ import {
 } from './auth/login_override.js';
 
 /* global testPassed */
-
-const testPassed = () => {};
 const logPass = (testName) => {
   /* PASS: ${testName} */ testPassed();
 };

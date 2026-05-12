@@ -138,7 +138,7 @@ globals: {
       },
     },
     // All test files - merged configuration
-    {
+{
       files: [
         'tests/**/*.js',
         'test/**/*.js',
@@ -149,6 +149,8 @@ globals: {
         '**/test_*.js',
         '**/*.test.js',
         '**/*.spec.js',
+        'comprehensive_*.js',
+        'comprehensive_*.ts',
       ],
       parser: 'espree',
       parserOptions: {

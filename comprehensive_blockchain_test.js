@@ -9,7 +9,7 @@ import { getBlockchainInstance } from './blockchain/blockchainLedger.js';
  */
 
 // No-op test reporter for linting
-const testPassed = () => {};
+/* global testPassed */
 
 /**
  * @param {string} testName
