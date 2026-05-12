@@ -5,12 +5,14 @@
 ## Fix Execution Plan
 
 ### Phase 1: Fix testPassed no-redeclare errors (4 files)
+
 - [ ] comprehensive_blockchain_test.js
 - [ ] comprehensive_integration_test.js  
 - [ ] comprehensive_integration_test_fixed.js
 - [ ] comprehensive_payroll_test_fixed.js
 
 ### Phase 2: Fix parsing errors (Unicode/syntax)
+
 - [ ] debt_acquisition_critical_test.js - \uXXXX at line 1
 - [ ] comprehensive_merchant_test.js - Unexpected token .. at line 48
 - [ ] comprehensive_payroll_test.js - Unexpected character at line 425
@@ -68,10 +70,12 @@
 - [ ] web_ui_test.js - Unexpected token ) at line 336
 
 ### Phase 3: Fix TypeScript parsing errors
+
 - [ ] comprehensive_integration_test.ts - Declaration expected at line 215
 - [ ] comprehensive_integration_test_complete.ts - Expression expected at line 103
 - [ ] comprehensive_integration_test_fixed.ts - Already has console warnings (ok)
 - [ ] multi_repo_revenue_aggregator.ts - ; expected at line 99
 
 ### Phase 4: Verify fixes
+
 - [ ] Run npm run lint to verify all errors are resolved
