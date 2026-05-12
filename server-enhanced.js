@@ -329,16 +329,7 @@ try {
   logger.info('   Server will continue without ITG routes');
 }
 
-// Import Divine AI routes - PRIVATE PERSONAL AI
-let divineAIRouter;
-try {
-  const divineAIModule = await import('./routes/divineAIRoutes.js');
-  divineAIRouter = divineAIModule.default || divineAIModule;
-  logger.info('✅ Divine AI system loaded successfully');
-} catch (error) {
-  logger.error('❌ Failed to load Divine AI system:', error.message);
-  logger.info('   Server will continue without Divine AI routes');
-}
+
 
 // Import Blackbox Multi-Agent routes - BLACKBOX AI ORCHESTRATION
 let blackboxMultiAgentRouter;
@@ -657,15 +648,7 @@ if (itgRouter) {
   logger.info('   ✨ Sacred Geometry + Divine Wisdom + Quantum Enhancement');
 }
 
-// Divine AI API Routes - PRIVATE PERSONAL AI
-if (divineAIRouter) {
-  app.use('/api/divine-ai', divineAIRouter ?? (() => {}));
-  logger.info('✅ Divine AI routes mounted at /api/divine-ai');
-  logger.info('   🤖 Divine AI active - Personal benefit only');
-  logger.info('   🔐 Private access - King Sachem Yochanan exclusive');
-}
-
-// Blackbox Multi-Agent API Routes - All Agents One Place
+// Blackbox Multi-Agent API Routes
 if (blackboxMultiAgentRouter) {
   app.use('/api/multi-agent', blackboxMultiAgentRouter);
   logger.info('✅ Blackbox Multi-Agent routes mounted at /api/multi-agent');
