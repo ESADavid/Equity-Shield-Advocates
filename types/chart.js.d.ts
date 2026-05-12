@@ -3,7 +3,7 @@ declare module 'chart.js' {
     responsive?: boolean;
     plugins?: {
       legend?: {
-        position?: 'top' | 'bottom' | 'left' | 'right';
+        position?: 'top' | 'bottom' | 'left' | 'right' | string;
       };
       title?: {
         display?: boolean;
@@ -25,9 +25,26 @@ declare module 'chart.js' {
     constructor(ctx: CanvasRenderingContext2D, config: any);
     destroy(): void;
     update(): void;
+    static register: {
+      (): void;
+      CategoryScale: any;
+      LinearScale: any;
+      BarElement: any;
+      Title: any;
+      Tooltip: any;
+      Legend: any;
+    };
   }
 
-  export function register(...items: any): void;
+  export const register: {
+    (): void;
+    CategoryScale: any;
+    LinearScale: any;
+    BarElement: any;
+    Title: any;
+    Tooltip: any;
+    Legend: any;
+  };
 
   export const CategoryScale: any;
   export const LinearScale: any;
@@ -35,4 +52,15 @@ declare module 'chart.js' {
   export const Title: any;
   export const Tooltip: any;
   export const Legend: any;
+}
+
+declare module 'react-chartjs-2' {
+  import { ChartOptions, ChartData } from 'chart.js';
+
+  export interface BarProps {
+    data: ChartData;
+    options?: ChartOptions;
+  }
+
+  export function Bar(props: BarProps): JSX.Element;
 }

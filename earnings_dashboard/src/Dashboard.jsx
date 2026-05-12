@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -145,16 +145,27 @@ function Dashboard() {
               Connect your bank accounts securely using Plaid for proof of funds
               verification and income analysis.
             </p>
-            <PlaidLink
+<PlaidLink
               userId="oscar-broome-user"
               products={['transactions', 'balances', 'income']}
-onSuccess={(data, metadata) => {
+              /**
+               * Success callback for Plaid Link
+               * @param {Object} data - The public token exchange response
+               * @param {Object} metadata - Metadata about the link session
+               * @returns {void}
+               */
+              onSuccess={(data, metadata) => {
                 // TODO: Replace with proper logger
                 if (data && data.accounts) {
                   setConnectedAccounts(data.accounts);
                 }
                 console.warn('Bank account connected successfully!');
               }}
+              /**
+               * Exit callback for Plaid Link
+               * @param {Object|null} err - Error object if exit was due to error
+               * @returns {void}
+               */
               onExit={(err) => {
                 if (err) {
                   alert('Connection cancelled or failed');
