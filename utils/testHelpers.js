@@ -39,9 +39,9 @@ const assert = (condition, message = 'Assertion failed') => {
  * @returns {Object} Expect chain object
  */
 const expect = (actual) => ({
-  toBe: (/** @type {unknown} */ expected) => {
+toBe: (/** @type {unknown} */ expected) => {
     if (actual !== expected) {
-      throw new Error(`Expected ${expected} but got ${actual}`);
+      throw new Error(`Expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
     }
   },
   toEqual: (/** @type {unknown} */ expected) => {
@@ -49,14 +49,14 @@ const expect = (actual) => ({
       throw new Error(`Expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
     }
   },
-  toBeTruthy: () => {
+toBeTruthy: () => {
     if (!actual) {
-      throw new Error(`Expected ${actual} to be truthy`);
+      throw new Error(`Expected ${JSON.stringify(actual)} to be truthy`);
     }
   },
   toBeFalsy: () => {
     if (actual) {
-      throw new Error(`Expected ${actual} to be falsy`);
+      throw new Error(`Expected ${JSON.stringify(actual)} to be falsy`);
     }
   },
   toBeDefined: () => {
@@ -64,9 +64,9 @@ const expect = (actual) => ({
       throw new Error('Expected value to be defined');
     }
   },
-  toBeNull: () => {
+toBeNull: () => {
     if (actual !== null) {
-      throw new Error(`Expected null but got ${actual}`);
+      throw new Error(`Expected null but got ${JSON.stringify(actual)}`);
     }
   }
 });
