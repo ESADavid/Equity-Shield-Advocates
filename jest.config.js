@@ -23,7 +23,13 @@ export default {
     ],
   },
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^(\\.{1,2}/.*)\\.js$': '<rootDir>$1.js',
+    '^utils/loggerWrapper\\.js$': '<rootDir>/utils/loggerWrapper.js',
+    '^services/(.*)$': '<rootDir>/services/$1.js',
+    '^routes/(.*)$': '<rootDir>/routes/$1.js',
+    '^models/(.*)$': '<rootDir>/models/$1.js',
+    '^public/(.*)$': '<rootDir>/public/$1',
+    '^middleware/(.*)$': '<rootDir>/middleware/$1.js',
     '\\\\?(.*\\.(png|jpg|jpeg|gif|webp))': 'identity-obj-proxy',
   },
   transformIgnorePatterns: ['node_modules/(?!(date-fns|@testing-library))'],
@@ -43,4 +49,5 @@ export default {
     '!**/dist/**',
   ],
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node'],
+  resolver: undefined,
 };
