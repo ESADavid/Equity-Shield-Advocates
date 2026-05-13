@@ -77,33 +77,30 @@ async function aggregateRevenues(
   return { totalRevenue, perRepository, revenueStreamsSummary };
 }
 
-// Wrap in async IIFE to handle top-level await
-(async () => {
-  // Top-level await - assumes all repositories are subdirectories in a parent directory 'owlban_repos'
-  const baseDir = path.resolve(process.cwd(), 'owlban_repos');
-  try {
-    await fs.access(baseDir);
-  } catch {
-    // Directory doesn't exist, silently exit
-    return;
-  }
+// Top-level await - assumes all repositories are subdirectories in a parent directory 'owlban_repos'
+const baseDir = path.resolve(process.cwd(), 'owlban_repos');
+try {
+  await fs.access(baseDir);
+} catch {
+  // Directory doesn't exist, silently exit
+  process.exit(0);
+}
 
-  const dirents = await fs.readdir(baseDir, { withFileTypes: true });
-  const repoDirs = dirents
-    .filter((d) => d.isDirectory())
-    .map((d) => path.join(baseDir, d.name));
+const dirents = await fs.readdir(baseDir, { withFileTypes: true });
+const repoDirs = dirents
+  .filter((d) => d.isDirectory())
+  .map((d) => path.join(baseDir, d.name));
 
-  const aggregated = await aggregateRevenues(repoDirs);
+const aggregated = await aggregateRevenues(repoDirs);
 
-  // Write aggregated data to a JSON file
-  const outputFile = path.join(baseDir, 'aggregated_revenue_report.json');
-  try {
-    await fs.writeFile(
-      outputFile,
-      JSON.stringify(aggregated, null, 2),
-      'utf-8'
-    );
-  } catch {
-    // Silently ignore file write errors
-  }
-})();
+// Write aggregated data to a JSON file
+const outputFile = path.join(baseDir, 'aggregated_revenue_report.json');
+try {
+  await fs.writeFile(
+    outputFile,
+    JSON.stringify(aggregated, null, 2),
+    'utf-8'
+  );
+} catch {
+  // Silently ignore file write errors
+}
