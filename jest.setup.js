@@ -60,3 +60,6 @@ globalThis.ResizeObserver = class ResizeObserver {
     return;
   } // intentional no-op for jsdom test mock
 };
+
+// Polyfill setImmediate for node test environment
+global.setImmediate = global.setImmediate || ((fn, ...args) => setTimeout(() => fn(...args), 0));

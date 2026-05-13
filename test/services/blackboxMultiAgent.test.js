@@ -4,8 +4,6 @@
  */
 
 describe('BlackboxMultiAgentService', () => {
-  let service;
-
   beforeAll(() => {
     // Import the service dynamically to avoid module resolution issues in test
     jest.resetModules();
