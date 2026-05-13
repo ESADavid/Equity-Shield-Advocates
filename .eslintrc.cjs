@@ -6,7 +6,7 @@ module.exports = {
     jest: true,
   },
   extends: ['eslint:recommended'],
-  parser: 'espree',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2022,
     sourceType: 'module',
@@ -64,11 +64,6 @@ module.exports = {
     'payrollSystem.js',
     'performance_test.js',
     'production_deploy.js',
-    // TypeScript files should not be linted by JavaScript ESLint
-    '*.ts',
-    '*.tsx',
-    '**/*.ts',
-    '**/*.tsx',
     // JS files with parse errors that need manual fixing
     'critical_path_test.js',
     'debt_acquisition_critical_test.js',
