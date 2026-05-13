@@ -456,7 +456,11 @@ const notificationId = `NOTIF-${Date.now()}-${Math.random().toString(36).substri
    * @param {string} userId - User ID
    * @returns {Promise<Object>} Send result
    */
-  async sendEmail(/** @type {Template} */ template, /** @type {Object} */ data, /** @type {string} */ userId) {
+  async sendEmail(
+    /** @type {Template} */ template,
+    /** @type {Object} */ data,
+    /** @type {string} */ userId
+  ) {
     try {
       if (!this.emailTransporter) {
         return {
@@ -493,10 +497,18 @@ const notificationId = `NOTIF-${Date.now()}-${Math.random().toString(36).substri
     }
   }
 
-  /**
+/**
    * Send SMS notification
+   * @param {Template} template - Notification template
+   * @param {Object} data - Template data
+   * @param {string} userId - User ID
+   * @returns {Promise<Object>} Send result
    */
-  async sendSMS(template, data, userId) {
+  async sendSMS(
+    /** @type {Template} */ template,
+    /** @type {Object} */ data,
+    /** @type {string} */ userId
+  ) {
     try {
       const message = this.replaceTemplateVariables(template.smsBody, data);
 
