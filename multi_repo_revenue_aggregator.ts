@@ -12,7 +12,7 @@ interface RevenueData {
   repository: string;
   totalRevenue: number;
   revenueStreams: RevenueStream[];
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 interface AggregatedRevenue {
@@ -24,13 +24,13 @@ interface AggregatedRevenue {
 async function loadRevenueFromRepo(
   repoPath: string
 ): Promise<RevenueData | null> {
+  const revenueFile = path.join(repoPath, 'revenue.json');
   try {
-    const revenueFile = path.join(repoPath, 'revenue.json');
-    try {
-      await fs.access(revenueFile);
-    } catch {
-      return null;
-    }
+    await fs.access(revenueFile);
+  } catch {
+    return null;
+  }
+  try {
     const data = await fs.readFile(revenueFile, 'utf-8');
     const revenue = JSON.parse(data) as Record<string, unknown>;
     if (!revenue || typeof revenue !== 'object') {
@@ -60,12 +60,15 @@ async function aggregateRevenues(
       perRepository[revenueData.repository] = revenueData.totalRevenue;
       totalRevenue += revenueData.totalRevenue;
 
-      revenueData.revenueStreams.forEach((stream) => {
-        if (!revenueStreamsSummary[stream.name]) {
-          revenueStreamsSummary[stream.name] = 0;
+      for (const stream of revenueData.revenueStreams) {
+        const streamName = stream.name;
+        if (streamName) {
+          if (!revenueStreamsSummary[streamName]) {
+            revenueStreamsSummary[streamName] = 0;
+          }
+          revenueStreamsSummary[streamName] += stream.amount;
         }
-        revenueStreamsSummary[stream.name] += stream.amount;
-      });
+      }
     }
   });
 
@@ -80,7 +83,6 @@ async function main() {
   try {
     await fs.access(baseDir);
   } catch {
-    /* console.error('Base directory for repositories does not exist:', baseDir); */
     return;
   }
 
@@ -91,23 +93,7 @@ async function main() {
 
   const aggregated = await aggregateRevenues(repoDirs);
 
-// console.log('Aggregated Revenue Report:');
-  // console.log(
-  //   `Total Revenue Across All Repositories: $${aggregated.totalRevenue.toLocaleString()}`
-  // );
-  // console.log('Revenue Per Repository:');
-  Object.entries(aggregated.perRepository).forEach(([repo, revenue]) => {
-    // console.log(`- ${repo}: $${revenue.toLocaleString()}`);
-  });
-
-  // console.log('Revenue Streams Summary:');
-  Object.entries(aggregated.revenueStreamsSummary).forEach(
-    ([stream, amount]) => {
-      // console.log(`- ${stream}: $${amount.toLocaleString()}`);
-    }
-  );
-
-  // Optionally write aggregated data to a JSON file
+  // Write aggregated data to a JSON file
   const outputFile = path.join(baseDir, 'aggregated_revenue_report.json');
   try {
     await fs.writeFile(
@@ -115,9 +101,8 @@ async function main() {
       JSON.stringify(aggregated, null, 2),
       'utf-8'
     );
-    /* console.log(`Aggregated revenue report written to ${outputFile}`); */
-  } catch (error) {
-    /* console.error('Error writing aggregated revenue report:', error); */
+  } catch {
+    // Silently ignore file write errors
   }
 }
 
