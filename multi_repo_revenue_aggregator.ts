@@ -1,5 +1,5 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
 
 interface RevenueStream {
   name: string;
@@ -77,12 +77,14 @@ async function aggregateRevenues(
   return { totalRevenue, perRepository, revenueStreamsSummary };
 }
 
-async function main() {
-  // Assuming all repositories are subdirectories in a parent directory 'owlban_repos'
-  const baseDir = path.resolve(__dirname, 'owlban_repos');
+// Wrap in async IIFE to handle top-level await
+(async () => {
+  // Top-level await - assumes all repositories are subdirectories in a parent directory 'owlban_repos'
+  const baseDir = path.resolve(process.cwd(), 'owlban_repos');
   try {
     await fs.access(baseDir);
   } catch {
+    // Directory doesn't exist, silently exit
     return;
   }
 
@@ -104,6 +106,4 @@ async function main() {
   } catch {
     // Silently ignore file write errors
   }
-}
-
-main();
+})();
