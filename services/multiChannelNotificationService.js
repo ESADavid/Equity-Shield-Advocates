@@ -43,6 +43,26 @@ import nodemailer from 'nodemailer';
  */
 
 /**
+ * @typedef {Object} TemplateData
+ * @property {string} id
+ * @property {string} name
+ * @property {string[]} channels
+ * @property {string} subject
+ * @property {string} emailBody
+ * @property {string} [smsBody]
+ * @property {string} pushBody
+ * @property {string} priority
+ */
+
+/**
+ * @typedef {Object} ChannelPreference
+ * @property {boolean} email
+ * @property {boolean} sms
+ * @property {boolean} push
+ * @property {boolean} inApp
+ */
+
+/**
  * @typedef {Object} Template
  * @property {string} id
  * @property {string} name
@@ -106,7 +126,7 @@ class MultiChannelNotificationService {
         process.env.SMTP_USER &&
         process.env.SMTP_PASS
       ) {
-        this.emailTransporter = nodemailer.createTransporter({
+this.emailTransporter = nodemailer.createTransport({
           host: process.env.SMTP_HOST,
           port: process.env.SMTP_PORT || 587,
           secure: false,
@@ -281,21 +301,25 @@ class MultiChannelNotificationService {
     info(`Initialized ${defaultTemplates.length} notification templates`);
   }
 
-  /**
+/**
    * Send notification through multiple channels
    * @param {Object} notificationData - Notification details
-   * @returns {Object} Send result
+   * @returns {Promise<Object>} Send result
    */
   async sendNotification(notificationData) {
     try {
-      const {
-        userId,
-        templateId,
-        channels = ['email', 'push', 'in-app'],
-        data = {},
-        priority = 'medium',
-        scheduledFor = null,
-      } = notificationData;
+      /** @type {string} */
+      const userId = notificationData.userId;
+      /** @type {string} */
+      const templateId = notificationData.templateId;
+      /** @type {string[]} */
+      const channels = notificationData.channels || ['email', 'push', 'in-app'];
+      /** @type {Object} */
+      const data = notificationData.data || {};
+      /** @type {string} */
+      const priority = notificationData.priority || 'medium';
+      /** @type {string|null} */
+      const scheduledFor = notificationData.scheduledFor || null;
 
       // Get template
       const template = this.templates.get(templateId);
@@ -315,7 +339,7 @@ class MultiChannelNotificationService {
       };
 
       // Create notification record
-      const notificationId = `NOTIF-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+const notificationId = `NOTIF-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 
       const notification = {
         id: notificationId,
@@ -399,15 +423,15 @@ class MultiChannelNotificationService {
     }
   }
 
-  /**
+/**
    * Send notification to specific channel
    * @param {string} channel - Channel type
-   * @param {Object} template - Notification template
+   * @param {Template} template - Notification template
    * @param {Object} data - Template data
    * @param {string} userId - User ID
-   * @returns {Object} Send result
+   * @returns {Promise<Object>} Send result
    */
-  async sendToChannel(channel, template, data, userId) {
+  async sendToChannel(/** @type {string} */ channel, /** @type {Template} */ template, /** @type {Object} */ data, /** @type {string} */ userId) {
     switch (channel) {
       case 'email':
         return await this.sendEmail(template, data, userId);
@@ -425,10 +449,14 @@ class MultiChannelNotificationService {
     }
   }
 
-  /**
+/**
    * Send email notification
+   * @param {Template} template - Notification template
+   * @param {Object} data - Template data
+   * @param {string} userId - User ID
+   * @returns {Promise<Object>} Send result
    */
-  async sendEmail(template, data, userId) {
+  async sendEmail(/** @type {Template} */ template, /** @type {Object} */ data, /** @type {string} */ userId) {
     try {
       if (!this.emailTransporter) {
         return {
