@@ -89,7 +89,7 @@ git push origin main
 ## 📋 PHASE BREAKDOWN
 
 | Phase | Description | Status | Priority |
-|-------|-------------|--------|----------|
+| ----- | ----------- | ------ | -------- |
 | 1 | ESLint Fixes (91 problems) | ⏳ PENDING | 🔴 HIGH |
 | 2 | Testing & Verification | ⏳ PENDING | 🔴 HIGH |
 | 3 | Documentation Finalization | ⏳ PENDING | 🟡 MEDIUM |
@@ -220,7 +220,7 @@ npm run lint -- --fix && npm test && npm run dev
 ## 📅 TIMELINE
 
 | Timeframe | Phase | Tasks |
-|----------|-------|-------|
+| -------- | ----- | ----- |
 | Today | Phase 1 | ESLint fixes (91 problems) |
 | Today | Phase 2 | Testing & verification |
 | This Week | Phase 3 | Documentation |
