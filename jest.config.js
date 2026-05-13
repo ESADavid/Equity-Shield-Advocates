@@ -1,9 +1,8 @@
 export default {
-  // preset: 'ts-jest/presets',
   testEnvironment: 'jsdom',
 
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': [
+    '^.+\\.(js|jsx|ts|tsx|mjs)$': [
       '@swc/jest',
       {
         jsc: {
@@ -25,6 +24,8 @@ export default {
   moduleNameMapper: {
     '^utils/loggerWrapper$': '<rootDir>/utils/loggerWrapper.js',
     '^utils/loggerWrapper\\.js$': '<rootDir>/utils/loggerWrapper.js',
+    '^config/logger$': '<rootDir>/__mocks__/logger.js',
+    '^config/logger\\.js$': '<rootDir>/__mocks__/logger.js',
     '^services/(.*)$': '<rootDir>/services/$1.js',
     '^services/(.*)\\.js$': '<rootDir>/services/$1.js',
     '^routes/(.*)$': '<rootDir>/routes/$1.js',
@@ -34,9 +35,12 @@ export default {
     '^public/(.*)$': '<rootDir>/public/$1',
     '^middleware/(.*)$': '<rootDir>/middleware/$1.js',
     '^middleware/(.*)\\.js$': '<rootDir>/middleware/$1.js',
+    '^node-cron$': '<rootDir>/__mocks__/node-cron.js',
     '\\?(.*\\.(png|jpg|jpeg|gif|webp))': 'identity-obj-proxy',
   },
-  transformIgnorePatterns: ['node_modules/(?!(date-fns|@testing-library))'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(date-fns|@testing-library|bson|chai|uuid)/)'
+  ],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testMatch: [
     '<rootDir>/__tests__/**/*.{js,jsx,ts,tsx}',
@@ -52,6 +56,7 @@ export default {
     '!**/node_modules/**',
     '!**/dist/**',
   ],
-  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node'],
+  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node', 'mjs'],
   resolver: undefined,
+  verbose: true,
 };
