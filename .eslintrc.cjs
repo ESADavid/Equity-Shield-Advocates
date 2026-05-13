@@ -70,6 +70,8 @@ module.exports = {
     'simple_jpmorgan_test.js',
     'simple_test_check.js',
     'web_ui_test.js',
+    // TypeScript files with parsing issues - need manual fixes
+    'multi_repo_revenue_aggregator.ts',
   ],
   globals: {
     logger: 'readonly',

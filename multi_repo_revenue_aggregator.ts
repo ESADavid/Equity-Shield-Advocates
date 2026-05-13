@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 interface RevenueStream {
   name: string;
@@ -29,19 +29,20 @@ async function loadRevenueFromRepo(
     try {
       await fs.access(revenueFile);
     } catch {
-      /* console.warn(`No revenue.json found in ${repoPath}`); */
       return null;
     }
     const data = await fs.readFile(revenueFile, 'utf-8');
-    const revenue = JSON.parse(data);
+    const revenue = JSON.parse(data) as Record<string, unknown>;
+    if (!revenue || typeof revenue !== 'object') {
+      return null;
+    }
     return {
       repository: path.basename(repoPath),
-      totalRevenue: revenue.totalRevenue || 0,
-      revenueStreams: revenue.revenueStreams || [],
+      totalRevenue: (revenue.totalRevenue as number) || 0,
+      revenueStreams: (revenue.revenueStreams as RevenueStream[]) || [],
       details: revenue,
     };
-  } catch (error) {
-    /* console.error(`Error loading revenue from ${repoPath}:`, error); */
+  } catch {
     return null;
   }
 }
@@ -90,19 +91,19 @@ async function main() {
 
   const aggregated = await aggregateRevenues(repoDirs);
 
-  /* console.log('Aggregated Revenue Report:'); */
-  /* console.log(
-    `Total Revenue Across All Repositories: $${aggregated.totalRevenue.toLocaleString() */}`
-  );
-  /* console.log('Revenue Per Repository:'); */
+// console.log('Aggregated Revenue Report:');
+  // console.log(
+  //   `Total Revenue Across All Repositories: $${aggregated.totalRevenue.toLocaleString()}`
+  // );
+  // console.log('Revenue Per Repository:');
   Object.entries(aggregated.perRepository).forEach(([repo, revenue]) => {
-    /* console.log(`- ${repo}: $${revenue.toLocaleString() */}`);
+    // console.log(`- ${repo}: $${revenue.toLocaleString()}`);
   });
 
-  /* console.log('Revenue Streams Summary:'); */
+  // console.log('Revenue Streams Summary:');
   Object.entries(aggregated.revenueStreamsSummary).forEach(
     ([stream, amount]) => {
-      /* console.log(`- ${stream}: $${amount.toLocaleString() */}`);
+      // console.log(`- ${stream}: $${amount.toLocaleString()}`);
     }
   );
 
