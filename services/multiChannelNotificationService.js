@@ -53,8 +53,8 @@ class MultiChannelNotificationService {
       } else {
         warn('Email service not configured - set SMTP environment variables');
       }
-    } catch (error) {
-      error('Error initializing email service:', error);
+} catch (err) {
+      error('Error initializing email service:', err);
     }
   }
 
