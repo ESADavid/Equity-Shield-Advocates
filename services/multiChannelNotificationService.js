@@ -13,8 +13,74 @@
  * - Batch notifications
  */
 
-import { info, error, warn, debug } from 'utils/loggerWrapper.js';
+import { info, error, warn } from 'utils/loggerWrapper.js';
 import nodemailer from 'nodemailer';
+
+/**
+ * @typedef {Object} NotificationData
+ * @property {string} userId
+ * @property {string} templateId
+ * @property {string[]} [channels]
+ * @property {Record<string, any>} [data]
+ * @property {string} [priority]
+ * @property {string|null} [scheduledFor]
+ */
+
+/**
+ * @typedef {Object} Notification
+ * @property {string} id
+ * @property {string} userId
+ * @property {string} templateId
+ * @property {string} templateName
+ * @property {string} priority
+ * @property {string[]} channels
+ * @property {Record<string, any>} data
+ * @property {string} status
+ * @property {string|null} scheduledFor
+ * @property {string} createdAt
+ * @property {Record<string, any>} deliveryStatus
+ * @property {string} [sentAt]
+ */
+
+/**
+ * @typedef {Object} Template
+ * @property {string} id
+ * @property {string} name
+ * @property {string[]} channels
+ * @property {string} subject
+ * @property {string} emailBody
+ * @property {string} smsBody
+ * @property {string} pushBody
+ * @property {string} priority
+ */
+
+/**
+ * @typedef {Object} UserPreferences
+ * @property {boolean} [email]
+ * @property {boolean} [sms]
+ * @property {boolean} [push]
+ * @property {boolean} [inApp]
+ * @property {string} [updatedAt]
+ */
+
+/**
+ * @typedef {Object} FilterOptions
+ * @property {string} [status]
+ * @property {string} [priority]
+ * @property {string} [startDate]
+ * @property {string} [endDate]
+ * @property {number} [page]
+ * @property {number} [limit]
+ */
+
+/**
+ * @typedef {Object} SendResult
+ * @property {boolean} success
+ * @property {string} [error]
+ * @property {string} [notificationId]
+ * @property {Record<string, any>} [deliveryResults]
+ * @property {string} [timestamp]
+ */
 
 class MultiChannelNotificationService {
   constructor() {
