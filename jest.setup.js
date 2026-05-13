@@ -4,6 +4,7 @@ process.env.LOG_LEVEL = 'warn'; // Reduce logger noise
 
 /* eslint-disable no-console */
 // Mock console methods to reduce noise
+/** @type {Record<'log'|'info'|'warn'|'error', typeof console.log>} */
 const originalConsoleMethods = {
   log: console.log,
   info: console.info,
@@ -11,44 +12,64 @@ const originalConsoleMethods = {
   error: console.error,
 };
 
+/** @type {Array<'log'|'info'>} */
 const suppressedMethods = ['log', 'info'];
+/** @type {Record<string, Function>} */
 const consoleMethods = {};
 
-suppressedMethods.forEach((method) => {
+suppressedMethods.forEach(/** @type {function(string): void} */ ((method) => {
   consoleMethods[method] = jest.fn();
-});
+}));
 
-Object.keys(originalConsoleMethods).forEach((method) => {
+Object.keys(originalConsoleMethods).forEach(/** @type {function(string): void} */ ((method) => {
   if (!consoleMethods[method]) {
-    consoleMethods[method] = originalConsoleMethods[method];
+    consoleMethods[method] = originalConsoleMethods[/** @type {'log'|'info'|'warn'|'error'} */ (method)];
   }
-});
+}));
 
 Object.assign(console, consoleMethods);
 
-globalThis.fetch = jest.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve({}),
-  })
-);
+// Properly typed fetch mock - returns a complete Response-like object
+/** @type {() => Promise<Response>} */
+const createMockResponse = () => Promise.resolve(/** @type {Response} */ ({
+  ok: true,
+  json: () => Promise.resolve({}),
+  headers: new Headers(),
+  redirected: false,
+  status: 200,
+  statusText: 'OK',
+  type: 'default',
+  url: '',
+  body: null,
+  bodyUsed: false,
+  clone: function () { return this; },
+  text: () => Promise.resolve(''),
+  blob: () => Promise.resolve(new Blob()),
+  formData: () => Promise.resolve(new FormData()),
+  arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
+  bytes: () => Promise.resolve(new Uint8Array(0)),
+}));
 
-globalThis.TextEncoder = require('node:util').TextEncoder;
-globalThis.TextDecoder = require('node:util').TextDecoder;
+globalThis.fetch = jest.fn(/** @type {typeof createMockResponse} */ (createMockResponse));
 
-// Service Worker mocks for browser tests
+// Use built-in Node.js TextEncoder/TextDecoder
+globalThis.TextEncoder = TextEncoder;
+globalThis.TextDecoder = TextDecoder;
+
+// Service Worker mocks for browser tests (CacheStorage)
+/** @type {CacheStorage} */
+const mockCacheStorage = {
+  open: jest.fn(),
+  match: jest.fn(),
+  delete: jest.fn(),
+  keys: jest.fn(),
+  has: jest.fn(),
+};
 if (typeof globalThis !== 'undefined') {
-  globalThis.caches = {
-    open: jest.fn(),
-    match: jest.fn(),
-    add: jest.fn(),
-    put: jest.fn(),
-    delete: jest.fn(),
-    keys: jest.fn(),
-  };
+  globalThis.caches = mockCacheStorage;
 }
 
-// Fix for jsdom
+// Fix for jsdom ResizeObserver
 globalThis.ResizeObserver = class ResizeObserver {
   observe() {
     return;
@@ -62,4 +83,6 @@ globalThis.ResizeObserver = class ResizeObserver {
 };
 
 // Polyfill setImmediate for node test environment
-global.setImmediate = global.setImmediate || ((fn, ...args) => setTimeout(() => fn(...args), 0));
+/** @type {(fn: () => void) => void} */
+const setImmediatePolyfill = (fn) => setTimeout(fn, 0);
+globalThis.setImmediate = globalThis.setImmediate || setImmediatePolyfill;
