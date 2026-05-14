@@ -350,11 +350,13 @@ class DryIceCoolingSystem extends EventEmitter {
     return { zoneId, rackId };
   }
 
-  /**
+/**
    * Update zone temperature based on heat load
    * This simulates the cooling effect
+   * @param {string} zoneId - Zone ID
+   * @param {number} newTemp - New temperature
    */
-  updateZoneTemp(zoneId, newTemp) {
+  updateZoneTemp(/** @type {string} */ zoneId, /** @type {number} */ newTemp) {
     const zone = this.zones.find(z => z.id === zoneId);
     if (!zone) {
       throw new Error(`Zone not found: ${zoneId}`);
@@ -375,10 +377,11 @@ class DryIceCoolingSystem extends EventEmitter {
     return { zoneId, oldTemp, newTemp };
   }
 
-  /**
+/**
    * Get cooling power in kW for a zone
+   * @param {string} zoneId - Zone ID
    */
-  getCoolingPower(zoneId) {
+  getCoolingPower(/** @type {string} */ zoneId) {
     const zone = this.zones.find(z => z.id === zoneId);
     if (!zone) {
       throw new Error(`Zone not found: ${zoneId}`);
@@ -403,10 +406,11 @@ class DryIceCoolingSystem extends EventEmitter {
     };
   }
 
-  /**
+/**
    * Consume dry ice for cooling
+   * @param {number} kg - Amount to consume
    */
-  consumeDryIce(kg) {
+  consumeDryIce(/** @type {number} */ kg) {
     if (this.state.inventory < kg) {
       this.addAlert('insufficientInventory', `Insufficient dry ice: ${this.state.inventory}kg available, ${kg}kg requested`);
       return { success: false, requested: kg, consumed: 0 };
