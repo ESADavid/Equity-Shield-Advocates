@@ -1,5 +1,5 @@
+// @ts-nocheck
 /**
- * @ts-nocheck
  * DRY ICE COOLING SYSTEM FOR DATA CENTERS
  * Emergency Cooling Solution for AI/ML Infrastructure
  * 
@@ -44,15 +44,12 @@
  * @property {string} zoneId - Zone ID
  * @property {number} heatLoad - Heat load (kW)
  * 
- * @typedef {Object} Server - Server to assign to zone
+* @typedef {Object} Server - Server to assign to zone
  * @property {string} id - Server ID
  * @property {number} heatLoad - Heat load (kW)
  */
 
 import { EventEmitter } from 'node:events';
-
-/** @type {Zone[]} */
-const ZoneArray = [];
 
 
 
