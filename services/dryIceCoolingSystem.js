@@ -65,29 +65,38 @@ class DryIceCoolingSystem extends EventEmitter {
     // Configuration defaults
     /** @type {DryIceConfig} */
     this.config = {
-      // Dry ice capacity in kg per cooling cycle
-      dryIceCapacity: config.dryIceCapacity || 1000, // 1000 kg default
+// Dry ice capacity in kg per cooling cycle
+      /** @type {number} */
+      dryIceCapacity: config.dryIceCapacity ?? 1000,
       // Ambient temperature threshold to trigger cooling (°C)
-      triggerTemp: config.triggerTemp || 25,
+      /** @type {number} */
+      triggerTemp: config.triggerTemp ?? 25,
       // Critical temperature threshold (°C)
-      criticalTemp: config.criticalTemp || 35,
+      /** @type {number} */
+      criticalTemp: config.criticalTemp ?? 35,
       // Cooling efficiency (0-1)
-      efficiency: config.efficiency || 0.85,
+      /** @type {number} */
+      efficiency: config.efficiency ?? 0.85,
       // Auto-replenish dry ice
+      /** @type {boolean} */
       autoReplenish: config.autoReplenish ?? true,
       // Minimum dry ice level before alert (%)
-      minLevelAlert: config.minLevelAlert || 20,
+      /** @type {number} */
+      minLevelAlert: config.minLevelAlert ?? 20,
       // Number of cooling zones
-      zones: config.zones || 4,
+      /** @type {number} */
+      zones: config.zones ?? 4,
       // CO2 sublimation rate (kg/hour per zone)
-      sublimationRate: config.sublimationRate || 5,
+      /** @type {number} */
+      sublimationRate: config.sublimationRate ?? 5,
     };
 
 // System state
     /** @type {{inventory: number, zoneTemps: number[], status: string, heatRemoved: number, co2Consumed: number, uptime: number, lastMaintenance: number, alerts: Alert[]}} */
     this.state = {
       // Dry ice inventory in kg
-      inventory: config.initialInventory || this.config.dryIceCapacity,
+      /** @type {number} */
+      inventory: config.initialInventory ?? this.config.dryIceCapacity ?? 1000,
       // Current server rack temperatures by zone
       zoneTemps: new Array(this.config.zones).fill(20),
       // System status: 'standby' | 'active' | 'critical' | 'offline'
@@ -265,10 +274,11 @@ class DryIceCoolingSystem extends EventEmitter {
     };
   }
 
-  /**
+/**
    * Add dry ice inventory
+   * @param {number} kg - Amount of dry ice to add in kg
    */
-  addDryIce(kg) {
+  addDryIce(/** @type {number} */ kg) {
     const previousInventory = this.state.inventory;
     this.state.inventory = Math.min(
       this.state.inventory + kg,
@@ -290,10 +300,13 @@ class DryIceCoolingSystem extends EventEmitter {
     };
   }
 
-  /**
+/**
    * Assign server rack to cooling zone
+   * @param {string} zoneId - Zone ID
+   * @param {string} rackId - Rack ID
+   * @param {number} heatLoad - Heat load in kW
    */
-  assignRack(zoneId, rackId, heatLoad) {
+  assignRack(/** @type {string} */ zoneId, /** @type {string} */ rackId, /** @type {number} */ heatLoad) {
     const zone = this.zones.find(z => z.id === zoneId);
     if (!zone) {
       throw new Error(`Zone not found: ${zoneId}`);
@@ -312,10 +325,12 @@ class DryIceCoolingSystem extends EventEmitter {
     return { zoneId, rackId, heatLoad };
   }
 
-  /**
+/**
    * Remove server rack from cooling zone
+   * @param {string} zoneId - Zone ID
+   * @param {string} rackId - Rack ID
    */
-  removeRack(zoneId, rackId) {
+  removeRack(/** @type {string} */ zoneId, /** @type {string} */ rackId) {
     const zone = this.zones.find(z => z.id === zoneId);
     if (!zone) {
       throw new Error(`Zone not found: ${zoneId}`);
