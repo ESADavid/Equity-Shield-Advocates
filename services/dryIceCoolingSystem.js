@@ -5,15 +5,65 @@
  * 
  * This system provides passive cooling using solid CO2 (dry ice) for data centers
  * to reduce energy consumption and combat overheating from AI workloads.
+ * 
+ * @typedef {Object} DryIceConfig - Configuration options for the cooling system
+ * @property {number} [dryIceCapacity=1000] - Dry ice capacity in kg per cooling cycle
+ * @property {number} [triggerTemp=25] - Ambient temperature threshold to trigger cooling (°C)
+ * @property {number} [criticalTemp=35] - Critical temperature threshold (°C)
+ * @property {number} [efficiency=0.85] - Cooling efficiency (0-1)
+ * @property {boolean} [autoReplenish=true] - Auto-replenish dry ice
+ * @property {number} [minLevelAlert=20] - Minimum dry ice level before alert (%)
+ * @property {number} [zones=4] - Number of cooling zones
+ * @property {number} [sublimationRate=5] - CO2 sublimation rate (kg/hour per zone)
+ * @property {number} [initialInventory] - Initial dry ice inventory in kg
+ * 
+ * @typedef {Object} Alert - Alert object
+ * @property {string} type - Alert type
+ * @property {string} message - Alert message
+ * @property {number} timestamp - Alert timestamp
+ * @property {boolean} resolved - Whether alert is resolved
+ * 
+ * @typedef {Object} Rack - Server rack object
+ * @property {string} id - Rack ID
+ * @property {number} heatLoad - Heat load in kW
+ * @property {number} assignedAt - Assignment timestamp
+ * 
+ * @typedef {Object} Zone - Cooling zone object
+ * @property {string} id - Zone ID
+ * @property {string} name - Zone name
+ * @property {number} targetTemp - Target temperature (°C)
+ * @property {number} currentTemp - Current temperature (°C)
+ * @property {string} status - Zone status
+ * @property {number} heatLoad - Total heat load (kW)
+ * @property {number} consumptionRate - Consumption rate (kg/hour)
+ * @property {Rack[]} racks - Server racks assigned
+ * @property {number} coolingPower - Cooling power (kW)
+ * 
+ * @typedef {Object} Assignment - Zone assignment object
+ * @property {string} serverId - Server ID
+ * @property {string} zoneId - Zone ID
+ * @property {number} heatLoad - Heat load (kW)
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 
+/** @type {import('node:events').EventEmitter} */
+let emitterBase;
+
+/**
+ * Dry Ice Cooling System for Data Centers
+ * @extends EventEmitter
+ */
 class DryIceCoolingSystem extends EventEmitter {
+  /**
+   * Create a DryIceCoolingSystem instance
+   * @param {Partial<DryIceConfig>} [config={}] - Configuration options
+   */
   constructor(config = {}) {
     super();
     
     // Configuration defaults
+    /** @type {DryIceConfig} */
     this.config = {
       // Dry ice capacity in kg per cooling cycle
       dryIceCapacity: config.dryIceCapacity || 1000, // 1000 kg default
@@ -33,12 +83,13 @@ class DryIceCoolingSystem extends EventEmitter {
       sublimationRate: config.sublimationRate || 5,
     };
 
-    // System state
+// System state
+    /** @type {{inventory: number, zoneTemps: number[], status: string, heatRemoved: number, co2Consumed: number, uptime: number, lastMaintenance: number, alerts: Alert[]}} */
     this.state = {
       // Dry ice inventory in kg
       inventory: config.initialInventory || this.config.dryIceCapacity,
       // Current server rack temperatures by zone
-      zoneTemps: Array(this.config.zones).fill(20),
+      zoneTemps: new Array(this.config.zones).fill(20),
       // System status: 'standby' | 'active' | 'critical' | 'offline'
       status: 'standby',
       // Total heat removed (kWh)
@@ -157,10 +208,11 @@ class DryIceCoolingSystem extends EventEmitter {
     });
   }
 
-  /**
+/**
    * Set system status
+   * @param {string} status - New system status
    */
-  setStatus(status) {
+  setStatus(/** @type {string} */ status) {
     if (this.state.status !== status) {
       const oldStatus = this.state.status;
       this.state.status = status;
@@ -170,8 +222,10 @@ class DryIceCoolingSystem extends EventEmitter {
 
   /**
    * Add alert
+   * @param {string} type - Alert type
+   * @param {string} message - Alert message
    */
-  addAlert(type, message) {
+  addAlert(/** @type {string} */ type, /** @type {string} */ message) {
     const alert = {
       type,
       message,
@@ -367,7 +421,7 @@ class DryIceCoolingSystem extends EventEmitter {
       ambientTemp,
       energyToRemovekJ: energyToRemove,
       dryIceRequiredKg: Math.ceil(dryIceWithLosses),
-      estimatedCost: Math.ceil(dryIceWithLosses) * 0.50, // $0.50/kg dry ice estimate
+estimatedCost: Math.ceil(dryIceWithLosses) * 0.5, // $0.5/kg dry ice estimate
     };
   }
 
