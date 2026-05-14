@@ -422,10 +422,13 @@ class DryIceCoolingSystem extends EventEmitter {
     return { success: true, requested: kg, consumed: kg, remaining: this.state.inventory };
   }
 
-  /**
+/**
    * Calculate dry ice requirements for cooling
+   * @param {number} heatLoadkW - Heat load in kW
+   * @param {number} durationHours - Duration in hours
+   * @param {number} ambientTemp - Ambient temperature
    */
-  calculateRequirements(heatLoadkW, durationHours, ambientTemp) {
+  calculateRequirements(/** @type {number} */ heatLoadkW, /** @type {number} */ durationHours, /** @type {number} */ ambientTemp) {
     // Heat of sublimation: ~769 kJ/kg
     // 1 kWh = 3600 kJ
     const energyToRemove = heatLoadkW * durationHours * 3600; // kJ
