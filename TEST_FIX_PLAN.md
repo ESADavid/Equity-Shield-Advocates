@@ -1,71 +1,73 @@
 # Test Fix Plan
 
-## Summary of Test Failures
+## Summary of Issues Found
 
-### 1. tests/service_worker.test.js
-**Error:** Cannot find module '../../public/sw.js'
+Based on the test execution output, there are multiple categories of test failures:
 
-**Root Cause:** The Jest config moduleNameMapper doesn't include a mapping for `public/*` paths. The test is trying to require `../../public/sw.js` but Jest can't resolve it.
+### 1. TypeScript Syntax in JavaScript Files (Critical)
+- **Issue**: SWC parser configured for ECMAScript, encounters TypeScript syntax (`interface`, `as`, `: type`)
+- **Affected files**: 
+  - `payrollSystem.ts` imported by `.js` files
+  - Multiple `.test.ts` files with TypeScript syntax
+- **Root cause**: `jest.config.js` transform uses `syntax: 'ecmascript'` instead of `'typescript'`
 
-**Fix:** Add a moduleNameMapper entry in jest.config.js to map public files correctly.
+### 2. Missing Mock Files
+- **Issue**: `node-cron` mock missing at `__mocks__/node-cron.js`
+- **Affected tests**: `server_rebuilt.test.js` - POST /api/sync/all
 
----
+### 3. Missing Dependencies
+- **Issue**: `sinon` not in package.json
+- **Affected tests**: `test_layer_integration.test.js`
 
-### 2. quickbooks_payroll_integration.test.ts
-**Errors:**
-1. ReferenceError: setImmediate is not defined
-2. Tests expect response.message to match /Missing bank account/ but receive "Failed to update payroll data"
-3. Tests expect response.data.length to be greater than 0 but get success: false
-4. TypeError: integration.createPayrollRun is not a function
+### 4. Module Resolution Failures
+- **Issue**: Cannot find modules like `../models/Item.js`
+- **Affected tests**: Multiple test files
 
-**Root Cause:** 
-- The test environment doesn't have setImmediate polyfilled
-- The implementation returns early with `{ success: false, message }` when bank account is missing, but the test expects data to be returned 
-- The getAllEmployees mock response structure doesn't match what the implementation expects
-- The test is importing a different file than the one with createPayrollRun
+### 5. Test Logic Issues
+- Status code mismatches (expecting 200, getting 500 or 400)
+- Timeout issues
+- Missing logger reference in `payroll_api.js`
 
-**Fix:**
-- Add setImmediate polyfill in jest.setup.js
-- Update the test expectations or implementation to match
-- Add proper mock responses for getAllEmployees
-- Ensure correct import path
+## Fix Plan
 
----
-
-### 3. earnings_dashboard/update_revenue_data.test.js
-**Error:** Cannot find module './update_revenue_data'
-
-**Root Cause:** The test is located at `earnings_dashboard/update_revenue_data.test.js` but trying to import from `./update_revenue_data` which should resolve to `earnings_dashboard/update_revenue_data.js`. This might be a jest config issue with module resolution.
-
-**Fix:** Ensure jest properly resolves the module. May need to add moduleNameMapper or fix the test file location.
-
----
-
-## Implementation Plan
-
-### Step 1: Fix jest.config.js
-Add public path mapping:
+### Step 1: Fix Jest Configuration
+Update `jest.config.js` to properly parse TypeScript:
 ```javascript
-'^public/(.*)$': '<rootDir>/public/$1',
+// Change from:
+syntax: 'ecmascript'
+// To:
+syntax: 'typescript'
 ```
 
-### Step 2: Fix jest.setup.js
-Add setImmediate polyfill if not present:
-```javascript
-global.setImmediate = global.setImmediate || ((fn, ...args) => setTimeout(() => fn(...args), 0));
-```
+### Step 2: Create Missing Mock Files
+- Create `__mocks__/node-cron.js`
 
-### Step 3: Fix quickbooks_payroll_integration.test.ts
-- Fix mock responses to match implementation expectations
-- Ensure createPayrollRun is available in the integration instance
+### Step 3: Add Missing Dependencies
+Add `sinon` to devDependencies in package.json
 
-### Step 4: Fix update_revenue_data test
-- Verify module resolution is correct in jest.config.js
+### Step 4: Fix Module Resolution
+Add proper moduleNameMapper entries for models and other modules
 
----
+### Step 5: Fix Test Files with TS Syntax Issues
+Convert or alias TypeScript files properly
 
-## Files to Modify
-1. jest.config.js
-2. jest.setup.js (check if exists and create if needed)
-3. tests/service_worker.test.js (may need path adjustment)
-4. quickbooks_payroll_integration.test.ts
+### Step 6: Fix Business Logic Issues
+- Fix logger reference in `payroll_api.js`
+- Fix status code returns in various endpoints
+
+## Implementation Order
+
+1. Fix jest.config.js (transform)
+2. Create __mocks__/node-cron.js
+3. Add sinon to package.json
+4. Fix module mappers
+5. Fix test files
+6. Fix business logic
+
+## Dependencies Between Fixes
+
+- jest.config.js fix enables parsing of TS files
+- node-cron mock creates required mock
+- sinon addition fixes dependency issue
+- Module mappers help with resolution
+- Business logic fixes resolve test failures
