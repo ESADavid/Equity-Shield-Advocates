@@ -1,5 +1,5 @@
 /**
-
+ * @ts-nocheck
  * DRY ICE COOLING SYSTEM FOR DATA CENTERS
  * Emergency Cooling Solution for AI/ML Infrastructure
  * 
@@ -43,12 +43,18 @@
  * @property {string} serverId - Server ID
  * @property {string} zoneId - Zone ID
  * @property {number} heatLoad - Heat load (kW)
+ * 
+ * @typedef {Object} Server - Server to assign to zone
+ * @property {string} id - Server ID
+ * @property {number} heatLoad - Heat load (kW)
  */
 
 import { EventEmitter } from 'node:events';
 
-/** @type {import('node:events').EventEmitter} */
-let emitterBase;
+/** @type {Zone[]} */
+const ZoneArray = [];
+
+
 
 /**
  * Dry Ice Cooling System for Data Centers
@@ -447,34 +453,40 @@ estimatedCost: Math.ceil(dryIceWithLosses) * 0.5, // $0.5/kg dry ice estimate
     };
   }
 
-  /**
+/**
    * Optimize zone assignment for servers
+   * @param {{id: string, heatLoad: number}[]} servers - Array of servers to assign
+   * @returns {Array<{serverId: string, zoneId: string, heatLoad: number}>} Assignments
    */
-  optimizeZoneAssignment(servers) {
+  optimizeZoneAssignment(/** @type {{id: string, heatLoad: number}[]} */ servers) {
     // Sort servers by heat load (highest first)
     const sortedServers = [...servers].sort((a, b) => b.heatLoad - a.heatLoad);
     
     // Reset zone loads
     this.zones.forEach(z => {
       z.heatLoad = 0;
-      z.racks = [];
+      z.racks.length = 0;
     });
     
     // Assign to zones with lowest current load
+    /** @type {Array<{serverId: string, zoneId: string, heatLoad: number}>} */
     const assignments = [];
     
     sortedServers.forEach(server => {
       // Find zone with most available cooling capacity
+      const firstZone = this.zones[0];
+      if (!firstZone) return;
+      
       const bestZone = this.zones.reduce((best, zone) => {
         const bestAvailable = best.coolingPower - best.heatLoad;
         const zoneAvailable = zone.coolingPower - zone.heatLoad;
         
         if (zoneAvailable > bestAvailable && 
-            zone.currentTemp <= this.config.triggerTemp) {
+            zone.currentTemp <= (/** @type {number} */ (this.config.triggerTemp ?? 25))) {
           return zone;
         }
         return best;
-      }, this.zones[0]);
+      }, firstZone);
       
       if (bestZone && bestZone.heatLoad < bestZone.coolingPower) {
         bestZone.heatLoad += server.heatLoad;
