@@ -55,13 +55,15 @@ const createMockResponse = function () {
 
 globalThis.fetch = jest.fn(createMockResponse);
 
-// Use built-in Node.js TextEncoder/TextDecoder for browser test environments
-if (typeof TextEncoder !== 'undefined') {
-  globalThis.TextEncoder = TextEncoder;
-}
-if (typeof TextDecoder !== 'undefined') {
-  globalThis.TextDecoder = TextDecoder;
-}
+// Polyfill TextEncoder/TextDecoder for Node.js test environments
+// These are needed by libraries like @noble/hashes, whatwg-url, etc.
+const { TextEncoder, TextDecoder } = require('util');
+globalThis.TextEncoder = TextEncoder;
+globalThis.TextDecoder = TextDecoder;
+
+// Polyfill Buffer for Node.js test environments
+// Needed by libraries like superagent, formidable, etc.
+globalThis.Buffer = Buffer;
 
 /** @type {CacheStorage['open']} */
 const mockCacheOpen = function () {
