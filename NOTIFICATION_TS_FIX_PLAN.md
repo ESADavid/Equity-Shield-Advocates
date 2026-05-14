@@ -1,218 +1,68 @@
-# Multi-Channel Notification Service TypeScript Fix Plan
+<!-- markdownlint-disable MD033 -->
 
-## Task Summary
+# Notification Service TypeScript Fix Plan
 
-Fix TypeScript errors in `services/multiChannelNotificationService.js` based on provided diagnostic output.
+## Overview
 
-## Information Gathered
+Fix TypeScript errors in `services/multiChannelNotificationService.js`
 
-### File Analyzed
+## Errors to Fix
 
-- **File**: `services/multiChannelNotificationService.js`
-- **Language**: JavaScript with TypeScript checking enabled (checkJs: true)
-- **TypeScript Config**: strict: true, noImplicitAny: true
+### 1. Line 130 - nodemailer Transport Options (Error 2769)
 
-### Issues Identified (46 errors/warnings)
+- **Issue**: 'host' does not exist in type 'Transport<any, TransportOptions> | TransportOptions'
+- **Fix**: Add proper type casting or use interface for SMTP config
 
-#### 1. Missing nodemailer type declaration (7016)
+### 2. Lines 312-322 - notificationData Properties (Error 2339)
 
-- **Line 17**: `import nodemailer from 'nodemailer'`
-- **Fix**: Install `@types/nodemailer` or create declaration file
+- **Issue**: Properties userId, templateId, channels, data, priority, scheduledFor don't exist on type 'Object'
+- **Fix**: Add proper JSDoc @param type annotation for notificationData
 
-#### 2. Async function return type issues (1064)
+### 3. Lines 383, 389, 395 - Index Signature (Error 7053)
 
-- **Lines 221, 342, 693**: Async functions must return `Promise<T>`
-- **Fix**: Add proper return type annotations to async functions
+- **Issue**: Element implicitly has 'any' type because string can't index type '{}'
+- **Fix**: Add proper index signature or use Record<string, any>
 
-#### 3. Property doesn't exist on Object (2339) - Multiple instances
+### 4. Line 404 - sentAt Property (Error 2339)
 
-- **Lines 226-231**: Destructured properties from `notificationData`
-- **Lines 314**: `sentAt` property access
-- **Lines 606-637**: Properties accessed on filter objects
-- **Fix**: Define proper interface/types for these objects
+- **Issue**: 'sentAt' does not exist on notification type
+- **Fix**: Add sentAt to notification type definition (it's optional)
 
-#### 4. Implicit 'any' type for expression (7053) - Multiple instances
+### 5. Lines 476, 516 - email/phone Properties (Error 2339)
 
-- **Lines 293, 299, 305**: Dynamic property access on objects
-- **Line 514**: Channel lookup in preferences
-- **Fix**: Add proper index signatures or type guards
+- **Issue**: 'email' and 'phone' don't exist on type 'Object'
+- **Fix**: Add proper typing for data parameter
 
-#### 5. Implicit 'any' parameter type (7006) - Multiple instances
+### 6. Lines 573-821 - Implicit Any Types (Error 7006)
 
-- **Lines 365, 405, 433, 459**: Function parameters without types
-- **Line 494**: Multiple parameters
-- **Line 507**: channel, preferences parameters
-- **Line 520**: Multiple parameters
-- **Fix**: Add type annotations to all parameters
+- **Issue**: Multiple parameters have implicit 'any' type
+- **Fix**: Add explicit JSDoc @param type annotations
 
-#### 6. Generic type Array<T> requires type argument (2314)
+### 7. Line 746 - Arithmetic Operations (Error 2362, 2363)
 
-- **Line 692**: `Array` used without type argument
-- **Fix**: Add `<NotificationType>` or use `any[]`
+- **Issue**: Left/right operands must be numeric
+- **Fix**: Convert to numbers using Number() or parseInt()
 
-#### 7. Arithmetic operation type issues (2362, 2363)
+### 8. Line 806 - Array Generic (Error 2314)
 
-- **Line 632**: Date arithmetic
-- **Fix**: Explicitly convert to timestamps
+- **Issue**: Generic type 'Array<T>' requires type argument
+- **Fix**: Add type argument: Array<any> or Array<Notification>
 
-#### 8. Unused imports/variables (6133, S1128)
+### 9. Line 807 - Promise Return Type (Error 1064)
 
-- **Line 16**: `debug` imported but never used
-- **Line 405**: `userId` declared but never read
-- **Fix**: Remove unused declarations
+- **Issue**: Return type must be Promise<T>
+- **Fix**: Add explicit Promise<Object> return type
 
-#### 9. Deprecated API (S1874)
+### 10. Line 821 - success Property (Error 2339)
 
-- **Line 252**: `substr` is deprecated
-- **Fix**: Use `substring` instead
+- **Issue**: 'success' doesn't exist on type 'Object'
+- **Fix**: Add proper typing for result object
 
-#### 10. Unexpected await of non-Promise (S4123)
+## Implementation Steps
 
-- **Lines 287, 700**: Await of non-Promise value
-- **Fix**: Wrap in Promise.resolve() or remove await
-
-## Detailed Fix Plan
-
-### Phase 1: Install Type Definitions
-
-```bash
-npm install --save-dev @types/nodemailer
-```
-
-### Phase 2: Define TypeScript Interfaces
-
-Add at the top of the file:
-```typescript
-// Type definitions
-interface NotificationData {
-  userId: string;
-  templateId: string;
-  channels?: string[];
-  data?: Record<string, any>;
-  priority?: string;
-  scheduledFor?: string | null;
-}
-
-interface Notification {
-  id: string;
-  userId: string;
-  templateId: string;
-  templateName: string;
-  priority: string;
-  channels: string[];
-  data: Record<string, any>;
-  status: string;
-  scheduledFor: string | null;
-  createdAt: string;
-  deliveryStatus: Record<string, any>;
-  sentAt?: string;
-}
-
-interface Template {
-  id: string;
-  name: string;
-  channels: string[];
-  subject: string;
-  emailBody: string;
-  smsBody: string;
-  pushBody: string;
-  priority: string;
-}
-
-interface UserPreferences {
-  email?: boolean;
-  sms?: boolean;
-  push?: boolean;
-  inApp?: boolean;
-  updatedAt?: string;
-}
-
-interface ChannelPreferences {
-  email: boolean;
-  sms: boolean;
-  push: boolean;
-  inApp: boolean;
-}
-
-interface FilterOptions {
-  status?: string;
-  priority?: string;
-  startDate?: string;
-  endDate?: string;
-  page?: number;
-  limit?: number;
-}
-
-interface SendResult {
-  success: boolean;
-  error?: string;
-  notificationId?: string;
-  deliveryResults?: Record<string, any>;
-  timestamp?: string;
-}
-```
-
-### Phase 3: Fix Async Return Types
-
-- Line 221: `async sendNotification(notificationData: NotificationData): Promise<SendResult>`
-- Line 342: `async sendToChannel(channel: string, template: Template, data: Record<string, any>, userId: string): Promise<SendResult>`
-- Line 693: `async sendBatchNotifications(notifications: NotificationData[]): Promise<SendResult>`
-
-### Phase 4: Fix Parameter Types
-
-- Line 365: Add types to `updatePreferences(userId: string, preferences: UserPreferences)`
-- Line 405: Add types to `getPreferences(userId: string)`
-- Line 433: Add types to `getNotificationHistory(userId: string, filters?: FilterOptions)`
-- Line 459: Add types to `getNotification(notificationId: string)`
-- Line 494: Add types to `sendNotification(notificationData: NotificationData)`
-- Line 507: Add types to `isChannelEnabled(channel: string, preferences: ChannelPreferences)`
-- Line 520: Add types to `logDelivery(notificationId: string, channel: string, result: SendResult)`
-
-### Phase 5: Fix Property Access
-
-- Lines 226-231: Type the destructured object properly
-- Line 314: Add `sentAt?: string` to Notification interface
-- Lines 606-637: Type filter parameter as `FilterOptions`
-
-### Phase 6: Fix Dynamic Access
-
-- Lines 293, 299, 305: Add proper type assertions
-- Line 514: Add channel type checking
-
-### Phase 7: Fix Array Type
-
-- Line 692: Change `Array` to `Array<NotificationData>` or `NotificationData[]`
-
-### Phase 8: Fix Date Arithmetic
-
-- Line 632: Use explicit Date.getTime() for arithmetic
-
-### Phase 9: Remove Unused Code
-
-- Line 16: Remove unused `debug` import
-- Line 405: Either use or remove `userId` parameter
-
-### Phase 10: Fix Deprecated API
-
-- Line 252: Replace `substr(2, 9)` with `substring(2, 11)`
-
-### Phase 11: Fix Promise Issues
-
-- Line 287: Wrap non-promise in Promise.resolve()
-- Line 700: Wrap non-promise in Promise.resolve()
-
-## Implementation Strategy
-
-1. First, install `@types/nodemailer`
-2. Then add type definitions at the top of the file as JSDoc comments
-3. Add JSDoc type annotations to all functions
-4. Fix the specific line errors one by one
-
-## Dependent Files
-
-None required - this is a standalone fix
-
-## Followup Steps
-
-- Run TypeScript compiler to verify fixes
-- Test the notification service
+1. Add comprehensive JSDoc type definitions at the top
+2. Fix nodemailer transport options with proper typing
+3. Add explicit types to all function parameters
+4. Fix object property accesses with proper casting
+5. Fix arithmetic operations with numeric conversions
+6. Add proper return types to all async functions
