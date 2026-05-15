@@ -20,6 +20,7 @@
 - [x] 7. Use @ts-nocheck for JavaScript file with JSDoc - APPROPRIATE
 
 ## Notes
+
 - File is .js (JavaScript) not .ts (TypeScript)
 - JSDoc types are used instead of TypeScript annotations
 - @ts-nocheck is appropriate for JS files with JSDoc type hints

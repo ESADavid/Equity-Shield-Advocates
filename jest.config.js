@@ -31,13 +31,13 @@ export default {
     '^routes/(.*)$': '<rootDir>/routes/$1.js',
 '^routes/(.*).js$': '<rootDir>/routes/$1.js',
     '^models/(.*)$': '<rootDir>/models/$1.js',
-    '^models/(.*)\.js$': '<rootDir>/models/$1.js',
+    '^models/(.*).js$': '<rootDir>/models/$1.js',
     '^public/(.*)$': '<rootDir>/public/$1',
 '^../public/(.*)$': '<rootDir>/public/$1',
     '^middleware/(.*)$': '<rootDir>/middleware/$1.js',
 '^middleware/(.*).js$': '<rootDir>/middleware/$1.js',
     '^node-cron$': '<rootDir>/__mocks__/node-cron.js',
-    '\\?(.*\.(png|jpg|jpeg|gif|webp))': 'identity-obj-proxy',
+    '\\?(.*.(png|jpg|jpeg|gif|webp))': 'identity-obj-proxy',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(date-fns|@testing-library|bson|chai|uuid)/)'
