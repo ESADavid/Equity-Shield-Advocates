@@ -1,5 +1,13 @@
 import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 
+// Use named import for logger to avoid ReferenceError
+const logger = {
+  error: (msg, err) => error(err instanceof Error ? err.message : err, err),
+  info: (msg) => info(msg),
+  warn: (msg) => warn(msg),
+  debug: (msg) => debug(msg),
+};
+
 const express = require('express');
 const router = express.Router();
 const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default;

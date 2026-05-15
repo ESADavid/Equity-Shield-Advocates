@@ -361,7 +361,7 @@ class QuickBooksPayrollIntegration {
     };
   }
 
-  /**
+/**
    * Get mock employees for testing
    * @returns {Object} Mock data
    */
@@ -381,6 +381,53 @@ class QuickBooksPayrollIntegration {
         },
       ],
     };
+  }
+
+  /**
+   * Create a payroll run for given employees
+   * @param {string[]} employeeIds - Array of employee IDs
+   * @returns {Promise<Object>} Payroll run result
+   */
+  async createPayrollRun(employeeIds) {
+    if (!this.isConfigured) {
+      return {
+        success: true,
+        message: 'Mock: Payroll run created',
+        batchId: `BATCH-${Date.now()}`,
+        employeeCount: employeeIds.length,
+      };
+    }
+
+    try {
+      const results = [];
+
+      for (const employeeId of employeeIds) {
+        const payroll = await this.getEmployeePayroll(employeeId);
+        results.push({
+          employeeId,
+          success: payroll.success,
+          data: payroll.data,
+        });
+      }
+
+      const successCount = results.filter((r) => r.success).length;
+
+      info(`Created payroll run for ${successCount} employees`);
+
+      return {
+        success: true,
+        batchId: `BATCH-${Date.now()}`,
+        processed: successCount,
+        failed: results.length - successCount,
+        results,
+      };
+    } catch (err) {
+      error('Error creating payroll run:', err);
+      return {
+        success: false,
+        error: err.message,
+      };
+    }
   }
 }
 
