@@ -1,18 +1,31 @@
 import { info, error, warn, debug } from 'utils/loggerWrapper.js';
 
-// Use named import for logger to avoid ReferenceError
+/**
+ * Custom logger with typed parameters
+ * @param {string} msg - The log message
+ * @param {Error|string} err - The error object or message
+ */
 const logger = {
-  error: (msg, err) => error(err instanceof Error ? err.message : err, err),
+  /**
+   * Log error message with optional error details
+   * @param {string} msg - The log message
+   * @param {Error|string} err - The error object or message
+   */
+  error: (/** @type {string} */ msg, /** @type {Error|string} */ err) =>
+    error(err instanceof Error ? err.message : err, err),
+  /** @param {string} msg */
   info: (msg) => info(msg),
+  /** @param {string} msg */
   warn: (msg) => warn(msg),
+  /** @param {string} msg */
   debug: (msg) => debug(msg),
 };
 
 const express = require('express');
 const router = express.Router();
 const fetchAndSyncPayroll = require('./fetch_and_sync_payroll').default;
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const revenueDataPath = path.resolve(
   __dirname,
@@ -20,7 +33,7 @@ const revenueDataPath = path.resolve(
 );
 
 // GET /api/payroll/employees - fetch employee payroll data from synced revenue data
-router.get('/employees', (req, res) => {
+router.get('/employees', (_req, res) => {
   try {
     const fileContent = fs.readFileSync(revenueDataPath, 'utf-8');
     const revenueData = JSON.parse(fileContent);
@@ -33,7 +46,7 @@ router.get('/employees', (req, res) => {
 });
 
 // POST /api/payroll/sync - trigger payroll data sync
-router.post('/sync', async (req, res) => {
+router.post('/sync', async (_req, res) => {
   try {
     await fetchAndSyncPayroll();
     res.json({ success: true, message: 'Payroll data sync completed' });
