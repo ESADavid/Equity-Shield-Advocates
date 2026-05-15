@@ -1,4 +1,4 @@
-import { info, error, warn, debug } from 'utils/loggerWrapper.js';
+import { error } from 'utils/loggerWrapper.js';
 
 /**
  * Custom logger with typed parameters
@@ -6,19 +6,34 @@ import { info, error, warn, debug } from 'utils/loggerWrapper.js';
  * @param {Error|string} err - The error object or message
  */
 const logger = {
-  /**
+/**
    * Log error message with optional error details
    * @param {string} msg - The log message
    * @param {Error|string} err - The error object or message
    */
-  error: (/** @type {string} */ msg, /** @type {Error|string} */ err) =>
-    error(err instanceof Error ? err.message : err, err),
-  /** @param {string} msg */
-  info: (msg) => info(msg),
-  /** @param {string} msg */
-  warn: (msg) => warn(msg),
-  /** @param {string} msg */
-  debug: (msg) => debug(msg),
+  error: (
+    /** @type {string} */ msg,
+    /** @type {Error|string} */ err
+  ) => {
+    const errorMessage =
+      err instanceof Error ? `${msg}: ${err.message}` : `${msg}: ${err}`;
+    error(errorMessage, err);
+  },
+/**
+   * Log info message
+   * @param {string} msg - The log message
+   */
+  info: (/** @type {string} */ msg) => info(msg),
+  /**
+   * Log warning message
+   * @param {string} msg - The log message
+   */
+  warn: (/** @type {string} */ msg) => warn(msg),
+  /**
+   * Log debug message
+   * @param {string} msg - The log message
+   */
+  debug: (/** @type {string} */ msg) => debug(msg),
 };
 
 const express = require('express');

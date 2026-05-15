@@ -12,7 +12,7 @@
  */
 
 import axios from 'axios';
-import { info, error, warn, debug } from 'utils/loggerWrapper.js';
+import { info, error, warn } from 'utils/loggerWrapper.js';
 
 class QuickBooksPayrollIntegration {
   /**
@@ -142,7 +142,7 @@ class QuickBooksPayrollIntegration {
         })
       );
 
-      const employee = response.data.Employee;
+const employee = response.data?.Employee;
 
       return {
         success: true,
