@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Mock for sinon library
  * Used by tests that need sinon stubs/spies but don't have it installed

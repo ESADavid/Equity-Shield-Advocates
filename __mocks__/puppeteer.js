@@ -11,6 +11,11 @@ export const launch = async (options = {}) => ({
   // Create new page
   newPage: async () => ({
     // Page navigation
+    /**
+     * @param {string} url
+     * @param {object} [options]
+     * @returns {Promise<{ url: string, options: object, status: number }>}
+     */
     goto: async (url, options = {}) => ({
       url,
       options,
@@ -18,21 +23,38 @@ export const launch = async (options = {}) => ({
     }),
     
     // Wait for selector
-    waitForSelector: async (selector) => true,
+    /**
+     * @param {string} _selector
+     * @returns {Promise<true>}
+     */
+    waitForSelector: async (_selector) => true,
     
     // Click element
-    click: async (selector) => {},
+    /**
+     * @param {string} _selector
+     * @returns {Promise<void>}
+     */
+    click: async (_selector) => {},
     
     // Type in input
-    type: async (selector, text) => {},
+    /**
+     * @param {string} _selector
+     * @param {string} _text
+     * @returns {Promise<void>}
+     */
+    type: async (_selector, _text) => {},
     
     // Evaluate JavaScript
+    /**
+     * @param {Function} fn
+     * @returns {Promise<unknown>}
+     */
     evaluate: async (fn) => {
       if (typeof fn === 'function') {
         return fn();
       }
       return {};
-    }),
+    },
     
     // Get content
     content: async () => '<html><body>Mock Page</body></html>',
@@ -44,14 +66,30 @@ export const launch = async (options = {}) => ({
     close: async () => {},
     
     // Set viewport
-    setViewport: async (options) => {},
+    /**
+     * @param {object} _options
+     * @returns {Promise<void>}
+     */
+    setViewport: async (_options) => {},
     
     // screenshot
+    /**
+     * @returns {Promise<Buffer>}
+     */
     screenshot: async () => Buffer.from(''),
     
     // Query selectors
-    $: async (selector) => null,
-    $$: async (selector) => [],
+    /**
+     * @param {string} _selector
+     * @returns {Promise<null>}
+     */
+    $: async (_selector) => null,
+    
+    /**
+     * @param {string} _selector
+     * @returns {Promise<Array<unknown>>}
+     */
+    $$: async (_selector) => [],
   }),
   
   // Close browser
