@@ -44,6 +44,7 @@
     "plaid": "^23.0.0",
     "response-time": "^2.3.4",
     "socket.io": "^4.8.1",
+    "stripe": "^22.2.0",
     "twilio": "^5.13.1",
     "winston": "^3.19.0",
     "zod": "^3.23.8"
