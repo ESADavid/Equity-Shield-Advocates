@@ -7,7 +7,7 @@
 import express from 'express';
 import PartnerCoordinationService from '../services/partnerCoordinationService.js';
 import PMCIntegrationService from '../services/pmcIntegrationService.js';
-import { info, error, warn, debug } from 'utils/loggerWrapper.js';
+import { error } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
 const partnerService = new PartnerCoordinationService();
@@ -28,8 +28,8 @@ router.post('/onboard', async (req, res) => {
     } else {
       res.status(400).json(result);
     }
-  } catch (error) {
-    error('Error onboarding partner:', error);
+} catch (err) {
+    error('Error onboarding partner:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to onboard partner',
@@ -47,7 +47,7 @@ router.get('/', (req, res) => {
     const filters = {
       status: req.query.status,
       type: req.query.type,
-      minRating: parseFloat(req.query.minRating),
+      minRating: req.query.minRating ? parseFloat(String(req.query.minRating)) : undefined,
       sortBy: req.query.sortBy,
     };
 
@@ -67,10 +67,10 @@ router.get('/', (req, res) => {
  * @desc    Get partner details
  * @access  Private
  */
-router.get('/:partnerId', (req, res) => {
+router.get('/:partnerId', async (req, res) => {
   try {
     const { partnerId } = req.params;
-    const result = partnerService.getPartner(partnerId);
+    const result = await partnerService.getPartner(partnerId);
 
     if (result.success) {
       res.json(result);
@@ -91,12 +91,12 @@ router.get('/:partnerId', (req, res) => {
  * @desc    Activate a partner
  * @access  Private
  */
-router.post('/:partnerId/activate', (req, res) => {
+router.post('/:partnerId/activate', async (req, res) => {
   try {
     const { partnerId } = req.params;
     const userId = req.user?.id || 'system';
 
-    const result = partnerService.activatePartner(partnerId, userId);
+    const result = await partnerService.activatePartner(partnerId, userId);
 
     if (result.success) {
       res.json(result);
@@ -117,12 +117,12 @@ router.post('/:partnerId/activate', (req, res) => {
  * @desc    Assign project to partner
  * @access  Private
  */
-router.post('/:partnerId/projects', (req, res) => {
+router.post('/:partnerId/projects', async (req, res) => {
   try {
     const { partnerId } = req.params;
     const userId = req.user?.id || 'system';
 
-    const result = partnerService.assignProject(partnerId, req.body, userId);
+    const result = await partnerService.assignProject(partnerId, req.body, userId);
 
     if (result.success) {
       res.status(201).json(result);
@@ -143,13 +143,13 @@ router.post('/:partnerId/projects', (req, res) => {
  * @desc    Update project status
  * @access  Private
  */
-router.put('/projects/:projectId', (req, res) => {
+router.put('/projects/:projectId', async (req, res) => {
   try {
     const { projectId } = req.params;
     const { status, ...updateData } = req.body;
     const userId = req.user?.id || 'system';
 
-    const result = partnerService.updateProjectStatus(
+    const result = await partnerService.updateProjectStatus(
       projectId,
       status,
       updateData,
@@ -175,12 +175,12 @@ router.put('/projects/:projectId', (req, res) => {
  * @desc    Log communication with partner
  * @access  Private
  */
-router.post('/:partnerId/communication', (req, res) => {
+router.post('/:partnerId/communication', async (req, res) => {
   try {
     const { partnerId } = req.params;
     const userId = req.user?.id || 'system';
 
-    const result = partnerService.logCommunication(partnerId, req.body, userId);
+    const result = await partnerService.logCommunication(partnerId, req.body, userId);
 
     if (result.success) {
       res.status(201).json(result);
@@ -201,12 +201,12 @@ router.post('/:partnerId/communication', (req, res) => {
  * @desc    Update partner performance rating
  * @access  Private
  */
-router.post('/:partnerId/rating', (req, res) => {
+router.post('/:partnerId/rating', async (req, res) => {
   try {
     const { partnerId } = req.params;
     const userId = req.user?.id || 'system';
 
-    const result = partnerService.updatePerformanceRating(
+    const result = await partnerService.updatePerformanceRating(
       partnerId,
       req.body,
       userId
@@ -231,13 +231,13 @@ router.post('/:partnerId/rating', (req, res) => {
  * @desc    Update workflow step status
  * @access  Private
  */
-router.put('/workflows/:workflowId/steps/:stepId', (req, res) => {
+router.put('/workflows/:workflowId/steps/:stepId', async (_req, res) => {
   try {
-    const { workflowId, stepId } = req.params;
-    const { status } = req.body;
-    const userId = req.user?.id || 'system';
+    const { workflowId, stepId } = _req.params;
+    const { status } = _req.body;
+    const userId = _req.user?.id || 'system';
 
-    const result = partnerService.updateWorkflowStep(
+    const result = await partnerService.updateWorkflowStep(
       workflowId,
       stepId,
       status,
@@ -263,12 +263,14 @@ router.put('/workflows/:workflowId/steps/:stepId', (req, res) => {
  * @desc    Get partner service statistics
  * @access  Private
  */
-router.get('/statistics', (req, res) => {
+router.get('/statistics', async (_req, res) => {
   try {
-    const result = partnerService.getStatistics();
+    // Extract query parameters for potential filtering (reserved for future use)
+    const queryParams = _req.query;
+    const result = await partnerService.getStatistics();
     res.json(result);
-  } catch (error) {
-    error('Error getting statistics:', error);
+  } catch (err) {
+    error('Error getting statistics:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to get statistics',
@@ -281,12 +283,12 @@ router.get('/statistics', (req, res) => {
  * @desc    Get partner service health status
  * @access  Public
  */
-router.get('/health', (req, res) => {
+router.get('/health', async (_req, res) => {
   try {
-    const result = partnerService.getHealthStatus();
+    const result = await partnerService.getHealthStatus();
     res.json(result);
-  } catch (error) {
-    error('Error getting health status:', error);
+  } catch (err) {
+    error('Error getting health status:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to get health status',
@@ -301,10 +303,10 @@ router.get('/health', (req, res) => {
  * @desc    Create coordinated PMC operation
  * @access  Private
  */
-router.post('/pmc/operations', (req, res) => {
+router.post('/pmc/operations', async (req, res) => {
   try {
     const userId = req.user?.id || 'system';
-    const result = pmcService.createCoordinatedOperation(req.body, userId);
+    const result = await pmcService.createCoordinatedOperation(req.body, userId);
 
     if (result.success) {
       res.status(201).json(result);
@@ -349,10 +351,10 @@ router.get('/pmc/operations', (req, res) => {
  * @desc    Get PMC operation details
  * @access  Private
  */
-router.get('/pmc/operations/:operationId', (req, res) => {
+router.get('/pmc/operations/:operationId', async (req, res) => {
   try {
     const { operationId } = req.params;
-    const result = pmcService.getOperation(operationId);
+    const result = await pmcService.getOperation(operationId);
 
     if (result.success) {
       res.json(result);
@@ -373,13 +375,13 @@ router.get('/pmc/operations/:operationId', (req, res) => {
  * @desc    Update PMC operation status
  * @access  Private
  */
-router.put('/pmc/operations/:operationId/status', (req, res) => {
+router.put('/pmc/operations/:operationId/status', async (req, res) => {
   try {
     const { operationId } = req.params;
     const { status, ...updateData } = req.body;
     const userId = req.user?.id || 'system';
 
-    const result = pmcService.updateOperationStatus(
+    const result = await pmcService.updateOperationStatus(
       operationId,
       status,
       updateData,
@@ -405,12 +407,12 @@ router.put('/pmc/operations/:operationId/status', (req, res) => {
  * @desc    Allocate resources to PMC operation
  * @access  Private
  */
-router.post('/pmc/operations/:operationId/resources', (req, res) => {
+router.post('/pmc/operations/:operationId/resources', async (_req, res) => {
   try {
-    const { operationId } = req.params;
-    const userId = req.user?.id || 'system';
+    const { operationId } = _req.params;
+    const userId = _req.user?.id || 'system';
 
-    const result = pmcService.allocateResources(operationId, req.body, userId);
+    const result = await pmcService.allocateResources(operationId, _req.body, userId);
 
     if (result.success) {
       res.status(201).json(result);
@@ -431,13 +433,13 @@ router.post('/pmc/operations/:operationId/resources', (req, res) => {
  * @desc    Generate PMC operation report
  * @access  Private
  */
-router.post('/pmc/operations/:operationId/report', (req, res) => {
+router.post('/pmc/operations/:operationId/report', async (_req, res) => {
   try {
-    const { operationId } = req.params;
-    const { reportType } = req.body;
-    const userId = req.user?.id || 'system';
+    const { operationId } = _req.params;
+    const { reportType } = _req.body;
+    const userId = _req.user?.id || 'system';
 
-    const result = pmcService.generateOperationReport(
+    const result = await pmcService.generateOperationReport(
       operationId,
       reportType,
       userId
@@ -462,10 +464,10 @@ router.post('/pmc/operations/:operationId/report', (req, res) => {
  * @desc    Create PMC training program
  * @access  Private
  */
-router.post('/pmc/training', (req, res) => {
+router.post('/pmc/training', async (_req, res) => {
   try {
-    const userId = req.user?.id || 'system';
-    const result = pmcService.createTrainingProgram(req.body, userId);
+    const userId = _req.user?.id || 'system';
+    const result = await pmcService.createTrainingProgram(_req.body, userId);
 
     if (result.success) {
       res.status(201).json(result);
@@ -486,9 +488,9 @@ router.post('/pmc/training', (req, res) => {
  * @desc    Get PMC integration status
  * @access  Private
  */
-router.get('/pmc/integration-status', (req, res) => {
+router.get('/pmc/integration-status', async (_req, res) => {
   try {
-    const result = pmcService.getIntegrationStatus();
+    const result = await pmcService.getIntegrationStatus();
     res.json(result);
   } catch (error) {
     error('Error getting PMC integration status:', error);
@@ -504,9 +506,9 @@ router.get('/pmc/integration-status', (req, res) => {
  * @desc    Get PMC service statistics
  * @access  Private
  */
-router.get('/pmc/statistics', (req, res) => {
+router.get('/pmc/statistics', async (_req, res) => {
   try {
-    const result = pmcService.getStatistics();
+    const result = await pmcService.getStatistics();
     res.json(result);
   } catch (error) {
     error('Error getting PMC statistics:', error);
@@ -522,9 +524,9 @@ router.get('/pmc/statistics', (req, res) => {
  * @desc    Get PMC service health status
  * @access  Public
  */
-router.get('/pmc/health', (req, res) => {
+router.get('/pmc/health', async (_req, res) => {
   try {
-    const result = pmcService.getHealthStatus();
+    const result = await pmcService.getHealthStatus();
     res.json(result);
   } catch (error) {
     error('Error getting PMC health status:', error);

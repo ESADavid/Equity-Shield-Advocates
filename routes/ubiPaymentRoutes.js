@@ -2,7 +2,7 @@
 import express from 'express';
 import ubiPaymentService from '../services/ubiPaymentService.js';
 import UBIPayment from '../models/UBIPayment.js';
-import { info, error } from 'utils/loggerWrapper.js';
+import { info, error } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
 
@@ -34,7 +34,9 @@ router.post('/process/:citizenId', async (req, res, next) => {
 // Get payment history for a citizen
 router.get('/history/:citizenId', async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit) || 50;
+    /** @type {string} */
+    const limitStr = req.query.limit;
+    const limit = parseInt(limitStr) || 50;
     const history = await ubiPaymentService.getPaymentHistory(
       req.params.citizenId,
       limit
@@ -142,9 +144,13 @@ router.post('/bulk-process', async (req, res, next) => {
 // Get UBI payment statistics
 router.get('/stats', async (req, res, next) => {
   try {
-    const { startDate, endDate } = req.query;
+    /** @type {string|undefined} */
+    const startDate = req.query.startDate;
+    /** @type {string|undefined} */
+    const endDate = req.query.endDate;
 
     // Build date filter
+    /** @type {Object} */
     const dateFilter = {};
     if (startDate) dateFilter.$gte = new Date(startDate);
     if (endDate) dateFilter.$lte = new Date(endDate);
