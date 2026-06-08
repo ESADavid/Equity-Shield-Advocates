@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { error } from 'utils/loggerWrapper.js';
+import { error } from './loggerWrapper.js';
 
 const JWT_SECRET =
   process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';

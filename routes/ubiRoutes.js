@@ -3,59 +3,70 @@
  * API endpoints for Universal Basic Income
  */
 
-const express = require('express');
+import express from 'express';
+import { info, error } from '../utils/loggerWrapper.js';
+import { authenticateToken } from '../utils/authMiddleware.js';
+import UniversalBasicIncomeService from '../services/universalBasicIncomeService.js';
+
 const router = express.Router();
-const UBI = require('../services/universalBasicIncomeService');
-const authMiddleware = require('../utils/authMiddleware');
-const logger = require('../utils/logger');
+
+// Welcome endpoint
+router.get('/welcome', (req, res) => {
+  res.json({
+    message: 'Universal Basic Income System - Heaven on Earth',
+    mission: '$33,000/year per citizen',
+    rate: '$2,750/month',
+    eligibleAge: 18,
+  });
+});
 
 // POST /api/ubi/eligibility/:citizenId
-router.post('/eligibility/:citizenId', authMiddleware, async (req, res) => {
+router.post('/eligibility/:citizenId', authenticateToken, async (req, res) => {
   try {
     const { citizenId } = req.params;
-    const eligibility = await UBI.calculateEligibility(citizenId);
+    const eligibility = await UniversalBasicIncomeService.calculateEligibility(citizenId);
     res.json(eligibility);
   } catch (error) {
-    logger.error(`UBI eligibility check failed: ${error.message}`);
+    error(`UBI eligibility check failed: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 });
 
 // POST /api/ubi/payment
-router.post('/payment', authMiddleware, async (req, res) => {
+router.post('/payment', authenticateToken, async (req, res) => {
   try {
     const { citizenId, month, amount } = req.body;
-    const result = await UBI.processPayment(citizenId, month, amount);
+    const result = await UniversalBasicIncomeService.processPayment(citizenId, month, amount);
     res.json(result);
   } catch (error) {
-    logger.error(`UBI payment failed: ${error.message}`);
+    error(`UBI payment failed: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 });
 
 // GET /api/ubi/history/:citizenId
-router.get('/history/:citizenId', authMiddleware, async (req, res) => {
+router.get('/history/:citizenId', authenticateToken, async (req, res) => {
   try {
     const { citizenId } = req.params;
-    const history = await UBI.getPaymentHistory(citizenId);
+    const history = await UniversalBasicIncomeService.getPaymentHistory(citizenId);
     res.json(history);
   } catch (error) {
-    logger.error(`UBI history fetch failed: ${error.message}`);
+    error(`UBI history fetch failed: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 });
 
 // POST /api/ubi/suspend/:citizenId
-router.post('/suspend/:citizenId', authMiddleware, async (req, res) => {
+router.post('/suspend/:citizenId', authenticateToken, async (req, res) => {
   try {
     const { citizenId } = req.params;
     const { reason } = req.body;
-    await UBI.suspendUBI(citizenId, reason);
+    await UniversalBasicIncomeService.suspendUBI(citizenId, reason);
     res.json({ status: 'suspended', reason });
   } catch (error) {
-    logger.error(`UBI suspension failed: ${error.message}`);
+    error(`UBI suspension failed: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 });
 
-module.exports = router;
+export default router;

@@ -3,10 +3,10 @@
  * Mandatory education management and compliance
  */
 
-import { info, warn, error } from '../utils/logger.js';
-const Education = require('../models/Education');
-const Citizen = require('../models/Citizen');
-const UBI = require('./universalBasicIncomeService');
+import { info, warn, error } from '../utils/loggerWrapper.js';
+import Education from '../models/Education.js';
+import Citizen from '../models/Citizen.js';
+import UniversalBasicIncomeService from './universalBasicIncomeService.js';
 
 class EducationService {
   static async enrollCitizen(citizenId, curriculum, durationMonths) {
@@ -23,7 +23,7 @@ class EducationService {
     });
 
     await educationRecord.save();
-    logger.info(
+    info(
       `Citizen ${citizenId} enrolled in ${curriculum} (${durationMonths} months)`
     );
     return { enrolled: true, educationId: educationRecord._id };
@@ -42,12 +42,12 @@ class EducationService {
 
     // Check UBI compliance
     if (education.progress < 80) {
-      await UBI.suspendUBI(citizenId, 'Education progress below threshold');
+      await UniversalBasicIncomeService.suspendUBI(citizenId, 'Education progress below threshold');
     } else if (education.progress >= 95) {
-      await UBI.reinstateUBI(citizenId);
+      await UniversalBasicIncomeService.reinstateUBI(citizenId);
     }
 
-    logger.info(`Education progress updated for ${citizenId}: ${progress}%`);
+    info(`Education progress updated for ${citizenId}: ${progress}%`);
     return education;
   }
 
@@ -90,4 +90,4 @@ class EducationService {
   }
 }
 
-module.exports = EducationService;
+export default EducationService;

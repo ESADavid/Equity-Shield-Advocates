@@ -3,10 +3,9 @@
  * Handles UBI payments, eligibility, JPMorgan integration
  */
 
-import { info, warn, error } from '../utils/logger.js';
-const Citizen = require('../models/Citizen');
-const Education = require('../models/Education');
-const mongoose = require('mongoose');
+import { info, warn, error } from '../utils/loggerWrapper.js';
+import Citizen from '../models/Citizen.js';
+import Education from '../models/Education.js';
 
 class UniversalBasicIncomeService {
   static async calculateEligibility(citizenId) {
@@ -25,7 +24,7 @@ class UniversalBasicIncomeService {
   }
 
   static async processPayment(citizenId, month, amount) {
-    logger.info(
+    info(
       `Processing UBI payment for citizen ${citizenId}, month ${month}, amount $${amount}`
     );
 
@@ -43,7 +42,7 @@ class UniversalBasicIncomeService {
       },
     });
 
-    logger.info(`UBI payment completed: ${transactionId}`);
+    info(`UBI payment completed: ${transactionId}`);
     return { transactionId, status: 'completed' };
   }
 
@@ -62,7 +61,7 @@ class UniversalBasicIncomeService {
       ubiSuspended: true,
       suspensionReason: reason,
     });
-    logger.warn(`UBI suspended for ${citizenId}: ${reason}`);
+    warn(`UBI suspended for ${citizenId}: ${reason}`);
   }
 
   static async reinstateUBI(citizenId) {
@@ -70,8 +69,8 @@ class UniversalBasicIncomeService {
       ubiSuspended: false,
       suspensionReason: null,
     });
-    logger.info(`UBI reinstated for ${citizenId}`);
+    info(`UBI reinstated for ${citizenId}`);
   }
 }
 
-module.exports = UniversalBasicIncomeService;
+export default UniversalBasicIncomeService;

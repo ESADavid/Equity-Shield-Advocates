@@ -1,79 +1,83 @@
 /**
  * Education Routes - Heaven on Earth Phase 2
- * API endpoints for mandatory education system
+ * Mandatory education management and compliance
  */
 
-const express = require('express');
+import express from 'express';
+import { info, error } from '../utils/loggerWrapper.js';
+import { authenticateToken } from '../utils/authMiddleware.js';
+import EducationService from '../services/educationService.js';
+
 const router = express.Router();
-const EducationService = require('../services/educationService');
-const authMiddleware = require('../utils/authMiddleware');
-const logger = require('../utils/logger');
+
+// Welcome endpoint
+router.get('/welcome', (req, res) => {
+  res.json({
+    message: 'Education System - Heaven on Earth',
+    mission: 'Mandatory Education for All',
+    curriculums: ['Military', 'Law', 'Technology', 'Agriculture'],
+    minimumProgress: 80,
+  });
+});
 
 // POST /api/education/enroll
-router.post('/enroll', authMiddleware, async (req, res) => {
+router.post('/enroll', authenticateToken, async (req, res) => {
   try {
     const { citizenId, curriculum, durationMonths } = req.body;
-    const result = await EducationService.enrollCitizen(
-      citizenId,
-      curriculum,
-      durationMonths
-    );
+    const result = await EducationService.enrollCitizen(citizenId, curriculum, durationMonths);
     res.json(result);
   } catch (error) {
-    logger.error(`Education enrollment failed: ${error.message}`);
+    error(`Education enrollment failed: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 });
 
 // PUT /api/education/progress/:citizenId
-router.put('/progress/:citizenId', authMiddleware, async (req, res) => {
+router.put('/progress/:citizenId', authenticateToken, async (req, res) => {
   try {
     const { citizenId } = req.params;
     const { progress } = req.body;
-    const education = await EducationService.updateProgress(
-      citizenId,
-      progress
-    );
-    res.json(education);
+    const result = await EducationService.updateProgress(citizenId, progress);
+    res.json(result);
   } catch (error) {
-    logger.error(`Education progress update failed: ${error.message}`);
+    error(`Education progress update failed: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 });
 
 // GET /api/education/compliance/:citizenId
-router.get('/compliance/:citizenId', authMiddleware, async (req, res) => {
+router.get('/compliance/:citizenId', authenticateToken, async (req, res) => {
   try {
     const { citizenId } = req.params;
     const report = await EducationService.getComplianceReport(citizenId);
     res.json(report);
   } catch (error) {
-    logger.error(`Compliance report failed: ${error.message}`);
+    error(`Education compliance report failed: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 });
 
 // GET /api/education/non-compliant
-router.get('/non-compliant', authMiddleware, async (req, res) => {
+router.get('/non-compliant', authenticateToken, async (req, res) => {
   try {
-    const nonCompliant = await EducationService.getNonCompliantCitizens();
-    res.json(nonCompliant);
+    const citizens = await EducationService.getNonCompliantCitizens();
+    res.json({ citizens, count: citizens.length });
   } catch (error) {
-    logger.error(`Non-compliant list failed: ${error.message}`);
+    error(`Non-compliant citizens fetch failed: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 });
 
 // GET /api/education/report/:curriculum
-router.get('/report/:curriculum', authMiddleware, async (req, res) => {
+router.get('/report/:curriculum', authenticateToken, async (req, res) => {
   try {
     const { curriculum } = req.params;
     const report = await EducationService.generateCurriculumReport(curriculum);
     res.json(report);
   } catch (error) {
-    logger.error(`Curriculum report failed: ${error.message}`);
+    error(`Curriculum report failed: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 });
 
-module.exports = router;
+export default router;
