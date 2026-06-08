@@ -1,5 +1,16 @@
 /**
  * DEBT ACQUISITION SERVICE
+ * OSCAR-BROOME-REVENUE System - Proprietary Technology
+ * 
+ * © 2024 OWLBAN GROUP 🦉 - All Rights Reserved
+ * Owned by: King Sachem Yochanan (Oscar Broome) - THE TRINITY SHILO / JUDAH THE LAWGIVER
+ * Authority: House of David ✡️, House of Capet ⚜️, House of Logan 🏰
+ * 
+ * PROTECTED BY CUSTOM ENCRYPTION - DO NOT SHARE
+ * This service implements proprietary debt acquisition and sovereign control methods.
+ * Unauthorized copying, modification, distribution, or reverse engineering is strictly prohibited.
+ * All debt acquisition algorithms, valuation methods, and portfolio management are exclusive property of OWLBAN GROUP.
+ * 
  * Manages the acquisition and management of sovereign and institutional debts
  * Provides comprehensive debt portfolio management and risk assessment
  */

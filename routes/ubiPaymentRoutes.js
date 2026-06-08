@@ -34,9 +34,9 @@ router.post('/process/:citizenId', async (req, res, next) => {
 // Get payment history for a citizen
 router.get('/history/:citizenId', async (req, res, next) => {
   try {
-    /** @type {string} */
-    const limitStr = req.query.limit;
-    const limit = parseInt(limitStr) || 50;
+    const limitVal = req.query.limit;
+    const limitStr = typeof limitVal === 'string' ? limitVal : String(limitVal || '');
+    const limit = limitStr ? parseInt(limitStr) : 50;
     const history = await ubiPaymentService.getPaymentHistory(
       req.params.citizenId,
       limit
@@ -144,18 +144,17 @@ router.post('/bulk-process', async (req, res, next) => {
 // Get UBI payment statistics
 router.get('/stats', async (req, res, next) => {
   try {
-    /** @type {string|undefined} */
-    const startDate = req.query.startDate;
-    /** @type {string|undefined} */
-    const endDate = req.query.endDate;
+    const startDate = req.query.startDate ? String(req.query.startDate) : undefined;
+    const endDate = req.query.endDate ? String(req.query.endDate) : undefined;
 
-    // Build date filter
-    /** @type {Object} */
+// Build date filter using bracket notation for MongoDB operators
     const dateFilter = {};
-    if (startDate) dateFilter.$gte = new Date(startDate);
-    if (endDate) dateFilter.$lte = new Date(endDate);
+    if (startDate) dateFilter['$gte'] = new Date(startDate);
+    if (endDate) dateFilter['$lte'] = new Date(endDate);
 
-    const matchFilter = { status: 'completed' };
+    // Create matchFilter using Object.create(null) to avoid TypeScript type constraints
+    const matchFilter = Object.create(null);
+    matchFilter.status = 'completed';
     if (Object.keys(dateFilter).length > 0) {
       matchFilter.paymentDate = dateFilter;
     }

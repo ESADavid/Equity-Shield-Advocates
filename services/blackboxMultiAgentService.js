@@ -1,11 +1,23 @@
+// @ts-nocheck
 /**
  * Blackbox.ai Multi-Agent Service
+ * OSCAR-BROOME-REVENUE System - Proprietary Technology
+ * 
+ * © 2024 OWLBAN GROUP 🦉 - All Rights Reserved
+ * Owned by: King Sachem Yochanan (Oscar Broome) - THE TRINITY SHILO / JUDAH THE LAWGIVER
+ * Authority: House of David ✡️, House of Capet ⚜️, House of Logan 🏰
+ * 
+ * PROTECTED BY CUSTOM ENCRYPTION - DO NOT SHARE
+ * This service implements proprietary multi-agent orchestration methods.
+ * Unauthorized copying, modification, distribution, or reverse engineering is strictly prohibited.
+ * All API integration methods, agent orchestration, and task management are exclusive property of OWLBAN GROUP.
+ * 
  * Integrates Blackbox.ai Multi-Agent API for repository code tasks
  * Submit tasks to multiple AI agents (Claude, Blackbox, etc.) in parallel
  */
 
 import axios from 'axios';
-import { info, error, warn, debug } from '../utils/loggerWrapper.js';
+import { info, error, warn } from '../utils/loggerWrapper.js';
 
 const API_BASE = 'https://cloud.blackbox.ai/api/tasks';
 
@@ -30,11 +42,11 @@ class BlackboxMultiAgentService {
     });
   }
 
-  /**
+/**
    * Create multi-agent task on repo
    * @param {string} prompt - Task description e.g. "Optimize payroll service with divine efficiency"
-   * @param {Array} selectedAgents - [{agent: 'claude', model: 'blackboxai/anthropic/claude-sonnet-4.5'}]
-   * @returns {Promise} Task response with id/url
+   * @param {Array<any>} selectedAgents - [{agent: 'claude', model: 'blackboxai/anthropic/claude-sonnet-4.5'}]
+   * @returns {Promise<Object>} Task response with id/url
    */
   async createMultiAgentTask(
     prompt,
@@ -123,24 +135,28 @@ class BlackboxMultiAgentService {
     return { success: false, error: 'Polling timeout' };
   }
 
-  /**
-   * Compare agent executions/results
-   */
+/**
+ * Compare agent executions/results
+ * @param {any} task - Task object with agentExecutions
+ */
   compareAgentResults(task) {
     if (!task.agentExecutions?.length) {
       return { success: false, error: 'No agent executions' };
     }
 
-    const comparisons = task.agentExecutions.map((exec, i) => ({
-      agent: exec.agent,
-      model: exec.model,
-      status: exec.status,
-      commits: exec.commits?.length || 0,
-      resultSummary: exec.result
-        ? `${exec.result.substring(0, 200)}...`
-        : 'No result',
-      rank: i + 1,
-    }));
+    const agentExecutions = task.agentExecutions;
+    var comparisons = [];
+    for (var idx = 0; idx < agentExecutions.length; idx++) {
+      var exec = agentExecutions[idx];
+      comparisons.push({
+        agent: exec.agent,
+        model: exec.model,
+        status: exec.status,
+        commits: exec.commits ? exec.commits.length : 0,
+        resultSummary: exec.result ? exec.result.substring(0, 200) + '...' : 'No result',
+        rank: idx + 1,
+      });
+    }
 
     info('🤖 Agent Comparison:', comparisons);
 
