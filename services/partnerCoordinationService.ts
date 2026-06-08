@@ -354,16 +354,17 @@ export default class PartnerCoordinationService {
 
 // Initialize metadata and workflow if null/undefined
       if (!partner.metadata) {
-        partner.metadata = {};
+        (partner as unknown as { metadata: Record<string, unknown> }).metadata = {};
       }
       
-      // Initialize workflow in metadata if it doesn't exist
-      if (!('workflow' in partner.metadata)) {
-        (partner.metadata as unknown as { workflow: Record<string, IWorkflowStep> }).workflow = {};
+// Initialize workflow in metadata if it doesn't exist
+      const metadataObj = partner.metadata as Record<string, unknown>;
+      if (!('workflow' in metadataObj)) {
+        (metadataObj as unknown as { workflow: Record<string, IWorkflowStep> }).workflow = {} as Record<string, IWorkflowStep>;
       }
 
       // Get properly typed workflow object
-      const workflowObj = (partner.metadata as unknown as { workflow: Record<string, IWorkflowStep> }).workflow;
+      const workflowObj = (metadataObj as unknown as { workflow: Record<string, IWorkflowStep> }).workflow;
       
       // Update workflow step with proper typing
       workflowObj[stepId] = {

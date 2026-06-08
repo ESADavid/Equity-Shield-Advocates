@@ -13,7 +13,7 @@
 import Citizen from '../models/Citizen.js';
 import EducationProgram from '../models/Education.js';
 import UniversalBasicIncomeService from './universalBasicIncomeService.js';
-import { info, error, warn, debug } from 'utils/loggerWrapper.js';
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 
 class ComplianceService {
   constructor() {

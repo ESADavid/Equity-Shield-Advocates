@@ -5,7 +5,7 @@
  */
 
 import axios from 'axios';
-import { info, error, warn, debug } from 'utils/loggerWrapper.js';
+import { info, error, warn, debug } from '../utils/loggerWrapper.js';
 
 const API_BASE = 'https://cloud.blackbox.ai/api/tasks';
 

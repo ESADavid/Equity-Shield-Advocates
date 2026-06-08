@@ -2,7 +2,7 @@
  * Personal Asset Service - List & Control everything owned by citizen
  */
 
-import logger from 'utils/loggerWrapper.js';
+import logger from '../utils/loggerWrapper.js';
 import Citizen from '../models/Citizen.js';
 import Company from '../models/Company.js';
 import Stock from '../models/Stock.js';

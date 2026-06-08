@@ -1,4 +1,4 @@
-import { info, error } from 'utils/loggerWrapper.js';
+import { info, error } from '../utils/loggerWrapper.js';
 import PMCOperation from '../models/PMCOperation.js';
 
 export default class PMCIntegrationService {

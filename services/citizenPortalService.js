@@ -1,4 +1,4 @@
-import { info, error } from 'utils/loggerWrapper.js';
+import { info, error } from '../utils/loggerWrapper.js';
 import Citizen from '../models/Citizen.js';
 import ServiceRequest from '../models/ServiceRequest.js';
 

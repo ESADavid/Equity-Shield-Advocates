@@ -3,7 +3,7 @@
  * Simulates acquisition of major food companies and chains for world feeding
  */
 
-import logger from 'utils/loggerWrapper.js';
+import logger from '../utils/loggerWrapper.js';
 
 class GlobalFoodAcquisitionService {
   constructor() {
