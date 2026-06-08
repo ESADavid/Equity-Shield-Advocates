@@ -3,7 +3,7 @@
  * OSCAR BROOME REVENUE - OWLBAN GROUP
  */
 
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const educationSchema = new mongoose.Schema(
   {
@@ -54,4 +54,4 @@ const educationSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('Education', educationSchema);
+export default mongoose.model('Education', educationSchema);

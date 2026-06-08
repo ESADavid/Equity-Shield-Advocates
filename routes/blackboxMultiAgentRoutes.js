@@ -12,15 +12,13 @@ const router = express.Router();
 // POST /api/multi-agent/create
 router.post('/create', async (req, res) => {
   try {
-    const { prompt, selectedAgents, repoUrl, branch } = req.body;
+    const { prompt, selectedAgents } = req.body;
 
     info(`Multi-agent task request: ${prompt?.substring(0, 100)}`);
 
     const result = await blackboxService.createMultiAgentTask(
       prompt,
-      selectedAgents,
-      repoUrl,
-      branch
+      selectedAgents
     );
 
     res.json(result);
