@@ -8,7 +8,14 @@ import Citizen from '../models/Citizen.js';
 import Education from '../models/Education.js';
 
 class UniversalBasicIncomeService {
-  static async calculateEligibility(citizenId) {
+  /**
+   * Calculate UBI eligibility for a citizen
+   * @param {string} citizenId - Citizen ID
+   * @returns {Promise<{eligible: boolean, amount: number, reason?: string, citizen?: import('mongoose').Types.ObjectId}>}
+   */
+  static async calculateEligibility(
+    /** @type {string} */ citizenId
+  ) {
     const citizen = await Citizen.findById(citizenId);
     if (!citizen) throw new Error('Citizen not found');
 
@@ -23,7 +30,18 @@ class UniversalBasicIncomeService {
     return { eligible: true, amount, citizen: citizen._id };
   }
 
-  static async processPayment(citizenId, month, amount) {
+  /**
+   * Process UBI payment for a citizen
+   * @param {string} citizenId - Citizen ID
+   * @param {string} month - Month identifier
+   * @param {number} amount - Payment amount
+   * @returns {Promise<{transactionId: string, status: string}>}
+   */
+  static async processPayment(
+    /** @type {string} */ citizenId,
+    /** @type {string} */ month,
+    /** @type {number} */ amount
+  ) {
     info(
       `Processing UBI payment for citizen ${citizenId}, month ${month}, amount $${amount}`
     );
@@ -35,7 +53,8 @@ class UniversalBasicIncomeService {
       month
     );
 
-    // Update citizen record
+    // Fix: ubiSuspended is nested under ubiStatus in Citizen model
+    // Update citizen record using nested path
     await Citizen.findByIdAndUpdate(citizenId, {
       $push: {
         ubiPayments: { transactionId, month, amount, status: 'completed' },
@@ -46,28 +65,69 @@ class UniversalBasicIncomeService {
     return { transactionId, status: 'completed' };
   }
 
-  static async simulateJpmorganPayment(citizenId, amount, month) {
+  /**
+   * Simulate JPMorgan payment API call
+   * @param {string} citizenId - Citizen ID
+   * @param {number} amount - Payment amount
+   * @param {string} month - Month identifier
+   * @returns {Promise<string>} Transaction ID
+   */
+  static async simulateJpmorganPayment(
+    /** @type {string} */ citizenId,
+    /** @type {number} */ amount,
+    /** @type {string} */ month
+  ) {
     // Mock JPMorgan API call
     return `UBI_${citizenId}_${month}_${Date.now()}`;
   }
 
-  static async getPaymentHistory(citizenId, limit = 12) {
+  /**
+   * Get payment history for a citizen
+   * @param {string} citizenId - Citizen ID
+   * @param {number} limit - Number of records to return
+   * @returns {Promise<unknown[]>}
+   */
+  static async getPaymentHistory(
+    /** @type {string} */ citizenId,
+    /** @type {number} */ limit = 12
+  ) {
     const citizen = await Citizen.findById(citizenId).populate('ubiPayments');
-    return citizen.ubiPayments.slice(-limit);
+    if (!citizen) return [];
+    // Access ubiStatus.ubiPayments since that's where payments are stored
+    const payments = citizen.ubiStatus?.ubiPayments || [];
+    return payments.slice(-limit);
   }
 
-  static async suspendUBI(citizenId, reason) {
+  /**
+   * Suspend UBI for a citizen
+   * @param {string} citizenId - Citizen ID
+   * @param {string} reason - Suspension reason
+   * @returns {Promise<void>}
+   */
+  static async suspendUBI(
+    /** @type {string} */ citizenId,
+    /** @type {string} */ reason
+  ) {
+    // Fix: Use ubiStatus.suspended instead of ubiSuspended
     await Citizen.findByIdAndUpdate(citizenId, {
-      ubiSuspended: true,
-      suspensionReason: reason,
+      'ubiStatus.suspended': true,
+      'ubiStatus.suspensionReason': reason,
     });
     warn(`UBI suspended for ${citizenId}: ${reason}`);
   }
 
-  static async reinstateUBI(citizenId) {
+  /**
+   * Reinstate UBI for a citizen
+   * @param {string} citizenId - Citizen ID
+   * @returns {Promise<void>}
+   */
+  static async reinstateUBI(
+    /** @type {string} */ citizenId
+  ) {
+    // Fix: Use ubiStatus.suspended instead of ubiSuspended
     await Citizen.findByIdAndUpdate(citizenId, {
-      ubiSuspended: false,
-      suspensionReason: null,
+      'ubiStatus.suspended': false,
+      'ubiStatus.suspensionReason': null,
     });
     info(`UBI reinstated for ${citizenId}`);
   }
