@@ -1,16 +1,24 @@
-// Fixed: removed unused logger import (TS6192)
-// Added default logger import for test code
-import logger from 'utils/loggerWrapper.js';
+// Fixed: Converted to ESM format
+import logger from './utils/loggerWrapper.js';
+import DebtService from './services/debtAcquisitionService.js';
+import FoodService from './services/GlobalFoodAcquisitionService.js';
 
-// Global Acquisition Test
-const DebtService = require('./services/debtAcquisitionService').default;
-const service = new DebtService();
-service.initializeDebtPortfolio();
-const stacks = service.acquireGlobalDebtStacks('testuser', 'testtenant');
+// Initialize Debt Service
+const debtService = new DebtService();
+debtService.initializeDebtPortfolio();
+const stacks = debtService.acquireGlobalDebtStacks('testuser', 'testtenant');
 logger.info('Global Stacks Acquired:', stacks.length);
-logger.info('Portfolio:', service.getDebtPortfolioAnalytics());
+logger.info('Portfolio:', debtService.getDebtPortfolioAnalytics());
 
-const FoodService = require('./services/GlobalFoodAcquisitionService').default;
+// Initialize Food Service
 const foodService = new FoodService();
 foodService.initializePortfolio();
 logger.info('Food Empire:', foodService.getAnalytics());
+
+// Export for other modules
+export default {
+  debtService,
+  foodService,
+};
+
+export { debtService, foodService };
