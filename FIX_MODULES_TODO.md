@@ -22,3 +22,5 @@
 ### Status
 - [x] Fixed app.js ESM/CommonJS mixed imports - Now fully ESM
 - [x] Start server and verify all routes load - Working correctly
+- [x] Added ownership headers to services/personalAssetService.js - Priority 3 complete
+- [x] Added ownership headers to routes/assetRoutes.js - Complete

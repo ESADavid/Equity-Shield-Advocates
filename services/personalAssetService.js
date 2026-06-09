@@ -1,5 +1,14 @@
 /**
- * Personal Asset Service - List & Control everything owned by citizen
+ * Personal Asset Service
+ * OSCAR-BROOME-REVENUE System - Proprietary Technology
+ * 
+ * © 2024 OWLBAN GROUP 🦉 - All Rights Reserved
+ * Owned by: King Sachem Yochanan (Oscar Broome)
+ * Authority: House of David ✡️, House of Capet ⚜️, House of Logan 🏰
+ * 
+ * PROTECTED BY CUSTOM ENCRYPTION - DO NOT SHARE
+ * This module implements proprietary encryption methods.
+ * Access and use subject to OWLBAN GROUP ownership and licensing.
  */
 
 import logger from '../utils/loggerWrapper.js';
@@ -11,7 +20,42 @@ import Car from '../models/Car.js';
 import Transaction from '../models/Transaction.js';
 import Education from '../models/Education.js';
 
+/**
+ * @typedef {Object} AssetData
+ * @property {string} type
+ * @property {number} [value]
+ */
+
+/**
+ * @typedef {Object} UpdateData
+ * @property {number} [value]
+ */
+
+/**
+ * @typedef {Object} AssetItem
+ * @property {string} type
+ * @property {any} refId
+ * @property {number} value
+ */
+
+/**
+ * @typedef {Object} AssetCollection
+ * @property {AssetItem[]} [citizenAssets]
+ * @property {any[]} [companies]
+ * @property {any[]} [stocks]
+ * @property {any[]} [patents]
+ * @property {any[]} [cars]
+ * @property {any[]} [transactions]
+ * @property {any[]} [educationRecords]
+ * @property {number} [netWorth]
+ */
+
 export default class PersonalAssetService {
+  /**
+   * Get all assets for a citizen
+   * @param {string} citizenId - The citizen ID
+   * @returns {Promise<any>}
+   */
   async getAllAssets(citizenId) {
     try {
       const citizen = await Citizen.findOne({ citizenId }).populate(
@@ -19,18 +63,22 @@ export default class PersonalAssetService {
       );
       if (!citizen) return { success: false, error: 'Citizen not found' };
 
-      // Aggregate from all models
+// Aggregate from all models
+      // Note: Transaction.getByUser(userId, tenantId, limit) - order is userId, tenantId, limit
+      // Using type assertion to call the static method
       const [companies, stocks, patents, cars, transactions, education] =
         await Promise.all([
           Company.find({ citizenId: citizen._id }),
           Stock.find({ citizenId: citizen._id }),
           Patent.find({ citizenId: citizen._id }),
           Car.find({ citizenId: citizen._id }),
-          Transaction.getByUser(citizen._id, 'default-tenant', 50), // Assume tenant
+          /** @type {any} */ (Transaction).getByUser(citizen._id, 'default-tenant', 50),
           Education.find({ citizenId: citizen._id }),
         ]);
 
+      /** @type {AssetCollection} */
       const assets = {
+        /** @type {any} */
         citizenAssets: citizen.assets || [],
         companies,
         stocks,
@@ -51,6 +99,12 @@ export default class PersonalAssetService {
     }
   }
 
+  /**
+   * Add a new asset for a citizen
+   * @param {string} citizenId - The citizen ID
+   * @param {AssetData} assetData - The asset data
+   * @returns {Promise<any>}
+   */
   async addAsset(citizenId, assetData) {
     try {
       const citizen = await Citizen.findOne({ citizenId });
@@ -93,6 +147,13 @@ export default class PersonalAssetService {
     }
   }
 
+/**
+   * Update an existing asset
+   * @param {string} citizenId - The citizen ID
+   * @param {string} assetId - The asset ID
+   * @param {UpdateData} updates - The update data
+   * @returns {Promise<any>}
+   */
   async updateAsset(citizenId, assetId, updates) {
     try {
       const citizen = await Citizen.findOne({ citizenId });
@@ -114,14 +175,22 @@ export default class PersonalAssetService {
     }
   }
 
+  /**
+   * Delete an asset
+   * @param {string} citizenId - The citizen ID
+   * @param {string} assetId - The asset ID
+   * @returns {Promise<any>}
+   */
   async deleteAsset(citizenId, assetId) {
     try {
       const citizen = await Citizen.findOne({ citizenId });
       if (!citizen) return { success: false, error: 'Citizen not found' };
 
-      // Remove from citizen.assets and specific model
-      citizen.assets = citizen.assets.filter(
-        (a) => a.refId.toString() !== assetId
+// Remove from citizen.assets and specific model
+      /** @type {any[]} */
+      const assetList = citizen.assets || [];
+      citizen.assets = assetList.filter(
+        /** @type {(a: any) => boolean} */ ((a) => a.refId.toString() !== assetId)
       );
       await citizen.save();
 
@@ -136,16 +205,25 @@ export default class PersonalAssetService {
     }
   }
 
+  /**
+   * Calculate the net worth from assets
+   * @param {AssetCollection} assets - The asset collection
+   * @returns {number}
+   */
   calculateNetWorth(assets) {
     let total = 0;
     if (assets.companies)
-      assets.companies.forEach((c) => (total += Number(c.totalValue)));
+      /** @type {any[]} */
+      (assets.companies).forEach((c) => (total += Number(c.totalValue)));
     if (assets.stocks)
-      assets.stocks.forEach((s) => (total += Number(s.totalValue)));
+      /** @type {any[]} */
+      (assets.stocks).forEach((s) => (total += Number(s.totalValue)));
     if (assets.patents)
-      assets.patents.forEach((p) => (total += Number(p.estimatedValue)));
+      /** @type {any[]} */
+      (assets.patents).forEach((p) => (total += Number(p.estimatedValue)));
     if (assets.cars)
-      assets.cars.forEach((car) => (total += Number(car.currentValue)));
+      /** @type {any[]} */
+      (assets.cars).forEach((car) => (total += Number(car.currentValue)));
     return total;
   }
 }

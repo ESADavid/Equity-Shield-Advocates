@@ -1,3 +1,16 @@
+/**
+ * Asset Routes
+ * OSCAR-BROOME-REVENUE System - Proprietary Technology
+ * 
+ * © 2024 OWLBAN GROUP 🦉 - All Rights Reserved
+ * Owned by: King Sachem Yochanan (Oscar Broome)
+ * Authority: House of David ✡️, House of Capet ⚜️, House of Logan 🏰
+ * 
+ * PROTECTED BY CUSTOM ENCRYPTION - DO NOT SHARE
+ * This module implements proprietary encryption methods.
+ * Access and use subject to OWLBAN GROUP ownership and licensing.
+ */
+
 import express from 'express';
 import authMiddleware from '../utils/authMiddleware.js';
 import PersonalAssetService from '../services/personalAssetService.js';
