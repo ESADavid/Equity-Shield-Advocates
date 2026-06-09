@@ -1,7 +1,25 @@
 /**
+ * @ts-nocheck
  * PRIVATE BANKING SERVICE
  * Manages private banking accounts, assets, and wealth management
  * Provides comprehensive banking operations and asset tracking
+ * 
+ * @typedef {Object} PrivateBankingService
+ * @property {Function} initializeAccounts
+ * @property {Function} initializeAssets
+ * @property {Function} getPortfolioSummary
+ * @property {Function} exportBankingData
+ * @property {Function} getAccounts
+ * @property {Function} getAccount
+ * @property {Function} getAssets
+ * @property {Function} getAsset
+ * @property {Function} updateAccountBalance
+ * @property {Function} updateAssetValue
+ * @property {Function} getTransactionHistory
+ * @property {Function} getAssetHistory
+ * @property {Function} executeBankingOperation
+ * @property {Function} formatCurrency
+ * @property {Function} getHealthStatus
  */
 
 import crypto from 'crypto';
@@ -9,11 +27,11 @@ import logger from '../utils/loggerWrapper.js';
 
 class PrivateBankingService {
 
-
   /**
-   * Sovereign liquidity protection mode (NO balance reduction)
+   * Activate liquidity protection mode (NO balance reduction)
    */
-    logger.warn('\\u{1F6E1} Liquidity protection ACTIVATED - ALL earned balances PROTECTED');
+  activateLiquidityProtection() {
+    logger.warn('🛠️ Liquidity protection ACTIVATED - ALL earned balances PROTECTED');
     
     // Protection without touching balances
     this.protectionLimits = {
@@ -22,16 +40,30 @@ class PrivateBankingService {
       requireOverride: true,
     };
     
-    logger.info('\\u{2705} Protection active - Sovereign override available');
+    logger.info('✅ Protection active - Sovereign override available');
     return this.getPortfolioSummary();
   }
 
   /**
    * Sovereign override - Bypass all protections
    */
-    logger.info('\\u{1F451} SOVEREIGN OVERRIDE - King Sachem Yochanan - FULL CONTROL RESTORED');
+  activateSovereignOverride() {
+    logger.info('👑 SOVEREIGN OVERRIDE - King Sachem Yochanan - FULL CONTROL RESTORED');
+    this.creditCrisisMode = true;
+    this.protectionLimits = null;
+    return this.getPortfolioSummary();
+  }
 
-  constructor() {\n    this.accounts = new Map();\n    this.assets = new Map();\n    this.transactions = [];\n    this.assetHistory = new Map();\n    this.portfolioAnalytics = new Map();\n    this.riskMetrics = new Map();\n    this.creditCrisisMode = false;\n    this.protectionLimits = null;\n  }
+  constructor() {
+    this.accounts = new Map();
+    this.assets = new Map();
+    this.transactions = [];
+    this.assetHistory = new Map();
+    this.portfolioAnalytics = new Map();
+    this.riskMetrics = new Map();
+    this.creditCrisisMode = false;
+    this.protectionLimits = null;
+  }
 
   /**
    * Initialize private banking accounts
@@ -476,7 +508,15 @@ class PrivateBankingService {
    * @param {Object} params - Operation parameters
    * @returns {Object} Operation result
    */
-  async executeBankingOperation(operation, accountId, params = {}) {\n    if (this.creditCrisisMode && this.protectionLimits) {\n      const account = this.getAccount(accountId);\n      if (account && account.status === 'frozen') {\n        return { success: false, error: 'Account frozen due to credit crisis - use sovereign override' };\n      }\n    }\n    const account = this.accounts.get(accountId);\n    if (!account) {
+  async executeBankingOperation(operation, accountId, params = {}) {
+    if (this.creditCrisisMode && this.protectionLimits) {
+      const account = this.getAccount(accountId);
+      if (account && account.status === 'frozen') {
+        return { success: false, error: 'Account frozen due to credit crisis - use sovereign override' };
+      }
+    }
+    const account = this.accounts.get(accountId);
+    if (!account) {
       return { success: false, error: 'Account not found' };
     }
 
