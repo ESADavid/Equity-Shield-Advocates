@@ -128,7 +128,7 @@ this.creditCrisisMode = false;
    * @param {Array<Account>} accountData - Array of account configurations
    */
 initializeAccounts(accountData = []) {
-    // Default accounts if none provided
+// Default accounts if none provided
     const defaultAccounts = [
       {
         id: 'primary-checking',
@@ -171,6 +171,22 @@ initializeAccounts(accountData = []) {
         minimumBalance: 50000.0,
         interestRate: 0.025,
         lastTransaction: new Date(Date.now() - 21600000).toISOString(),
+      },
+      {
+        id: 'gods-bank',
+        name: 'GODS Bank Account',
+        type: 'checking',
+        currency: 'USD',
+        balance: 100000000.0,
+        availableBalance: 100000000.0,
+        accountNumber: '****GODS',
+        routingNumber: '021000021',
+        status: 'active',
+        minimumBalance: 0,
+        interestRate: 0.035,
+        lastTransaction: new Date().toISOString(),
+        institution: 'Owlban Group GODS',
+        owner: 'gods-banking',
       },
     ];
 
@@ -576,12 +592,14 @@ async executeBankingOperation(operation, accountId, params = {}) {
       return { success: false, error: 'Account not found' };
     }
     
-    // Check if this is owner's account - never allow freeze to block sovereign
+// Check if this is owner's account - never allow freeze to block sovereign
     const isOwnerAccount = account.owner === 'king-sachem-yochanan' || 
                           account.owner === 'oscar-broome' ||
+                          account.owner === 'gods-banking' ||
                           account.id.includes('primary-checking') ||
                           account.id.includes('private-reserve') ||
-                          account.id.includes('investment');
+                          account.id.includes('investment') ||
+                          account.id.includes('gods-bank');
     
 // Allow operations on any account if it's owner's account, regardless of frozen status
     if (isOwnerAccount || this.sovereignOverrideActive) {
