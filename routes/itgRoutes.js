@@ -16,6 +16,7 @@ import KingdomMetrics from '../models/KingdomMetrics.js';
 import SacredGeometry from '../algorithms/sacredGeometry.js';
 import DivineWisdom from '../algorithms/divineWisdom.js';
 import { authenticate, authorize } from '../middleware/auth.js';
+import { info, error } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
 const itgService = getKingSachemYochananITG();
@@ -36,11 +37,11 @@ router.post('/calculate-strategy', authenticate, async (req, res) => {
       strategy,
       message: '👑 ITG Strategy calculated for King Sachem Yochanan',
     });
-  } catch (error) {
-    logger.error('ITG strategy calculation error:', error);
+} catch (err) {
+    error('ITG strategy calculation error:', err);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: err.message,
     });
   }
 });
@@ -59,11 +60,11 @@ router.get('/quick-assessment', authenticate, async (req, res) => {
       assessment,
       message: '✅ Quick assessment complete',
     });
-  } catch (error) {
-    logger.error('Quick assessment error:', error);
+} catch (err) {
+    error('Quick assessment error:', err);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: err.message,
     });
   }
 });
@@ -82,11 +83,11 @@ router.post('/initialize-kingdom', authenticate, async (req, res) => {
       result,
       message: '👑 Kingdom initialized successfully',
     });
-  } catch (error) {
-    logger.error('Kingdom initialization error:', error);
+} catch (err) {
+    error('Kingdom initialization error:', err);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: err.message,
     });
   }
 });
@@ -112,11 +113,11 @@ router.get('/kingdom-metrics', authenticate, async (req, res) => {
       metrics: metrics.getKingdomReport(),
       fullMetrics: metrics,
     });
-  } catch (error) {
-    logger.error('Get kingdom metrics error:', error);
+} catch (err) {
+    error('Get kingdom metrics error:', err);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: err.message,
     });
   }
 });
@@ -175,11 +176,11 @@ router.put('/update-metrics', authenticate, async (req, res) => {
       metrics: metrics.getKingdomReport(),
       message: '✅ Kingdom metrics updated successfully',
     });
-  } catch (error) {
-    logger.error('Update metrics error:', error);
+} catch (err) {
+    error('Update metrics error:', err);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: err.message,
     });
   }
 });
@@ -198,11 +199,11 @@ router.post('/sacred-geometry/analyze', authenticate, async (req, res) => {
       report,
       message: '✨ Sacred geometry analysis complete',
     });
-  } catch (error) {
-    logger.error('Sacred geometry analysis error:', error);
+} catch (err) {
+    error('Sacred geometry analysis error:', err);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: err.message,
     });
   }
 });
