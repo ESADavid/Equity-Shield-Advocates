@@ -1,5 +1,4 @@
 /**
- * @ts-nocheck
  * PRIVATE BANKING SERVICE
  * OSCAR-BROOME-REVENUE System - Proprietary Technology
  * 
@@ -361,14 +360,14 @@ getAssets() {
     };
   }
 
-  /**
-   * Update account balance
-   * @param {string} accountId - Account ID
-   * @param {number} newBalance - New balance
-   * @param {string} transactionType - Type of transaction
-   * @param {string} description - Transaction description
-   * @returns {Object} Update result
-   */
+/**
+ * Update account balance
+ * @param {string} accountId - Account ID
+ * @param {number} newBalance - New balance
+ * @param {string} transactionType - Type of transaction
+ * @param {string} description - Transaction description
+ * @returns {{success: false, error: string} | {success: true, account: any, transaction: any, oldBalance: string, newBalance: string}} Update result
+ */
   updateAccountBalance(
     accountId,
     newBalance,
@@ -418,12 +417,12 @@ getAssets() {
     };
   }
 
-  /**
+/**
    * Update asset value
    * @param {string} assetId - Asset ID
    * @param {number} newValue - New asset value
    * @param {string} reason - Reason for update
-   * @returns {Object} Update result
+   * @returns {{success: false, error: string} | {success: true, asset: any, oldValue: string, newValue: string, change: string, changePercent: string}} Update result
    */
   updateAssetValue(assetId, newValue, reason = 'valuation') {
     const asset = this.assets.get(assetId);
@@ -474,7 +473,7 @@ getAssets() {
 
 /**
    * Get portfolio summary
-   * @returns {Object} Portfolio summary
+   * @returns {{totalPortfolioValue: string, totalAccountBalance: string, totalAssetValue: string, assetAllocation: object, performance: {totalReturn: string, numberOfAccounts: number, numberOfAssets: number}, lastUpdated: string}} Portfolio summary
    */
 getPortfolioSummary() {
     const accounts = Array.from(this.accounts.values());
