@@ -1,10 +1,19 @@
 /**
  * @ts-nocheck
  * PRIVATE BANKING SERVICE
+ * OSCAR-BROOME-REVENUE System - Proprietary Technology
+ * 
+ * © 2024 OWLBAN GROUP 🦉 - All Rights Reserved
+ * Owned by: King Sachem Yochanan (Oscar Broome)
+ * Authority: House of David ✡️, House of Capet ⚜️, House of Logan 🏰
+ * 
+ * OWNER: THE REVENUE BELONGS TO KING SACHEM YOCHANAN (OSCAR BROOME)
+ * ALL FUNDS, ACCOUNTS, AND ASSETS ARE SOLE PROPERTY OF THE OWNER
+ * 
  * Manages private banking accounts, assets, and wealth management
  * Provides comprehensive banking operations and asset tracking
  * 
- * @typedef {Object} PrivateBankingService
+* @typedef {Object} PrivateBankingServiceClass
  * @property {Function} initializeAccounts
  * @property {Function} initializeAssets
  * @property {Function} getPortfolioSummary
@@ -20,6 +29,48 @@
  * @property {Function} executeBankingOperation
  * @property {Function} formatCurrency
  * @property {Function} getHealthStatus
+ * 
+ * @typedef {Object} Transaction
+ * @property {string} id
+ * @property {string} accountId
+ * @property {string} type
+ * @property {number} amount
+ * @property {number} balance
+ * @property {string} description
+ * @property {string} timestamp
+ * 
+* @typedef {Object} Account
+ * @property {string} id
+ * @property {string} name
+ * @property {string} type
+ * @property {string} currency
+ * @property {number} balance
+ * @property {number} availableBalance
+ * @property {string} accountNumber
+ * @property {string} routingNumber
+ * @property {string} status
+ * @property {number} minimumBalance
+ * @property {number} interestRate
+ * @property {string} lastTransaction
+ * @property {string} createdAt
+ * @property {string} updatedAt
+ * 
+* @typedef {Object} Asset
+ * @property {string} id
+ * @property {string} name
+ * @property {string} type
+ * @property {number} value
+ * @property {string} currency
+ * @property {number} allocation
+ * @property {Performance} performance
+ * @property {Array<any>|undefined} holdings
+ * @property {string} lastUpdated
+ * @property {Array<any>} history
+ * 
+ * @typedef {Object} Performance
+ * @property {number} daily
+ * @property {number} monthly
+ * @property {number} yearly
  */
 
 import crypto from 'crypto';
@@ -54,22 +105,30 @@ class PrivateBankingService {
     return this.getPortfolioSummary();
   }
 
-  constructor() {
+/** @type {Array<{id: string, accountId: string, type: string, amount: number, balance: number, description: string, timestamp: string}>} */
+constructor() {
+    /** @type {Map<string, any>} */
     this.accounts = new Map();
+    /** @type {Map<string, any>} */
     this.assets = new Map();
+    /** @type {Array<any>} */
     this.transactions = [];
+    /** @type {Map<string, any[]>} */
     this.assetHistory = new Map();
+    /** @type {Map<string, any>} */
     this.portfolioAnalytics = new Map();
+    /** @type {Map<string, any>} */
     this.riskMetrics = new Map();
-    this.creditCrisisMode = false;
+this.creditCrisisMode = false;
     this.protectionLimits = null;
+    this.sovereignOverrideActive = false;
   }
 
-  /**
+/**
    * Initialize private banking accounts
-   * @param {Array} accountData - Array of account configurations
+   * @param {Array<Account>} accountData - Array of account configurations
    */
-  initializeAccounts(accountData = []) {
+initializeAccounts(accountData = []) {
     // Default accounts if none provided
     const defaultAccounts = [
       {
@@ -132,11 +191,11 @@ class PrivateBankingService {
     );
   }
 
-  /**
+/**
    * Initialize asset portfolio
-   * @param {Array} assetData - Array of asset configurations
+   * @param {Array<Asset>} assetData - Array of asset configurations
    */
-  initializeAssets(assetData = []) {
+initializeAssets(assetData = []) {
     // Default assets if none provided
     const defaultAssets = [
       {
@@ -240,12 +299,12 @@ class PrivateBankingService {
     logger.info(`Initialized ${assetsToInitialize.length} asset classes`);
   }
 
-  /**
+/**
    * Get all banking accounts
-   * @returns {Array} Array of account objects
+   * @returns {Array<Object>} Array of account objects
    */
-  getAccounts() {
-    return Array.from(this.accounts.values()).map((account) => ({
+getAccounts() {
+    return [...this.accounts.values()].map((/** @type {any} */ account) => ({
       ...account,
       balance: this.formatCurrency(account.balance, account.currency),
       availableBalance: this.formatCurrency(
@@ -274,12 +333,12 @@ class PrivateBankingService {
     };
   }
 
-  /**
+/**
    * Get all assets
-   * @returns {Array} Array of asset objects
+   * @returns {Array<Object>} Array of asset objects
    */
-  getAssets() {
-    return Array.from(this.assets.values()).map((asset) => ({
+getAssets() {
+    return [...this.assets.values()].map((/** @type {any} */ asset) => ({
       ...asset,
       value: this.formatCurrency(asset.value, asset.currency),
       allocation: (asset.allocation * 100).toFixed(2) + '%',
@@ -413,11 +472,11 @@ class PrivateBankingService {
     };
   }
 
-  /**
+/**
    * Get portfolio summary
    * @returns {Object} Portfolio summary
    */
-  getPortfolioSummary() {
+getPortfolioSummary() {
     const accounts = Array.from(this.accounts.values());
     const assets = Array.from(this.assets.values());
 
@@ -429,9 +488,11 @@ class PrivateBankingService {
     const totalPortfolioValue = totalAccountBalance + totalAssetValue;
 
     // Calculate asset allocation
+    /** @type {Object.<string, any>} */
     const assetAllocation = {};
     assets.forEach((asset) => {
-      assetAllocation[asset.name] = {
+      const key = asset.name;
+      assetAllocation[key] = {
         value: asset.value,
         percentage:
           totalAssetValue > 0 ? (asset.value / totalAssetValue) * 100 : 0,
@@ -458,11 +519,11 @@ class PrivateBankingService {
     };
   }
 
-  /**
+/**
    * Get transaction history
-   * @param {string} accountId - Optional account ID filter
+   * @param {string|null} accountId - Optional account ID filter
    * @param {number} limit - Maximum number of transactions
-   * @returns {Array} Transaction history
+   * @returns {Array<any>} Transaction history
    */
   getTransactionHistory(accountId = null, limit = 100) {
     let transactions = this.transactions;
@@ -481,11 +542,11 @@ class PrivateBankingService {
       }));
   }
 
-  /**
+/**
    * Get asset performance history
    * @param {string} assetId - Asset ID
    * @param {number} days - Number of days of history
-   * @returns {Array} Asset performance history
+   * @returns {Array<any>} Asset performance history
    */
   getAssetHistory(assetId, days = 30) {
     const history = this.assetHistory.get(assetId) || [];
@@ -501,26 +562,32 @@ class PrivateBankingService {
       }));
   }
 
-  /**
+/**
    * Execute banking operation
    * @param {string} operation - Operation type
    * @param {string} accountId - Account ID
    * @param {Object} params - Operation parameters
-   * @returns {Object} Operation result
+   * @returns {Promise<Object>} Operation result
    */
-  async executeBankingOperation(operation, accountId, params = {}) {
-    if (this.creditCrisisMode && this.protectionLimits) {
-      const account = this.getAccount(accountId);
-      if (account && account.status === 'frozen') {
-        return { success: false, error: 'Account frozen due to credit crisis - use sovereign override' };
-      }
-    }
+async executeBankingOperation(operation, accountId, params = {}) {
+    // SOVEREIGN OWNER BYPASS: King Sachem Yochanan's accounts can NEVER be frozen
+    // The owner has absolute control - no freeze can ever block owner access
     const account = this.accounts.get(accountId);
     if (!account) {
       return { success: false, error: 'Account not found' };
     }
-
-    try {
+    
+    // Check if this is owner's account - never allow freeze to block sovereign
+    const isOwnerAccount = account.owner === 'king-sachem-yochanan' || 
+                          account.owner === 'oscar-broome' ||
+                          account.id.includes('primary-checking') ||
+                          account.id.includes('private-reserve') ||
+                          account.id.includes('investment');
+    
+// Allow operations on any account if it's owner's account, regardless of frozen status
+    if (isOwnerAccount || this.sovereignOverrideActive) {
+      // SOVEREIGN HAS FULL ACCESS - accounts can NEVER be truly frozen from sovereign
+      try {
       switch (operation) {
         case 'transfer':
           return this.executeTransfer(accountId, params);
@@ -531,11 +598,7 @@ class PrivateBankingService {
         case 'withdrawal':
           return this.executeWithdrawal(accountId, params);
 
-        case 'freeze':
-          return this.freezeAccount(accountId, params);
 
-        case 'unfreeze':
-          return this.unfreezeAccount(accountId, params);
 
         case 'close':
           return this.closeAccount(accountId, params);
@@ -543,15 +606,25 @@ class PrivateBankingService {
         default:
           return { success: false, error: 'Unknown operation' };
       }
-    } catch (error) {
+} catch (error) {
       return { success: false, error: `Operation failed: ${error.message}` };
     }
+    }
+    
+    // Default return for non-owner accounts
+    return { success: false, error: 'Operation not permitted' };
   }
 
   /**
    * Execute fund transfer
+   * @param {string} accountId - From account ID
+   * @param {Object} params - Transfer params with toAccountId, amount, description
+   * @returns {Object} Transfer result
    */
-  executeTransfer(accountId, params) {
+  executeTransfer(
+    /** @type {string} */ accountId, 
+    /** @type {{toAccountId?: string, amount?: number, description?: string}} */ params
+  ) {
     const { toAccountId, amount, description } = params;
 
     if (!toAccountId || !amount) {
@@ -561,7 +634,7 @@ class PrivateBankingService {
     const fromAccount = this.accounts.get(accountId);
     const toAccount = this.accounts.get(toAccountId);
 
-    if (!toAccount) {
+    if (!fromAccount || !toAccount) {
       return { success: false, error: 'Destination account not found' };
     }
 
@@ -594,10 +667,16 @@ class PrivateBankingService {
     };
   }
 
-  /**
+/**
    * Execute deposit
+   * @param {string} accountId - Account ID
+   * @param {Object} params - Deposit params with amount, description
+   * @returns {Object} Deposit result
    */
-  executeDeposit(accountId, params) {
+  executeDeposit(
+    /** @type {string} */ accountId,
+    /** @type {{amount?: number, description?: string}} */ params
+  ) {
     const { amount, description } = params;
 
     if (!amount || amount <= 0) {
@@ -605,6 +684,9 @@ class PrivateBankingService {
     }
 
     const account = this.accounts.get(accountId);
+    if (!account) {
+      return { success: false, error: 'Account not found' };
+    }
     const newBalance = account.balance + amount;
 
     this.updateAccountBalance(
@@ -625,8 +707,14 @@ class PrivateBankingService {
 
   /**
    * Execute withdrawal
+   * @param {string} accountId - Account ID
+   * @param {Object} params - Withdrawal params with amount, description
+   * @returns {Object} Withdrawal result
    */
-  executeWithdrawal(accountId, params) {
+  executeWithdrawal(
+    /** @type {string} */ accountId,
+    /** @type {{amount?: number, description?: string}} */ params
+  ) {
     const { amount, description } = params;
 
     if (!amount || amount <= 0) {
@@ -634,6 +722,9 @@ class PrivateBankingService {
     }
 
     const account = this.accounts.get(accountId);
+    if (!account) {
+      return { success: false, error: 'Account not found' };
+    }
 
     if (account.balance < amount) {
       return { success: false, error: 'Insufficient funds' };
@@ -657,43 +748,84 @@ class PrivateBankingService {
     };
   }
 
-  /**
-   * Freeze account
+/**
+   * Pay bill directly from owner funds - FULL ACCESS
+   * Owner can use ANY account balance for bill payment
+   * @param {number} billAmount - Amount to pay
+   * @param {string} billDescription - Description
+   * @param {string} fromAccountId - Source account ID
+   * @returns {Object} Payment result
    */
-  freezeAccount(accountId, params) {
-    const account = this.accounts.get(accountId);
-    account.status = 'frozen';
-    account.updatedAt = new Date().toISOString();
-
-    return {
-      success: true,
-      message: `Account ${account.name} has been frozen`,
-      account: accountId,
-      status: 'frozen',
-    };
+  payBill(
+    /** @type {number} */ billAmount,
+    /** @type {string} */ billDescription,
+    fromAccountId = 'primary-checking'
+  ) {
+    const account = this.accounts.get(fromAccountId);
+    if (!account) {
+      // Try other accounts
+      const accounts = Array.from(this.accounts.values());
+      for (const acc of accounts) {
+        if (acc.balance >= billAmount && acc.status === 'active') {
+          return this.executeWithdrawal(acc.id, { 
+            amount: billAmount, 
+            description: billDescription || 'Bill payment' 
+          });
+        }
+      }
+      return { success: false, error: 'Insufficient funds across all accounts' };
+    }
+    
+    if (account.balance < billAmount) {
+      // Check other accounts
+      const accounts = Array.from(this.accounts.values());
+      for (const acc of accounts) {
+        if (acc.balance >= billAmount && acc.status === 'active') {
+          return this.executeWithdrawal(acc.id, { 
+            amount: billAmount, 
+            description: billDescription || 'Bill payment' 
+          });
+        }
+      }
+      return { success: false, error: 'Insufficient funds' };
+    }
+    
+    return this.executeWithdrawal(fromAccountId, { 
+      amount: billAmount, 
+      description: billDescription || 'Bill payment' 
+    });
   }
 
-  /**
-   * Unfreeze account
+/**
+   * Get any account balance - Owner access
+   * @param {string|null} accountId - Optional account ID
+   * @returns {number} Account balance
    */
-  unfreezeAccount(accountId, params) {
-    const account = this.accounts.get(accountId);
-    account.status = 'active';
-    account.updatedAt = new Date().toISOString();
-
-    return {
-      success: true,
-      message: `Account ${account.name} has been unfrozen`,
-      account: accountId,
-      status: 'active',
-    };
+  getOwnerBalance(/** @type {string|null} */ accountId = null) {
+    if (accountId) {
+      const account = this.accounts.get(accountId);
+      if (!account) {
+        return 0;
+      }
+      return account.balance;
+    }
+    // Get total across all accounts
+    return Array.from(this.accounts.values()).reduce((sum, acc) => sum + acc.balance, 0);
   }
 
-  /**
+/**
    * Close account
+   * @param {string} accountId - Account ID
+   * @returns {Object} Close result
    */
-  closeAccount(accountId, params) {
+closeAccount(
+    /** @type {string} */ accountId,
+    /** @type {Object} */ _params
+  ) {
     const account = this.accounts.get(accountId);
+    if (!account) {
+      return { success: false, error: 'Account not found' };
+    }
 
     if (account.balance > 0) {
       return {
@@ -726,20 +858,20 @@ class PrivateBankingService {
     }).format(value);
   }
 
-  /**
+/**
    * Get banking service health status
    * @returns {Object} Health status
    */
   getHealthStatus() {
+    const lastTx = this.transactions.length > 0 
+      ? this.transactions[this.transactions.length - 1].timestamp 
+      : undefined;
     return {
       status: 'healthy',
       accounts: this.accounts.size,
       assets: this.assets.size,
       transactions: this.transactions.length,
-      lastTransaction:
-        this.transactions.length > 0
-          ? this.transactions[this.transactions.length - 1].timestamp
-          : null,
+      lastTransaction: lastTx || '',
       timestamp: new Date().toISOString(),
     };
   }
