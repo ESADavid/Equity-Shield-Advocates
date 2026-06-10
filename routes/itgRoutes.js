@@ -15,8 +15,8 @@ import { getKingSachemYochananITG } from '../services/kingSachemYochananITG.js';
 import KingdomMetrics from '../models/KingdomMetrics.js';
 import SacredGeometry from '../algorithms/sacredGeometry.js';
 import DivineWisdom from '../algorithms/divineWisdom.js';
-import { authenticate, authorize } from '../middleware/auth.js';
-import { info, error } from '../utils/loggerWrapper.js';
+import { authenticate } from '../middleware/auth.js';
+import { error } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
 const itgService = getKingSachemYochananITG();
@@ -51,7 +51,7 @@ router.post('/calculate-strategy', authenticate, async (req, res) => {
  * @desc    Get quick ITG assessment
  * @access  Private
  */
-router.get('/quick-assessment', authenticate, async (req, res) => {
+router.get('/quick-assessment', authenticate, async (_req, res) => {
   try {
     const assessment = await itgService.quickAssessment();
 
@@ -65,7 +65,7 @@ router.get('/quick-assessment', authenticate, async (req, res) => {
     res.status(500).json({
       success: false,
       error: err.message,
-    });
+    }) 
   }
 });
 
@@ -97,8 +97,9 @@ router.post('/initialize-kingdom', authenticate, async (req, res) => {
  * @desc    Get current kingdom metrics
  * @access  Private
  */
-router.get('/kingdom-metrics', authenticate, async (req, res) => {
+router.get('/kingdom-metrics', authenticate, async (_req, res) => {
   try {
+    // @ts-ignore - getKingMetrics is a custom static method on the schema
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
 
     if (!metrics) {
@@ -129,6 +130,7 @@ router.get('/kingdom-metrics', authenticate, async (req, res) => {
  */
 router.put('/update-metrics', authenticate, async (req, res) => {
   try {
+    // @ts-ignore - getKingMetrics is a custom static method on the schema
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
 
     if (!metrics) {
@@ -224,12 +226,12 @@ router.post('/sacred-geometry/fibonacci', authenticate, async (req, res) => {
       length: n,
       goldenRatio: sacredGeometry.phi,
     });
-  } catch (error) {
-    logger.error('Fibonacci calculation error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+} catch (err) {
+      error('Fibonacci calculation error:', err);
+      res.status(500).json({
+        success: false,
+        error: err.message,
+      });
   }
 });
 
@@ -254,11 +256,11 @@ router.post(
         projections,
         goldenRatio: sacredGeometry.phi,
       });
-    } catch (error) {
-      logger.error('Golden ratio growth error:', error);
+} catch (err) {
+      error('Golden ratio growth error:', err);
       res.status(500).json({
         success: false,
-        error: error.message,
+        error: err.message,
       });
     }
   }
@@ -285,11 +287,11 @@ router.post(
         result,
         message: `💰 ${result.multiplier}-fold return prophesied`,
       });
-    } catch (error) {
-      logger.error('Covenant multiplication error:', error);
+} catch (err) {
+      error('Covenant multiplication error:', err);
       res.status(500).json({
         success: false,
-        error: error.message,
+        error: err.message,
       });
     }
   }
@@ -310,11 +312,11 @@ router.post('/divine-wisdom/evaluate', authenticate, async (req, res) => {
       report,
       message: '🙏 Divine wisdom evaluation complete',
     });
-  } catch (error) {
-    logger.error('Divine wisdom evaluation error:', error);
+} catch (err) {
+    error('Divine wisdom evaluation error:', err);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: err.message,
     });
   }
 });
@@ -333,11 +335,11 @@ router.post('/divine-wisdom/multi-factor', authenticate, async (req, res) => {
       score,
       message: '✅ Multi-factor wisdom score calculated',
     });
-  } catch (error) {
-    logger.error('Multi-factor wisdom error:', error);
+} catch (err) {
+    error('Multi-factor wisdom error:', err);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: err.message,
     });
   }
 });
@@ -360,8 +362,8 @@ router.post(
         patterns,
         message: '🕊️ Prophetic patterns recognized',
       });
-    } catch (error) {
-      logger.error('Prophetic pattern recognition error:', error);
+} catch (error) {
+      error('Prophetic pattern recognition error:', error);
       res.status(500).json({
         success: false,
         error: error.message,
@@ -377,6 +379,7 @@ router.post(
  */
 router.post('/record-decision', authenticate, async (req, res) => {
   try {
+    // @ts-ignore - getKingMetrics is a custom static method on the schema
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
 
     if (!metrics) {
@@ -392,8 +395,8 @@ router.post('/record-decision', authenticate, async (req, res) => {
       success: true,
       message: '📝 Decision recorded successfully',
     });
-  } catch (error) {
-    logger.error('Record decision error:', error);
+} catch (error) {
+    error('Record decision error:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -406,8 +409,9 @@ router.post('/record-decision', authenticate, async (req, res) => {
  * @desc    Get sovereignty status
  * @access  Private
  */
-router.get('/sovereignty-status', authenticate, async (req, res) => {
+router.get('/sovereignty-status', authenticate, async (_req, res) => {
   try {
+    // @ts-ignore - getKingMetrics is a custom static method on the schema
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
 
     if (!metrics) {
@@ -424,7 +428,7 @@ router.get('/sovereignty-status', authenticate, async (req, res) => {
       message: '👑 Sovereignty verified',
     });
   } catch (error) {
-    logger.error('Sovereignty status error:', error);
+    error('Sovereignty status error:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -437,8 +441,9 @@ router.get('/sovereignty-status', authenticate, async (req, res) => {
  * @desc    Get divine favor metrics
  * @access  Private
  */
-router.get('/divine-favor', authenticate, async (req, res) => {
+router.get('/divine-favor', authenticate, async (_req, res) => {
   try {
+    // @ts-ignore - getKingMetrics is a custom static method on the schema
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
 
     if (!metrics) {
@@ -454,8 +459,8 @@ router.get('/divine-favor', authenticate, async (req, res) => {
       king: 'King Sachem Yochanan',
       message: '✨ Divine favor measured',
     });
-  } catch (error) {
-    logger.error('Divine favor error:', error);
+} catch (error) {
+    error('Divine favor error:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -468,8 +473,9 @@ router.get('/divine-favor', authenticate, async (req, res) => {
  * @desc    Get kingdom expansion metrics
  * @access  Private
  */
-router.get('/kingdom-expansion', authenticate, async (req, res) => {
+router.get('/kingdom-expansion', authenticate, async (_req, res) => {
   try {
+    // @ts-ignore - getKingMetrics is a custom static method on the schema
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
 
     if (!metrics) {
@@ -486,7 +492,7 @@ router.get('/kingdom-expansion', authenticate, async (req, res) => {
       message: '📈 Kingdom expansion tracked',
     });
   } catch (error) {
-    logger.error('Kingdom expansion error:', error);
+    error('Kingdom expansion error:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -499,8 +505,9 @@ router.get('/kingdom-expansion', authenticate, async (req, res) => {
  * @desc    Get covenant fulfillment status
  * @access  Private
  */
-router.get('/covenant-status', authenticate, async (req, res) => {
+router.get('/covenant-status', authenticate, async (_req, res) => {
   try {
+    // @ts-ignore - getKingMetrics is a custom static method on the schema
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
 
     if (!metrics) {
@@ -516,8 +523,8 @@ router.get('/covenant-status', authenticate, async (req, res) => {
       king: 'King Sachem Yochanan',
       message: '📜 Covenant status retrieved',
     });
-  } catch (error) {
-    logger.error('Covenant status error:', error);
+} catch (error) {
+    error('Covenant status error:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -530,8 +537,9 @@ router.get('/covenant-status', authenticate, async (req, res) => {
  * @desc    Get comprehensive dashboard data
  * @access  Private
  */
-router.get('/dashboard-data', authenticate, async (req, res) => {
+router.get('/dashboard-data', authenticate, async (_req, res) => {
   try {
+    // @ts-ignore - getKingMetrics is a custom static method on the schema
     const metrics = await KingdomMetrics.getKingMetrics('Sachem Yochanan');
 
     if (!metrics) {
@@ -557,8 +565,8 @@ router.get('/dashboard-data', authenticate, async (req, res) => {
       impact: metrics.kingdomImpact,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    logger.error('Dashboard data error:', error);
+} catch (error) {
+    error('Dashboard data error:', error);
     res.status(500).json({
       success: false,
       error: error.message,

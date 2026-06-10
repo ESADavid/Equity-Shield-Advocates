@@ -3,25 +3,52 @@
  * King Sachem Yochanan ITG Algorithm
  *
  * Tracks sovereignty, divine favor, kingdom expansion, and covenant fulfillment
+ * @module KingdomMetrics
  */
 
 import mongoose from 'mongoose';
 
-const KingdomMetricsSchema = new mongoose.Schema(
+/**
+ * @typedef {Object} KingdomMetricsDocument
+ * @property {string} kingName
+ * @property {string} kingTitle
+ * @property {Object} sovereignty
+ * @property {number} sovereignty.level
+ * @property {string} sovereignty.status
+* @property {Array<any>} sovereignty.territories
+ * @property {Object} sovereignty.authority
+ * @property {Object} divineFavor
+ * @property {number} divineFavor.currentLevel
+ * @property {Object} divineFavor.components
+* @property {Array<any>} divineFavor.blessings
+ * @property {Array<any>} divineFavor.testimonies
+ * @property {Object} kingdomExpansion
+ * @property {Object} covenantFulfillment
+ * @property {Object} sacredAlignment
+ * @property {Object} wisdomMetrics
+ * @property {Object} financialKingdom
+ * @property {Object} spiritualKingdom
+ * @property {Object} kingdomImpact
+ * @property {Object} quantumMetrics
+ * @property {Object} itgScores
+ * @property {Date} createdAt
+ * @property {Date} updatedAt
+ * @property {Date} lastReview
+ */
+
+const { Schema } = mongoose;
+
+const KingdomMetricsSchema = new Schema(
   {
-    // King Identity
     kingName: {
       type: String,
       required: true,
       default: 'Sachem Yochanan',
     },
-
     kingTitle: {
       type: String,
       default: 'King Sachem Yochanan',
     },
-
-    // Sovereignty Tracking
     sovereignty: {
       level: {
         type: Number,
@@ -34,14 +61,12 @@ const KingdomMetricsSchema = new mongoose.Schema(
         enum: ['Established', 'Growing', 'Challenged', 'Victorious'],
         default: 'Established',
       },
-      territories: [
-        {
-          name: String,
-          acquired: Date,
-          status: String,
-          value: Number,
-        },
-      ],
+      territories: [{
+        name: String,
+        acquired: Date,
+        status: String,
+        value: Number,
+      }],
       authority: {
         spiritual: { type: Number, default: 100 },
         financial: { type: Number, default: 100 },
@@ -49,8 +74,6 @@ const KingdomMetricsSchema = new mongoose.Schema(
         cultural: { type: Number, default: 100 },
       },
     },
-
-    // Divine Favor Measurements
     divineFavor: {
       currentLevel: {
         type: Number,
@@ -65,24 +88,18 @@ const KingdomMetricsSchema = new mongoose.Schema(
         wisdom: { type: Number, default: 90 },
         righteousness: { type: Number, default: 88 },
       },
-      blessings: [
-        {
-          type: String,
-          receivedAt: Date,
-          description: String,
-          value: Number,
-        },
-      ],
-      testimonies: [
-        {
-          date: Date,
-          testimony: String,
-          category: String,
-        },
-      ],
+      blessings: [{
+        type: String,
+        receivedAt: Date,
+        description: String,
+        value: Number,
+      }],
+      testimonies: [{
+        date: Date,
+        testimony: String,
+        category: String,
+      }],
     },
-
-    // Kingdom Expansion Metrics
     kingdomExpansion: {
       influence: {
         current: { type: Number, default: 1000 },
@@ -105,69 +122,53 @@ const KingdomMetricsSchema = new mongoose.Schema(
         target: { type: Number, default: 10000 },
       },
     },
-
-    // Covenant Fulfillment Tracking
     covenantFulfillment: {
-      activeCovenants: [
-        {
-          name: String,
-          establishedDate: Date,
-          terms: String,
-          status: {
-            type: String,
-            enum: ['Active', 'Fulfilled', 'In Progress', 'Pending'],
-            default: 'Active',
-          },
-          fulfillmentPercentage: { type: Number, default: 0 },
-          blessingsReceived: [String],
-          nextMilestone: String,
+      activeCovenants: [{
+        name: String,
+        establishedDate: Date,
+        terms: String,
+        status: {
+          type: String,
+          enum: ['Active', 'Fulfilled', 'In Progress', 'Pending'],
+          default: 'Active',
         },
-      ],
-      seedsSown: [
-        {
-          date: Date,
-          amount: Number,
-          purpose: String,
-          expectedReturn: Number,
-          actualReturn: Number,
-          harvestDate: Date,
-        },
-      ],
-      promises: [
-        {
-          scripture: String,
-          promise: String,
-          claimedDate: Date,
-          fulfilledDate: Date,
-          status: String,
-          testimony: String,
-        },
-      ],
+        fulfillmentPercentage: { type: Number, default: 0 },
+        blessingsReceived: [String],
+        nextMilestone: String,
+      }],
+      seedsSown: [{
+        date: Date,
+        amount: Number,
+        purpose: String,
+        expectedReturn: Number,
+        actualReturn: Number,
+        harvestDate: Date,
+      }],
+      promises: [{
+        scripture: String,
+        promise: String,
+        claimedDate: Date,
+        fulfilledDate: Date,
+        status: String,
+        testimony: String,
+      }],
     },
-
-    // Sacred Geometry Alignment
     sacredAlignment: {
       fibonacciAlignment: { type: Number, default: 0 },
       goldenRatioAlignment: { type: Number, default: 0 },
-      sacredNumberPatterns: [
-        {
-          number: Number,
-          significance: String,
-          occurrences: Number,
-          lastDetected: Date,
-        },
-      ],
-      divinePatterns: [
-        {
-          pattern: String,
-          detected: Date,
-          significance: String,
-          action: String,
-        },
-      ],
+      sacredNumberPatterns: [{
+        number: Number,
+        significance: String,
+        occurrences: Number,
+        lastDetected: Date,
+      }],
+      divinePatterns: [{
+        pattern: String,
+        detected: Date,
+        significance: String,
+        action: String,
+      }],
     },
-
-    // Wisdom and Decision Metrics
     wisdomMetrics: {
       currentLevel: {
         type: Number,
@@ -175,36 +176,28 @@ const KingdomMetricsSchema = new mongoose.Schema(
         max: 7,
         default: 5,
       },
-      decisions: [
-        {
-          date: Date,
-          decision: String,
-          wisdomScore: Number,
-          outcome: String,
-          lessons: String,
-        },
-      ],
-      propheticInsights: [
-        {
-          date: Date,
-          insight: String,
-          source: String,
-          fulfillment: String,
-          fulfilled: Boolean,
-        },
-      ],
-      counselReceived: [
-        {
-          date: Date,
-          counselor: String,
-          topic: String,
-          wisdom: String,
-          applied: Boolean,
-        },
-      ],
+      decisions: [{
+        date: Date,
+        decision: String,
+        wisdomScore: Number,
+        outcome: String,
+        lessons: String,
+      }],
+      propheticInsights: [{
+        date: Date,
+        insight: String,
+        source: String,
+        fulfillment: String,
+        fulfilled: Boolean,
+      }],
+      counselReceived: [{
+        date: Date,
+        counselor: String,
+        topic: String,
+        wisdom: String,
+        applied: Boolean,
+      }],
     },
-
-    // Financial Kingdom Metrics
     financialKingdom: {
       totalAssets: { type: Number, default: 0 },
       monthlyRevenue: { type: Number, default: 0 },
@@ -215,8 +208,6 @@ const KingdomMetricsSchema = new mongoose.Schema(
       stewardshipScore: { type: Number, default: 85 },
       generosityIndex: { type: Number, default: 80 },
     },
-
-    // Spiritual Kingdom Metrics
     spiritualKingdom: {
       prayerHours: { type: Number, default: 0 },
       fastingDays: { type: Number, default: 0 },
@@ -234,8 +225,6 @@ const KingdomMetricsSchema = new mongoose.Schema(
         gifts: [String],
       },
     },
-
-    // Kingdom Impact Metrics
     kingdomImpact: {
       livesTransformed: { type: Number, default: 0 },
       salvations: { type: Number, default: 0 },
@@ -250,24 +239,18 @@ const KingdomMetricsSchema = new mongoose.Schema(
         generations: Number,
       },
     },
-
-    // Quantum-Enhanced Metrics
     quantumMetrics: {
       quantumAlignment: { type: Number, default: 95 },
       blockchainVerified: { type: Boolean, default: false },
       blockchainHash: String,
       gpuAccelerated: { type: Boolean, default: true },
-      aiPredictions: [
-        {
-          date: Date,
-          prediction: String,
-          confidence: Number,
-          outcome: String,
-        },
-      ],
+      aiPredictions: [{
+        date: Date,
+        prediction: String,
+        confidence: Number,
+        outcome: String,
+      }],
     },
-
-    // ITG Algorithm Scores
     itgScores: {
       integration: { type: Number, default: 0 },
       technology: { type: Number, default: 0 },
@@ -275,18 +258,14 @@ const KingdomMetricsSchema = new mongoose.Schema(
       overall: { type: Number, default: 0 },
       lastCalculated: Date,
     },
-
-    // Timestamps
     createdAt: {
       type: Date,
       default: Date.now,
     },
-
     updatedAt: {
       type: Date,
       default: Date.now,
     },
-
     lastReview: {
       type: Date,
       default: Date.now,
@@ -297,51 +276,38 @@ const KingdomMetricsSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for efficient querying
+// Indexes
 KingdomMetricsSchema.index({ kingName: 1, createdAt: -1 });
 KingdomMetricsSchema.index({ 'sovereignty.level': -1 });
 KingdomMetricsSchema.index({ 'divineFavor.currentLevel': -1 });
 KingdomMetricsSchema.index({ 'itgScores.overall': -1 });
 
-// Methods
+// Methods - using function to preserve 'this' context
 KingdomMetricsSchema.methods.calculateITGScore = function () {
-  // Integration Score (0-100)
+  /** @type {any} */
+  const doc = this;
+  
   const integration =
-    this.sovereignty.level * 0.3 +
-    this.divineFavor.currentLevel * 0.3 +
-    (this.wisdomMetrics.currentLevel / 7) * 100 * 0.2 +
-    this.financialKingdom.stewardshipScore * 0.2;
+    doc.sovereignty.level * 0.3 +
+    doc.divineFavor.currentLevel * 0.3 +
+    (doc.wisdomMetrics.currentLevel / 7) * 100 * 0.2 +
+    doc.financialKingdom.stewardshipScore * 0.2;
 
-  // Technology Score (0-100)
   const technology =
-    this.quantumMetrics.quantumAlignment * 0.4 +
-    (this.quantumMetrics.blockchainVerified ? 30 : 0) +
-    (this.quantumMetrics.gpuAccelerated ? 30 : 0);
+    doc.quantumMetrics.quantumAlignment * 0.4 +
+    (doc.quantumMetrics.blockchainVerified ? 30 : 0) +
+    (doc.quantumMetrics.gpuAccelerated ? 30 : 0);
 
-  // Growth Score (0-100)
   const growthRate =
-    (this.kingdomExpansion.influence.growth /
-      this.kingdomExpansion.influence.current) *
-      100 *
-      0.25 +
-    (this.kingdomExpansion.resources.growth /
-      this.kingdomExpansion.resources.current) *
-      100 *
-      0.25 +
-    (this.kingdomExpansion.territory.growth /
-      this.kingdomExpansion.territory.current) *
-      100 *
-      0.25 +
-    (this.kingdomExpansion.people.growth /
-      this.kingdomExpansion.people.current) *
-      100 *
-      0.25;
+    (doc.kingdomExpansion.influence.growth / doc.kingdomExpansion.influence.current) * 100 * 0.25 +
+    (doc.kingdomExpansion.resources.growth / doc.kingdomExpansion.resources.current) * 100 * 0.25 +
+    (doc.kingdomExpansion.territory.growth / doc.kingdomExpansion.territory.current) * 100 * 0.25 +
+    (doc.kingdomExpansion.people.growth / doc.kingdomExpansion.people.current) * 100 * 0.25;
   const growth = Math.min(100, growthRate);
 
-  // Overall ITG Score
   const overall = integration * 0.4 + technology * 0.3 + growth * 0.3;
 
-  this.itgScores = {
+  doc.itgScores = {
     integration,
     technology,
     growth,
@@ -349,35 +315,56 @@ KingdomMetricsSchema.methods.calculateITGScore = function () {
     lastCalculated: new Date(),
   };
 
-  return this.itgScores;
+  return doc.itgScores;
 };
 
 KingdomMetricsSchema.methods.updateDivineFavor = function () {
-  const components = this.divineFavor.components;
+  /** @type {any} */
+  const doc = this;
+  const components = doc.divineFavor.components;
   const average =
     (components.faithfulness +
       components.obedience +
       components.generosity +
       components.wisdom +
-      components.righteousness) /
-    5;
+      components.righteousness) / 5;
 
-  this.divineFavor.currentLevel = average;
+  doc.divineFavor.currentLevel = average;
   return average;
 };
 
+/**
+ * @typedef {Object} BlessingInput
+ * @property {string} type
+ * @property {string} description
+ * @property {number} [value]
+ */
+
+/** @param {BlessingInput} blessing */
 KingdomMetricsSchema.methods.recordBlessing = function (blessing) {
-  this.divineFavor.blessings.push({
+  /** @type {any} */
+  const doc = this;
+  doc.divineFavor.blessings.push({
     type: blessing.type,
     receivedAt: new Date(),
     description: blessing.description,
     value: blessing.value || 0,
   });
-  return this.save();
+  return doc.save();
 };
 
+/**
+ * @typedef {Object} CovenantInput
+ * @property {string} name
+ * @property {string} terms
+ * @property {string} [nextMilestone]
+ */
+
+/** @param {CovenantInput} covenant */
 KingdomMetricsSchema.methods.recordCovenant = function (covenant) {
-  this.covenantFulfillment.activeCovenants.push({
+  /** @type {any} */
+  const doc = this;
+  doc.covenantFulfillment.activeCovenants.push({
     name: covenant.name,
     establishedDate: new Date(),
     terms: covenant.terms,
@@ -386,11 +373,21 @@ KingdomMetricsSchema.methods.recordCovenant = function (covenant) {
     blessingsReceived: [],
     nextMilestone: covenant.nextMilestone,
   });
-  return this.save();
+  return doc.save();
 };
 
+/**
+ * @typedef {Object} SeedInput
+ * @property {number} amount
+ * @property {string} purpose
+ * @property {number} [expectedReturn]
+ */
+
+/** @param {SeedInput} seed */
 KingdomMetricsSchema.methods.sowSeed = function (seed) {
-  this.covenantFulfillment.seedsSown.push({
+  /** @type {any} */
+  const doc = this;
+  doc.covenantFulfillment.seedsSown.push({
     date: new Date(),
     amount: seed.amount,
     purpose: seed.purpose,
@@ -398,72 +395,91 @@ KingdomMetricsSchema.methods.sowSeed = function (seed) {
     actualReturn: 0,
     harvestDate: null,
   });
-  return this.save();
+  return doc.save();
 };
 
+/**
+ * @typedef {Object} DecisionInput
+ * @property {string} name
+ * @property {number} score
+ * @property {string} [outcome]
+ * @property {string} [lessons]
+ */
+
+/** @param {DecisionInput} decision */
 KingdomMetricsSchema.methods.recordDecision = function (decision) {
-  this.wisdomMetrics.decisions.push({
+  /** @type {any} */
+  const doc = this;
+  doc.wisdomMetrics.decisions.push({
     date: new Date(),
     decision: decision.name,
     wisdomScore: decision.score,
     outcome: decision.outcome || 'Pending',
     lessons: decision.lessons || '',
   });
-  return this.save();
+  return doc.save();
 };
 
+/**
+ * @typedef {Object} ExpansionInput
+ * @property {number} [influence]
+ * @property {number} [resources]
+ * @property {number} [territory]
+ * @property {number} [people]
+ */
+
+/** @param {ExpansionInput} expansion */
 KingdomMetricsSchema.methods.expandKingdom = function (expansion) {
+  /** @type {any} */
+  const doc = this;
   if (expansion.influence) {
-    this.kingdomExpansion.influence.growth =
-      expansion.influence - this.kingdomExpansion.influence.current;
-    this.kingdomExpansion.influence.current = expansion.influence;
+    doc.kingdomExpansion.influence.growth = expansion.influence - doc.kingdomExpansion.influence.current;
+    doc.kingdomExpansion.influence.current = expansion.influence;
   }
   if (expansion.resources) {
-    this.kingdomExpansion.resources.growth =
-      expansion.resources - this.kingdomExpansion.resources.current;
-    this.kingdomExpansion.resources.current = expansion.resources;
+    doc.kingdomExpansion.resources.growth = expansion.resources - doc.kingdomExpansion.resources.current;
+    doc.kingdomExpansion.resources.current = expansion.resources;
   }
   if (expansion.territory) {
-    this.kingdomExpansion.territory.growth =
-      expansion.territory - this.kingdomExpansion.territory.current;
-    this.kingdomExpansion.territory.current = expansion.territory;
+    doc.kingdomExpansion.territory.growth = expansion.territory - doc.kingdomExpansion.territory.current;
+    doc.kingdomExpansion.territory.current = expansion.territory;
   }
   if (expansion.people) {
-    this.kingdomExpansion.people.growth =
-      expansion.people - this.kingdomExpansion.people.current;
-    this.kingdomExpansion.people.current = expansion.people;
+    doc.kingdomExpansion.people.growth = expansion.people - doc.kingdomExpansion.people.current;
+    doc.kingdomExpansion.people.current = expansion.people;
   }
-  return this.save();
+  return doc.save();
 };
 
 KingdomMetricsSchema.methods.getKingdomReport = function () {
+  /** @type {any} */
+  const doc = this;
   return {
-    king: this.kingTitle,
-    sovereignty: this.sovereignty,
-    divineFavor: this.divineFavor.currentLevel,
-    kingdomExpansion: this.kingdomExpansion,
-    itgScores: this.itgScores,
-    spiritualMetrics: this.spiritualKingdom,
-    financialMetrics: this.financialKingdom,
-    impact: this.kingdomImpact,
-    lastUpdated: this.updatedAt,
+    king: doc.kingTitle,
+    sovereignty: doc.sovereignty,
+    divineFavor: doc.divineFavor.currentLevel,
+    kingdomExpansion: doc.kingdomExpansion,
+    itgScores: doc.itgScores,
+    spiritualMetrics: doc.spiritualKingdom,
+    financialMetrics: doc.financialKingdom,
+    impact: doc.kingdomImpact,
+    lastUpdated: doc.updatedAt,
   };
 };
 
-// Static methods
-KingdomMetricsSchema.statics.getKingMetrics = async function (
-  kingName = 'Sachem Yochanan'
-) {
+// Static methods - using function to preserve 'this' context
+KingdomMetricsSchema.statics.getKingMetrics = async function (kingName = 'Sachem Yochanan') {
+  // @ts-ignore - TypeScript cannot infer the correct Model type for mongoose statics
   return await this.findOne({ kingName }).sort({ createdAt: -1 });
 };
 
-KingdomMetricsSchema.statics.createKingMetrics = async function (
-  kingName = 'Sachem Yochanan'
-) {
+KingdomMetricsSchema.statics.createKingMetrics = async function (kingName = 'Sachem Yochanan') {
+  // @ts-ignore - TypeScript cannot infer the correct Model type for mongoose statics
   const metrics = new this({
     kingName,
     kingTitle: `King ${kingName}`,
   });
+  // @ts-ignore - TypeScript cannot infer the correct Model type for mongoose statics
   return await metrics.save();
 };
 
