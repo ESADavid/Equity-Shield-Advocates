@@ -1,0 +1,30 @@
+{
+  "name": "equity-shield-advocates",
+  "version": "1.0.0",
+  "description": "Equity Shield Advocates is an application designed to provide structured corporate data and real assets information across various sectors. It includes an API server to serve corporate and real assets data, and an AI component to query and analyze corporate structures.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ESADavid/Equity-Shield-Advocates.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ESADavid/Equity-Shield-Advocates/issues"
+  },
+  "homepage": "https://github.com/ESADavid/Equity-Shield-Advocates#readme",
+  "dependencies": {
+    "axios": "^1.17.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
