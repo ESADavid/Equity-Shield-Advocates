@@ -27,7 +27,7 @@ const PatentSchema = new mongoose.Schema(
       enum: ['pending', 'issued', 'expired'],
       default: 'pending',
     },
-    estimatedValue: { type: mongoose.Decimal128, default: 0 },
+estimatedValue: { type: mongoose.Types.Decimal128, default: 0 },
     description: String,
   },
   { timestamps: true }

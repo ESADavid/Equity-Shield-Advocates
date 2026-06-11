@@ -25,18 +25,18 @@ const foodSupplyChainSchema = new mongoose.Schema(
       required: true,
       enum: ['farm', 'processor', 'distributor', 'retailer', 'global_chain'],
     },
-    annualCapacity: {
-      type: mongoose.Decimal128,
+annualCapacity: {
+      type: mongoose.Types.Decimal128,
       required: true,
       min: 0,
     },
     acquiredValue: {
-      type: mongoose.Decimal128,
+      type: mongoose.Types.Decimal128,
       required: true,
       min: 0,
     },
     currentValue: {
-      type: mongoose.Decimal128,
+      type: mongoose.Types.Decimal128,
       required: true,
       min: 0,
     },
@@ -59,8 +59,8 @@ const foodSupplyChainSchema = new mongoose.Schema(
       type: String,
       maxlength: 500,
     },
-    feedsWorldPopulation: {
-      type: mongoose.Decimal128,
+feedsWorldPopulation: {
+      type: mongoose.Types.Decimal128,
       default: 0,
     },
     aiOptimized: {

@@ -28,10 +28,10 @@ const PMCOperationSchema = new mongoose.Schema(
     },
     description: String,
     objectives: [String],
-    resources: {
+resources: {
       personnel: { type: Number, default: 0 },
       equipment: [String],
-      budget: mongoose.Decimal128,
+      budget: mongoose.Types.Decimal128,
     },
     timeline: {
       startDate: Date,

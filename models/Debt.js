@@ -36,18 +36,18 @@ const debtSchema = new mongoose.Schema(
         'municipal_bonds',
       ],
     },
-    faceValue: {
-      type: mongoose.Decimal128,
+faceValue: {
+      type: mongoose.Types.Decimal128,
       required: true,
       min: 0,
     },
     acquiredValue: {
-      type: mongoose.Decimal128,
+      type: mongoose.Types.Decimal128,
       required: true,
       min: 0,
     },
     currentValue: {
-      type: mongoose.Decimal128,
+      type: mongoose.Types.Decimal128,
       required: true,
       min: 0,
     },
@@ -66,13 +66,13 @@ const debtSchema = new mongoose.Schema(
       required: true,
       default: Date.now,
     },
-    interestRate: {
-      type: mongoose.Decimal128,
+interestRate: {
+      type: mongoose.Types.Decimal128,
       required: true,
       min: 0,
     },
     expectedYield: {
-      type: mongoose.Decimal128,
+      type: mongoose.Types.Decimal128,
       required: true,
       min: 0,
     },
@@ -165,14 +165,14 @@ const debtSchema = new mongoose.Schema(
       lastAssessment: Date,
       nextAssessment: Date,
     },
-    valuations: [
+valuations: [
       {
         date: { type: Date, default: Date.now },
-        value: mongoose.Decimal128,
-        change: mongoose.Decimal128,
-        changePercent: mongoose.Decimal128,
-        marketPrice: mongoose.Decimal128,
-        interestRate: mongoose.Decimal128,
+        value: mongoose.Types.Decimal128,
+        change: mongoose.Types.Decimal128,
+        changePercent: mongoose.Types.Decimal128,
+        marketPrice: mongoose.Types.Decimal128,
+        interestRate: mongoose.Types.Decimal128,
         riskRating: String,
         assessedBy: {
           type: mongoose.Schema.Types.ObjectId,
@@ -183,7 +183,7 @@ const debtSchema = new mongoose.Schema(
     cashflows: [
       {
         date: Date,
-        amount: mongoose.Decimal128,
+        amount: mongoose.Types.Decimal128,
         type: {
           type: String,
           enum: ['interest', 'principal', 'fee'],

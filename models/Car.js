@@ -19,8 +19,8 @@ const CarSchema = new mongoose.Schema(
     },
     model: { type: String, required: true },
     vin: { type: String, required: true, unique: true },
-    purchasePrice: { type: mongoose.Decimal128, required: true },
-    currentValue: { type: mongoose.Decimal128, default: 0 },
+    purchasePrice: { type: mongoose.Types.Decimal128, required: true },
+    currentValue: { type: mongoose.Types.Decimal128, default: 0 },
     purchaseDate: { type: Date, default: Date.now },
     status: {
       type: String,

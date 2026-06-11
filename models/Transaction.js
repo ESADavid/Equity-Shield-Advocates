@@ -27,8 +27,8 @@ const transactionSchema = new mongoose.Schema(
         'debt_interest',
       ],
     },
-    amount: {
-      type: mongoose.Decimal128,
+amount: {
+      type: mongoose.Types.Decimal128,
       required: true,
       min: 0,
     },
@@ -93,10 +93,10 @@ const transactionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.Mixed,
       default: {},
     },
-    fees: {
-      processingFee: { type: mongoose.Decimal128, default: 0 },
-      transactionFee: { type: mongoose.Decimal128, default: 0 },
-      totalFees: { type: mongoose.Decimal128, default: 0 },
+fees: {
+      processingFee: { type: mongoose.Types.Decimal128, default: 0 },
+      transactionFee: { type: mongoose.Types.Decimal128, default: 0 },
+      totalFees: { type: mongoose.Types.Decimal128, default: 0 },
     },
     timestamps: {
       initiated: { type: Date, default: Date.now },
