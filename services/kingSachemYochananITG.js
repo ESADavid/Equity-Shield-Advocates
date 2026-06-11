@@ -10,12 +10,68 @@
  * - Multi-dimensional growth optimization
  */
 
-import SacredGeometry from '../algorithms/sacredGeometry.js';
-import DivineWisdom from '../algorithms/divineWisdom.js';
+import SacredGeometry from '../algorithms/sacredGeometry.mjs';
+import DivineWisdom from '../algorithms/divineWisdom.mjs';
 import KingdomMetrics from '../models/KingdomMetrics.js';
 import { getBlockchainService } from '../blockchain/blockchainService.js';
 import NvidiaBlackwellService from './nvidiaBlackwellService.js';
 import winston from 'winston';
+
+/**
+ * @typedef {Object} ITGInput
+ * @property {number[]} [dataPoints]
+ * @property {number} [seedValue]
+ * @property {number} [covenantLevel]
+ * @property {string} [decisionName]
+ * @property {Object} [decisionAttributes]
+ * @property {string} [timing]
+ * @property {number} [confirmations]
+ * @property {boolean} [peace]
+ * @property {number} [openDoors]
+ * @property {string} [expectedFruit]
+ * @property {Object} [factors]
+ * @property {Array} [events]
+
+ * @typedef {Object} ITGScoresData
+ * @property {any} sacredAnalysis
+ * @property {any} wisdomReport
+ * @property {any} quantumResult
+ * @property {any} blockchainVerification
+ * @property {any} metrics
+
+ * @typedef {Object} ExpansionInput
+ * @property {number} [influence]
+ * @property {number} [resources]
+ * @property {number} [territory]
+ * @property {number} [people]
+
+ * @typedef {Object} GrowthProjectionsInput
+ * @property {any} metrics
+ * @property {any} sacredAnalysis
+ * @property {any} wisdomReport
+ * @property {any} itgScores
+
+ * @typedef {Object} StrategicRecommendationsInput
+ * @property {any} itgScores
+ * @property {any} sacredAnalysis
+ * @property {any} wisdomReport
+ * @property {any} projections
+
+ * @typedef {Object} Recommendations
+ * @property {string[]} immediate
+ * @property {string[]} shortTerm
+ * @property {string[]} longTerm
+ * @property {string[]} spiritual
+ * @property {string[]} financial
+ * @property {string[]} technological
+
+ * @typedef {Object} KingdomMetricsDocument
+ * @property {string} kingName
+ * @property {Object} sovereignty
+ * @property {Object} divineFavor
+ * @property {Object} kingdomExpansion
+ * @property {Object} itgScores
+*/
 
 class KingSachemYochananITG {
   constructor() {
@@ -51,17 +107,21 @@ class KingSachemYochananITG {
     this.logger.info('👑 King Sachem Yochanan ITG Algorithm Initialized');
   }
 
-  /**
+/**
    * CORE ITG ALGORITHM
    * Calculates optimal growth strategy using all integrated systems
+   * @param {ITGInput} input
+   * @returns {Promise<Object>}
    */
-  async calculateITGStrategy(input) {
+  async calculateITGStrategy(/** @type {ITGInput} */ input) {
     try {
       this.logger.info('🚀 Calculating ITG Strategy for King Sachem Yochanan');
 
       // Step 1: Get or create kingdom metrics
+      // @ts-ignore - TypeScript cannot infer the correct Model type for mongoose statics
       let metrics = await KingdomMetrics.getKingMetrics(this.kingName);
       if (!metrics) {
+        // @ts-ignore - TypeScript cannot infer the correct Model type for mongoose statics
         metrics = await KingdomMetrics.createKingMetrics(this.kingName);
       }
 
@@ -218,10 +278,12 @@ class KingSachemYochananITG {
     }
   }
 
-  /**
+/**
    * Calculate ITG Scores (Integration, Technology, Growth)
+   * @param {ITGScoresData} data
+   * @returns {Object}
    */
-  calculateITGScores(data) {
+  calculateITGScores(/** @type {ITGScoresData} */ data) {
     const { sacredAnalysis, wisdomReport, quantumResult, metrics } = data;
 
     // Integration Score (0-100)
@@ -284,10 +346,15 @@ class KingSachemYochananITG {
     return 'Beginning Wisdom Level';
   }
 
-  /**
+/**
    * Generate Growth Projections
+   * @param {any} metrics
+   * @param {any} sacredAnalysis
+   * @param {any} wisdomReport
+   * @param {any} itgScores
+   * @returns {Object}
    */
-  generateGrowthProjections(metrics, sacredAnalysis, wisdomReport, itgScores) {
+  generateGrowthProjections(/** @type {any} */ metrics, /** @type {any} */ sacredAnalysis, /** @type {any} */ wisdomReport, /** @type {any} */ itgScores) {
     const projections = {
       shortTerm: {
         period: '3 months',
@@ -331,22 +398,28 @@ class KingSachemYochananITG {
     return projections;
   }
 
-  /**
+/**
    * Generate Strategic Recommendations
+   * @param {any} itgScores
+   * @param {any} sacredAnalysis
+   * @param {any} wisdomReport
+   * @param {any} projections
+   * @returns {Recommendations}
    */
   generateStrategicRecommendations(
-    itgScores,
-    sacredAnalysis,
-    wisdomReport,
-    projections
+    /** @type {any} */ itgScores,
+    /** @type {any} */ sacredAnalysis,
+    /** @type {any} */ wisdomReport,
+    /** @type {any} */ projections
   ) {
+    /** @type {Recommendations} */
     const recommendations = {
-      immediate: [],
-      shortTerm: [],
-      longTerm: [],
-      spiritual: [],
-      financial: [],
-      technological: [],
+      immediate: /** @type {string[]} */ ([]),
+      shortTerm: /** @type {string[]} */ ([]),
+      longTerm: /** @type {string[]} */ ([]),
+      spiritual: /** @type {string[]} */ ([]),
+      financial: /** @type {string[]} */ ([]),
+      technological: /** @type {string[]} */ ([]),
     };
 
     // Immediate Actions
@@ -478,11 +551,13 @@ class KingSachemYochananITG {
     return '🙏 SEEKING BLESSING: Return to the Lord with all your heart, King Sachem Yochanan, and He will restore and bless abundantly. 🙏';
   }
 
-  /**
+/**
    * Quick ITG Assessment
+   * @returns {Promise<Object>}
    */
   async quickAssessment() {
     try {
+      // @ts-ignore - TypeScript cannot infer the correct Model type for mongoose statics
       const metrics = await KingdomMetrics.getKingMetrics(this.kingName);
       if (!metrics) {
         return {
@@ -509,16 +584,20 @@ class KingSachemYochananITG {
     }
   }
 
-  /**
+/**
    * Initialize Kingdom for King Sachem Yochanan
+   * @param {any} [initialData]
+   * @returns {Promise<Object>}
    */
-  async initializeKingdom(initialData = {}) {
+  async initializeKingdom(/** @type {any} */ initialData = {}) {
     try {
       this.logger.info('👑 Initializing Kingdom for King Sachem Yochanan');
 
+      // @ts-ignore - TypeScript cannot infer the correct Model type for mongoose statics
       let metrics = await KingdomMetrics.getKingMetrics(this.kingName);
 
       if (!metrics) {
+        // @ts-ignore - TypeScript cannot infer the correct Model type for mongoose statics
         metrics = await KingdomMetrics.createKingMetrics(this.kingName);
       }
 
@@ -574,6 +653,7 @@ class KingSachemYochananITG {
 }
 
 // Singleton instance
+/** @type {KingSachemYochananITG | null} */
 let itgInstance = null;
 
 export function getKingSachemYochananITG() {

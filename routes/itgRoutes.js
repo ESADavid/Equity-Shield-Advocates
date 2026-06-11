@@ -13,8 +13,8 @@
 import express from 'express';
 import { getKingSachemYochananITG } from '../services/kingSachemYochananITG.js';
 import KingdomMetrics from '../models/KingdomMetrics.js';
-import SacredGeometry from '../algorithms/sacredGeometry.js';
-import DivineWisdom from '../algorithms/divineWisdom.js';
+import SacredGeometry from '../algorithms/sacredGeometry.mjs';
+import DivineWisdom from '../algorithms/divineWisdom.mjs';
 import { authenticate } from '../middleware/auth.js';
 import { error } from '../utils/loggerWrapper.js';
 
