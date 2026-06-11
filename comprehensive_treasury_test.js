@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Comprehensive Treasury Management Test Suite
  * Tests all treasury functionality including cash positions, FX rates,
@@ -61,7 +62,6 @@ async function makeRequest(
       if (i === retries - 1) {
         throw error;
       }
-      /* console.log(`Request failed, retrying... (${i + 1}/${retries}) */ testPassed();`);
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
@@ -71,7 +71,6 @@ async function makeRequest(
  * Test cash positions endpoint
  */
 async function testCashPositions() {
-  /* console.log('\n🧪 Testing Cash Positions...'); */ testPassed();
   testResults.total++;
 
   try {
@@ -81,14 +80,12 @@ async function testCashPositions() {
     );
 
     if (response.status === 200 && response.data) {
-      /* console.log('✅ Cash positions test passed'); */ testPassed();
       testResults.passed++;
       return true;
     } else {
       throw new Error('Invalid response format');
     }
   } catch (error) {
-    /* console.log('❌ Cash positions test failed:', error.message); */ testPassed();
     testResults.failed++;
     testResults.errors.push({
       test: 'Cash Positions',
@@ -102,21 +99,18 @@ async function testCashPositions() {
  * Test foreign exchange rates endpoint
  */
 async function testFXRates() {
-  /* console.log('\n🧪 Testing FX Rates...'); */ testPassed();
   testResults.total++;
 
   try {
     const response = await makeRequest('GET', '/jpmorgan/treasury/fx-rates');
 
     if (response.status === 200 && response.data) {
-      /* console.log('✅ FX rates test passed'); */ testPassed();
       testResults.passed++;
       return true;
     } else {
       throw new Error('Invalid response format');
     }
   } catch (error) {
-    /* console.log('❌ FX rates test failed:', error.message); */ testPassed();
     testResults.failed++;
     testResults.errors.push({
       test: 'FX Rates',
@@ -130,7 +124,6 @@ async function testFXRates() {
  * Test liquidity forecast endpoint
  */
 async function testLiquidityForecast() {
-  /* console.log('\n🧪 Testing Liquidity Forecast...'); */ testPassed();
   testResults.total++;
 
   try {
@@ -140,14 +133,12 @@ async function testLiquidityForecast() {
     );
 
     if (response.status === 200 && response.data) {
-      /* console.log('✅ Liquidity forecast test passed'); */ testPassed();
       testResults.passed++;
       return true;
     } else {
       throw new Error('Invalid response format');
     }
   } catch (error) {
-    /* console.log('❌ Liquidity forecast test failed:', error.message); */ testPassed();
     testResults.failed++;
     testResults.errors.push({
       test: 'Liquidity Forecast',
@@ -161,7 +152,6 @@ async function testLiquidityForecast() {
  * Test risk exposure endpoint
  */
 async function testRiskExposure() {
-  /* console.log('\n🧪 Testing Risk Exposure...'); */ testPassed();
   testResults.total++;
 
   try {
@@ -171,14 +161,12 @@ async function testRiskExposure() {
     );
 
     if (response.status === 200 && response.data) {
-      /* console.log('✅ Risk exposure test passed'); */ testPassed();
       testResults.passed++;
       return true;
     } else {
       throw new Error('Invalid response format');
     }
   } catch (error) {
-    /* console.log('❌ Risk exposure test failed:', error.message); */ testPassed();
     testResults.failed++;
     testResults.errors.push({
       test: 'Risk Exposure',
@@ -192,7 +180,6 @@ async function testRiskExposure() {
  * Test investment instruction endpoint
  */
 async function testInvestmentInstruction() {
-  /* console.log('\n🧪 Testing Investment Instruction...'); */ testPassed();
   testResults.total++;
 
   try {
@@ -211,14 +198,12 @@ async function testInvestmentInstruction() {
     );
 
     if (response.status === 200 && response.data) {
-      /* console.log('✅ Investment instruction test passed'); */ testPassed();
       testResults.passed++;
       return true;
     } else {
       throw new Error('Invalid response format');
     }
   } catch (error) {
-    /* console.log('❌ Investment instruction test failed:', error.message); */ testPassed();
     testResults.failed++;
     testResults.errors.push({
       test: 'Investment Instruction',
@@ -232,7 +217,6 @@ async function testInvestmentInstruction() {
  * Test portfolio performance endpoint
  */
 async function testPortfolioPerformance() {
-  /* console.log('\n🧪 Testing Portfolio Performance...'); */ testPassed();
   testResults.total++;
 
   try {
@@ -242,14 +226,12 @@ async function testPortfolioPerformance() {
     );
 
     if (response.status === 200 && response.data) {
-      /* console.log('✅ Portfolio performance test passed'); */ testPassed();
       testResults.passed++;
       return true;
     } else {
       throw new Error('Invalid response format');
     }
   } catch (error) {
-    /* console.log('❌ Portfolio performance test failed:', error.message); */ testPassed();
     testResults.failed++;
     testResults.errors.push({
       test: 'Portfolio Performance',
@@ -263,7 +245,6 @@ async function testPortfolioPerformance() {
  * Test cash flow analytics endpoint
  */
 async function testCashFlowAnalytics() {
-  /* console.log('\n🧪 Testing Cash Flow Analytics...'); */ testPassed();
   testResults.total++;
 
   try {
@@ -273,14 +254,12 @@ async function testCashFlowAnalytics() {
     );
 
     if (response.status === 200 && response.data) {
-      /* console.log('✅ Cash flow analytics test passed'); */ testPassed();
       testResults.passed++;
       return true;
     } else {
       throw new Error('Invalid response format');
     }
   } catch (error) {
-    /* console.log('❌ Cash flow analytics test failed:', error.message); */ testPassed();
     testResults.failed++;
     testResults.errors.push({
       test: 'Cash Flow Analytics',
@@ -294,7 +273,6 @@ async function testCashFlowAnalytics() {
  * Test treasury health endpoint
  */
 async function testTreasuryHealth() {
-  /* console.log('\n🧪 Testing Treasury Health...'); */ testPassed();
   testResults.total++;
 
   try {
@@ -305,14 +283,12 @@ async function testTreasuryHealth() {
       response.data &&
       response.data.status === 'healthy'
     ) {
-      /* console.log('✅ Treasury health test passed'); */ testPassed();
       testResults.passed++;
       return true;
     } else {
       throw new Error('Treasury service is not healthy');
     }
   } catch (error) {
-    /* console.log('❌ Treasury health test failed:', error.message); */ testPassed();
     testResults.failed++;
     testResults.errors.push({
       test: 'Treasury Health',
@@ -326,7 +302,6 @@ async function testTreasuryHealth() {
  * Test concurrent treasury operations
  */
 async function testConcurrentOperations() {
-  /* console.log('\n🧪 Testing Concurrent Treasury Operations...'); */ testPassed();
   testResults.total++;
 
   try {
@@ -345,17 +320,12 @@ async function testConcurrentOperations() {
     ).length;
 
     if (successful >= 4) {
-      // At least 4 out of 6 should succeed
-      /* console.log(
-        `✅ Concurrent operations test passed (${successful}/6 successful) */ testPassed();`
-      );
       testResults.passed++;
       return true;
     } else {
       throw new Error(`Only ${successful}/6 operations succeeded`);
     }
   } catch (error) {
-    /* console.log('❌ Concurrent operations test failed:', error.message); */ testPassed();
     testResults.failed++;
     testResults.errors.push({
       test: 'Concurrent Operations',
@@ -382,7 +352,6 @@ function generateReport() {
     recommendations: [],
   };
 
-  // Add recommendations based on failures
   if (testResults.failed > 0) {
     report.recommendations.push(
       'Review failed tests and fix underlying issues'
@@ -411,19 +380,12 @@ function saveReport(report) {
     'comprehensive_treasury_test_report.json'
   );
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-  /* console.log(`\n📄 Test report saved to: ${reportPath}`); */ testPassed();
 }
 
 /**
  * Main test runner
  */
 async function runComprehensiveTreasuryTests() {
-  /* console.log('🚀 Starting Comprehensive Treasury Management Test Suite'); */ testPassed();
-  /* console.log('='.repeat(60) */ testPassed(););
-  /* console.log(`Environment: ${process.env.NODE_ENV || 'development'}`); */ testPassed();
-  /* console.log(`Base URL: ${TEST_CONFIG.baseURL}`); */ testPassed();
-  /* console.log('='.repeat(60) */ testPassed(););
-
   try {
     // Test individual endpoints
     await testTreasuryHealth();
@@ -442,51 +404,26 @@ async function runComprehensiveTreasuryTests() {
     const report = generateReport();
     saveReport(report);
 
-    // Display final results
-    /* console.log('\n' + '='.repeat(60) */ testPassed(););
-    /* console.log('📊 FINAL TEST RESULTS'); */ testPassed();
-    /* console.log('='.repeat(60) */ testPassed(););
-    /* console.log(`Total Tests: ${testResults.total}`); */ testPassed();
-    /* console.log(`Passed: ${testResults.passed}`); */ testPassed();
-    /* console.log(`Failed: ${testResults.failed}`); */ testPassed();
-    /* console.log(
-      `Success Rate: ${((testResults.passed / testResults.total) */ testPassed(); * 100).toFixed(2)}%`
-    );
-
     if (testResults.failed > 0) {
-      /* console.log('\n❌ FAILED TESTS:'); */ testPassed();
-      testResults.errors.forEach((error, index) => {
-        /* console.log(`${index + 1}. ${error.test}: ${error.error}`); */ testPassed();
-      });
+      process.exit(1);
     }
 
     if (testResults.passed === testResults.total) {
-      /* console.log('\n🎉 ALL TREASURY TESTS PASSED!'); */ testPassed();
-      /* console.log('Treasury management system is fully operational.'); */ testPassed();
       process.exit(0);
     } else {
-      /* console.log('\n⚠️  SOME TESTS FAILED'); */ testPassed();
-      /* console.log(
-        'Please review the errors and fix the issues before proceeding.'
-      ); */ testPassed();
       process.exit(1);
     }
   } catch (error) {
-    /* console.error('\n💥 CRITICAL ERROR during testing:', error.message); */ testPassed();
-    /* console.error('Stack trace:', error.stack); */ testPassed();
     process.exit(1);
   }
 }
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
-  /* console.error('\n💥 Uncaught Exception:', error.message); */ testPassed();
-  /* console.error('Stack trace:', error.stack); */ testPassed();
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  /* console.error('\n💥 Unhandled Rejection at:', promise, 'reason:', reason); */ testPassed();
   process.exit(1);
 });
 

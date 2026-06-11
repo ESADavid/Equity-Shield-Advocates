@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+// @ts-nocheck
 
 import axios from 'axios';
 import { performance } from 'perf_hooks';
@@ -32,28 +32,15 @@ class PerformanceTest {
   }
 
   async runAllTests() {
-    logger.info('🚀 Starting comprehensive performance tests...');
+    logger.info('Starting comprehensive performance tests...');
 
     try {
-      // Health check test
       await this.testHealthCheck();
-
-      // Database performance test
       await this.testDatabasePerformance();
-
-      // Cache performance test
       await this.testCachePerformance();
-
-      // API response time tests
       await this.testAPIResponseTimes();
-
-      // Concurrent load test
       await this.testConcurrentLoad();
-
-      // Memory usage test
       await this.testMemoryUsage();
-
-      // Generate report
       this.generateReport();
     } catch (error) {
       logger.error('Performance test failed:', error);
@@ -176,7 +163,6 @@ class PerformanceTest {
     const promises = [];
     const startTime = performance.now();
 
-    // Create concurrent requests
     for (let i = 0; i < numberOfRequests; i++) {
       promises.push(
         axios
@@ -234,7 +220,7 @@ class PerformanceTest {
   }
 
   generateReport() {
-    logger.info('📊 Generating performance test report...');
+    logger.info('Generating performance test report...');
 
     const report = {
       timestamp: new Date().toISOString(),
@@ -245,46 +231,6 @@ class PerformanceTest {
       },
       results: this.results,
     };
-
-    // Log detailed report
-    /* console.log('\n' + '='.repeat(80) */ testPassed(););
-    /* console.log('🎯 PERFORMANCE TEST REPORT'); */ testPassed();
-    /* console.log('='.repeat(80) */ testPassed(););
-    /* console.log(`Timestamp: ${report.timestamp}`); */ testPassed();
-    /* console.log(`Overall Health: ${report.summary.overallHealth}`); */ testPassed();
-    /* console.log(`Performance Score: ${report.summary.performanceScore}/100`); */ testPassed();
-    /* console.log('\n📈 Key Metrics:'); */ testPassed();
-
-    if (this.results.healthCheck.success) {
-      /* console.log(
-        `✅ Health Check: ${this.results.healthCheck.responseTime?.toFixed(2) */ testPassed();}ms`
-      );
-    }
-
-    if (this.results.concurrentLoad.requestsPerSecond) {
-      /* console.log(
-        `🚀 Concurrent Load: ${this.results.concurrentLoad.requestsPerSecond.toFixed(2) */ testPassed();} req/sec`
-      );
-      /* console.log(
-        `📊 Success Rate: ${this.results.concurrentLoad.successRate.toFixed(2) */ testPassed();}%`
-      );
-    }
-
-    if (this.results.databasePerformance.latency) {
-      /* console.log(
-        `💾 Database Latency: ${this.results.databasePerformance.latency}ms`
-      ); */ testPassed();
-    }
-
-    if (this.results.cachePerformance.metrics) {
-      const cacheMetrics = this.results.cachePerformance.metrics;
-      /* console.log(`🔄 Cache Hit Rate: ${cacheMetrics.hitRate}%`); */ testPassed();
-    }
-
-    /* console.log('\n💡 Recommendations:'); */ testPassed();
-    report.summary.recommendations.forEach((rec) => /* console.log(`• ${rec}`) */ testPassed(););
-
-    /* console.log('\n' + '='.repeat(80) */ testPassed(););
 
     // Save detailed report to file
     fs.writeFileSync(
@@ -317,17 +263,10 @@ class PerformanceTest {
   calculatePerformanceScore() {
     let score = 100;
 
-    // Deduct points for slow response times
     if (this.results.healthCheck.responseTime > 200) score -= 10;
     if (this.results.concurrentLoad.averageResponseTime > 100) score -= 15;
-
-    // Deduct points for low success rates
     if (this.results.concurrentLoad.successRate < 95) score -= 20;
-
-    // Deduct points for cache issues
     if (this.results.cachePerformance.status === 'error') score -= 15;
-
-    // Deduct points for database issues
     if (this.results.databasePerformance.connectionStatus !== 'connected')
       score -= 25;
 
@@ -373,11 +312,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   test
     .runAllTests()
     .then(() => {
-      logger.info('✅ Performance tests completed successfully');
+      logger.info('Performance tests completed successfully');
       process.exit(0);
     })
     .catch((error) => {
-      logger.error('❌ Performance tests failed:', error);
+      logger.error('Performance tests failed:', error);
       process.exit(1);
     });
 }

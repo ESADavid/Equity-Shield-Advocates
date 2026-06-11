@@ -1,4 +1,8 @@
-/* global testPassed */\nconst testPassed = () => {};\nimport axios from 'axios';
+// @ts-nocheck
+// Mock testPassed for silent testing
+const testPassed = () => {};
+
+import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -65,7 +69,6 @@ class TestSuite {
     const filepath = path.join(__dirname, filename);
 
     fs.writeFileSync(filepath, JSON.stringify(results, null, 2), 'utf-8');
-    /* console.log(`📄 Detailed report saved to: ${filepath}`); */ testPassed();
   }
 }
 
@@ -77,10 +80,6 @@ class PayrollEndpointTests {
   }
 
   async testEnvironmentConfiguration() {
-    /* console.log(
-      '[2025-09-29T18:00:25.923Z] ℹ️ Testing environment configuration...'
-    ); */ testPassed();
-
     // Wait a moment for server to be fully ready
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -89,9 +88,6 @@ class PayrollEndpointTests {
       const healthResponse = await axios.get(
         `${TEST_CONFIG.SERVER.BASE_URL}/health`
       );
-      /* console.log(
-        `Health response status: ${healthResponse.status}, data status: ${healthResponse.data.status}`
-      ); */ testPassed();
       if (
         healthResponse.status === 200 &&
         (healthResponse.data.status === 'healthy' ||
@@ -102,7 +98,6 @@ class PayrollEndpointTests {
           'passed',
           `Server is ${healthResponse.data.status} and running`
         );
-        /* console.log('[2025-09-29T18:00:25.923Z] ✅ Environment Config: PASSED'); */ testPassed();
         return true;
       } else {
         this.testSuite.addTest(
@@ -110,7 +105,6 @@ class PayrollEndpointTests {
           'failed',
           `Server health check failed - status: ${healthResponse.data.status}`
         );
-        /* console.log('[2025-09-29T18:00:25.923Z] ❌ Environment Config: FAILED'); */ testPassed();
         return false;
       }
     } catch (error) {
@@ -119,16 +113,11 @@ class PayrollEndpointTests {
         'failed',
         `Health check error: ${error.message}`
       );
-      /* console.log('[2025-09-29T18:00:25.923Z] ❌ Environment Config: FAILED'); */ testPassed();
       return false;
     }
   }
 
   async testGetEmployees() {
-    /* console.log(
-      '[2025-09-29T18:00:25.970Z] ℹ️ Testing get employees endpoint...'
-    ); */ testPassed();
-
     try {
       const response = await axios.get(`${this.baseUrl}/employees`);
       if (
@@ -141,7 +130,6 @@ class PayrollEndpointTests {
           'passed',
           `Retrieved ${response.data.data.length} employees`
         );
-        /* console.log('[2025-09-29T18:00:25.970Z] ✅ Get Employees: PASSED'); */ testPassed();
         return true;
       } else {
         this.testSuite.addTest(
@@ -149,7 +137,6 @@ class PayrollEndpointTests {
           'failed',
           'Invalid response format'
         );
-        /* console.log('[2025-09-29T18:00:25.970Z] ❌ Get Employees: FAILED'); */ testPassed();
         return false;
       }
     } catch (error) {
@@ -158,16 +145,11 @@ class PayrollEndpointTests {
         'failed',
         `Request failed: ${error.message}`
       );
-      /* console.log('[2025-09-29T18:00:25.970Z] ❌ Get Employees: FAILED'); */ testPassed();
       return false;
     }
   }
 
   async testAddEmployee() {
-    /* console.log(
-      '[2025-09-29T18:00:26.033Z] ℹ️ Testing add employee endpoint...'
-    ); */ testPassed();
-
     const testEmployee = {
       id: `test-emp-${Date.now()}`,
       name: 'Test Employee',
@@ -191,15 +173,13 @@ class PayrollEndpointTests {
           'passed',
           'Employee added successfully'
         );
-        /* console.log('[2025-09-29T18:00:26.033Z] ✅ Add Employee: PASSED'); */ testPassed();
-        return testEmployee.id; // Return employee ID for cleanup
+        return testEmployee.id;
       } else {
         this.testSuite.addTest(
           'Add Employee',
           'failed',
           'Failed to add employee'
         );
-        /* console.log('[2025-09-29T18:00:26.033Z] ❌ Add Employee: FAILED'); */ testPassed();
         return null;
       }
     } catch (error) {
@@ -208,16 +188,11 @@ class PayrollEndpointTests {
         'failed',
         `Request failed: ${error.message}`
       );
-      /* console.log('[2025-09-29T18:00:26.033Z] ❌ Add Employee: FAILED'); */ testPassed();
       return null;
     }
   }
 
   async testCalculatePayroll() {
-    /* console.log(
-      '[2025-09-29T18:00:26.037Z] ℹ️ Testing calculate payroll endpoint...'
-    ); */ testPassed();
-
     const payrollData = {
       employeeId: 'test-calc',
       hoursWorked: 40,
@@ -256,9 +231,6 @@ class PayrollEndpointTests {
             'passed',
             'Payroll calculated correctly'
           );
-          /* console.log(
-            '[2025-09-29T18:00:26.037Z] ✅ Calculate Payroll: PASSED'
-          ); */ testPassed();
           return true;
         } else {
           this.testSuite.addTest(
@@ -266,9 +238,6 @@ class PayrollEndpointTests {
             'failed',
             'Incorrect calculations'
           );
-          /* console.log(
-            '[2025-09-29T18:00:26.037Z] ❌ Calculate Payroll: FAILED'
-          ); */ testPassed();
           return false;
         }
       } else {
@@ -277,7 +246,6 @@ class PayrollEndpointTests {
           'failed',
           'Invalid response format'
         );
-        /* console.log('[2025-09-29T18:00:26.037Z] ❌ Calculate Payroll: FAILED'); */ testPassed();
         return false;
       }
     } catch (error) {
@@ -286,16 +254,11 @@ class PayrollEndpointTests {
         'failed',
         `Request failed: ${error.message}`
       );
-      /* console.log('[2025-09-29T18:00:26.037Z] ❌ Calculate Payroll: FAILED'); */ testPassed();
       return false;
     }
   }
 
   async testProcessPayroll() {
-    /* console.log(
-      '[2025-09-29T18:00:26.040Z] ℹ️ Testing process payroll endpoint...'
-    ); */ testPassed();
-
     try {
       const response = await axios.post(`${this.baseUrl}/process`);
       if (
@@ -308,7 +271,6 @@ class PayrollEndpointTests {
           'passed',
           `Processed payroll for ${response.data.data.length} employees`
         );
-        /* console.log('[2025-09-29T18:00:26.040Z] ✅ Process Payroll: PASSED'); */ testPassed();
         return true;
       } else {
         this.testSuite.addTest(
@@ -316,7 +278,6 @@ class PayrollEndpointTests {
           'failed',
           'Failed to process payroll'
         );
-        /* console.log('[2025-09-29T18:00:26.040Z] ❌ Process Payroll: FAILED'); */ testPassed();
         return false;
       }
     } catch (error) {
@@ -325,21 +286,11 @@ class PayrollEndpointTests {
         'failed',
         `Request failed: ${error.message}`
       );
-      /* console.log('[2025-09-29T18:00:26.040Z] ❌ Process Payroll: FAILED'); */ testPassed();
       return false;
     }
   }
 
   async runAllTests() {
-    /* console.log('🧪 Starting Comprehensive Payroll Integration Tests'); */ testPassed();
-    /* console.log(
-      '======================================================================'
-    ); */ testPassed();
-    /* console.log(`Server URL: ${TEST_CONFIG.SERVER.BASE_URL}`); */ testPassed();
-    /* console.log(
-      '======================================================================'
-    ); */ testPassed();
-
     // Run all tests
     await this.testEnvironmentConfiguration();
     await this.testGetEmployees();
@@ -351,9 +302,8 @@ class PayrollEndpointTests {
     if (employeeId) {
       try {
         await axios.delete(`${this.baseUrl}/employees/${employeeId}`);
-        /* console.log(`🧹 Cleaned up test employee: ${employeeId}`); */ testPassed();
       } catch (error) {
-        /* console.log(`⚠️ Failed to clean up test employee: ${employeeId}`); */ testPassed();
+        // Silent fail for cleanup
       }
     }
 
@@ -367,16 +317,6 @@ async function runComprehensivePayrollTests() {
   const testSuite = await tester.runAllTests();
 
   const results = testSuite.getResults();
-
-  /* console.log('\n============================================================'); */ testPassed();
-  /* console.log('🧪 COMPREHENSIVE PAYROLL TEST REPORT'); */ testPassed();
-  /* console.log('============================================================'); */ testPassed();
-  /* console.log(`Total Tests: ${results.summary.total}`); */ testPassed();
-  /* console.log(`✅ Passed: ${results.summary.passed}`); */ testPassed();
-  /* console.log(`❌ Failed: ${results.summary.failed}`); */ testPassed();
-  /* console.log(`⚠️ Skipped: ${results.summary.skipped}`); */ testPassed();
-  /* console.log(`📈 Success Rate: ${results.summary.successRate}`); */ testPassed();
-  /* console.log('============================================================'); */ testPassed();
 
   // Save detailed results
   testSuite.saveResults();
