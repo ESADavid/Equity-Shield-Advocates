@@ -1,41 +1,118 @@
+"""
+Natural language query parsing and routing for corporate analytics.
+
+This module converts user text into:
+- intent
+- extracted entities/filters
+- normalized structured query objects
+
+It is intentionally lightweight and deterministic for backend integration and testing.
+"""
+
+from __future__ import annotations
+
 import re
-from ai_component import CorporateStructureAI
+from typing import Any, Dict, List
 
-class NaturalLanguageQuery:
-    def __init__(self):
-        self.ai = CorporateStructureAI()
 
-    def parse_query(self, query):
-        """
-        Basic parsing of natural language query to extract intent and parameters.
-        """
-        query = query.lower()
-        if "sector" in query:
-            match = re.search(r'sector\s+(\w+)', query)
-            if match:
-                return ("sector", match.group(1))
-            else:
-                return ("list_sectors", None)
-        elif "company" in query:
-            match = re.search(r'company\s+(\w+)', query)
-            if match:
-                return ("company", match.group(1))
-        return ("unknown", None)
+INTENT_KEYWORDS = {
+    "sector_performance": ["sector performance", "best sector", "worst sector", "sector returns"],
+    "company_distribution": ["distribution", "how many companies", "company count", "breakdown"],
+    "key_metrics": ["key metrics", "summary metrics", "portfolio metrics", "overall performance"],
+    "risk_assessment": ["risk", "risk score", "compliance risk", "high risk"],
+    "predict": ["predict", "forecast", "projection", "future trend"],
+    "report": ["report", "generate report", "export report", "summary report"],
+}
 
-    def execute_query(self, query):
-        intent, param = self.parse_query(query)
-        if intent == "sector":
-            return self.ai.get_companies_by_sector(param)
-        elif intent == "list_sectors":
-            return self.ai.get_sectors()
-        elif intent == "company":
-            # For simplicity, return company info by ticker if implemented
-            return f"Company info for {param} not implemented."
-        else:
-            return "Sorry, I did not understand the query."
 
-if __name__ == "__main__":
-    nlq = NaturalLanguageQuery()
-    print(nlq.execute_query("List sectors"))
-    print(nlq.execute_query("Show companies in sector Technology"))
-    print(nlq.execute_query("Get company ABC"))
+SECTOR_HINTS = [
+    "technology",
+    "healthcare",
+    "finance",
+    "energy",
+    "consumer",
+    "industrial",
+    "real estate",
+    "utilities",
+]
+
+
+def _normalize(text: str) -> str:
+    return " ".join(text.strip().lower().split())
+
+
+def detect_intent(query: str) -> str:
+    normalized = _normalize(query)
+    for intent, keywords in INTENT_KEYWORDS.items():
+        for phrase in keywords:
+            if phrase in normalized:
+                return intent
+    return "unknown"
+
+
+def extract_entities(query: str) -> Dict[str, Any]:
+    normalized = _normalize(query)
+    entities: Dict[str, Any] = {}
+
+    matched_sectors: List[str] = [s for s in SECTOR_HINTS if s in normalized]
+    if matched_sectors:
+        entities["sectors"] = matched_sectors
+
+    top_match = re.search(r"\btop\s+(\d+)\b", normalized)
+    if top_match:
+        entities["top_n"] = int(top_match.group(1))
+
+    year_match = re.search(r"\b(20\d{2})\b", normalized)
+    if year_match:
+        entities["year"] = int(year_match.group(1))
+
+    high_risk = any(token in normalized for token in ["high risk", "critical risk"])
+    if high_risk:
+        entities["risk_level"] = "high"
+
+    return entities
+
+
+def parse_nl_query(query: str) -> Dict[str, Any]:
+    intent = detect_intent(query)
+    entities = extract_entities(query)
+
+    return {
+        "raw_query": query,
+        "intent": intent,
+        "entities": entities,
+        "confidence": 0.85 if intent != "unknown" else 0.2,
+    }
+
+
+def to_structured_query(parsed: Dict[str, Any]) -> Dict[str, Any]:
+    intent = parsed.get("intent", "unknown")
+    entities = parsed.get("entities", {})
+
+    action_map = {
+        "sector_performance": "analyze_sector_performance",
+        "company_distribution": "analyze_company_distribution",
+        "key_metrics": "analyze_key_metrics",
+        "risk_assessment": "run_risk_assessment",
+        "predict": "run_predictive_model",
+        "report": "generate_report",
+        "unknown": "fallback_help",
+    }
+
+    return {
+        "action": action_map.get(intent, "fallback_help"),
+        "filters": entities,
+        "meta": {
+            "intent": intent,
+            "confidence": parsed.get("confidence", 0.0),
+        },
+    }
+
+
+def handle_query(query: str) -> Dict[str, Any]:
+    parsed = parse_nl_query(query)
+    structured = to_structured_query(parsed)
+    return {
+        "parsed": parsed,
+        "structured_query": structured,
+    }

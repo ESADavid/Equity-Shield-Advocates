@@ -28,7 +28,7 @@
    - 401.
 7. Authorized ping:
 
-   - 200.
+   - 1.
 
 ## Option D - Side Effects / Secret Controls
 

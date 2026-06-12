@@ -15,24 +15,26 @@ Secure Node/Express JPM integration implementation covering:
 npm install
 ```
 
-2. Copy environment file:
+1. Copy environment file:
 
 ```bash
 cp .env.example .env
 ```
+
 (Windows PowerShell)
+
 ```powershell
 Copy-Item .env.example .env
 ```
 
-3. Fill required values in `.env`:
+1. Fill required values in `.env`:
 
 - `JPM_CLIENT_ID`
 - `JPM_CLIENT_SECRET`
 - `JPM_SCOPE`
 - `INTERNAL_API_KEY`
 
-4. Start service:
+1. Start service:
 
 ```bash
 npm run start

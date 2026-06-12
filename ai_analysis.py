@@ -1,43 +1,160 @@
-import json
-from collections import Counter
+"""
+AI analysis utilities for corporate structure datasets.
 
-import os
-class CorporateAnalysis:
-    def __init__(self, json_path=None):
-        if json_path is None:
-            json_path = os.path.join(os.path.dirname(__file__), 'data/corporate_structure.json')
-        with open(json_path, 'r') as f:
-            self.data = json.load(f)
+This module provides deterministic, testable analytics helpers that summarize:
+- sector performance
+- company distributions
+- key portfolio metrics
 
-    def sector_summary(self):
-        """
-        Returns a summary of sectors with the count of companies in each sector.
-        """
-        sector_counts = {sector: len(companies) for sector, companies in self.data.items()}
-        return sector_counts
+Data contract (flexible, best-effort):
+Input can be either:
+1) list[dict] of company records, or
+2) dict with a list under one of: "companies", "data", "records"
 
-    def top_sectors(self, top_n=5):
-        """
-        Returns the top N sectors by number of companies.
-        """
-        sector_counts = self.sector_summary()
-        sorted_sectors = sorted(sector_counts.items(), key=lambda x: x[1], reverse=True)
-        return sorted_sectors[:top_n]
+Expected record keys (optional, with graceful fallbacks):
+- company_name | name
+- sector
+- valuation | market_cap | value
+- return_pct | performance_pct | ytd_return_pct
+- risk_score
+"""
 
-    def company_distribution(self):
-        """
-        Returns the distribution of companies across all sectors.
-        """
-        distribution = {}
-        for sector, companies in self.data.items():
-            distribution[sector] = [company.get('name', 'Unknown') for company in companies]
-        return distribution
+from __future__ import annotations
 
-if __name__ == "__main__":
-    analysis = CorporateAnalysis()
-    print("Sector Summary:")
-    print(analysis.sector_summary())
-    print("\nTop Sectors:")
-    print(analysis.top_sectors())
-    print("\nCompany Distribution:")
-    print(analysis.company_distribution())
+from collections import Counter, defaultdict
+from statistics import mean
+from typing import Any, Dict, Iterable, List, Optional
+
+
+def _extract_records(payload: Any) -> List[Dict[str, Any]]:
+    if isinstance(payload, list):
+        return [r for r in payload if isinstance(r, dict)]
+    if isinstance(payload, dict):
+        for key in ("companies", "data", "records"):
+            value = payload.get(key)
+            if isinstance(value, list):
+                return [r for r in value if isinstance(r, dict)]
+    return []
+
+
+def _to_float(value: Any) -> Optional[float]:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _get_first(record: Dict[str, Any], *keys: str) -> Any:
+    for key in keys:
+        if key in record:
+            return record.get(key)
+    return None
+
+
+def summarize_sector_performance(payload: Any) -> Dict[str, Any]:
+    """
+    Aggregates average return and average valuation by sector.
+    """
+    records = _extract_records(payload)
+    bucket: Dict[str, Dict[str, List[float]]] = defaultdict(lambda: {"returns": [], "valuations": []})
+
+    for record in records:
+        sector = _get_first(record, "sector") or "Unknown"
+        # Ensure sector is represented even when return/valuation are missing.
+        _ = bucket[sector]
+        ret = _to_float(_get_first(record, "return_pct", "performance_pct", "ytd_return_pct"))
+        val = _to_float(_get_first(record, "valuation", "market_cap", "value"))
+
+        if ret is not None:
+            bucket[sector]["returns"].append(ret)
+        if val is not None:
+            bucket[sector]["valuations"].append(val)
+
+    sectors = []
+    for sector, values in bucket.items():
+        avg_return = mean(values["returns"]) if values["returns"] else None
+        avg_valuation = mean(values["valuations"]) if values["valuations"] else None
+        sectors.append(
+            {
+                "sector": sector,
+                "company_count": len(values["returns"]) if values["returns"] else 0,
+                "avg_return_pct": avg_return,
+                "avg_valuation": avg_valuation,
+            }
+        )
+
+    sectors.sort(key=lambda x: (x["avg_return_pct"] is None, -(x["avg_return_pct"] or 0)))
+    return {"sector_performance": sectors, "sector_count": len(sectors)}
+
+
+def summarize_company_distribution(payload: Any) -> Dict[str, Any]:
+    """
+    Summarizes company counts by sector and valuation buckets.
+    """
+    records = _extract_records(payload)
+    by_sector = Counter()
+    valuation_buckets = Counter({"small": 0, "mid": 0, "large": 0, "unknown": 0})
+
+    for record in records:
+        sector = _get_first(record, "sector") or "Unknown"
+        by_sector[sector] += 1
+
+        valuation = _to_float(_get_first(record, "valuation", "market_cap", "value"))
+        if valuation is None:
+            valuation_buckets["unknown"] += 1
+        elif valuation < 2e9:
+            valuation_buckets["small"] += 1
+        elif valuation < 10e9:
+            valuation_buckets["mid"] += 1
+        else:
+            valuation_buckets["large"] += 1
+
+    return {
+        "total_companies": len(records),
+        "distribution_by_sector": dict(by_sector),
+        "distribution_by_valuation_bucket": dict(valuation_buckets),
+    }
+
+
+def summarize_key_metrics(payload: Any) -> Dict[str, Any]:
+    """
+    Computes top-level metrics used for investment/risk reporting.
+    """
+    records = _extract_records(payload)
+    valuations: List[float] = []
+    returns: List[float] = []
+    risks: List[float] = []
+
+    for record in records:
+        val = _to_float(_get_first(record, "valuation", "market_cap", "value"))
+        ret = _to_float(_get_first(record, "return_pct", "performance_pct", "ytd_return_pct"))
+        risk = _to_float(_get_first(record, "risk_score"))
+
+        if val is not None:
+            valuations.append(val)
+        if ret is not None:
+            returns.append(ret)
+        if risk is not None:
+            risks.append(risk)
+
+    return {
+        "total_companies": len(records),
+        "total_valuation": sum(valuations) if valuations else 0.0,
+        "average_return_pct": mean(returns) if returns else None,
+        "average_risk_score": mean(risks) if risks else None,
+        "max_valuation": max(valuations) if valuations else None,
+        "min_valuation": min(valuations) if valuations else None,
+    }
+
+
+def run_full_analysis(payload: Any) -> Dict[str, Any]:
+    """
+    Convenience orchestrator for all summaries.
+    """
+    return {
+        "sector": summarize_sector_performance(payload),
+        "distribution": summarize_company_distribution(payload),
+        "metrics": summarize_key_metrics(payload),
+    }
