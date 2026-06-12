@@ -163,7 +163,41 @@ Date: **[Date]**
 
 ---
 
-## 9) Completion Criteria
+## 9) Channel Enablement Setup (ATM/Online, Mobile Phone Banking, Tap to Pay)
+
+### ATM & Online Banking
+
+- [ ] Enroll MERCDEE in online banking (business profile activation complete)
+- [ ] Configure full account visibility (Operating + Reserve + optional merchant account)
+- [ ] Order and activate business debit card(s) for ATM access
+- [ ] Set ATM withdrawal limits and regional usage controls
+- [ ] Enable real-time account alerts (balance, debits, credits, login events)
+- [ ] Confirm admin can manage users, limits, and entitlements
+- [ ] Validate MFA login from approved company device(s)
+- [ ] Document emergency lock/unlock process for card compromise scenarios
+
+### Mobile Phone Banking
+
+- [ ] Enroll designated MERCDEE users in mobile banking
+- [ ] Confirm each user has MFA and device security (PIN/biometric) enabled
+- [ ] Enable mobile deposit if operationally required
+- [ ] Configure push alerts for transactions and profile/security changes
+- [ ] Validate role-based access parity with online banking permissions
+- [ ] Test balance inquiry, transfer workflow, and transaction history access
+- [ ] Record approved user/device register for audit tracking
+
+### Tap to Pay
+
+- [ ] Confirm deployment model (bank-native Tap to Pay vs processor gateway)
+- [ ] Enroll approved iOS/Android company devices for contactless acceptance
+- [ ] Map Tap to Pay settlements to designated operating account
+- [ ] Configure risk controls (amount caps, velocity checks, refund controls)
+- [ ] Enable dispute/chargeback notifications to treasury owner
+- [ ] Execute pilot transaction and confirm receipt + settlement trail
+- [ ] Validate reconciliation flow from processor/bank into accounting system
+- [ ] Publish Tap to Pay operational SOP (device handling, incident escalation, refund handling)
+
+## 10) Completion Criteria
 
 - [ ] Accounts opened and operational
 - [ ] Governance-consistent signer structure active

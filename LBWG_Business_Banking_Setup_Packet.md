@@ -160,7 +160,41 @@ Date: **[Date]**
 
 ---
 
-## 9) Completion Criteria
+## 9) Channel Enablement Setup (ATM/Online, Mobile Phone Banking, Tap to Pay)
+
+### ATM & Online Banking
+
+- [ ] Enroll LBWG in online banking (business profile activation complete)
+- [ ] Configure primary account visibility (Operating + Reserve)
+- [ ] Order and activate business debit card(s) for ATM access
+- [ ] Set ATM withdrawal limits and geographic controls
+- [ ] Enable real-time balance/activity alerts (email/SMS)
+- [ ] Restrict high-risk transaction types unless explicitly required
+- [ ] Confirm admin user can manage users, limits, and entitlements
+- [ ] Validate login + MFA from approved company device(s)
+
+### Mobile Phone Banking
+
+- [ ] Enroll designated LBWG users in bank mobile app access
+- [ ] Verify each user has MFA enabled and device-level lock enabled
+- [ ] Enable mobile check deposit if required by treasury workflow
+- [ ] Configure push notifications for credits, debits, and profile changes
+- [ ] Confirm role-based permissions match online banking policy
+- [ ] Test mobile balance view, transaction search, and internal transfers
+- [ ] Document user enrollment status and approved device inventory
+
+### Tap to Pay
+
+- [ ] Confirm Tap to Pay provider path (bank-native vs processor-integrated)
+- [ ] Enroll company-owned iOS/Android devices for contactless acceptance
+- [ ] Configure merchant category settings and settlement account mapping
+- [ ] Set transaction risk thresholds (velocity, amount, refunds)
+- [ ] Enable dispute/chargeback notifications to finance owner
+- [ ] Run controlled live test transaction with receipt confirmation
+- [ ] Verify settlement timing and reconciliation into accounting records
+- [ ] Publish Tap to Pay SOP (device custody, refund policy, escalation path)
+
+## 10) Completion Criteria
 
 - [ ] Accounts open and funded
 - [ ] Signers and approvals configured
