@@ -23,7 +23,7 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from statistics import mean
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 def _extract_records(payload: Any) -> List[Dict[str, Any]]:
@@ -58,7 +58,9 @@ def summarize_sector_performance(payload: Any) -> Dict[str, Any]:
     Aggregates average return and average valuation by sector.
     """
     records = _extract_records(payload)
-    bucket: Dict[str, Dict[str, List[float]]] = defaultdict(lambda: {"returns": [], "valuations": []})
+    bucket: Dict[str, Dict[str, List[float]]] = defaultdict(
+        lambda: {"returns": [], "valuations": []}
+    )
 
     for record in records:
         sector = _get_first(record, "sector") or "Unknown"
@@ -72,20 +74,24 @@ def summarize_sector_performance(payload: Any) -> Dict[str, Any]:
         if val is not None:
             bucket[sector]["valuations"].append(val)
 
-    sectors = []
+    sectors: List[Dict[str, Any]] = []
     for sector, values in bucket.items():
         avg_return = mean(values["returns"]) if values["returns"] else None
         avg_valuation = mean(values["valuations"]) if values["valuations"] else None
+        sort_return = avg_return if avg_return is not None else float("-inf")
         sectors.append(
             {
                 "sector": sector,
                 "company_count": len(values["returns"]) if values["returns"] else 0,
                 "avg_return_pct": avg_return,
                 "avg_valuation": avg_valuation,
+                "_sort_return": sort_return,
             }
         )
 
-    sectors.sort(key=lambda x: (x["avg_return_pct"] is None, -(x["avg_return_pct"] or 0)))
+    sectors.sort(key=lambda x: x["_sort_return"], reverse=True)
+    for item in sectors:
+        item.pop("_sort_return", None)
     return {"sector_performance": sectors, "sector_count": len(sectors)}
 
 
@@ -94,27 +100,27 @@ def summarize_company_distribution(payload: Any) -> Dict[str, Any]:
     Summarizes company counts by sector and valuation buckets.
     """
     records = _extract_records(payload)
-    by_sector = Counter()
-    valuation_buckets = Counter({"small": 0, "mid": 0, "large": 0, "unknown": 0})
+    by_sector: Dict[str, int] = {}
+    valuation_buckets: Dict[str, int] = {"small": 0, "mid": 0, "large": 0, "unknown": 0}
 
     for record in records:
         sector = _get_first(record, "sector") or "Unknown"
-        by_sector[sector] += 1
+        by_sector[sector] = by_sector.get(sector, 0) + 1
 
         valuation = _to_float(_get_first(record, "valuation", "market_cap", "value"))
         if valuation is None:
-            valuation_buckets["unknown"] += 1
+            valuation_buckets["unknown"] = valuation_buckets["unknown"] + 1
         elif valuation < 2e9:
-            valuation_buckets["small"] += 1
+            valuation_buckets["small"] = valuation_buckets["small"] + 1
         elif valuation < 10e9:
-            valuation_buckets["mid"] += 1
+            valuation_buckets["mid"] = valuation_buckets["mid"] + 1
         else:
-            valuation_buckets["large"] += 1
+            valuation_buckets["large"] = valuation_buckets["large"] + 1
 
     return {
         "total_companies": len(records),
-        "distribution_by_sector": dict(by_sector),
-        "distribution_by_valuation_bucket": dict(valuation_buckets),
+        "distribution_by_sector": by_sector,
+        "distribution_by_valuation_bucket": valuation_buckets,
     }
 
 

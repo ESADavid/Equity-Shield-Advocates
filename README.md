@@ -55,6 +55,10 @@ npm run start
 - Centralized error handling with request IDs
 - Safe upstream error mapping
 
+## System Topology
+
+- `docs/TOPOLOGY.md` - architecture, middleware, route/service flow, and security boundaries
+
 ## Test Matrix
 
 See:

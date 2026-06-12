@@ -45,6 +45,7 @@ class TestAIReport(unittest.TestCase):
         self.assertEqual(rows[0]["sector"], "Technology")
 
     def test_generate_csv_report(self):
+        """CSV report should include the expected header row."""
         csv_text = generate_csv_report(ANALYSIS_RESULT)
         self.assertIn("sector,company_count,avg_return_pct,avg_valuation", csv_text)
 
