@@ -36,8 +36,9 @@ declare module 'mongoose' {
  * Type declaration for global module exports
  */
 declare global {
-  export import BiometricData = mongoose.Model<IBiometricData>;
-  export import Permission = mongoose.Model<IPermission>;
+  // Re-export types for external use
+  type BiometricDataModel = mongoose.Model<IBiometricData>;
+  type PermissionModel = mongoose.Model<IPermission>;
 }
 
 export {};

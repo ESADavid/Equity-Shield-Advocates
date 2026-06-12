@@ -550,9 +550,10 @@ router.post(
         success: false,
         error: 'Failed to add notification',
         message: error.message,
-      });
+});
     }
   }
+);
 // POST /api/debt/global-acquire - Execute global takeover
 router.post('/global-acquire', authenticate, authorize(['admin']), async (req, res) => {
   try {
