@@ -19,7 +19,12 @@ def _safe_get(d: Dict[str, Any], key: str, default: Any = None) -> Any:
     return d.get(key, default) if isinstance(d, dict) else default
 
 
-def generate_text_report(analysis_result: Dict[str, Any], predictive_result: Dict[str, Any], risk_result: Dict[str, Any]) -> str:
+def generate_text_report(
+    analysis_result: Dict[str, Any],
+    predictive_result: Dict[str, Any],
+    risk_result: Dict[str, Any],
+) -> str:
+    """Generate a human-readable multi-section report from analysis outputs."""
     timestamp = datetime.utcnow().isoformat() + "Z"
 
     metrics = _safe_get(analysis_result, "metrics", {})
@@ -60,7 +65,12 @@ def generate_text_report(analysis_result: Dict[str, Any], predictive_result: Dic
 
 
 def generate_csv_report_rows(analysis_result: Dict[str, Any]) -> List[Dict[str, Any]]:
-    sector_items = _safe_get(_safe_get(analysis_result, "sector", {}), "sector_performance", [])
+    """Build row dictionaries used for CSV sector performance export."""
+    sector_items = _safe_get(
+        _safe_get(analysis_result, "sector", {}),
+        "sector_performance",
+        [],
+    )
     rows: List[Dict[str, Any]] = []
     for item in sector_items:
         rows.append(
@@ -75,6 +85,7 @@ def generate_csv_report_rows(analysis_result: Dict[str, Any]) -> List[Dict[str, 
 
 
 def generate_csv_report(analysis_result: Dict[str, Any]) -> str:
+    """Serialize sector performance rows into CSV text."""
     rows = generate_csv_report_rows(analysis_result)
     output = io.StringIO()
     fieldnames = ["sector", "company_count", "avg_return_pct", "avg_valuation"]
@@ -90,6 +101,7 @@ def generate_json_report(
     predictive_result: Dict[str, Any],
     risk_result: Dict[str, Any],
 ) -> Dict[str, Any]:
+    """Generate a JSON-ready report payload containing metadata and sections."""
     return {
         "report_metadata": {
             "generated_at": datetime.utcnow().isoformat() + "Z",
@@ -106,6 +118,7 @@ def generate_full_report_bundle(
     predictive_result: Dict[str, Any],
     risk_result: Dict[str, Any],
 ) -> Dict[str, Any]:
+    """Return a bundle containing text, CSV, and JSON report representations."""
     return {
         "text": generate_text_report(analysis_result, predictive_result, risk_result),
         "csv": generate_csv_report(analysis_result),

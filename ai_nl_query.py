@@ -42,6 +42,7 @@ def _normalize(text: str) -> str:
 
 
 def detect_intent(query: str) -> str:
+    """Detect the best-matching intent label from a natural language query."""
     normalized = _normalize(query)
     for intent, keywords in INTENT_KEYWORDS.items():
         for phrase in keywords:
@@ -51,6 +52,7 @@ def detect_intent(query: str) -> str:
 
 
 def extract_entities(query: str) -> Dict[str, Any]:
+    """Extract structured entities such as sectors, top_n, year, and risk_level."""
     normalized = _normalize(query)
     entities: Dict[str, Any] = {}
 
@@ -74,6 +76,7 @@ def extract_entities(query: str) -> Dict[str, Any]:
 
 
 def parse_nl_query(query: str) -> Dict[str, Any]:
+    """Parse a natural language query into intent, entities, and confidence."""
     intent = detect_intent(query)
     entities = extract_entities(query)
 
@@ -86,6 +89,7 @@ def parse_nl_query(query: str) -> Dict[str, Any]:
 
 
 def to_structured_query(parsed: Dict[str, Any]) -> Dict[str, Any]:
+    """Map parsed query output to an executable backend action and filters."""
     intent = parsed.get("intent", "unknown")
     entities = parsed.get("entities", {})
 
@@ -110,6 +114,7 @@ def to_structured_query(parsed: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def handle_query(query: str) -> Dict[str, Any]:
+    """End-to-end handler that returns parsed and structured query payloads."""
     parsed = parse_nl_query(query)
     structured = to_structured_query(parsed)
     return {

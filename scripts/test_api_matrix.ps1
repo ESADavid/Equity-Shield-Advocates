@@ -4,6 +4,10 @@ if (-not $BaseUrl) { $BaseUrl = "http://localhost:8080" }
 $InternalApiKey = $env:INTERNAL_API_KEY
 if (-not $InternalApiKey) { $InternalApiKey = "missing" }
 
+Write-Host ("Using BASE_URL={0}" -f $BaseUrl)
+Write-Host ("INTERNAL_API_KEY configured={0}" -f ([string]($InternalApiKey -ne "missing")))
+Write-Host ""
+
 function Invoke-GetWithHeaders {
   param(
     [Parameter(Mandatory = $true)][string]$Url,
@@ -15,7 +19,7 @@ function Invoke-GetWithHeaders {
     Write-Output ("HTTP/{0} {1}" -f $response.Version, [int]$response.StatusCode)
     Write-Output $response.Content
   } catch {
-    if ($_.Exception.Response -ne $null) {
+    if ($null -ne $_.Exception.Response) {
       $r = $_.Exception.Response
       $code = [int]$r.StatusCode
       Write-Output ("HTTP/1.1 {0}" -f $code)
@@ -42,7 +46,7 @@ function Invoke-JsonPost {
     Write-Output ("HTTP/{0} {1}" -f $response.Version, [int]$response.StatusCode)
     Write-Output $response.Content
   } catch {
-    if ($_.Exception.Response -ne $null) {
+    if ($null -ne $_.Exception.Response) {
       $r = $_.Exception.Response
       $code = [int]$r.StatusCode
       Write-Output ("HTTP/1.1 {0}" -f $code)

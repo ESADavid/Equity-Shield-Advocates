@@ -89,7 +89,11 @@ def trend_forecast(series: List[float], horizon: int = 1) -> List[float]:
     return [m * (n + i) + b for i in range(horizon)]
 
 
-def predict(records: List[Dict[str, Any]], value_key: str = "value", horizon: int = 3) -> Dict[str, Any]:
+def predict(
+    records: List[Dict[str, Any]],
+    value_key: str = "value",
+    horizon: int = 3,
+) -> Dict[str, Any]:
     """
     End-to-end prediction wrapper.
     """

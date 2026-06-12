@@ -62,3 +62,4 @@ curl -i http://localhost:8080/api/jpm/ping
 
 ```bash
 curl -i http://localhost:8080/api/jpm/ping -H "x-api-key: <INTERNAL_API_KEY>"
+```

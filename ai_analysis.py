@@ -21,7 +21,7 @@ Expected record keys (optional, with graceful fallbacks):
 
 from __future__ import annotations
 
-from collections import Counter, defaultdict
+from collections import defaultdict
 from statistics import mean
 from typing import Any, Dict, List, Optional
 

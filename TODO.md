@@ -1,7 +1,8 @@
-# TODO - Topology + API Matrix Reliability
+# TODO - Pylint Fix for ai_report.py
 
-- [ ] Add topology documentation file (`docs/TOPOLOGY.md`)
-- [ ] Link topology docs from `README.md`
-- [ ] Refactor `scripts/test_api_matrix.ps1` to use PowerShell-native JSON payloads
-- [ ] (Optional) Align Windows notes in `tests/curl_matrix.md`
-- [ ] Validate script run output format and expected auth behavior
+- [x] Review lint diagnostics and target file content
+- [ ] Add function docstrings in `ai_report.py`
+- [ ] Reformat long lines to satisfy max line length
+- [ ] Run/verify lint checks for `ai_report.py`
+- [ ] Re-run related unittest coverage
+- [ ] Mark completion summary
