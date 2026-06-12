@@ -6,3 +6,9 @@
 - [ ] Run/verify lint checks for `ai_report.py`
 - [ ] Re-run related unittest coverage
 - [ ] Mark completion summary
+
+## Execution Steps
+- [ ] Run pylint on `ai_report.py`
+- [ ] Apply fixes in `ai_report.py` based on pylint output
+- [ ] Run tests for `test_ai_report.py`
+- [ ] Update checklist completion status
