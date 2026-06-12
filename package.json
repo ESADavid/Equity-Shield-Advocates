@@ -1,30 +1,25 @@
 {
-  "name": "equity-shield-advocates",
+  "name": "equity-shield-advocates-jpm-integration",
   "version": "1.0.0",
-  "description": "Equity Shield Advocates is an application designed to provide structured corporate data and real assets information across various sectors. It includes an API server to serve corporate and real assets data, and an AI component to query and analyze corporate structures.",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs",
-    "test": "tests"
-  },
+  "description": "Secure JPM integration service artifacts for Equity Shield Advocates",
+  "type": "module",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test:curl": "echo \"Run scripts/test_api_matrix.ps1 (Windows) or scripts/test_api_matrix.sh (Unix)\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ESADavid/Equity-Shield-Advocates.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/ESADavid/Equity-Shield-Advocates/issues"
-  },
-  "homepage": "https://github.com/ESADavid/Equity-Shield-Advocates#readme",
+  "keywords": [
+    "jpmorgan",
+    "oauth",
+    "express",
+    "security"
+  ],
+  "author": "Equity Shield Advocates",
+  "license": "UNLICENSED",
   "dependencies": {
-    "axios": "^1.17.0",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
   }
 }
