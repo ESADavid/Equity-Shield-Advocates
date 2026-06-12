@@ -1,0 +1,29 @@
+{
+  "trustName": "Mercier Broome Leeper Family Trust",
+  "trusteeSigners": [
+    {
+      "name": "John Trustee",
+      "role": "Trustee",
+      "email": "john.trustee@example.com"
+    }
+  ],
+  "trustAccounts": [
+    {
+      "name": "Trust Operating",
+      "type": "primary"
+    },
+    {
+      "name": "Trust Reserve",
+      "type": "reserve"
+    }
+  ],
+  "transferPolicy": {
+    "purposeMemoTemplate": "Transfer for approved trust purpose: {{purpose}}",
+    "dualApprovalThreshold": 2,
+    "requiresTrusteeApproval": true
+  },
+  "separationControls": {
+    "noCommingling": true,
+    "entityAccountsIndependent": true
+  }
+}

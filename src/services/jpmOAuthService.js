@@ -1,10 +1,13 @@
 import axios from 'axios';
-import { env } from '../config/env.js';
+import { env, getMissingOAuthConfig } from '../config/env.js';
 
 export async function fetchOAuthToken(requestId) {
-  if (!env.scope || !String(env.scope).trim()) {
-    const error = new Error('JPM_SCOPE is required');
+  const missing = getMissingOAuthConfig();
+  if (missing.length > 0) {
+    const error = new Error(`Missing required OAuth configuration: ${missing.join(', ')}`);
     error.statusCode = 400;
+    error.publicMessage = 'OAuth configuration is incomplete';
+    error.validationErrors = missing.map((key) => `${key} is required.`);
     throw error;
   }
 

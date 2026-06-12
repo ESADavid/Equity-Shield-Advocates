@@ -10,7 +10,8 @@ export function notFoundHandler(req, res) {
 }
 
 export function errorHandler(err, req, res, next) {
-  const statusCode = err.statusCode || err.status || 500;
+  const isMalformedJson = err?.type === 'entity.parse.failed' || err instanceof SyntaxError;
+  const statusCode = isMalformedJson ? 400 : (err.statusCode || err.status || 500);
 
   logger.error('Request failed', {
     requestId: req.requestId,
@@ -24,7 +25,9 @@ export function errorHandler(err, req, res, next) {
 
   const payload = {
     ok: false,
-    error: err.publicMessage || err.message || 'Internal Server Error',
+    error: isMalformedJson
+      ? 'Malformed JSON body'
+      : (err.publicMessage || err.message || 'Internal Server Error'),
     requestId: req.requestId
   };
 

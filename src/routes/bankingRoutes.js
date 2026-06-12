@@ -6,6 +6,18 @@ import { listTransactions } from '../services/transactionsService.js';
 
 const router = Router();
 
+function handleValidationError(err, req, res, next) {
+  if (err.validationErrors) {
+    return res.status(400).json({
+      ok: false,
+      error: err.publicMessage || 'Validation failed',
+      details: err.validationErrors,
+      requestId: req.requestId
+    });
+  }
+  return next(err);
+}
+
 router.post('/setup', (req, res, next) => {
   try {
     const plan = buildBankingSetupPlan(req.body);
@@ -15,15 +27,7 @@ router.post('/setup', (req, res, next) => {
       requestId: req.requestId
     });
   } catch (err) {
-    if (err.validationErrors) {
-      return res.status(400).json({
-        ok: false,
-        error: err.publicMessage || 'Validation failed',
-        details: err.validationErrors,
-        requestId: req.requestId
-      });
-    }
-    return next(err);
+    return handleValidationError(err, req, res, next);
   }
 });
 
@@ -36,15 +40,7 @@ router.post('/setup/family-trust', (req, res, next) => {
       requestId: req.requestId
     });
   } catch (err) {
-    if (err.validationErrors) {
-      return res.status(400).json({
-        ok: false,
-        error: err.publicMessage || 'Validation failed',
-        details: err.validationErrors,
-        requestId: req.requestId
-      });
-    }
-    return next(err);
+    return handleValidationError(err, req, res, next);
   }
 });
 
@@ -70,16 +66,19 @@ router.get('/transactions', authGuard, (req, res, next) => {
       requestId: req.requestId
     });
   } catch (err) {
-    if (err.validationErrors) {
-      return res.status(400).json({
-        ok: false,
-        error: err.publicMessage || 'Validation failed',
-        details: err.validationErrors,
-        requestId: req.requestId
-      });
-    }
-    return next(err);
+    return handleValidationError(err, req, res, next);
   }
+});
+
+router.use((err, req, res, next) => {
+  if (err?.type === 'entity.parse.failed') {
+    return res.status(400).json({
+      ok: false,
+      error: 'Malformed JSON body',
+      requestId: req.requestId
+    });
+  }
+  return next(err);
 });
 
 export default router;

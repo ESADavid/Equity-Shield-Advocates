@@ -1,0 +1,17 @@
+{
+  "entityName": "Acme LLC",
+  "ein": "12-3456789",
+  "authorizedSigners": [
+    {
+      "name": "Jane Doe",
+      "title": "CEO",
+      "email": "jane.doe@acme.example"
+    }
+  ],
+  "accounts": [
+    {
+      "type": "operating",
+      "initialDeposit": 5000
+    }
+  ]
+}
