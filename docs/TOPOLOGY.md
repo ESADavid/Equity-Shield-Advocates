@@ -45,6 +45,7 @@ flowchart TD
 ## Request Path Topology
 
 ### 1) Health
+
 - `GET /health`
 - Path:
   1. Client request
@@ -53,6 +54,7 @@ flowchart TD
 - No auth required
 
 ### 2) OAuth Token Flow
+
 - `POST /api/oauth/token`
 - Path:
   1. Route validation/dispatch
@@ -64,6 +66,7 @@ flowchart TD
   - 400/5xx mapped for upstream failures
 
 ### 3) Banking Setup
+
 - `POST /api/banking/setup`
 - Path:
   1. JSON payload parsed by Express
@@ -72,6 +75,7 @@ flowchart TD
 - Malformed JSON never reaches service logic; it fails at parser with 400
 
 ### 4) Protected Ping
+
 - `GET /api/jpm/ping`
 - Path:
   1. `authGuard` checks either:
@@ -80,6 +84,7 @@ flowchart TD
   2. If valid, route executes; otherwise returns 401
 
 ### 5) AI Endpoints
+
 - `/api/ai/*` routes fan into AI analysis/predict/report flows
 - HTTP API remains in Express while analysis logic is in Python modules/tests present in repo
 
@@ -102,5 +107,6 @@ flowchart TD
 ## Notes for Windows Shell Reliability
 
 PowerShell inline escaping for `curl.exe -d "{...}"` is fragile. Prefer:
+
 - PowerShell hashtables + `ConvertTo-Json`
 - Then pass generated JSON as body to avoid malformed payload parsing errors

@@ -1,3 +1,5 @@
+"""Unit tests for ai_predictive forecasting utilities."""
+
 import unittest
 
 from ai_predictive import (
