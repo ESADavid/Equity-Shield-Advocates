@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, RequestHandler } from 'express';
 import cors from 'cors';
 import path from 'node:path';
 import basicAuth from 'express-basic-auth';
@@ -64,7 +64,11 @@ app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 app.use(express.json());
 app.use(
   morgan('combined', {
-    stream: { write: (msg: string) => logger.info(msg.trim()) },
+    stream: {
+      write: (message: string) => {
+        logger.info(message.trim());
+      },
+    },
   })
 );
 

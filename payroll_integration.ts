@@ -156,9 +156,9 @@ class PayrollIntegration {
     try {
       // Simulate async call to banking API for transaction status
       await new Promise((resolve) => setTimeout(resolve, 500));
-      // For demo, randomly assign status
+// For demo, randomly assign status
       const statuses = ['pending', 'completed', 'failed'];
-      const status = statuses[Math.floor(Math.random() * statuses.length)];
+      const status = statuses[Math.floor(Math.random() * statuses.length)] as string;
       return { success: true, status };
     } catch (error) {
       /* console.error('Error fetching transaction status:', error); */

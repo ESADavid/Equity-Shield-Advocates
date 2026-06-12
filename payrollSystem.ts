@@ -117,13 +117,16 @@ export class PayrollSystem {
     info(`Employee updated: ${employee.name} (${employee.id})`);
   }
 
-  deleteEmployee(id: string): void {
+deleteEmployee(id: string): void {
     const index = this.employees.findIndex((e) => e.id === id);
     if (index === -1) {
       throw new Error('Employee not found');
     }
 
     const employee = this.employees[index];
+    if (!employee) {
+      throw new Error('Employee not found');
+    }
     this.employees.splice(index, 1);
     info(`Employee deleted: ${employee.name} (${employee.id})`);
   }
@@ -166,7 +169,7 @@ export class PayrollSystem {
     const taxAmount = grossPay * taxRate;
     const netPay = grossPay - taxAmount - deductions;
 
-    return {
+return {
       employeeId: employee.id,
       name: employee.name,
       position: employee.position,
@@ -179,8 +182,8 @@ export class PayrollSystem {
       grossPay,
       taxAmount,
       netPay,
-      accountNumber: employee.accountNumber,
-      routingNumber: employee.routingNumber,
+      accountNumber: employee.accountNumber ?? '',
+      routingNumber: employee.routingNumber ?? '',
       payDate,
     };
   }

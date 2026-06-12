@@ -55,60 +55,60 @@ interface IPerformanceDataInput {
 }
 
 // Service return types
-interface OnboardResult {
+export interface OnboardResult {
   success: boolean;
   partnerId?: string;
   message?: string;
   error?: string;
 }
 
-interface GetPartnersResult {
+export interface GetPartnersResult {
   success: boolean;
   partners?: IPartner[];
   count?: number;
   error?: string;
 }
 
-interface GetPartnerResult {
+export interface GetPartnerResult {
   success: boolean;
   partner?: IPartner;
   error?: string;
 }
 
-interface ActivateResult {
+export interface ActivateResult {
   success: boolean;
   message?: string;
   error?: string;
 }
 
-interface AssignProjectResult {
+export interface AssignProjectResult {
   success: boolean;
   projectId?: string;
   error?: string;
 }
 
-interface UpdateProjectStatusResult {
+export interface UpdateProjectStatusResult {
   success: boolean;
   message?: string;
   error?: string;
 }
 
-interface LogCommunicationResult {
+export interface LogCommunicationResult {
   success: boolean;
   error?: string;
 }
 
-interface UpdatePerformanceResult {
+export interface UpdatePerformanceResult {
   success: boolean;
   error?: string;
 }
 
-interface UpdateWorkflowResult {
+export interface UpdateWorkflowResult {
   success: boolean;
   error?: string;
 }
 
-interface GetStatisticsResult {
+export interface GetStatisticsResult {
   success: boolean;
   stats?: {
     totalPartners: number;
@@ -119,7 +119,7 @@ interface GetStatisticsResult {
   error?: string;
 }
 
-interface HealthStatus {
+export interface HealthStatus {
   status: string;
   mode: string;
 }
@@ -158,8 +158,8 @@ export default class PartnerCoordinationService {
     try {
       const partners = await Partner.find(filters as mongoose.FilterQuery<IPartner>).limit(50);
       info(`Found ${partners.length} partners`);
-      // Convert mongoose documents to plain objects
-      const partnersList = partners.map(p => p.toObject()) as unknown as IPartner[];
+// Convert mongoose documents to plain objects
+      const partnersList = partners.map((p: mongoose.Document) => p.toObject()) as unknown as IPartner[];
       return { success: true, partners: partnersList, count: partners.length };
     } catch (err) {
       error('Get partners failed:', err);
@@ -243,8 +243,8 @@ export default class PartnerCoordinationService {
       if (!partner) return { success: false, error: 'Project not found' };
 
       const projectsArray = partner.projects as unknown as IProject[];
-      const projectIndex = projectsArray.findIndex(
-        (p) => p.projectId === projectId
+const projectIndex = projectsArray.findIndex(
+        (p: IProject) => p.projectId === projectId
       );
       if (projectIndex === -1)
         return { success: false, error: 'Project not found' };

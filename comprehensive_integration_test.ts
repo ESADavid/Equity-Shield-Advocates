@@ -4,17 +4,8 @@
  */
 /* eslint-disable no-console */
 
-import crypto from 'crypto';
-import {
-  loginOverrideManager,
-  registerUser,
-  authenticateUser,
-  changePassword,
-  enableMFA,
-  verifyMFAToken,
-  deactivateUser,
-  validateToken,
-} from './auth/login_override.js';
+// Note: Auth imports are used via dynamic import in test functions
+// import { validateToken } from './auth/login_override.js';
 
 type UserId = string;
 type AccountId = string;
@@ -22,7 +13,9 @@ type Amount = number;
 type AccountType = string;
 type Reason = string;
 type TestName = string;
-type TokenValidationResult = {
+
+// Export type for TokenValidationResult (used in other files)
+export type TokenValidationResult = {
   valid: boolean;
   user?: {
     userId: string;
@@ -41,6 +34,9 @@ interface Account {
   freezeReason?: string;
   frozenAt?: Date;
 }
+
+// Re-export types for type compatibility
+export type { AccountId, UserId, Amount, AccountType, Reason, TestName };
 
 // Interface for Transaction
 interface Transaction {
@@ -204,13 +200,14 @@ class TestResults {
     this.errors.push({ test: testName, error });
   }
 
-  summary(): void {
+summary(): void {
     const total = this.passed + this.failed;
     const successRate = total > 0 ? ((this.passed / total) * 100).toFixed(2) : '0.00';
+    console.log(`Test Results: ${this.passed}/${total} passed (${successRate}%)`);
 
     if (this.errors.length > 0) {
-      this.errors.forEach((err, index) => {
-        const errorMessage = err.error.message || 'Unknown error';
+      this.errors.forEach((err) => {
+        console.log(`Error: ${err.error.message || 'Unknown error'}`);
       });
     }
   }

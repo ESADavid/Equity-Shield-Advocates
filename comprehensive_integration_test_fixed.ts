@@ -4,9 +4,9 @@
  * Extension changed to .ts for proper TypeScript support
  */
 
-const testPassed = () => {};
-const logPass = () => {};
-const logFail = () => {};
+const testPassedFixed_v2 = () => {};
+const logPassFixed = () => {};
+const logFailFixed = () => {};
 
 // Types
 interface Account {
@@ -165,9 +165,9 @@ class TestResults {
   failed: number = 0;
   errors: TestError[] = [];
 
-  logPass(): void {
+logPass(): void {
     this.passed++;
-    logPass();
+    logPassFixed();
   }
 
   /**
@@ -177,7 +177,7 @@ class TestResults {
   logFail(testName: string, error: Error): void {
     this.failed++;
     this.errors.push({ test: testName, error });
-    logFail();
+    logFailFixed();
   }
 
   summary(): void {

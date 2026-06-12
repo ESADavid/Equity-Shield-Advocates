@@ -24,8 +24,8 @@ export function calculatePayrollForEmployee(
   const taxRate = overrides?.taxRate ?? employee.taxRate;
   const deductions = overrides?.deductions ?? employee.deductions;
   const bonuses = overrides?.bonuses ?? employee.bonuses;
-  const payPeriod =
-    overrides?.payPeriod ?? new Date().toISOString().split('T')[0];
+const payPeriod =
+    (overrides?.payPeriod ?? new Date().toISOString().split('T')[0]) || new Date().toISOString().slice(0, 10);
 
   // Calculate regular pay
   const regularPay = hoursWorked * hourlyRate;
@@ -53,7 +53,7 @@ export function calculatePayrollForEmployee(
     bonuses,
     netPay: Math.round(netPay * 100) / 100,
     payPeriod,
-    calculatedAt: new Date().toISOString(),
+calculatedAt: (new Date().toISOString() as string) || '',
   };
 }
 
@@ -62,7 +62,7 @@ export function calculatePayrollForEmployee(
  */
 export function calculateSalariedPayroll(
   employee: Employee,
-  payPeriod: string = new Date().toISOString().split('T')[0]
+  payPeriod: string = (new Date().toISOString().split('T')[0] || new Date().toISOString().slice(0, 10))
 ): PayrollCalculation {
   if (!employee.salary) {
     throw new Error('Employee does not have a salary defined');
@@ -79,10 +79,10 @@ export function calculateSalariedPayroll(
     grossPay: Math.round(grossPay * 100) / 100,
     taxAmount: Math.round(taxAmount * 100) / 100,
     deductions: employee.deductions,
-    bonuses: employee.bonuses,
+bonuses: employee.bonuses,
     netPay: Math.round(netPay * 100) / 100,
     payPeriod,
-    calculatedAt: new Date().toISOString(),
+    calculatedAt: (new Date().toISOString() as string) || '',
   };
 }
 
@@ -98,7 +98,7 @@ export function isSalariedEmployee(employee: Employee): boolean {
  */
 export function calculatePayrollSummary(
   employees: Employee[],
-  payPeriod: string = new Date().toISOString().split('T')[0]
+  payPeriod: string = (new Date().toISOString().split('T')[0] || new Date().toISOString().slice(0, 10))
 ) {
   const calculations = employees.map((employee) => {
     if (isSalariedEmployee(employee)) {
