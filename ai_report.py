@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import csv
 import io
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, Dict, List
 
 
@@ -25,7 +25,7 @@ def generate_text_report(
     risk_result: Dict[str, Any],
 ) -> str:
     """Generate a human-readable multi-section report from analysis outputs."""
-    timestamp = datetime.utcnow().isoformat() + "Z"
+    timestamp = datetime.now(UTC).isoformat().replace("+00:00", "Z")
 
     metrics = _safe_get(analysis_result, "metrics", {})
     sector = _safe_get(analysis_result, "sector", {})
@@ -104,7 +104,7 @@ def generate_json_report(
     """Generate a JSON-ready report payload containing metadata and sections."""
     return {
         "report_metadata": {
-            "generated_at": datetime.utcnow().isoformat() + "Z",
+            "generated_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
             "report_type": "ai_enhancement_summary",
         },
         "analysis": analysis_result,

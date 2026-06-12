@@ -63,3 +63,30 @@ curl -i http://localhost:8080/api/jpm/ping
 ```bash
 curl -i http://localhost:8080/api/jpm/ping -H "x-api-key: <INTERNAL_API_KEY>"
 ```
+
+## 9) Unauthorized Transactions List
+
+```bash
+curl -i "http://localhost:8080/api/banking/transactions"
+```
+
+## 10) Authorized Transactions List
+
+```bash
+curl -i "http://localhost:8080/api/banking/transactions" \
+  -H "x-api-key: <INTERNAL_API_KEY>"
+```
+
+## 11) Authorized Transactions List With Filters
+
+```bash
+curl -i "http://localhost:8080/api/banking/transactions?accountId=acct_operating_001&type=credit&minAmount=1000&limit=5" \
+  -H "x-api-key: <INTERNAL_API_KEY>"
+```
+
+## 12) Transactions Invalid Amount Range
+
+```bash
+curl -i "http://localhost:8080/api/banking/transactions?minAmount=5000&maxAmount=100" \
+  -H "x-api-key: <INTERNAL_API_KEY>"
+```

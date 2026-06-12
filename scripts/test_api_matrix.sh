@@ -27,3 +27,22 @@ echo "5) Authorized ping"
 curl -i "$BASE_URL/api/jpm/ping" \
   -H "x-api-key: ${INTERNAL_API_KEY:-missing}"
 echo -e "\n"
+
+echo "6) Unauthorized transactions list"
+curl -i "$BASE_URL/api/banking/transactions"
+echo -e "\n"
+
+echo "7) Authorized transactions list"
+curl -i "$BASE_URL/api/banking/transactions" \
+  -H "x-api-key: ${INTERNAL_API_KEY:-missing}"
+echo -e "\n"
+
+echo "8) Authorized transactions list with filters"
+curl -i "$BASE_URL/api/banking/transactions?accountId=acct_operating_001&type=credit&minAmount=1000&limit=5" \
+  -H "x-api-key: ${INTERNAL_API_KEY:-missing}"
+echo -e "\n"
+
+echo "9) Transactions invalid amount range"
+curl -i "$BASE_URL/api/banking/transactions?minAmount=5000&maxAmount=100" \
+  -H "x-api-key: ${INTERNAL_API_KEY:-missing}"
+echo -e "\n"
