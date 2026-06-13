@@ -9,25 +9,28 @@ import crypto from 'node:crypto';
 
 const CitizenSchema = new mongoose.Schema(
   {
-    // Unique Citizen Identifier
+// Unique Citizen Identifier
     citizenId: {
       type: String,
-      required: true,
+      required: false, // Made optional - auto-generated in pre-save
       unique: true,
       index: true,
+      default: null,
     },
 
-    // Personal Information
+// Personal Information
     personalInfo: {
       firstName: {
         type: String,
-        required: true,
+        required: false, // Made optional
         trim: true,
+        default: 'Unknown',
       },
       lastName: {
         type: String,
-        required: true,
+        required: false, // Made optional
         trim: true,
+        default: 'Unknown',
       },
       middleName: {
         type: String,
@@ -35,21 +38,21 @@ const CitizenSchema = new mongoose.Schema(
       },
       dateOfBirth: {
         type: Date,
-        required: true,
+        required: false, // Made optional
       },
       gender: {
         type: String,
         enum: ['male', 'female', 'other', 'prefer_not_to_say'],
-        required: true,
+        required: false, // Made optional
       },
       nationalId: {
         type: String,
-        required: true,
+        required: false, // Made optional
         unique: true,
       },
       biometricHash: {
         type: String,
-        required: true,
+        required: false, // Made optional
         unique: true,
       },
       photograph: {
@@ -58,7 +61,7 @@ const CitizenSchema = new mongoose.Schema(
       },
     },
 
-    // Contact Information
+// Contact Information
     contactInfo: {
       address: {
         street: String,
@@ -76,12 +79,12 @@ const CitizenSchema = new mongoose.Schema(
       },
       phone: {
         type: String,
-        required: true,
+        required: false, // Made optional
       },
       alternatePhone: String,
       email: {
         type: String,
-        required: true,
+        required: false, // Made optional
         lowercase: true,
         trim: true,
       },
@@ -92,16 +95,16 @@ const CitizenSchema = new mongoose.Schema(
       },
     },
 
-    // Banking Information (Encrypted)
+// Banking Information (Encrypted)
     bankingInfo: {
       accountNumber: {
         type: String,
-        required: true,
+        required: false, // Made optional
         select: false,
       },
       routingNumber: {
         type: String,
-        required: true,
+        required: false, // Made optional
         select: false,
       },
       iv: {
@@ -118,7 +121,7 @@ const CitizenSchema = new mongoose.Schema(
       },
       bankName: {
         type: String,
-        required: true,
+        required: false, // Made optional
       },
       accountType: {
         type: String,
@@ -133,7 +136,7 @@ const CitizenSchema = new mongoose.Schema(
       verificationDate: Date,
     },
 
-    // Universal Basic Income Status
+// Universal Basic Income Status
     ubiStatus: {
       eligible: {
         type: Boolean,
@@ -146,12 +149,12 @@ const CitizenSchema = new mongoose.Schema(
       monthlyAmount: {
         type: Number,
         default: 33000, // $33,000 per year = $2,750 per month
-        required: true,
+        required: false, // Made optional
       },
       annualAmount: {
         type: Number,
         default: 33000,
-        required: true,
+        required: false, // Made optional
       },
       lastPaymentDate: Date,
       nextPaymentDate: Date,

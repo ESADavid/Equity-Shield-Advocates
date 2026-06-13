@@ -955,3 +955,37 @@
 {"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-11T19:05:05.567Z"}
 {"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-11T19:05:05.695Z"}
 {"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-11T19:05:05.697Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:18:00.302Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:18:00.307Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:18:02.378Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:18:02.381Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:18:02.286Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:18:02.301Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:18:06.478Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:18:06.483Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:27:41.316Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:27:41.320Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:27:42.216Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:27:42.217Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:27:45.167Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:27:45.168Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:27:48.183Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:27:48.184Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:40:34.181Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:40:34.183Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:40:36.429Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:40:36.431Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:40:44.694Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:40:44.695Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T08:40:45.703Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T08:40:45.705Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T09:09:02.894Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T09:09:02.895Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T09:09:02.945Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T09:09:02.947Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T09:09:06.324Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T09:09:06.325Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T09:09:07.352Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T09:09:07.353Z"}
+{"level":"warn","message":"Email service disabled due to incomplete configuration","service":"email-service","timestamp":"2026-06-13T15:53:53.455Z"}
+{"count":2,"level":"info","message":"Email templates loaded","service":"email-service","timestamp":"2026-06-13T15:53:53.458Z"}

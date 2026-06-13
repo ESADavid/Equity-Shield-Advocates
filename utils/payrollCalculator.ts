@@ -51,9 +51,9 @@ const payPeriod =
     taxAmount: Math.round(taxAmount * 100) / 100,
     deductions,
     bonuses,
-    netPay: Math.round(netPay * 100) / 100,
+netPay: Math.round(netPay * 100) / 100,
     payPeriod,
-calculatedAt: (new Date().toISOString() as string) || '',
+    calculatedAt: new Date().toISOString(),
   };
 }
 
@@ -78,11 +78,11 @@ export function calculateSalariedPayroll(
     overtimePay: 0, // Salaried employees don't get overtime
     grossPay: Math.round(grossPay * 100) / 100,
     taxAmount: Math.round(taxAmount * 100) / 100,
-    deductions: employee.deductions,
-bonuses: employee.bonuses,
+deductions: employee.deductions,
+    bonuses: employee.bonuses,
     netPay: Math.round(netPay * 100) / 100,
     payPeriod,
-    calculatedAt: (new Date().toISOString() as string) || '',
+    calculatedAt: new Date().toISOString(),
   };
 }
 

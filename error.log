@@ -31,3 +31,11 @@
 2026-06-11T19:05:32.991Z [ERROR]: MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
 2026-06-11T19:05:35.724Z [ERROR]: MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
 2026-06-11T19:05:35.864Z [ERROR]: MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+2026-06-13T08:18:00.996Z [ERROR]: Dashboard HTML file not found
+2026-06-13T08:18:03.477Z [ERROR]: Dashboard HTML file not found
+2026-06-13T08:27:42.163Z [ERROR]: Dashboard HTML file not found
+2026-06-13T08:27:42.643Z [ERROR]: Dashboard HTML file not found
+2026-06-13T08:40:34.993Z [ERROR]: Dashboard HTML file not found
+2026-06-13T08:40:37.865Z [ERROR]: Dashboard HTML file not found
+2026-06-13T09:09:03.910Z [ERROR]: Dashboard HTML file not found
+2026-06-13T09:09:04.274Z [ERROR]: Dashboard HTML file not found

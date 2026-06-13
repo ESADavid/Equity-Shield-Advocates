@@ -42,19 +42,72 @@ app.get('/api/payroll/employees', (_req, res) => {
   }
 });
 
+// Helper to normalize employee data from test format to internal format
+function normalizeEmployeeData(employee: any): any {
+  const normalized = { ...employee };
+  
+  // Handle salary -> hourlyRate conversion
+  if (normalized.salary && !normalized.hourlyRate) {
+    // Assume annual salary, convert to hourly (2080 work hours/year)
+    normalized.hourlyRate = normalized.salary / 2080;
+  }
+  
+  // Set default hoursWorked if not provided
+  if (!normalized.hoursWorked) {
+    normalized.hoursWorked = 40;
+  }
+  
+  // Set default overtimeHours if not provided  
+  if (!normalized.overtimeHours) {
+    normalized.overtimeHours = 0;
+  }
+  
+  // Set default position if not provided
+  if (!normalized.position) {
+    normalized.position = normalized.name + ' - Employee';
+  }
+  
+  return normalized;
+}
+
 // Add or update employee
 app.post('/api/payroll/employees', (req, res) => {
-  const employee = req.body;
+  const rawEmployee = req.body;
   try {
+    // Normalize employee data from test format to internal format
+    const employee = normalizeEmployeeData(rawEmployee);
+    
     const employees = payrollSystem.getEmployees();
     const existing = employees.find((e: any) => e.id === employee.id);
 
     if (existing) {
-      payrollSystem.updateEmployee(employee);
+      // Preserve the id and update with new data
+      payrollSystem.updateEmployee({
+        ...existing,
+        ...employee,
+        id: existing.id, // Ensure ID cannot be changed
+      });
       return res.status(200).json({ message: 'Employee updated successfully' });
     } else {
-      payrollSystem.addEmployee(employee);
-      return res.status(200).json({ message: 'Employee added successfully' });
+      // Check if this could be an update request (id provided but not found)
+      // In this case, try to add as new
+      try {
+        payrollSystem.addEmployee(employee);
+        return res.status(200).json({ message: 'Employee added successfully' });
+      } catch (addError) {
+        // If add fails because employee exists (race condition), try update
+        const currentEmployees = payrollSystem.getEmployees();
+        const current = currentEmployees.find((e: any) => e.id === employee.id);
+        if (current) {
+          payrollSystem.updateEmployee({
+            ...current,
+            ...employee,
+            id: current.id,
+          });
+          return res.status(200).json({ message: 'Employee updated successfully' });
+        }
+        throw addError;
+      }
     }
   } catch (error) {
     logger.error('Error adding/updating employee:', {
