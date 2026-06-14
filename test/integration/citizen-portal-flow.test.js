@@ -4,25 +4,39 @@
  */
 
 import mongoose from 'mongoose';
+import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import CitizenPortalService from '../../services/citizenPortalService.js';
 import Citizen from '../../models/Citizen.js';
 
 describe('Citizen Portal Integration Flow', () => {
+  let mongoServer;
   let portalService;
   let testCitizenId;
 
   beforeAll(async () => {
+    // Start MongoDB memory server for testing
+    mongoServer = await MongoMemoryReplSet.create({
+      replSet: { count: 1 }
+    });
+    const mongoUri = mongoServer.getUri();
+    
     // Connect to MongoDB test database before running tests
-    await mongoose.connect('mongodb://localhost:27017/test', {
+    await mongoose.connect(mongoUri, {
       bufferCommands: false,
     });
     portalService = new CitizenPortalService();
-  }, 15000);
+  }, 30000);
 
   afterAll(async () => {
     // Disconnect from MongoDB after all tests complete
-    await mongoose.connection.dropDatabase();
-    await mongoose.disconnect();
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.connection.dropDatabase();
+      await mongoose.disconnect();
+    }
+    // Stop the in-memory MongoDB server
+    if (mongoServer) {
+      await mongoServer.stop();
+    }
   });
 
   describe('Citizen Registration Flow', () => {

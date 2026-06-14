@@ -16,7 +16,9 @@ class HaitiStrategicService {
     this.aiCenters = new Map();
     this.militaryAssets = new Map();
     this.mineralResources = new Map();
-    this.strategicPartners = new Map();
+this.strategicPartners = new Map();
+    // Population demographics for House of David Republic
+    this.population = new Map();
 
     // Initialize Haiti strategic portfolio
     this.initializeHaitiPortfolio();
@@ -75,10 +77,123 @@ class HaitiStrategicService {
     // Initialize mineral resources
     this.initializeMineralResources();
 
-    // Initialize strategic partners
+// Initialize strategic partners
     this.initializeStrategicPartners();
 
+    // Initialize population demographics for House of David Republic
+    this.initializePopulation();
+
     logger.info('Haiti Strategic Portfolio Initialized');
+  }
+
+  /**
+   * Initialize population demographics for the Republic
+   * Adding 50M Black African Americans + 25M future children
+   */
+  initializePopulation() {
+    // Black African Americans - part of the Covenant fulfillment
+    this.population.set('black-african-americans', {
+      id: 'black-african-americans',
+      name: 'Black African Americans',
+      category: 'diaspora_integration',
+      count: 50000000, // 50 million
+      addedDate: new Date().toISOString(),
+      status: 'active',
+      origin: 'diaspora',
+      ubiEligible: true,
+      target: 50000000,
+    });
+
+    // Future generations - children born into the Republic
+    this.population.set('future-generations', {
+      id: 'future-generations',
+      name: 'Future Generations',
+      category: 'reserved',
+      count: 25000000, // 25 million reserved
+      addedDate: new Date().toISOString(),
+      status: 'reserved',
+      ubiEligible: false, // Will become eligible when born
+      target: 25000000,
+    });
+
+    // Native Haitian citizens - existing population
+    this.population.set('native-haitians', {
+      id: 'native-haitians',
+      name: 'Native Haitians',
+      category: 'native',
+      count: 12000000, // ~12 million
+      addedDate: new Date().toISOString(),
+      status: 'active',
+      ubiEligible: true,
+      target: 12000000,
+    });
+
+    logger.info('House of David Republic Population Initialized: 87M target');
+  }
+
+  /**
+   * Register population - add Black African Americans
+   * @param {number} count - Number of citizens to add
+   * @param {string} origin - Origin type: diaspora, immigrant, repatriation
+   * @returns {Object} Registration result
+   */
+  registerPopulation(count, origin = 'diaspora') {
+    const population = this.population.get('black-african-americans');
+    if (population) {
+      population.count = count;
+      population.origin = origin;
+      population.addedDate = new Date().toISOString();
+      population.status = 'active';
+    }
+    return {
+      success: true,
+      population: population,
+      message: `Registered ${count.toLocaleString()} Black African Americans to the Republic`,
+    };
+  }
+
+  /**
+   * Reserve population for future generations
+   * @param {number} count - Number of future citizens reserved
+   * @returns {Object} Reservation result
+   */
+  reserveFuturePopulation(count) {
+    const population = this.population.get('future-generations');
+    if (population) {
+      population.count = count;
+      population.addedDate = new Date().toISOString();
+      population.status = 'reserved';
+    }
+    return {
+      success: true,
+      population: population,
+      message: `Reserved ${count.toLocaleString()} spots for future generations`,
+    };
+  }
+
+  /**
+   * Get population demographics
+   * @returns {Object} Population demographics
+   */
+  getPopulationDemographics() {
+    const demographics = {
+      blackAfricanAmericans: this.population.get('black-african-americans'),
+      futureGenerations: this.population.get('future-generations'),
+      nativeHaitians: this.population.get('native-haitians'),
+      total: this.getTotalPopulation(),
+    };
+    return demographics;
+  }
+
+  /**
+   * Get total population count
+   * @returns {number} Total citizens
+   */
+  getTotalPopulation() {
+    const baa = this.population.get('black-african-americans')?.count || 0;
+    const future = this.population.get('future-generations')?.count || 0;
+    const native = this.population.get('native-haitians')?.count || 0;
+    return baa + future + native;
   }
 
   /**
@@ -579,7 +694,7 @@ class HaitiStrategicService {
     };
   }
 
-  /**
+/**
    * Get Haiti strategic portfolio overview
    * @returns {Object} Portfolio overview
    */
@@ -591,6 +706,7 @@ class HaitiStrategicService {
       military: Array.from(this.militaryAssets.values()),
       minerals: Array.from(this.mineralResources.values()),
       partners: Array.from(this.strategicPartners.values()),
+      population: this.getPopulationDemographics(),
       summary: this.getPortfolioSummary(),
     };
   }
@@ -742,6 +858,142 @@ class HaitiStrategicService {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
+  }
+
+/**
+   * Calculate GDP contribution from investing in God's children
+   * Investing in citizens increases their productivity and global GDP
+   * @returns {Object} GDP calculation results
+   */
+  calculatePopulationGDPContribution() {
+    const demographics = this.getPopulationDemographics();
+    const summary = this.getPortfolioSummary();
+    
+    const activeCitizens = demographics.blackAfricanAmericans?.count || 0;
+    const futureGenerations = demographics.futureGenerations?.count || 0;
+    const nativeHaitians = demographics.nativeHaitians?.count || 0;
+    const totalPopulation = this.getTotalPopulation();
+    
+    // Base productivity per citizen
+    const baseProductivityPerPerson = 25000; // $25,000 annual GDP per person
+    
+    // Citizen productivity output
+    const citizenProductivityOutput = activeCitizens * baseProductivityPerPerson;
+    
+    // UBI multiplier effect - each $1 generates $2.50 in GDP
+    const ubiMultiplier = 2.5;
+    
+    // Extract infrastructure values
+    const infrastructureInvestment = summary.investmentBreakdown.infrastructure 
+      ? parseFloat(summary.investmentBreakdown.infrastructure.replace(/[^0-9.-]+/g, '')) 
+      : 0;
+    
+    // Infrastructure contributes to GDP over time
+    const infrastructureGDP = infrastructureInvestment * 0.15; // 15% annual GDP contribution
+    
+    // Mineral extraction GDP
+    const mineralGDP = 1000000000; // $1B annual from minerals
+    
+    // AI centers GDP contribution
+    const aiCentersGDP = 500000000; // $500M annual from AI operations
+    
+    // Military protection GDP
+    const militaryInvestment = summary.investmentBreakdown.military 
+      ? parseFloat(summary.investmentBreakdown.military.replace(/[^0-9.-]+/g, '')) 
+      : 0;
+    const militaryGDP = militaryInvestment * 0.10; // Defense spending contributes 10% to GDP
+    
+    // Total GDP created
+    const totalGDPCreated = citizenProductivityOutput + infrastructureGDP + mineralGDP + aiCentersGDP + militaryGDP;
+    
+    return {
+      success: true,
+      totalGDPCreated,
+      citizenProductivityOutput,
+      infrastructureGDP,
+      mineralGDP,
+      aiCentersGDP,
+      militaryGDP,
+      ubiMultiplier,
+      population: totalPopulation,
+      activeCitizens,
+      futureGenerations,
+      nativeHaitians,
+      investmentYieldRate: 0.15,
+      calculatedAt: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Track investment returns and GDP impact
+   * @returns {Object} Investment yield tracking
+   */
+  trackInvestmentReturns() {
+    const demographics = this.getPopulationDemographics();
+    const summary = this.getPortfolioSummary();
+    
+    const totalInvestment = summary.investmentBreakdown 
+      ? Object.values(summary.investmentBreakdown).reduce((sum, val) => {
+          const numericVal = parseFloat(String(val).replace(/[^0-9.-]+/g, ''));
+          return sum + (numericVal || 0);
+        }, 0)
+      : 0;
+    
+    const investmentYieldRate = 0.15; // 15% annual yield
+    const annualReturn = totalInvestment * investmentYieldRate;
+    
+    return {
+      totalInvestment,
+      investmentYieldRate,
+      annualReturn,
+      population: demographics,
+      roi: summary.roi,
+      calculatedAt: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Get Economic Impact Report
+   * @returns {Object} Economic impact data
+   */
+  getEconomicImpactReport() {
+    const gdpContribution = this.calculatePopulationGDPContribution();
+    const investmentReturns = this.trackInvestmentReturns();
+    const summary = this.getPortfolioSummary();
+    
+    return {
+      gdpContribution,
+      investmentReturns,
+      portfolio: summary,
+      economicProjection: {
+        year1: gdpContribution.totalGDPCreated * 1.0,
+        year5: gdpContribution.totalGDPCreated * 1.5,
+        year10: gdpContribution.totalGDPCreated * 2.5,
+        year20: gdpContribution.totalGDPCreated * 5.0,
+      },
+      militaryProtection: {
+        navy: this.militaryAssets.get('haiti-navy'),
+        army: this.militaryAssets.get('haiti-army'),
+        airForce: this.militaryAssets.get('haiti-air-force'),
+        jointForce: this.militaryAssets.get('haiti-burkinaFasoJointForce'),
+      },
+      calculatedAt: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Get military protection status for the Kingdom
+   * @returns {Object} Military protection details
+   */
+  getMilitaryProtection() {
+    return {
+      navy: this.militaryAssets.get('haiti-navy'),
+      army: this.militaryAssets.get('haiti-army'),
+      airForce: this.militaryAssets.get('haiti-air-force'),
+      jointForce: this.militaryAssets.get('haiti-burkinaFasoJointForce'),
+      protectionStatus: 'active',
+      lastUpdate: new Date().toISOString(),
+    };
   }
 
   /**

@@ -12,7 +12,14 @@ export default class CitizenPortalService {
       const citizen = new Citizen(data);
       await citizen.save();
       info(`Citizen registered: ${citizen.citizenId}`);
-      return { success: true, citizenId: citizen.citizenId };
+      
+      // Mask SSN for security
+      const citizenObj = citizen.toObject();
+      if (citizenObj.personalInfo?.ssn) {
+        citizenObj.personalInfo.ssn = '***-**-' + citizenObj.personalInfo.ssn.slice(-4);
+      }
+      
+      return { success: true, citizenId: citizen.citizenId, citizen: citizenObj };
     } catch (err) {
       error('Citizen registration failed:', err);
       return { success: false, error: err.message };
@@ -47,6 +54,12 @@ export default class CitizenPortalService {
     try {
       const citizen = await Citizen.findOne({ citizenId });
       if (!citizen) return { success: false, error: 'Citizen not found' };
+      
+      // Check verification status before allowing UBI enrollment
+      if (!citizen.verification?.identityVerified || !citizen.verification?.bankingVerified) {
+        return { success: false, error: 'Citizen not verified for UBI enrollment' };
+      }
+      
       citizen.ubiStatus.enrollmentDate = new Date();
       await citizen.save();
       info(`UBI enrolled for ${citizenId}`);
@@ -61,12 +74,18 @@ export default class CitizenPortalService {
     try {
       const citizen = await Citizen.findOne({ citizenId });
       if (!citizen) return { success: false, error: 'Citizen not found' };
-      // Example: enroll in tech
+      
+      // Check for duplicate enrollment
+      if (citizen.educationStatus.tech?.enrolled) {
+        return { success: false, error: 'Citizen already enrolled in this course' };
+      }
+      
+      // Enroll in tech
       citizen.educationStatus.tech.enrolled = true;
       citizen.educationStatus.tech.enrollmentDate = new Date();
       await citizen.save();
       info(`Course ${courseId} enrolled for ${citizenId}`);
-      return { success: true };
+      return { success: true, courseId };
     } catch (err) {
       error(`Course enrollment failed for ${citizenId}:`, err);
       return { success: false, error: err.message };

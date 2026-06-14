@@ -134,9 +134,9 @@ const UBI_RATE = {
 };
 
 const ELIGIBILITY_CRITERIA = {
-  MIN_AGE: 18,
+  MIN_AGE: 0, // BIRTH RIGHT - UBI starts at birth, not age 18
   MAX_AGE: 120,
-  REQUIRED_RESIDENCY_MONTHS: 12,
+  REQUIRED_RESIDENCY_MONTHS: 0, // Birth right - no residency requirement
   CITIZENSHIP_TYPES: ['citizen', 'permanent_resident', 'asylum'],
 };
 
@@ -253,12 +253,14 @@ class UniversalBasicIncomeService {
       /** @type {CitizenDocument & {age: number; fullName: string}} */
       const citizenDoc = citizen;
       
-      // Check age using the virtual - force as number since TypeScript doesn't understand Mongoose virtuals
+// Check age using the virtual - force as number since TypeScript doesn't understand Mongoose virtuals
+      // BIRTH RIGHT: UBI is given at birth, age 0+ is eligible
       const age = Number(/** @type {number} */ (citizenDoc.age)) || 0;
       if (age < ELIGIBILITY_CRITERIA.MIN_AGE) {
+        // This should never happen since MIN_AGE is now 0 (birth right)
         return {
           eligible: false,
-          reason: `Must be at least ${ELIGIBILITY_CRITERIA.MIN_AGE} years old`,
+          reason: 'Birth requires proper registration',
           currentAge: age,
         };
       }

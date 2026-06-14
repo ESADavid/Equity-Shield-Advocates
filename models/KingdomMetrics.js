@@ -100,7 +100,7 @@ const KingdomMetricsSchema = new Schema(
         category: String,
       }],
     },
-    kingdomExpansion: {
+kingdomExpansion: {
       influence: {
         current: { type: Number, default: 1000 },
         growth: { type: Number, default: 0 },
@@ -120,6 +120,45 @@ const KingdomMetricsSchema = new Schema(
         current: { type: Number, default: 100 },
         growth: { type: Number, default: 0 },
         target: { type: Number, default: 10000 },
+        // Population demographics for House of David Republic
+        demographics: {
+          // Black African Americans - part of the Covenant fulfillment
+          blackAfricanAmericans: {
+            current: { type: Number, default: 0 },
+            addedDate: Date,
+            status: {
+              type: String,
+              enum: ['pending', 'active', 'integrated'],
+              default: 'pending',
+            },
+            origin: {
+              type: String,
+              enum: ['diaspora', 'immigrant', ' repatriation', 'born_citizen'],
+              default: 'diaspora',
+            },
+          },
+          // Future generations - children born into the Republic
+          futureGenerations: {
+            current: { type: Number, default: 0 },
+            reservedFor: { type: Number, default: 25000000 }, // 25 million reserved
+            addedDate: Date,
+            status: {
+              type: String,
+              enum: ['reserved', 'born', 'pending_birth'],
+              default: 'reserved',
+            },
+          },
+          // Native Haitian citizens
+          nativeHaitians: {
+            current: { type: Number, default: 12000000 }, // ~12 million
+            addedDate: Date,
+          },
+          // Total citizen count for UBI and governance
+          totalCitizens: {
+            current: { type: Number, default: 12000000 },
+            target: { type: Number, default: 87000000 }, // 50M + 25M + 12M = 87M target
+          },
+        },
       },
     },
     covenantFulfillment: {
@@ -198,7 +237,7 @@ const KingdomMetricsSchema = new Schema(
         applied: Boolean,
       }],
     },
-    financialKingdom: {
+financialKingdom: {
       totalAssets: { type: Number, default: 0 },
       monthlyRevenue: { type: Number, default: 0 },
       monthlyGiving: { type: Number, default: 0 },
@@ -207,6 +246,33 @@ const KingdomMetricsSchema = new Schema(
       financialFreedom: { type: Number, default: 100 },
       stewardshipScore: { type: Number, default: 85 },
       generosityIndex: { type: Number, default: 80 },
+    },
+    // GDP Investment Tracking - Investing in God's children increases Global GDP
+    globalGDPContribution: {
+      totalGDPCreated: { type: Number, default: 0 },
+      citizenProductivityOutput: { type: Number, default: 0 },
+      ubiMultiplierEffect: { type: Number, default: 2.5 }, // $2.50 GDP per $1 UBI spent
+      infrastructureGDP: { type: Number, default: 0 },
+      mineralExtractionGDP: { type: Number, default: 0 },
+      aiCentersGDP: { type: Number, default: 0 },
+      militaryProtectionGDP: { type: Number, default: 0 },
+      investmentYieldRate: { type: Number, default: 0.15 }, // 15% annual return
+      lastCalculationDate: Date,
+    },
+    // Military Protection for the Kingdom
+    militaryProtection: {
+      activeForce: { type: Number, default: 0 },
+      navyFleet: { type: Number, default: 0 },
+      airForceFleet: { type: Number, default: 0 },
+      armyForce: { type: Number, default: 0 },
+      jointForceBurkinaFaso: { type: Number, default: 0 },
+      protectionStatus: {
+        type: String,
+        enum: ['active', 'developing', 'planned'],
+        default: 'planned',
+      },
+      budgetAnnual: { type: Number, default: 0 },
+      lastEquipmentUpdate: Date,
     },
     spiritualKingdom: {
       prayerHours: { type: Number, default: 0 },
@@ -451,6 +517,70 @@ KingdomMetricsSchema.methods.expandKingdom = function (expansion) {
   return doc.save();
 };
 
+/**
+ * @typedef {Object} PopulationInput
+ * @property {number} [blackAfricanAmericans] - Add Black African Americans (Diaspora integration)
+ * @property {number} [futureGenerations] - Reserve for future children/born citizens
+ * @property {string} [origin] - Origin: diaspora, immigrant, repatriation
+ */
+
+/** @param {PopulationInput} population */
+KingdomMetricsSchema.methods.registerPopulation = function (population) {
+  /** @type {any} */
+  const doc = this;
+  
+  // Register Black African Americans
+  if (population.blackAfricanAmericans) {
+    doc.kingdomExpansion.people.demographics.blackAfricanAmericans.current = population.blackAfricanAmericans;
+    doc.kingdomExpansion.people.demographics.blackAfricanAmericans.addedDate = new Date();
+    doc.kingdomExpansion.people.demographics.blackAfricanAmericans.status = 'active';
+    if (population.origin) {
+      doc.kingdomExpansion.people.demographics.blackAfricanAmericans.origin = population.origin;
+    }
+  }
+  
+  // Register future generations
+  if (population.futureGenerations) {
+    doc.kingdomExpansion.people.demographics.futureGenerations.current = population.futureGenerations;
+    doc.kingdomExpansion.people.demographics.futureGenerations.addedDate = new Date();
+    doc.kingdomExpansion.people.demographics.futureGenerations.status = 'reserved';
+  }
+  
+  // Recalculate total citizens
+  const blackAAs = doc.kingdomExpansion.people.demographics.blackAfricanAmericans.current || 0;
+  const futureGens = doc.kingdomExpansion.people.demographics.futureGenerations.current || 0;
+  const nativeHaitians = doc.kingdomExpansion.people.demographics.nativeHaitians.current || 12000000;
+  
+  doc.kingdomExpansion.people.demographics.totalCitizens.current = nativeHaitians + blackAAs + futureGens;
+  doc.kingdomExpansion.people.current = doc.kingdomExpansion.people.demographics.totalCitizens.current;
+  
+  // Update the main people target for Covenant fulfillment
+  doc.kingdomExpansion.people.target = 87000000; // 50M + 25M + 12M = 87M
+  
+  return doc.save();
+};
+
+/**
+ * Get population demographics report
+ * @returns {Object} Population report
+ */
+KingdomMetricsSchema.methods.getPopulationReport = function () {
+  /** @type {any} */
+  const doc = this;
+  return {
+    demographics: doc.kingdomExpansion.people.demographics,
+    totalCitizens: doc.kingdomExpansion.people.demographics.totalCitizens.current,
+    target: doc.kingdomExpansion.people.demographics.totalCitizens.target,
+    covenantFulfillment: {
+      blackAfricanAmericans: doc.kingdomExpansion.people.demographics.blackAfricanAmericans.current,
+      futureGenerations: doc.kingdomExpansion.people.demographics.futureGenerations.current,
+      nativeHaitians: doc.kingdomExpansion.people.demographics.nativeHaitians.current,
+    },
+    status: doc.kingdomExpansion.people.demographics.blackAfricanAmericans.status,
+    lastUpdated: doc.updatedAt,
+  };
+};
+
 KingdomMetricsSchema.methods.getKingdomReport = function () {
   /** @type {any} */
   const doc = this;
@@ -464,6 +594,143 @@ KingdomMetricsSchema.methods.getKingdomReport = function () {
     financialMetrics: doc.financialKingdom,
     impact: doc.kingdomImpact,
     lastUpdated: doc.updatedAt,
+  };
+};
+
+/**
+ * Calculate GDP contribution from investing in God's children
+ * Investing in citizens increases their productivity and global GDP
+ * @returns {Object} GDP calculation results
+ */
+KingdomMetricsSchema.methods.calculateGDPContribution = function () {
+  /** @type {any} */
+  const doc = this;
+  
+  const population = doc.kingdomExpansion.people.demographics.totalCitizens.current || 0;
+  const activeCitizens = doc.kingdomExpansion.people.demographics.blackAfricanAmericans.current || 0;
+  const futureGenerations = doc.kingdomExpansion.people.demographics.futureGenerations.current || 0;
+  
+  // Base productivity per citizen (annual GDP contribution per person)
+  const baseProductivityPerPerson = 25000; // $25,000 annual productivity
+  
+  // UBI multiplier effect - each $1 in UBI generates $2.50 in GDP
+  const ubiMultiplier = doc.globalGDPContribution.ubiMultiplierEffect || 2.5;
+  
+  // Calculate citizen productivity output
+  const citizenProductivityOutput = activeCitizens * baseProductivityPerPerson;
+  
+  // Infrastructure GDP contribution (from investments)
+  const infrastructureGDP = doc.globalGDPContribution.infrastructureGDP || 0;
+  
+  // Mineral extraction GDP
+  const mineralGDP = doc.globalGDPContribution.mineralExtractionGDP || 0;
+  
+  // AI centers GDP contribution  
+  const aiGDP = doc.globalGDPContribution.aiCentersGDP || 0;
+  
+  // Military protection GDP (defense spending contributes to GDP)
+  const militaryGDP = doc.globalGDPContribution.militaryProtectionGDP || 0;
+  
+  // Total GDP created
+  const totalGDPCreated = citizenProductivityOutput + infrastructureGDP + mineralGDP + aiGDP + militaryGDP;
+  
+  // Update the metrics
+  doc.globalGDPContribution.totalGDPCreated = totalGDPCreated;
+  doc.globalGDPContribution.citizenProductivityOutput = citizenProductivityOutput;
+  doc.globalGDPContribution.lastCalculationDate = new Date();
+  
+  return {
+    totalGDPCreated,
+    citizenProductivityOutput,
+    infrastructureGDP,
+    mineralGDP,
+    aiGDP,
+    militaryGDP,
+    ubiMultiplier,
+    population,
+    activeCitizens,
+    futureGenerations,
+    investmentYieldRate: doc.globalGDPContribution.investmentYieldRate,
+    calculatedAt: new Date().toISOString(),
+  };
+};
+
+/**
+ * Record military protection forces for the Kingdom
+ * @param {Object} militaryData - Military force data
+ * @returns {Object} Update result
+ */
+KingdomMetricsSchema.methods.updateMilitaryProtection = function (militaryData) {
+  /** @type {any} */
+  const doc = this;
+  
+  if (militaryData.activeForce !== undefined) {
+    doc.militaryProtection.activeForce = militaryData.activeForce;
+  }
+  if (militaryData.navyFleet !== undefined) {
+    doc.militaryProtection.navyFleet = militaryData.navyFleet;
+  }
+  if (militaryData.airForceFleet !== undefined) {
+    doc.militaryProtection.airForceFleet = militaryData.airForceFleet;
+  }
+  if (militaryData.armyForce !== undefined) {
+    doc.militaryProtection.armyForce = militaryData.armyForce;
+  }
+  if (militaryData.jointForceBurkinaFaso !== undefined) {
+    doc.militaryProtection.jointForceBurkinaFaso = militaryData.jointForceBurkinaFaso;
+  }
+  if (militaryData.protectionStatus) {
+    doc.militaryProtection.protectionStatus = militaryData.protectionStatus;
+  }
+  if (militaryData.budgetAnnual) {
+    doc.militaryProtection.budgetAnnual = militaryData.budgetAnnual;
+  }
+  
+  doc.militaryProtection.lastEquipmentUpdate = new Date();
+  
+  // Military spending contributes to GDP
+  const defenseSpending = militaryData.budgetAnnual || 0;
+  doc.globalGDPContribution.militaryProtectionGDP = defenseSpending * 1.5; // Defense spending multiplier
+  
+  return {
+    success: true,
+    militaryProtection: doc.militaryProtection,
+    gdpContribution: doc.globalGDPContribution.militaryProtectionGDP,
+  };
+};
+
+/**
+ * Get GDP Investment Summary Report
+ * @returns {Object} GDP investment summary
+ */
+KingdomMetricsSchema.methods.getGDPInvestmentReport = function () {
+  /** @type {any} */
+  const doc = this;
+  
+  const gdpData = this.calculateGDPContribution();
+  
+  return {
+    summary: {
+      totalGDPCreated: doc.globalGDPContribution.totalGDPCreated,
+      citizenProductivityOutput: doc.globalGDPContribution.citizenProductivityOutput,
+      ubiMultiplierEffect: doc.globalGDPContribution.ubiMultiplierEffect,
+      investmentYieldRate: doc.globalGDPContribution.investmentYieldRate,
+      lastCalculationDate: doc.globalGDPContribution.lastCalculationDate,
+    },
+    breakdown: {
+      infrastructureGDP: doc.globalGDPContribution.infrastructureGDP,
+      mineralExtractionGDP: doc.globalGDPContribution.mineralExtractionGDP,
+      aiCentersGDP: doc.globalGDPContribution.aiCentersGDP,
+      militaryProtectionGDP: doc.globalGDPContribution.militaryProtectionGDP,
+    },
+    military: doc.militaryProtection,
+    population: {
+      total: doc.kingdomExpansion.people.demographics.totalCitizens.current,
+      active: doc.kingdomExpansion.people.demographics.blackAfricanAmericans.current,
+      future: doc.kingdomExpansion.people.demographics.futureGenerations.current,
+      native: doc.kingdomExpansion.people.demographics.nativeHaitians.current,
+    },
+    calculatedAt: new Date().toISOString(),
   };
 };
 

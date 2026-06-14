@@ -2,6 +2,48 @@
   "totalAnnualRevenue": 1233296387,
   "totalDailyRevenue": 3378894.210958904,
   "totalAssetsUnderManagement": 2470000000000000,
+  "globalGDPContribution": {
+    "totalGDPCreated": 1250000000000,
+    "citizenProductivityOutput": 1250000000000,
+    "ubiMultiplierEffect": 2.5,
+    "infrastructureGDP": 1125000000,
+    "mineralExtractionGDP": 1000000000,
+    "aiCentersGDP": 500000000,
+    "militaryProtectionGDP": 650000000,
+    "investmentYieldRate": 0.15,
+    "population": 87000000,
+    "activeCitizens": 50000000,
+    "futureGenerations": 25000000,
+    "nativeHaitians": 12000000,
+    "economicProjections": {
+      "year1": 1250000000000,
+      "year5": 1875000000000,
+      "year10": 3125000000000,
+      "year20": 6250000000000
+    }
+  },
+  "militaryProtection": {
+    "navy": {
+      "personnel": 5000,
+      "budget": 200000000,
+      "status": "planned"
+    },
+    "army": {
+      "personnel": 15000,
+      "budget": 150000000,
+      "status": "planned"
+    },
+    "airForce": {
+      "personnel": 3000,
+      "budget": 300000000,
+      "status": "planned"
+    },
+    "jointForceBurkinaFaso": {
+      "personnel": 5000,
+      "budget": 1000000000,
+      "status": "planned"
+    }
+  },
   "revenueStreams": {
     "Sample Repo": {
       "amount": 617090945,

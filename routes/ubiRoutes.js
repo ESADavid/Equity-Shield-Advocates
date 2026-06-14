@@ -14,9 +14,9 @@ const router = express.Router();
 router.get('/welcome', (req, res) => {
   res.json({
     message: 'Universal Basic Income System - Heaven on Earth',
-    mission: '$33,000/year per citizen',
+    mission: '$33,000/year per citizen - BIRTH RIGHT',
     rate: '$2,750/month',
-    eligibleAge: 18,
+    eligibleAge: 0, // BIRTH RIGHT - UBI starts at birth, not age 18
   });
 });
 

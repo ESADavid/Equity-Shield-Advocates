@@ -1,5 +1,5 @@
 export default {
-  testEnvironment: 'jsdom',
+  testEnvironment: 'node',
 
   transform: {
     '^.+\\.(js|jsx|ts|tsx|mjs)$': [
@@ -37,17 +37,15 @@ export default {
     '^middleware/(.*)$': '<rootDir>/middleware/$1.js',
     '^middleware/(.*).js$': '<rootDir>/middleware/$1.js',
     '^node-cron$': '<rootDir>/__mocks__/node-cron.js',
-    // Mock missing dependencies
     '^sinon$': '<rootDir>/__mocks__/sinon.js',
     '^puppeteer$': '<rootDir>/__mocks__/puppeteer.js',
-    // Mock non-existent paths
     '^../owlban_revenue_repo/(.*)$': '<rootDir>/__mocks__/$1.js',
     '^../../public/js/(.*)$': '<rootDir>/__mocks__/biometric-auth.js',
     '^../models/Item\\.js$': '<rootDir>/__mocks__/Item.js',
     '\\?(.*.(png|jpg|jpeg|gif|webp))': 'identity-obj-proxy',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(date-fns|@testing-library|bson|chai|uuid)/)'
+    'node_modules/(?!(@testing-library|date-fns|bson|chai|uuid|mongodb|mongodb-memory-server|mongodb-memory-server-core|whatwg-url|jsdom|node-fetch)/)'
   ],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testMatch: [
