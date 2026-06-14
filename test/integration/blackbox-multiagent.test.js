@@ -1,6 +1,6 @@
+// Use Jest globals directly - they're automatically available in Jest test environment
 import request from 'supertest';
 import app from '../../server-enhanced.js';
-import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 
 describe('Blackbox Multi-Agent API', () => {
   let server;

@@ -4,8 +4,8 @@ module.exports = {
       '@babel/preset-env',
       {
         targets: { node: 'current' },
-        // Keep ES modules for Jest
-        modules: false,
+        // Use 'auto' to let Babel detect CommonJS vs ESM
+        modules: 'auto',
       },
     ],
     '@babel/preset-typescript',
@@ -14,7 +14,7 @@ module.exports = {
     '@babel/plugin-transform-runtime',
     '@babel/plugin-transform-private-methods',
   ],
-  // Don't ignore node_modules - let Jest's transformIgnorePatterns handle it
+  // Force CommonJS for Jest test environment
   env: {
     test: {
       presets: [
@@ -22,8 +22,8 @@ module.exports = {
           '@babel/preset-env',
           {
             targets: { node: 'current' },
-            // Keep ES modules for Jest
-            modules: false,
+            // Force CommonJS for Jest tests to avoid ESM issues
+            modules: 'commonjs',
           },
         ],
         '@babel/preset-typescript',
@@ -31,8 +31,6 @@ module.exports = {
       plugins: [
         '@babel/plugin-transform-runtime',
         '@babel/plugin-transform-private-methods',
-        // Add dynamic import support for Jest
-        ['@babel/plugin-transform-modules-commonjs', { lazy: true }],
       ],
     },
   },

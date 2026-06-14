@@ -1,27 +1,13 @@
 export default {
   testEnvironment: 'node',
 
+  // Use babel-jest for better ESM/CommonJS interoperability
   transform: {
-    '^.+\\.(js|jsx|ts|tsx|mjs)$': [
-      '@swc/jest',
-      {
-        jsc: {
-          parser: {
-            syntax: 'typescript',
-            tsx: true,
-            decorators: true,
-            dynamicImport: true,
-          },
-          target: 'es2022',
-          transform: {
-            legacyDecorator: true,
-            decoratorMetadata: true,
-          },
-        },
-      },
-    ],
+    '^.+\\.(js|jsx|ts|tsx|mjs)$': ['babel-jest', { configFile: './babel.config.cjs' }],
   },
-  moduleNameMapper: {
+moduleNameMapper: {
+    '^server-enhanced\\.js$': '<rootDir>/__mocks__/server-enhanced.js',
+    '^server-enhanced$': '<rootDir>/__mocks__/server-enhanced.js',
     '^utils/loggerWrapper$': '<rootDir>/utils/loggerWrapper.js',
     '^utils/loggerWrapper\\.js$': '<rootDir>/utils/loggerWrapper.js',
     '^config/logger$': '<rootDir>/__mocks__/logger.js',
