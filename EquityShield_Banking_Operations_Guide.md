@@ -39,7 +39,7 @@ Set up distinct accounts to keep controls clean and reporting accurate:
 Use this baseline mapping at account opening to keep controls clean and reporting dimensions consistent:
 
 | Account | Primary Purpose | Owner Role | Required Controls | Reporting Tag |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | Operating Checking | Core business disbursements and vendor/AP activity | Treasury/Ops | MFA, approval thresholds, vendor verification | `OPERATING_OPEX` |
 | Reserve / Liquidity | Emergency runway and planned capital allocation | CFO/Treasury | Reserve floor policy, memo-required drawdowns, dual approval above threshold | `RESERVE_LIQUIDITY` |
 | Payroll Clearing | Isolated payroll prefunding and payroll debits | Payroll Admin + Treasury approver | Prefund-per-cycle only, account change verification, cycle exception review | `PAYROLL_CLEARING` |
@@ -78,7 +78,7 @@ Use Section 2 role assignments for ownership and approvals.
 ### 3.0 Workflow Ownership and Control Gates
 
 | Stage | Primary Owner | Required Approver | Control Gate | Go/No-Go Output |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | Pre-Acquisition | Initiator (Ops/AP) | Admin (Treasury/CFO) | Entity/signer validation complete | Approved to draft funding plan |
 | Funding Plan | Admin (Treasury/CFO) | Approver (Officer/Director) | Sources/uses balanced and reserve floor preserved | Approved to prefund project account |
 | EMD Release | Initiator (Ops/AP) | Approver (Officer/Director) | Escrow callback + dual approval + verified instructions | Approved to release EMD |

@@ -27,3 +27,9 @@
   go/no-go rules, and control-baseline checklist
 - [x] Build Section 4 Real Estate Acquisition/Project Account operating guide
   and shift downstream section numbering
+
+## Markdown Lint Remediation TODO
+
+- [x] Fix MD060 compact table pipe spacing in `EquityShield_Banking_Operations_Guide.md`
+- [x] Fix MD024 duplicate headings in `tests/curl_matrix.md`
+- [x] Re-run markdownlint checks and confirm MD060/MD024 are cleared
