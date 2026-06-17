@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { buildBankingSetupPlan, buildFamilyTrustIntegrationPlan } from '../services/bankingSetupService.js';
+import { buildBankingSetupPlan, buildFamilyTrustIntegrationPlan, buildEquityShieldAdvocatesIntegrationPlan } from '../services/bankingSetupService.js';
 import { pingJpmSandbox } from '../services/jpmApiClient.js';
 import { authGuard } from '../middleware/authGuard.js';
 import { listTransactions } from '../services/transactionsService.js';
@@ -34,6 +34,19 @@ router.post('/setup', (req, res, next) => {
 router.post('/setup/family-trust', (req, res, next) => {
   try {
     const plan = buildFamilyTrustIntegrationPlan(req.body);
+    return res.json({
+      ok: true,
+      plan,
+      requestId: req.requestId
+    });
+  } catch (err) {
+    return handleValidationError(err, req, res, next);
+  }
+});
+
+router.post('/setup/equityshield-advocates', (req, res, next) => {
+  try {
+    const plan = buildEquityShieldAdvocatesIntegrationPlan(req.body);
     return res.json({
       ok: true,
       plan,

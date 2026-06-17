@@ -45,7 +45,29 @@ npm run start
 - `GET /health`
 - `POST /api/oauth/token`
 - `POST /api/banking/setup`
+- `POST /api/banking/setup/family-trust`
+- `POST /api/banking/setup/equityshield-advocates`
 - `GET /api/jpm/ping` (requires `Authorization: Bearer <INTERNAL_API_KEY>` or `x-api-key`)
+
+## Production Environment
+
+1. Create production env file from template:
+   - `.env.production.example` -> `.env.production`
+2. Set secure production values:
+   - `JPM_CLIENT_ID`
+   - `JPM_CLIENT_SECRET`
+   - `INTERNAL_API_KEY`
+   - production JPM URLs/scope approved by bank
+3. Start in production mode:
+   - Windows PowerShell:
+     - `./scripts/start-production.ps1`
+   - Unix:
+     - `sh ./scripts/start-production.sh`
+4. Optional PM2 process manager:
+   - `pm2 start ecosystem.config.cjs`
+   - `pm2 logs equity-shield-advocates-api`
+5. Restart requirement after route/code updates:
+   - Restart the running Node process so new endpoints are loaded.
 
 ## Security Controls
 

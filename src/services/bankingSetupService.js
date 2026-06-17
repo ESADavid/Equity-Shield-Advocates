@@ -217,3 +217,102 @@ export function buildFamilyTrustIntegrationPlan(payload) {
     trusteeSignerEmails: trusteeEmails
   };
 }
+
+export function buildEquityShieldAdvocatesIntegrationPlan(payload) {
+  const errors = [];
+
+  if (!payload || typeof payload !== 'object') {
+    errors.push('Payload must be a JSON object.');
+  }
+
+  const legalEntityName = payload?.entityName || payload?.legalName || 'Equity Shield Advocates';
+
+  if (!isNonEmptyString(legalEntityName)) {
+    errors.push('entityName or legalName is required and must be a non-empty string.');
+  }
+
+  if (!isNonEmptyString(payload?.ein)) {
+    errors.push('ein is required and must be a non-empty string.');
+  }
+
+  if (!Array.isArray(payload?.authorizedSigners) || payload.authorizedSigners.length === 0) {
+    errors.push('authorizedSigners must be a non-empty array.');
+  } else {
+    payload.authorizedSigners.forEach((s, idx) => {
+      if (!validateSigner(s)) {
+        errors.push(`authorizedSigners[${idx}] is invalid. Required: name, title, email.`);
+      }
+    });
+  }
+
+  if (!Array.isArray(payload?.accounts) || payload.accounts.length === 0) {
+    errors.push('accounts must be a non-empty array.');
+  } else {
+    payload.accounts.forEach((a, idx) => {
+      if (!validateAccount(a)) {
+        errors.push(`accounts[${idx}] is invalid. Required: type, initialDeposit(number >= 0).`);
+      }
+    });
+  }
+
+  const channels = payload?.channelEnablement || {};
+  const channelDefaults = {
+    atmOnline: true,
+    mobileBanking: true,
+    tapToPay: true
+  };
+
+  if (errors.length > 0) {
+    const err = new Error('Validation failed');
+    err.statusCode = 400;
+    err.publicMessage = 'Invalid EquityShield Advocates integration payload';
+    err.validationErrors = errors;
+    throw err;
+  }
+
+  const accountNames = payload.accounts.map((a) => a.type);
+  const initialFundingTotal = payload.accounts.reduce((sum, a) => sum + a.initialDeposit, 0);
+
+  return {
+    entityProfile: {
+      legalName: legalEntityName,
+      einLast4: payload.ein.slice(-4),
+      businessEmail: payload.businessEmail || null,
+      businessPhone: payload.businessPhone || null
+    },
+    integrationSummary: {
+      provider: 'JPMorgan',
+      productScope: ['Business Checking', 'Reserve', 'Digital Treasury Rails'],
+      channelsEnabled: {
+        atmOnline: channels.atmOnline ?? channelDefaults.atmOnline,
+        mobileBanking: channels.mobileBanking ?? channelDefaults.mobileBanking,
+        tapToPay: channels.tapToPay ?? channelDefaults.tapToPay
+      }
+    },
+    setupPlan: [
+      'Validate KYB package and incorporation records',
+      'Verify authorized signer identity matrix',
+      'Configure account stack and channel controls',
+      'Run controlled funding and activation checks'
+    ],
+    accountConfiguration: {
+      count: payload.accounts.length,
+      types: accountNames,
+      initialFundingTotal,
+      initialFundingDisplay: `$${toCurrency(initialFundingTotal)}`
+    },
+    controls: {
+      dualApprovalRequired: true,
+      segregationOfDutiesRequired: true,
+      noSharedCredentials: true
+    },
+    nextActions: [
+      'Upload EquityShield incorporation + EIN records',
+      'Submit signer IDs and role matrix',
+      'Confirm dual-approval threshold and alerting policy',
+      'Execute first controlled transaction and reconcile'
+    ],
+    signerCount: payload.authorizedSigners.length,
+    signerEmails: payload.authorizedSigners.map((s) => s.email)
+  };
+}

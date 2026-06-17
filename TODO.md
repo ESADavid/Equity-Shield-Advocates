@@ -1,9 +1,14 @@
-# Remaining Coverage TODO
+# EquityShield Advocates Integration TODO
 
-- [ ] Start isolated server on port 8081 with explicit env injection
-- [ ] Re-test auth happy-path (A) on `/api/banking/transactions` and `/api/banking/ping`
-- [ ] Re-test mixed-header precedence (B) on both protected endpoints
-- [ ] Run OAuth missing-config isolated scenario (C) with one JPM_* unset and verify 400 + details
-- [ ] Run OAuth timeout/unreachable distinction tests (D)
-- [ ] Re-test malformed JSON normalization (E) expecting `Malformed JSON body`
-- [ ] Summarize all outcomes for A/B/C/D/E/F
+- [x] Add EquityShield Advocates-specific integration builder in `src/services/bankingSetupService.js`
+- [x] Add route `POST /api/banking/setup/equityshield-advocates` in `src/routes/bankingRoutes.js`
+- [x] Add test payload fixture for EquityShield Advocates integration in `tests/`
+- [ ] Execute API validation checks for new route and summarize results
+
+# Production Environment TODO
+
+- [x] Create `.env.production.example` template with secure defaults
+- [x] Add PM2 production process file `ecosystem.config.cjs`
+- [x] Add startup scripts `scripts/start-production.ps1` and `scripts/start-production.sh`
+- [x] Document production runbook and restart behavior in `README.md`
+- [ ] Run production-mode smoke test (`NODE_ENV=production`) for `/health` and EquityShield endpoint

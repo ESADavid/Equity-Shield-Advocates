@@ -1,0 +1,33 @@
+{
+  "entityName": "Equity Shield Advocates, Inc.",
+  "ein": "12-3456789",
+  "businessEmail": "ops@equityshieldadvocates.com",
+  "businessPhone": "+1-555-0100",
+  "authorizedSigners": [
+    {
+      "name": "Avery Stone",
+      "title": "Managing Director",
+      "email": "avery.stone@equityshieldadvocates.com"
+    },
+    {
+      "name": "Jordan Hale",
+      "title": "Controller",
+      "email": "jordan.hale@equityshieldadvocates.com"
+    }
+  ],
+  "accounts": [
+    {
+      "type": "Operating Checking",
+      "initialDeposit": 25000
+    },
+    {
+      "type": "Reserve Savings",
+      "initialDeposit": 40000
+    }
+  ],
+  "channelEnablement": {
+    "atmOnline": true,
+    "mobileBanking": true,
+    "tapToPay": true
+  }
+}
