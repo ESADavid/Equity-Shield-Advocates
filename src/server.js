@@ -40,11 +40,18 @@ async function bootstrap() {
       disableAiRoutes: process.env.DISABLE_AI_ROUTES ?? null
     });
   } else {
-    const aiModule = await import('./routes/aiRoutes.js');
-    app.use('/api/ai', aiModule.default);
-    logger.info('ai_routes_enabled', {
-      disableAiRoutes: process.env.DISABLE_AI_ROUTES ?? null
-    });
+    try {
+      const aiModule = await import('./routes/aiRoutes.js');
+      app.use('/api/ai', aiModule.default);
+      logger.info('ai_routes_enabled', {
+        disableAiRoutes: process.env.DISABLE_AI_ROUTES ?? null
+      });
+    } catch (aiRouteErr) {
+      logger.error('ai_routes_load_failed', {
+        disableAiRoutes: process.env.DISABLE_AI_ROUTES ?? null,
+        message: aiRouteErr?.message || 'Unknown AI route load error'
+      });
+    }
   }
 
   app.use(notFoundHandler);
