@@ -11,8 +11,10 @@
 - [x] Add PM2 production process file `ecosystem.config.cjs`
 - [x] Add startup scripts `scripts/start-production.ps1` and `scripts/start-production.sh`
 - [x] Document production runbook and restart behavior in `README.md`
-- [ ] Run production-mode smoke test (`NODE_ENV=production`) for `/health`
+- [x] Run production-mode smoke test (`NODE_ENV=production`) for `/health`
   and EquityShield endpoint
+  - Result: `GET /health` returned `200 OK`; `POST /api/banking/setup/equityshield-advocates`
+    returned `200 OK` with valid fixture and `400 Bad Request` with invalid fixture.
 
 ## Banking Operations Documentation TODO
 
@@ -23,3 +25,5 @@
 - [x] Assign named roles in Section 2 and create assigned control baseline
 - [x] Set up Section 3 real estate banking workflow with ownership gates,
   go/no-go rules, and control-baseline checklist
+- [x] Build Section 4 Real Estate Acquisition/Project Account operating guide
+  and shift downstream section numbering

@@ -192,9 +192,102 @@ Go/No-Go rule:
 
 ---
 
-## 4) Daily Banking Transactions (AP/AR Operations)
+## 4) Real Estate Acquisition/Project Account Operations
 
-## 4.1 Accounts Payable (Vendors)
+Use this section as the operating standard after Section 3 workflow approval.
+It governs day-to-day activity inside the dedicated property account rail.
+
+## 4.1 Account Scope and Allowed Uses
+
+Allowed transactions in the Real Estate Acquisition/Project Account:
+
+- Earnest money deposits (EMD)
+- Closing wires
+- Property due-diligence expenses
+- Property-specific capex and remediation
+- Property utilities, insurance, taxes, and required service contracts
+
+Prohibited transactions:
+
+- Payroll outflows
+- General corporate OPEX unrelated to the property
+- Owner distributions
+- Reserve drawdowns without documented approval chain
+
+Control rule:
+
+- Every transaction must include a property/deal ID and reporting tag
+  `PROPERTY_PROJECT`.
+
+## 4.2 Standard Payment Runbook (Property Account)
+
+1. Intake request with property ID, amount, counterparty, due date, and purpose.
+2. Validate supporting artifacts (agreement/invoice/escrow instruction).
+3. Verify beneficiary status:
+   - approved and previously verified, or
+   - first-time counterparty requiring callback verification.
+4. Create payment in bank platform with required memo fields.
+5. Route for approvals based on threshold matrix.
+6. Release funds after controls clear.
+7. Archive evidence in deal folder and reconciliation register.
+
+Required memo format:
+
+- `PROPERTY_ID | DEAL_STAGE | PURPOSE | APPROVER_INITIALS`
+
+## 4.3 Property Payment Approval Matrix
+
+- <$10,000: single approver (if verified beneficiary and low-risk purpose)
+- $10,000–$50,000: dual approval
+- >$50,000 or first-time beneficiary: dual approval + callback verification
+- Closing wires (any amount): mandatory 4-eye + callback + final approver release
+
+## 4.4 Reconciliation and Exception Controls
+
+Daily:
+
+- Match posted debits/credits to authorized requests.
+- Flag and investigate unmatched items same day.
+
+Weekly:
+
+- Tie property account activity to deal ledger and project budget.
+- Review exceptions log with Admin + Approver.
+
+Month-end:
+
+- Produce property cash movement summary:
+  - opening balance
+  - inflows
+  - outflows by category
+  - ending balance
+  - unresolved exceptions
+
+Exception SLA:
+
+- Any unauthorized or unmatched transaction must be escalated within
+  1 business day and tracked to closure.
+
+## 4.5 Evidence Retention Standard (Property Account)
+
+Retain, per transaction:
+
+- source document (invoice/agreement/settlement instruction)
+- approval evidence (user/time/action)
+- callback log (where required)
+- payment confirmation ID
+- reconciliation reference
+
+Retention rule:
+
+- No transaction is considered complete until evidence package is archived
+  and linked to the property/deal record.
+
+---
+
+## 5) Daily Banking Transactions (AP/AR Operations)
+
+## 5.1 Accounts Payable (Vendors)
 
 Standard process:
 
@@ -210,14 +303,14 @@ Example approval matrix:
 - $5,000–$25,000: dual approval
 - >$25,000 or first-time vendor: dual approval + callback verification
 
-## 4.2 Accounts Receivable (Collections)
+## 5.2 Accounts Receivable (Collections)
 
 - Separate deposit references by client/property
 - Enable incoming payment alerts
 - Daily cash application to receivables ledger
 - Follow-up rules for unapplied cash > 2 business days
 
-## 4.3 Transfers Between Internal Accounts
+## 5.3 Transfers Between Internal Accounts
 
 - Use named templates:
   - `OPERATING_TO_PAYROLL`
@@ -227,15 +320,15 @@ Example approval matrix:
 
 ---
 
-## 5) Payroll Setup and Operations
+## 6) Payroll Setup and Operations
 
-## 5.1 Payroll Account Design
+## 6.1 Payroll Account Design
 
 - Use payroll clearing account for all payroll outflows
 - Keep only required cycle funding in clearing account
 - Keep tax withholdings and benefits segregated in payroll reporting
 
-## 5.2 Payroll Runbook (Each Cycle)
+## 6.2 Payroll Runbook (Each Cycle)
 
 1. Freeze payroll inputs (hours/salary changes)
 2. Review pre-process register
@@ -247,7 +340,7 @@ Example approval matrix:
    - tax payment scheduling
    - benefit remittances
 
-## 5.3 Payroll Controls
+## 6.3 Payroll Controls
 
 - New employee bank changes require separate verification
 - Same-day payroll changes need escalated approval
@@ -258,11 +351,11 @@ Example approval matrix:
 
 ---
 
-## 6) Liquidity Withdrawals (Reserve Drawdowns)
+## 7) Liquidity Withdrawals (Reserve Drawdowns)
 
 (“Liquarity withdraws” interpreted as liquidity withdrawals.)
 
-## 6.1 Policy Structure
+## 7.1 Policy Structure
 
 Define and document:
 
@@ -276,7 +369,7 @@ Define and document:
   - undocumented owner draws
   - unsupported related-party transfers
 
-## 6.2 Withdrawal Approval Flow
+## 7.2 Withdrawal Approval Flow
 
 1. Initiator submits request:
    - amount
@@ -290,7 +383,7 @@ Define and document:
 4. Execute transfer using approved template
 5. Record in liquidity register
 
-## 6.3 Liquidity Register (Required Fields)
+## 7.3 Liquidity Register (Required Fields)
 
 - Request ID
 - Date/time
@@ -302,7 +395,7 @@ Define and document:
 - New reserve balance
 - Supporting document links
 
-## 6.4 Example Limits
+## 7.4 Example Limits
 
 - <$10,000: single approver (if above reserve floor)
 - $10,000–$100,000: dual approval
@@ -310,7 +403,7 @@ Define and document:
 
 ---
 
-## 7) Security and Fraud Controls
+## 8) Security and Fraud Controls
 
 Minimum controls to enforce:
 
@@ -335,7 +428,7 @@ Incident response:
 
 ---
 
-## 8) Monthly and Quarterly Governance
+## 9) Monthly and Quarterly Governance
 
 Monthly:
 
@@ -353,7 +446,7 @@ Quarterly:
 
 ---
 
-## 9) API/Platform Mapping (Current Project)
+## 10) API/Platform Mapping (Current Project)
 
 Relevant endpoints in this project:
 
@@ -366,7 +459,7 @@ Use these for planning/validation workflows while operating controls above in pr
 
 ---
 
-## 10) Quick Start SOP (One-Page)
+## 11) Quick Start SOP (One-Page)
 
 1. Confirm account topology (Operating / Reserve / Payroll / Property)
 2. Enforce MFA + dual approval + callback verification
@@ -378,7 +471,7 @@ Use these for planning/validation workflows while operating controls above in pr
 
 ---
 
-## 11) Implementation Checklist
+## 12) Implementation Checklist
 
 - [x] Account topology confirmed (Operating / Reserve / Payroll / Property)
 - [ ] Approval matrix documented and approved
