@@ -1,4 +1,16 @@
-import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
+import dotenv from 'dotenv';
+
+const nodeEnv = String(process.env.NODE_ENV ?? '').trim() || 'development';
+const envFile = nodeEnv === 'production' ? '.env.production' : '.env';
+const envPath = path.resolve(process.cwd(), envFile);
+
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath, override: false });
+} else {
+  dotenv.config({ override: false });
+}
 
 function normalized(value) {
   return String(value ?? '').trim();

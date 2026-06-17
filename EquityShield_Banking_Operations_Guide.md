@@ -1,4 +1,5 @@
 # Equity Shield Advocates — Banking Operations Guide
+
 ## Real Estate Purchases, Transaction Workflows, Payroll, and Liquidity Withdrawals
 
 > Operational guide for running day-to-day and strategic banking activity with strong controls.  
@@ -33,68 +34,137 @@ Set up distinct accounts to keep controls clean and reporting accurate:
 
 ---
 
+### 1.1 Account Topology Activated (Controls + Reporting Tags)
+
+Use this baseline mapping at account opening to keep controls clean and reporting dimensions consistent:
+
+| Account | Primary Purpose | Owner Role | Required Controls | Reporting Tag |
+|---|---|---|---|---|
+| Operating Checking | Core business disbursements and vendor/AP activity | Treasury/Ops | MFA, approval thresholds, vendor verification | `OPERATING_OPEX` |
+| Reserve / Liquidity | Emergency runway and planned capital allocation | CFO/Treasury | Reserve floor policy, memo-required drawdowns, dual approval above threshold | `RESERVE_LIQUIDITY` |
+| Payroll Clearing | Isolated payroll prefunding and payroll debits | Payroll Admin + Treasury approver | Prefund-per-cycle only, account change verification, cycle exception review | `PAYROLL_CLEARING` |
+| Real Estate Acquisition/Project | Property-specific EMD, closing wires, and capex | Deal Lead + Officer approver | 4-eye approval, callback verification, verified escrow/title instructions | `PROPERTY_PROJECT` |
+
+Implementation note:
+
+- Open and name all four accounts as separate rails.
+- Map each outgoing transaction to exactly one reporting tag above.
+- Prohibit cross-purpose posting (e.g., payroll from operating, property close from reserve unless approved drawdown).
+
 ## 2) Roles and Approvals
 
 Define user access before moving money:
 
-- **Admin (Treasury/CFO):** manages users, limits, templates, approvals
-- **Initiator (Ops/AP):** creates ACH/wire/payroll files
-- **Approver (Officer/Director):** approves high-risk transactions
+- **Admin (Treasury/CFO): David Leeper Jr** — manages users, limits, templates, approvals
+- **Initiator (Ops/AP): Lativia L Gibbs** — creates ACH/wire/payroll files
+- **Approver (Officer/Director): Trevor T Gibbs** — approves high-risk transactions
 - **Read-only (Audit/Accounting):** statements, exports, reconciliations
 
-Control baseline:
-- MFA required for every user
-- No shared credentials
-- Dual approval for wires and high-value ACH
-- Out-of-band callback verification for first-time counterparties
+Control Baseline (Assigned):
+
+- [x] MFA required for every user
+- [x] No shared credentials
+- [x] Dual approval for wires and high-value ACH
+- [x] Out-of-band callback verification for first-time counterparties
+- [x] Quarterly user-access recertification ownership assigned to Treasury/CFO
 
 ---
 
 ## 3) How to Buy Real Estate (Banking Workflow)
 
-## 3.1 Pre-Acquisition Checklist
+This workflow is the required execution standard for property purchases.  
+Use Section 2 role assignments for ownership and approvals.
+
+### 3.0 Workflow Ownership and Control Gates
+
+| Stage | Primary Owner | Required Approver | Control Gate | Go/No-Go Output |
+|---|---|---|---|---|
+| Pre-Acquisition | Initiator (Ops/AP) | Admin (Treasury/CFO) | Entity/signer validation complete | Approved to draft funding plan |
+| Funding Plan | Admin (Treasury/CFO) | Approver (Officer/Director) | Sources/uses balanced and reserve floor preserved | Approved to prefund project account |
+| EMD Release | Initiator (Ops/AP) | Approver (Officer/Director) | Escrow callback + dual approval + verified instructions | Approved to release EMD |
+| Closing Wire | Initiator (Ops/AP) | Approver (Officer/Director) | 4-eye review + independent callback + final release | Approved to send closing wire |
+| Post-Close Reconciliation | Admin (Treasury/CFO) | Approver (Officer/Director) | Debits/credits tie to settlement docs | Property moved to steady-state reporting |
+
+## 3.1 Pre-Acquisition Checklist (Go/No-Go #1)
+
 Before contract execution:
-- Confirm entity name on account exactly matches purchase entity docs
-- Verify signer authority (resolution/LLC consent)
-- Confirm wire limits are high enough for closing amount
-- Enable dual approval + callback confirmation rules
-- Pre-create whitelisted counterparties only after independent verification
 
-## 3.2 Funding Plan
+- Confirm account title exactly matches purchase entity documents.
+- Verify signer authority (resolution/LLC consent/trust authority docs).
+- Confirm wire/ACH limits support expected EMD and closing amount.
+- Confirm dual-approval and callback controls are active.
+- Pre-create beneficiaries only after independent verification.
+
+Required artifacts:
+
+- Entity formation and authority package
+- Signer authorization documentation
+- Limit confirmation evidence (portal screenshot or banker confirmation)
+
+Go/No-Go rule:
+
+- **No contract funding activity** if any authority, limit, or control item is incomplete.
+
+## 3.2 Funding Plan (Go/No-Go #2)
+
 For each property:
-1. Define **total uses** (purchase price, closing costs, legal, reserves)
-2. Define **sources** (cash, investor capital, debt proceeds)
-3. Move funds into project/acquisition account in controlled tranches
-4. Keep minimum operating runway untouched in reserve account
 
-## 3.3 Earnest Money Deposit (EMD)
-- Use wire/ACH only to verified escrow account
+1. Define **total uses** (purchase price, closing costs, legal, reserves).
+2. Define **sources** (cash, investor capital, debt proceeds).
+3. Execute prefunding in controlled tranches into project/acquisition account.
+4. Preserve reserve floor and minimum operating runway.
+
+Required artifacts:
+
+- Sources/uses worksheet
+- 13-week cash impact note (or equivalent short-term forecast)
+- Approval record from Treasury/CFO and Officer/Director
+
+Go/No-Go rule:
+
+- **No EMD release** unless sources/uses are approved and reserve floor remains compliant.
+
+## 3.3 Earnest Money Deposit (EMD) (Go/No-Go #3)
+
+- Use wire/ACH only to independently verified escrow account.
 - Require:
   - signed purchase agreement
-  - escrow instructions verified via independent phone number
+  - escrow instructions verified via independently sourced phone number
   - dual approval before release
 - Save payment evidence:
   - confirmation ID
   - timestamp
   - approving users
-  - escrow contact verification notes
+  - escrow callback verification notes
 
-## 3.4 Closing Wire Procedure (Critical)
-Use a “4-eye + callback” process:
-1. Initiator enters wire
-2. Approver validates amount, beneficiary, purpose memo
-3. Separate team member calls title/escrow using independently sourced number
-4. Final approver releases wire
+Go/No-Go rule:
+
+- **No EMD release** based solely on email instructions.
+
+## 3.4 Closing Wire Procedure (Critical) (Go/No-Go #4)
+
+Use a strict “4-eye + callback” process:
+
+1. Initiator enters wire and purpose memo tied to deal ID.
+2. Approver validates amount, beneficiary, and settlement reference.
+3. Separate team member performs callback to title/escrow using independently sourced number.
+4. Final approver releases wire.
 5. Archive:
    - HUD/settlement statement
    - wire confirmation
    - callback log
+   - final approval evidence
 
 Never rely only on emailed wire instructions.
 
-## 3.5 Post-Close
-- Reconcile closing statement to bank debits/credits
-- Move property-level recurring bills to property account autopay (where safe)
+Go/No-Go rule:
+
+- **No closing wire release** without completed callback log and dual approval evidence.
+
+## 3.5 Post-Close (Go/No-Go #5)
+
+- Reconcile settlement statement to bank debits/credits within defined close window.
+- Move recurring property bills to property account/autopay (where safe).
 - Establish monthly reporting package:
   - rent inflows
   - debt service
@@ -102,12 +172,32 @@ Never rely only on emailed wire instructions.
   - capex
   - NOI view
 
+Required artifacts:
+
+- Reconciliation worksheet
+- Post-close controls sign-off
+- Reporting package template activation
+
+Go/No-Go rule:
+
+- **No transition to steady-state operations** until reconciliation variance is resolved or formally approved.
+
+### 3.6 Real Estate Workflow Control Baseline (Assigned)
+
+- [x] Role ownership assigned for each stage (Initiator/Admin/Approver)
+- [x] Dual approval enforced for EMD and closing wires
+- [x] Independent callback verification required before funds release
+- [x] Deal-level evidence retention required (agreement, settlement, confirmations, logs)
+- [x] Post-close reconciliation and reporting package activation required
+
 ---
 
 ## 4) Daily Banking Transactions (AP/AR Operations)
 
 ## 4.1 Accounts Payable (Vendors)
+
 Standard process:
+
 1. Invoice intake + coding
 2. Match invoice to PO/contract (if used)
 3. Payment batch creation (ACH/check/wire)
@@ -115,17 +205,20 @@ Standard process:
 5. Release and archive proof
 
 Example approval matrix:
+
 - <$5,000: single approver
 - $5,000–$25,000: dual approval
 - >$25,000 or first-time vendor: dual approval + callback verification
 
 ## 4.2 Accounts Receivable (Collections)
+
 - Separate deposit references by client/property
 - Enable incoming payment alerts
 - Daily cash application to receivables ledger
 - Follow-up rules for unapplied cash > 2 business days
 
 ## 4.3 Transfers Between Internal Accounts
+
 - Use named templates:
   - `OPERATING_TO_PAYROLL`
   - `OPERATING_TO_RESERVE`
@@ -137,11 +230,13 @@ Example approval matrix:
 ## 5) Payroll Setup and Operations
 
 ## 5.1 Payroll Account Design
+
 - Use payroll clearing account for all payroll outflows
 - Keep only required cycle funding in clearing account
 - Keep tax withholdings and benefits segregated in payroll reporting
 
 ## 5.2 Payroll Runbook (Each Cycle)
+
 1. Freeze payroll inputs (hours/salary changes)
 2. Review pre-process register
 3. CFO/Treasury approves total payroll funding
@@ -153,6 +248,7 @@ Example approval matrix:
    - benefit remittances
 
 ## 5.3 Payroll Controls
+
 - New employee bank changes require separate verification
 - Same-day payroll changes need escalated approval
 - Exception report reviewed every cycle:
@@ -167,7 +263,9 @@ Example approval matrix:
 (“Liquarity withdraws” interpreted as liquidity withdrawals.)
 
 ## 6.1 Policy Structure
+
 Define and document:
+
 - **Minimum reserve floor** (e.g., 3–6 months fixed costs)
 - **Permitted reasons** for withdrawal:
   - payroll support
@@ -179,6 +277,7 @@ Define and document:
   - unsupported related-party transfers
 
 ## 6.2 Withdrawal Approval Flow
+
 1. Initiator submits request:
    - amount
    - purpose
@@ -192,6 +291,7 @@ Define and document:
 5. Record in liquidity register
 
 ## 6.3 Liquidity Register (Required Fields)
+
 - Request ID
 - Date/time
 - Requestor
@@ -203,6 +303,7 @@ Define and document:
 - Supporting document links
 
 ## 6.4 Example Limits
+
 - <$10,000: single approver (if above reserve floor)
 - $10,000–$100,000: dual approval
 - >$100,000: dual approval + executive sign-off + cash forecast attachment
@@ -212,6 +313,7 @@ Define and document:
 ## 7) Security and Fraud Controls
 
 Minimum controls to enforce:
+
 - MFA on every user
 - Device hygiene policy for banking access
 - Dedicated approval devices for officers (recommended)
@@ -224,6 +326,7 @@ Minimum controls to enforce:
 - Beneficiary changes on hold period (e.g., 24 hours) for high-risk wires
 
 Incident response:
+
 1. Freeze online access/payment rails
 2. Contact bank fraud desk immediately
 3. Preserve logs + confirmations
@@ -235,12 +338,14 @@ Incident response:
 ## 8) Monthly and Quarterly Governance
 
 Monthly:
+
 - Bank recs for all accounts
 - Unusual transaction review
 - Approval exception review
 - Reserve floor compliance check
 
 Quarterly:
+
 - User access recertification
 - Approval threshold review
 - Beneficiary whitelist review
@@ -251,6 +356,7 @@ Quarterly:
 ## 9) API/Platform Mapping (Current Project)
 
 Relevant endpoints in this project:
+
 - `POST /api/banking/setup` — base business setup plan
 - `POST /api/banking/setup/family-trust` — trust integration plan
 - `POST /api/banking/setup/equityshield-advocates` — EquityShield-specific setup plan (code exists; runtime route activation required)
@@ -274,6 +380,7 @@ Use these for planning/validation workflows while operating controls above in pr
 
 ## 11) Implementation Checklist
 
+- [x] Account topology confirmed (Operating / Reserve / Payroll / Property)
 - [ ] Approval matrix documented and approved
 - [ ] Reserve withdrawal policy published
 - [ ] Payroll clearing workflow active
