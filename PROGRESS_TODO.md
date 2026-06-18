@@ -2,8 +2,8 @@
 
 - [x] Reviewed TODO.md and identified remaining unchecked items
 - [x] Run production-mode smoke test for `/health` and EquityShield endpoint
-- [ ] Reconcile Section 4 operating guide status and downstream numbering
-- [ ] Update TODO.md to mark all remaining items complete
+- [x] Reconcile Section 4 operating guide status and downstream numbering
+- [x] Update TODO.md to mark all remaining items complete
 
 ## Smoke Test Evidence (from terminal logs)
 

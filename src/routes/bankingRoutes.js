@@ -31,6 +31,19 @@ router.post('/setup', (req, res, next) => {
   }
 });
 
+router.post('/setup/business', (req, res, next) => {
+  try {
+    const plan = buildBankingSetupPlan(req.body);
+    return res.json({
+      ok: true,
+      plan,
+      requestId: req.requestId
+    });
+  } catch (err) {
+    return handleValidationError(err, req, res, next);
+  }
+});
+
 router.post('/setup/family-trust', (req, res, next) => {
   try {
     const plan = buildFamilyTrustIntegrationPlan(req.body);
