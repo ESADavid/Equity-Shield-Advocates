@@ -1,0 +1,598 @@
+openapi: 3.0.3
+info:
+  title: OSCAR BROOME REVENUE API
+  description: Comprehensive financial management platform API
+  version: 2.0.0
+  contact:
+    name: OSCAR BROOME Development Team
+    email: support@oscarbroome.com
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.oscarbroome.com
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the application and its dependencies
+      tags:
+        - System
+      responses:
+        '200':
+          description: Application is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Application is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/status:
+    get:
+      summary: API status and configuration
+      description: Returns detailed status information about API services and configuration
+      tags:
+        - System
+      responses:
+        '200':
+          description: Status information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+
+  /metrics:
+    get:
+      summary: Performance metrics
+      description: Returns real-time performance metrics and system statistics
+      tags:
+        - System
+      responses:
+        '200':
+          description: Metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricsResponse'
+
+  /api/auth/login:
+    post:
+      summary: User login
+      description: Authenticate a user and return access/refresh tokens
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  description: User's username or email
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/refresh:
+    post:
+      summary: Refresh access token
+      description: Generate new access token using refresh token
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Invalid refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/logout:
+    post:
+      summary: User logout
+      description: Invalidate the current session
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+  /api/auth/profile:
+    get:
+      summary: Get user profile
+      description: Retrieve the current user's profile information
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update user profile
+      description: Update the current user's profile information
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                department:
+                  type: string
+                profile:
+                  type: object
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/analytics/summary:
+    get:
+      summary: Get analytics summary
+      description: Retrieve financial analytics and revenue summary
+      tags:
+        - Analytics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Start date for analytics (YYYY-MM-DD)
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: End date for analytics (YYYY-MM-DD)
+      responses:
+        '200':
+          description: Analytics summary retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsSummary'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/payroll/employees:
+    get:
+      summary: Get employee list
+      description: Retrieve list of employees for payroll processing
+      tags:
+        - Payroll
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Employee list retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employees:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Employee'
+                  total:
+                    type: integer
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/merchant/transactions:
+    get:
+      summary: Get merchant transactions
+      description: Retrieve merchant payment transactions
+      tags:
+        - Merchant
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          description: Number of transactions to retrieve
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Offset for pagination
+      responses:
+        '200':
+          description: Transactions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Transaction'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /jpmorgan/accounts:
+    get:
+      summary: Get JPMorgan accounts
+      description: Retrieve banking account information from JPMorgan
+      tags:
+        - Banking
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Accounts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BankAccount'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        environment:
+          type: string
+        version:
+          type: string
+        uptime:
+          type: number
+        database:
+          $ref: '#/components/schemas/ServiceHealth'
+        cache:
+          $ref: '#/components/schemas/ServiceHealth'
+        performance:
+          $ref: '#/components/schemas/PerformanceMetrics'
+
+    ServiceHealth:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [connected, disconnected, error]
+        responseTime:
+          type: number
+        error:
+          type: string
+
+    PerformanceMetrics:
+      type: object
+      properties:
+        requestCount:
+          type: integer
+        totalResponseTime:
+          type: number
+        averageResponseTime:
+          type: number
+        slowRequests:
+          type: integer
+        errorCount:
+          type: integer
+        uptime:
+          type: number
+
+    StatusResponse:
+      type: object
+      properties:
+        merchantBillPay:
+          $ref: '#/components/schemas/ServiceStatus'
+        jpmorganPayment:
+          $ref: '#/components/schemas/ServiceStatus'
+        environment:
+          type: object
+          properties:
+            nodeVersion:
+              type: string
+            environment:
+              type: string
+            port:
+              type: integer
+        services:
+          type: object
+          properties:
+            stripe:
+              type: boolean
+            smtp:
+              type: boolean
+            twilio:
+              type: boolean
+            jpmorgan:
+              type: boolean
+            redis:
+              type: boolean
+            database:
+              type: boolean
+        performance:
+          $ref: '#/components/schemas/PerformanceMetrics'
+
+    ServiceStatus:
+      type: object
+      properties:
+        loaded:
+          type: boolean
+        functions:
+          type: array
+          items:
+            type: string
+
+    MetricsResponse:
+      type: object
+      properties:
+        performance:
+          $ref: '#/components/schemas/PerformanceMetrics'
+        database:
+          type: object
+        cache:
+          type: object
+        memory:
+          type: object
+        system:
+          type: object
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserProfile'
+        tokens:
+          $ref: '#/components/schemas/TokenResponse'
+
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: string
+
+    UserProfile:
+      type: object
+      properties:
+        _id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+        department:
+          type: string
+        isActive:
+          type: boolean
+        lastLogin:
+          type: string
+          format: date-time
+        profile:
+          type: object
+
+    AnalyticsSummary:
+      type: object
+      properties:
+        totalRevenue:
+          type: number
+        monthlyRevenue:
+          type: array
+          items:
+            type: object
+            properties:
+              month:
+                type: string
+              revenue:
+                type: number
+        topProducts:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              revenue:
+                type: number
+        growthRate:
+          type: number
+
+    Employee:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        department:
+          type: string
+        salary:
+          type: number
+        hireDate:
+          type: string
+          format: date
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+          enum: [pending, completed, failed, refunded]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        customerEmail:
+          type: string
+        description:
+          type: string
+
+    BankAccount:
+      type: object
+      properties:
+        id:
+          type: string
+        accountNumber:
+          type: string
+        accountType:
+          type: string
+        balance:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        path:
+          type: string
+        status:
+          type: integer

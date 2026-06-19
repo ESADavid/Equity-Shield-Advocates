@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Money Spending Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Money Spending Tracker</h1>
+      <div class="balance-section">
+        <label for="initial-money">Enter your available money:</label>
+        <input type="number" id="initial-money" placeholder="0" min="0" />
+        <button id="set-money-btn">Set Money</button>
+      </div>
+
+      <div class="spend-section" style="display: none">
+        <h2>Record a Spending Transaction</h2>
+        <form id="spend-form">
+          <input
+            type="number"
+            id="spend-amount"
+            placeholder="Amount"
+            min="0.01"
+            step="0.01"
+            required
+          />
+          <input
+            type="text"
+            id="spend-description"
+            placeholder="Description"
+            required
+          />
+          <select id="spend-category" required>
+            <option value="" disabled selected>Select Category</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Bills">Bills</option>
+            <option value="Other">Other</option>
+          </select>
+          <button type="submit">Add Transaction</button>
+        </form>
+      </div>
+
+      <div class="summary-section" style="display: none">
+        <h2>Summary</h2>
+        <p>Current Balance: $<span id="current-balance">0.00</span></p>
+        <h3>Transactions</h3>
+        <ul id="transaction-list"></ul>
+      </div>
+
+      <div class="fleet-section" style="display: none">
+        <h2>Corporate Fleet</h2>
+        <button id="purchase-all-btn">Purchase All Cars</button>
+        <ul id="car-list"></ul>
+        <h3>Purchased Cars</h3>
+        <ul id="purchased-car-list"></ul>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "totalAnnualRevenue": 5000000,
+  "totalDailyRevenue": 13698.63,
+  "purchases": {
+    "autoFleetDetails": [
+      {
+        "model": "Tesla Model S",
+        "vin": "12345",
+        "cost": 79999,
+        "deliveryStatus": "delivered"
+      },
+      {
+        "model": "BMW X5",
+        "vin": "67890",
+        "cost": 60999,
+        "deliveryStatus": "pending"
+      }
+    ],
+    "corporateHomes": 2500000
+  }
+}

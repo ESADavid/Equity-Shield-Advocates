@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oscar Broome - Executive Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <header class="dashboard-header">
+        <div class="logo">
+          <i class="fas fa-crown"></i>
+          <span>Oscar Broome Executive</span>
+        </div>
+        <nav class="dashboard-nav">
+          <a href="#" class="nav-item active" data-section="overview">
+            <i class="fas fa-chart-line"></i> Overview
+          </a>
+          <a href="#" class="nav-item" data-section="revenue">
+            <i class="fas fa-dollar-sign"></i> Revenue
+          </a>
+          <a href="#" class="nav-item" data-section="fleet">
+            <i class="fas fa-car"></i> Fleet
+          </a>
+          <a href="#" class="nav-item" data-section="analytics">
+            <i class="fas fa-chart-bar"></i> Analytics
+          </a>
+          <a href="#" class="nav-item" data-section="aum">
+            <i class="fas fa-wallet"></i> Assets Under Management
+          </a>
+        </nav>
+        <div class="user-profile">
+          <span id="executiveName">Oscar Broome</span>
+          <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </header>
+
+      <main class="dashboard-content">
+        <!-- Overview Section -->
+        <section id="overview-section" class="dashboard-section active">
+          <h1>Executive Overview</h1>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-value" id="totalRevenue">$0</div>
+                <div class="metric-label">Total Annual Revenue</div>
+                <div class="metric-change positive">+12.5% from last year</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon">
+                <i class="fas fa-car"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-value" id="fleetCount">0</div>
+                <div class="metric-label">Fleet Vehicles</div>
+                <div class="metric-change positive">+3 this month</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon">
+                <i class="fas fa-home"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-value" id="corporateHomes">0</div>
+                <div class="metric-label">Corporate Homes</div>
+                <div class="metric-change positive">+2 this quarter</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-value" id="dailyRevenue">$0</div>
+                <div class="metric-label">Daily Revenue</div>
+                <div class="metric-change positive">+8.3% vs yesterday</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon">
+                <i class="fas fa-wallet"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-value" id="totalAUM">$0</div>
+                <div class="metric-label">Total Assets Under Management</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="charts-container">
+            <div class="chart-card">
+              <h3>Revenue Trends</h3>
+              <canvas id="revenueChart"></canvas>
+            </div>
+
+            <div class="chart-card">
+              <h3>Fleet Distribution</h3>
+              <canvas id="fleetChart"></canvas>
+            </div>
+          </div>
+
+          <div class="recent-activity">
+            <h3>Recent Activity</h3>
+            <div class="activity-list" id="recentActivity">
+              <!-- Activity items will be populated here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Revenue Section -->
+        <section id="revenue-section" class="dashboard-section">
+          <h1>Revenue Management</h1>
+
+          <div class="revenue-controls">
+            <button class="btn-primary" onclick="syncRevenueData()">
+              <i class="fas fa-sync"></i> Sync Data
+            </button>
+            <button class="btn-secondary" onclick="downloadReport()">
+              <i class="fas fa-download"></i> Download Report
+            </button>
+          </div>
+
+          <div class="revenue-breakdown">
+            <h3>Revenue Streams</h3>
+            <div id="revenueStreams">
+              <!-- Revenue streams will be populated here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Fleet Section -->
+        <section id="fleet-section" class="dashboard-section">
+          <h1>Fleet Management</h1>
+
+          <div class="fleet-controls">
+            <button class="btn-primary" onclick="addFleetVehicle()">
+              <i class="fas fa-plus"></i> Add Vehicle
+            </button>
+            <button class="btn-secondary" onclick="viewFleetReport()">
+              <i class="fas fa-file-alt"></i> Fleet Report
+            </button>
+          </div>
+
+          <div class="fleet-list" id="fleetList">
+            <!-- Fleet vehicles will be populated here -->
+          </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics-section" class="dashboard-section">
+          <h1>Executive Analytics</h1>
+
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <h3>Performance Metrics</h3>
+              <div id="performanceMetrics">
+                <!-- Performance data will be populated here -->
+              </div>
+            </div>
+
+            <div class="analytics-card">
+              <h3>Financial Forecast</h3>
+              <div id="financialForecast">
+                <!-- Forecast data will be populated here -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Assets Under Management Section -->
+        <section id="aum-section" class="dashboard-section">
+          <h1>Assets Under Management</h1>
+
+          <div class="aum-metrics">
+            <div class="metric-card">
+              <div class="metric-icon">
+                <i class="fas fa-wallet"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-value" id="aumMetrics">$0</div>
+                <div class="metric-label">Total Assets Under Management</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="aum-asset-classes">
+            <h3>Asset Classes</h3>
+            <div id="aumAssetClasses">
+              <!-- Asset classes will be populated here -->
+            </div>
+          </div>
+
+          <div class="aum-performance-metrics">
+            <h3>Performance Metrics</h3>
+            <div id="aumPerformanceMetrics">
+              <!-- Performance metrics will be populated here -->
+            </div>
+          </div>
+
+          <div class="aum-chart-card">
+            <h3>AUM Distribution</h3>
+            <canvas id="aumChart"></canvas>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>

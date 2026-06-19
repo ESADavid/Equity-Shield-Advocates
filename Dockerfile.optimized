@@ -1,0 +1,75 @@
+# Multi-stage optimized Dockerfile for fast deployments
+
+# Stage 1: Dependencies
+FROM node:18-alpine AS deps
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies only (no dev dependencies for production)
+RUN npm ci --only=production --no-audit --no-fund && npm cache clean --force
+
+# Stage 2: Builder (for any build steps if needed)
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY package*.json ./
+
+# Copy source code
+COPY . .
+
+# If you have build steps, add them here
+# RUN npm run build
+
+# Stage 3: Runtime (optimized for production)
+FROM node:18-alpine AS runtime
+WORKDIR /app
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
+
+# Copy dependencies from deps stage
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
+
+# Copy package files
+COPY --chown=nextjs:nodejs package*.json ./
+
+# Copy application code (exclude unnecessary files)
+COPY --chown=nextjs:nodejs earnings_dashboard ./earnings_dashboard
+COPY --chown=nextjs:nodejs owlban_repos ./owlban_repos
+COPY --chown=nextjs:nodejs models ./models
+COPY --chown=nextjs:nodejs routes ./routes
+COPY --chown=nextjs:nodejs services ./services
+COPY --chown=nextjs:nodejs middleware ./middleware
+COPY --chown=nextjs:nodejs config ./config
+COPY --chown=nextjs:nodejs utils ./utils
+COPY --chown=nextjs:nodejs algorithms ./algorithms
+COPY --chown=nextjs:nodejs blockchain ./blockchain
+COPY --chown=nextjs:nodejs auth ./auth
+COPY --chown=nextjs:nodejs server-enhanced.js ./
+COPY --chown=nextjs:nodejs app.js ./
+
+# Switch to non-root user
+USER nextjs
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (res) => { \
+    process.exit(res.statusCode === 200 ? 0 : 1) \
+  }).on('error', () => process.exit(1))"
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the application
+CMD ["node", "server-enhanced.js"]

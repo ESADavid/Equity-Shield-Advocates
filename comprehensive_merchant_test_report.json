@@ -1,0 +1,36 @@
+{
+  "summary": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "successRate": "100.00"
+  },
+  "tests": [
+    {
+      "name": "Environment Config",
+      "result": "passed",
+      "message": "Mock mode active - Stripe credentials not required",
+      "timestamp": "2026-01-27T06:11:40.654Z"
+    },
+    {
+      "name": "Create Merchant Payment Intent",
+      "result": "passed",
+      "message": "Payment intent created: pi_mock_1769494300700 (Mock: true)",
+      "timestamp": "2026-01-27T06:11:40.708Z"
+    },
+    {
+      "name": "Merchant Webhook",
+      "result": "passed",
+      "message": "Webhook processed successfully (Mock: true)",
+      "timestamp": "2026-01-27T06:11:40.787Z"
+    },
+    {
+      "name": "Payment Intent Validation",
+      "result": "passed",
+      "message": "Properly validates required fields",
+      "timestamp": "2026-01-27T06:11:40.805Z"
+    }
+  ],
+  "timestamp": "2026-01-27T06:11:40.806Z"
+}
