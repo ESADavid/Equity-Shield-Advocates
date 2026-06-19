@@ -335,3 +335,14 @@ All conditions must pass:
 - Add secret manager integration (Vault/AWS/GCP/Azure) before go-live.
 - Enable audit logging retention and access review process.
 - Add CI pipeline checks for secret scanning and dependency vulnerabilities.
+
+---
+
+## 11) Operational Banking Documentation Linkage (Company Updates Integration)
+
+For consolidated business-operations and governance execution alignment (LBWG, MERCDEE, Family Trust, AUM structure, phased rollout, and risk controls), reference:
+
+- `COMPANY_UPDATES_AND_INTEGRATIONS_PLAN.md`
+- `AUM_REVENUE_UPDATE.md`
+
+This linkage keeps technical API implementation sequencing synchronized with legal/entity banking setup progress and trust separation controls.
