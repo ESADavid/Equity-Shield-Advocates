@@ -1,5 +1,0 @@
-{"error":"Unsupported hash length","level":"error","message":"Failed to record transaction in blockchain","timestamp":"2025-09-29T23:34:46.395Z"}
-{"error":"Unsupported hash length","eventType":"test_event","level":"error","message":"Failed to record system event","timestamp":"2025-09-29T23:34:46.410Z"}
-{"blockIndex":1,"hash":"00000fdb2ca1d1eed90c2c6af67789eefb51a13a20b84d2de1383654eab05532","level":"info","message":"Transaction recorded in blockchain","timestamp":"2025-09-29T23:35:36.677Z","transactionId":"52f1122e52d13bddca2cf1d69e41ef23"}
-{"blockIndex":2,"hash":"0000cd53e6cab40d34cf590600f7336928a4298b30e4d6450fb5a382dadff42f","level":"info","message":"Transaction recorded in blockchain","timestamp":"2025-09-29T23:35:40.798Z","transactionId":"88dd0d7597ab806781cd1d34dad2e78a"}
-{"isValid":true,"level":"info","message":"Blockchain integrity verification","timestamp":"2025-09-29T23:35:40.808Z"}

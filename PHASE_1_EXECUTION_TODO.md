@@ -1,1 +1,0 @@
-- [✅] Step 2: Update package.json scripts (god:start, lint:fix)\n
