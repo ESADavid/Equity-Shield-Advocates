@@ -1,3 +1,5 @@
-- [x] RenaUPDATEme function `Run-Test` to `Invoke-Test` in `scripts/thorough_api_test.ps1`
+# TODO
+
+- [x] Rename function `Run-Test` to `Invoke-Test` in `scripts/thorough_api_test.ps1`
 - [x] Update all call sites from `Run-Test` to `Invoke-Test`
 - [x] Mark tasks complete after edit
