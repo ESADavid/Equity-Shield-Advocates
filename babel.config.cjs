@@ -13,8 +13,8 @@ module.exports = {
   plugins: [
     '@babel/plugin-transform-runtime',
     '@babel/plugin-transform-private-methods',
+    '@babel/plugin-transform-class-static-block',
   ],
-  // Force CommonJS for Jest test environment
   env: {
     test: {
       presets: [
@@ -22,7 +22,6 @@ module.exports = {
           '@babel/preset-env',
           {
             targets: { node: 'current' },
-            // Force CommonJS for Jest tests to avoid ESM issues
             modules: 'commonjs',
           },
         ],
@@ -31,6 +30,7 @@ module.exports = {
       plugins: [
         '@babel/plugin-transform-runtime',
         '@babel/plugin-transform-private-methods',
+        '@babel/plugin-transform-class-static-block',
       ],
     },
   },

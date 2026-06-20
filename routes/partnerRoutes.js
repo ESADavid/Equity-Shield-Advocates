@@ -5,12 +5,12 @@
  */
 
 import express from 'express';
-import PartnerCoordinationService from '../services/partnerCoordinationService.js';
+import { partnerCoordinationService } from '../services/partnerCoordinationService.js';
 import PMCIntegrationService from '../services/pmcIntegrationService.js';
 import { error } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
-const partnerService = new PartnerCoordinationService();
+const partnerService = partnerCoordinationService;
 const pmcService = new PMCIntegrationService();
 
 /**

@@ -34,4 +34,7 @@ globalThis.addEventListener('push', (event) => {
   );
 });
 
-globalThis.addEventListener('notificationclick', (event) => {\n  event.notification.close();\n  event.waitUntil(globalThis.clients.openWindow('/'));\n});
+globalThis.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(globalThis.clients.openWindow('/'));
+});

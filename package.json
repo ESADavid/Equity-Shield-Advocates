@@ -24,7 +24,7 @@
   ],
   "author": "Oscar Broome Revenue Team",
   "license": "MIT",
-"dependencies": {
+  "dependencies": {
     "@babel/runtime": "^7.29.0",
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
@@ -52,10 +52,11 @@
     "winston": "^3.19.0",
     "zod": "^3.23.8"
   },
-"devDependencies": {
+  "devDependencies": {
     "@babel/core": "^7.29.0",
     "@babel/plugin-transform-runtime": "^7.29.0",
     "@babel/preset-env": "^7.29.5",
+    "@babel/preset-typescript": "^7.29.7",
     "@swc/jest": "^0.2.39",
     "@types/basic-auth": "^1.1.8",
     "@types/body-parser": "^1.19.6",
