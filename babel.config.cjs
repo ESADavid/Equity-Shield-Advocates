@@ -4,7 +4,6 @@ module.exports = {
       '@babel/preset-env',
       {
         targets: { node: 'current' },
-        // Use 'auto' to let Babel detect CommonJS vs ESM
         modules: 'auto',
       },
     ],
@@ -31,6 +30,7 @@ module.exports = {
         '@babel/plugin-transform-runtime',
         '@babel/plugin-transform-private-methods',
         '@babel/plugin-transform-class-static-block',
+        '@babel/plugin-syntax-import-meta',
       ],
     },
   },

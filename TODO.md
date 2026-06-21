@@ -1,7 +1,3 @@
-# Jest ESM Parse Error Fix Plan
-
-- [x] Inspect current Jest and Babel configuration (`jest.config.js`, `babel.config.cjs`)
-- [x] Update `jest.config.js` for `oscar-broome` so Babel transforms `.js` ESM tests reliably
-- [x] Update `babel.config.cjs` test env to compile modules for Jest runtime compatibility
-- [ ] Run filtered Jest command to verify ESM parse errors are resolved
-- [ ] Review remaining failures (if any) and summarize next actionable fixes
+- [ ] Harden Layer webhook logger assertions in `OSCAR-BROOME-REVENUE/test_layer_integration.test.js`
+- [ ] Stabilize Plaid auth test mocking in `OSCAR-BROOME-REVENUE/test_plaid_auth.test.js`
+- [ ] Run focused Jest suites for layer + plaid auth

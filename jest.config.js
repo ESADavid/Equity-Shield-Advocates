@@ -1,68 +1,20 @@
 export default {
   projects: [
     {
-      displayName: 'root',
-      rootDir: '.',
-      testEnvironment: 'node',
-      transform: {
-        '^.+\\.(js|jsx|ts|tsx|mjs)$': ['babel-jest', { configFile: './babel.config.cjs' }],
-      },
-      extensionsToTreatAsEsm: ['.ts', '.tsx'],
-      moduleNameMapper: {
-        '^server-enhanced\\.js$': '<rootDir>/__mocks__/server-enhanced.js',
-        '^server-enhanced$': '<rootDir>/__mocks__/server-enhanced.js',
-        '^utils/loggerWrapper$': '<rootDir>/utils/loggerWrapper.js',
-        '^utils/loggerWrapper\\.js$': '<rootDir>/utils/loggerWrapper.js',
-        '^config/logger$': '<rootDir>/__mocks__/logger.js',
-        '^config/logger\\.js$': '<rootDir>/__mocks__/logger.js',
-        '^services/(.*)$': '<rootDir>/services/$1.js',
-        '^services/(.*).js$': '<rootDir>/services/$1.js',
-        '^routes/(.*)$': '<rootDir>/routes/$1.js',
-        '^routes/(.*).js$': '<rootDir>/routes/$1.js',
-        '^models/(.*)$': '<rootDir>/models/$1.js',
-        '^models/(.*).js$': '<rootDir>/models/$1.js',
-        '^public/(.*)$': '<rootDir>/public/$1',
-        '^../public/(.*)$': '<rootDir>/public/$1',
-        '^middleware/(.*)$': '<rootDir>/middleware/$1.js',
-        '^middleware/(.*).js$': '<rootDir>/middleware/$1.js',
-        '^node-cron$': '<rootDir>/__mocks__/node-cron.js',
-        '^sinon$': '<rootDir>/__mocks__/sinon.js',
-        '^puppeteer$': '<rootDir>/__mocks__/puppeteer.js',
-        '^\\.\\./owlban_revenue_repo/quantum/quantumAIWallet\\.js$': '<rootDir>/__mocks__/quantumAIWallet.js',
-        '^\\.\\.\\/\\.\\.\\/public\\/js\\/biometric-auth\\.js$': '<rootDir>/__mocks__/biometric-auth.js',
-        '^../models/Item\\.js$': '<rootDir>/__mocks__/Item.js',
-        '\\?(.*.(png|jpg|jpeg|gif|webp))': 'identity-obj-proxy',
-      },
-      transformIgnorePatterns: [
-        'node_modules/(?!(@testing-library|date-fns|bson|chai|uuid|mongodb|mongodb-memory-server|mongodb-memory-server-core|whatwg-url|jsdom|node-fetch)/)'
-      ],
-      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-      testMatch: [
-        '<rootDir>/__tests__/**/*.{js,jsx,ts,tsx}',
-        '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
-        '<rootDir>/test/services/**/*.test.{js,jsx,ts,tsx}',
-        '<rootDir>/tests/**/*.{js,jsx,ts,tsx}',
-      ],
-      testPathIgnorePatterns: [
-        '<rootDir>/OSCAR-BROOME-REVENUE/',
-        '<rootDir>/node_modules/',
-      ],
-      modulePathIgnorePatterns: [
-        '<rootDir>/OSCAR-BROOME-REVENUE/',
-      ],
-      moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node', 'mjs'],
-    },
-    {
       displayName: 'oscar-broome',
       rootDir: './OSCAR-BROOME-REVENUE',
+      roots: ['<rootDir>'],
       testEnvironment: 'node',
       transform: {
         '^.+\\.(js|jsx|ts|tsx|mjs)$': ['babel-jest', { configFile: './babel.config.cjs' }],
       },
       extensionsToTreatAsEsm: ['.ts', '.tsx'],
       moduleNameMapper: {
+        '^\\.\\./server-enhanced$': '<rootDir>/__mocks__/server-enhanced.js',
         '^server-enhanced\\.js$': '<rootDir>/__mocks__/server-enhanced.js',
         '^server-enhanced$': '<rootDir>/__mocks__/server-enhanced.js',
+        '^\\.\\./server-enhanced\\.js$': '<rootDir>/__mocks__/server-enhanced.js',
+        '^\\.\\./\\.\\./server-enhanced\\.js$': '<rootDir>/__mocks__/server-enhanced.js',
         '^utils/loggerWrapper$': '<rootDir>/utils/loggerWrapper.js',
         '^utils/loggerWrapper\\.js$': '<rootDir>/utils/loggerWrapper.js',
         '^config/logger$': '<rootDir>/__mocks__/logger.js',
@@ -71,8 +23,6 @@ export default {
         '^services/(.*).js$': '<rootDir>/services/$1.js',
         '^routes/(.*)$': '<rootDir>/routes/$1.js',
         '^routes/(.*).js$': '<rootDir>/routes/$1.js',
-        '^models/(.*)$': '<rootDir>/models/$1.js',
-        '^models/(.*).js$': '<rootDir>/models/$1.js',
         '^public/(.*)$': '<rootDir>/public/$1',
         '^../public/(.*)$': '<rootDir>/public/$1',
         '^middleware/(.*)$': '<rootDir>/middleware/$1.js',
@@ -81,12 +31,11 @@ export default {
         '^sinon$': '<rootDir>/__mocks__/sinon.js',
         '^puppeteer$': '<rootDir>/__mocks__/puppeteer.js',
         '^\\.\\./owlban_revenue_repo/quantum/quantumAIWallet\\.js$': '<rootDir>/__mocks__/quantumAIWallet.js',
-        '^\\.\\.\\/\\.\\.\\/public\\/js\\/biometric-auth\\.js$': '<rootDir>/__mocks__/biometric-auth.js',
-        '^../models/Item\\.js$': '<rootDir>/__mocks__/Item.js',
+        '^\\.\\./\\.\\./public/js/biometric-auth\\.js$': '<rootDir>/__mocks__/biometric-auth.js',
         '\\?(.*.(png|jpg|jpeg|gif|webp))': 'identity-obj-proxy',
       },
       transformIgnorePatterns: [
-        'node_modules/(?!(@testing-library|date-fns|bson|chai|uuid|mongodb|mongodb-memory-server|mongodb-memory-server-core|whatwg-url|jsdom|node-fetch)/)'
+        'node_modules/(?!(@testing-library|date-fns|bson|chai|uuid|mongodb|mongodb-memory-server|mongodb-memory-server-core|whatwg-url|jsdom|node-fetch)/)',
       ],
       setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
       testMatch: [
@@ -101,6 +50,10 @@ export default {
         '<rootDir>/__tests__/services.test.js',
         '<rootDir>/__tests__/auth.test.js',
         '<rootDir>/tests/quantumSecurity.test.js',
+      ],
+      modulePathIgnorePatterns: [
+        '<rootDir>/../__mocks__/',
+        '<rootDir>/../earnings_dashboard/',
       ],
       moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node', 'mjs'],
     },
