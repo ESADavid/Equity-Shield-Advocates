@@ -1,3 +1,4 @@
-- [ ] Harden Layer webhook logger assertions in `OSCAR-BROOME-REVENUE/test_layer_integration.test.js`
-- [ ] Stabilize Plaid auth test mocking in `OSCAR-BROOME-REVENUE/test_plaid_auth.test.js`
-- [ ] Run focused Jest suites for layer + plaid auth
+- [x] Add in-memory fallback state to PartnerCoordinationService for deterministic no-DB integration flow
+- [x] Update partner lifecycle methods to use shared fallback state when DB is unavailable
+- [x] Ensure project/status/performance/communication operations mutate and read same fallback partner record
+- [x] Run partner coordination integration test to verify fix
