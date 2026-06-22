@@ -8,9 +8,9 @@
 
 | Field | Value |
 | --- | --- |
-| Period Label | **January 2025** |
-| Report Date | **2025-01-19** |
-| Prepared By | **[Preparer Name]** |
+| Period Label | **December 2025** |
+| Report Date | **2025-12-19** |
+| Prepared By | **OSCAR-BROOME** |
 | Reviewed By | **[Reviewer Name]** |
 
 ---
@@ -25,7 +25,7 @@
 | Excluded Transfers | **$0** |
 | Net Recognized Revenue | **$4,000,000** |
 | Source of Truth | **aggregated_revenue.json (ACCT-1001)** |
-| As-of Date | **2025-01-19** |
+| As-of Date | **2025-12-19** |
 
 ### Account: LBWG Reserve (Savings)
 
@@ -49,7 +49,7 @@
 | Excluded Transfers | **$0** |
 | Net Recognized Revenue | **$3,500,000** |
 | Source of Truth | **aggregated_revenue.json (ACCT-1002)** |
-| As-of Date | **2025-01-19** |
+| As-of Date | **2025-12-19** |
 
 ### Account: MERCDEE Reserve Savings
 
@@ -73,7 +73,7 @@
 | Excluded Transfers | **$0** |
 | Net Recognized Revenue | **$2,500,000** |
 | Source of Truth | **aggregated_revenue.json (ACCT-1003)** |
-| As-of Date | **2025-01-19** |
+| As-of Date | **2025-12-19** |
 
 ### Account: Family Trust Reserve Account
 
@@ -152,4 +152,4 @@
 ---
 
 *Template Version: 1.0*
-*Last Updated: [Current Date]*
+*Last Updated: December 19, 2025*
