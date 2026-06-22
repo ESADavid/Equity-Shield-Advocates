@@ -1,7 +1,7 @@
 import express from 'express';
-import { payrollSystem } from '../payrollSystem.ts';
+import { payrollSystem } from '../payrollSystem.js';
 import QuickBooksPayrollIntegration from '../quickbooks_payroll_integration.js';
-import { info, error as logError } from 'utils/loggerWrapper.js';
+import { info, error as logError } from '../utils/loggerWrapper.js';
 
 const router = express.Router();
 
@@ -21,8 +21,9 @@ router.use((req, res, next) => {
 // Get all employees
 router.get('/employees', (req, res) => {
   try {
-    const employees = payrollSystem.getEmployees();
-    res.json({ success: true, data: employees });
+    const result = payrollSystem.getEmployees();
+    // payrollSystem.getEmployees() already returns { success, data, timestamp }
+    res.json(result);
   } catch (error) {
     logError('Error fetching employees:', error);
     res
@@ -35,9 +36,8 @@ router.get('/employees', (req, res) => {
 router.post('/employees', (req, res) => {
   const employee = req.body;
   try {
-    const existing = payrollSystem
-      .getEmployees()
-      .find((e) => e.id === employee.id);
+    const result = payrollSystem.getEmployees();
+    const existing = result.data.find((e) => e.id === employee.id);
     if (existing) {
       payrollSystem.updateEmployee(employee);
       res.json({ success: true, message: 'Employee updated successfully' });
@@ -143,7 +143,8 @@ router.post('/process', async (req, res) => {
 router.get('/employees/:id/payroll', (req, res) => {
   const id = req.params.id;
   try {
-    const employee = payrollSystem.getEmployees().find((e) => e.id === id);
+    const employeesResult = payrollSystem.getEmployees();
+    const employee = employeesResult.data.find((e) => e.id === id);
     if (!employee) {
       return res
         .status(404)
@@ -269,7 +270,8 @@ router.post('/sync-quickbooks', async (req, res) => {
       process.env.QUICKBOOKS_REFRESH_TOKEN
     );
 
-    const employees = payrollSystem.getEmployees();
+    const employeesResult = payrollSystem.getEmployees();
+    const employees = employeesResult.data;
     const syncResults = [];
 
     for (const employee of employees) {

@@ -13,11 +13,11 @@ const __dirname = path.dirname(__filename);
 // Test configuration
 const TEST_CONFIG = {
   SERVER: {
-    PORT: 3000,
-    BASE_URL: 'http://localhost:3000',
+    PORT: 4000,
+    BASE_URL: 'http://localhost:4000',
   },
   PAYROLL: {
-    BASE_URL: 'http://localhost:3000/api/payroll',
+    BASE_URL: 'http://localhost:4000/api/payroll',
   },
 };
 

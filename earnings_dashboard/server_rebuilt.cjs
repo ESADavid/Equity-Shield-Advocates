@@ -4,8 +4,12 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const basicAuth = require('express-basic-auth');
+const logger = require('../utils/loggerWrapper.js');
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+// Import payroll router
+const payrollRouter = require('./payroll_router.js');
 
 const isTestEnv = process.env.NODE_ENV === 'test';
 
@@ -31,6 +35,14 @@ app.use(
 
 app.use(cors());
 app.use(express.json());
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
+// Mount payroll router at /api/payroll path (on port 4000)
+app.use('/api/payroll', payrollRouter);
 
 // Use the existing revenue.json file path
 const revenueDataPath = path.resolve(
