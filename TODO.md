@@ -9,3 +9,8 @@
 - [x] Update `AUM_REVENUE_UPDATE.md` with cross-reference to consolidated plan
 - [x] Update `jpm_integration_artifacts.md` with implementation status linkage
 - [x] Final consistency validation across account topology and integration sequencing
+- [x] Complete status matrix for all open checklist items (status_matrix.md)
+- [x] Validate JPM integration modules are present and wired in runtime (src/)
+- [x] Execute OAuth + banking route curl matrix (scripts/test_api_matrix.ps1)
+- [x] Initiate first monthly reporting packet (data/monthly_reporting_packet.md)
+- [x] Publish signed operational control memo (docs/OPERATIONAL_CONTROL_MEMO.md)

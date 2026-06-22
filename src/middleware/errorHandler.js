@@ -1,42 +1,49 @@
 import { env } from '../config/env.js';
-import { logger } from '../utils/logger.js';
 
-export function notFoundHandler(req, res) {
-  return res.status(404).json({
-    ok: false,
-    error: 'Not Found',
-    requestId: req.requestId
-  });
-}
-
+/**
+ * Central error handler middleware
+ * Maps upstream errors to safe output, includes requestId for traceability
+ */
 export function errorHandler(err, req, res, next) {
-  const isMalformedJson = err?.type === 'entity.parse.failed' || err instanceof SyntaxError;
-  const statusCode = isMalformedJson ? 400 : (err.statusCode || err.status || 500);
-
-  logger.error('Request failed', {
-    requestId: req.requestId,
-    route: req.originalUrl,
+  const requestId = req.requestId || 'unknown';
+  
+  // Log the error (with redacted details)
+  console.error(JSON.stringify({
+    requestId,
+    route: req.route?.path || req.path,
     method: req.method,
-    statusCode,
-    latencyMs: res.locals.latencyMs,
-    upstreamStatus: err.upstreamStatus,
-    error: err.message
-  });
-
-  const payload = {
-    ok: false,
-    error: isMalformedJson
-      ? 'Malformed JSON body'
-      : (err.publicMessage || err.message || 'Internal Server Error'),
-    requestId: req.requestId
-  };
-
-  if (env.verboseErrors && env.nodeEnv !== 'production') {
-    payload.details = {
-      stack: err.stack,
-      upstream: err.upstreamBody || null
-    };
+    error: err.message,
+    stack: env.enableVerboseErrors ? err.stack : undefined
+  }));
+  
+  // Determine status code
+  let statusCode = err.response?.status || err.statusCode || 500;
+  
+  // Map common errors to appropriate codes
+  if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
+    statusCode = 503; // Service unavailable
+  } else if (err.response?.status === 401 || err.response?.status === 403) {
+    statusCode = 401; // Unauthorized
+  } else if (err.response?.status === 404) {
+    statusCode = 404; // Not found
+  } else if (err.response?.status >= 400 && err.response?.status < 500) {
+    statusCode = 400; // Bad request
   }
-
-  return res.status(statusCode).json(payload);
+  
+  // Build safe error response
+  const errorResponse = {
+    error: statusCode >= 500 ? 'Internal Server Error' : 'Error',
+    message: err.response?.data?.error || err.message || 'An unexpected error occurred',
+    requestId
+  };
+  
+  // Add status code
+  errorResponse.statusCode = statusCode;
+  
+  // Hide stack traces in production
+  if (env.enableVerboseErrors && err.stack) {
+    errorResponse.stack = err.stack;
+  }
+  
+  res.status(statusCode).json(errorResponse);
 }

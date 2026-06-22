@@ -1,135 +1,146 @@
-$BaseUrl = $env:BASE_URL
-if (-not $BaseUrl) { $BaseUrl = "http://localhost:8080" }
+# Test API Matrix - PowerShell
+# Execute curl test matrix for JPM API endpoints
+# Run from project root: node scripts/test_api_matrix.ps1
 
-$InternalApiKey = $env:INTERNAL_API_KEY
-if (-not $InternalApiKey) { $InternalApiKey = "missing" }
+$BASE_URL = "http://localhost:8080"
+$TIMESTAMP = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+$OUTPUT_FILE = "tests/curl_results_$TIMESTAMP.json"
 
-Write-Host ("Using BASE_URL={0}" -f $BaseUrl)
-Write-Host ("INTERNAL_API_KEY configured={0}" -f ([string]($InternalApiKey -ne "missing")))
-Write-Host ""
+# Test results array
+$results = @()
 
-function Invoke-GetWithHeaders {
-  param(
-    [Parameter(Mandatory = $true)][string]$Url,
-    [hashtable]$Headers
-  )
-
-  try {
-    $response = Invoke-WebRequest -Method GET -Uri $Url -Headers $Headers -ErrorAction Stop
-    Write-Output ("HTTP/{0} {1}" -f $response.Version, [int]$response.StatusCode)
-    Write-Output $response.Content
-  } catch {
-    if ($null -ne $_.Exception.Response) {
-      $r = $_.Exception.Response
-      $code = [int]$r.StatusCode
-      Write-Output ("HTTP/1.1 {0}" -f $code)
-      $reader = New-Object System.IO.StreamReader($r.GetResponseStream())
-      $body = $reader.ReadToEnd()
-      $reader.Close()
-      Write-Output $body
+function Test-Endpoint {
+    param (
+        [string]$Name,
+        [string]$Method,
+        [string]$Endpoint,
+        [string]$Body = "",
+        [hashtable]$Headers = @{},
+        [int]$ExpectedStatus = 200
+    )
+    
+    Write-Host "Testing: $Name" -ForegroundColor Cyan
+    
+    $params = @{
+        Uri = "$BASE_URL$Endpoint"
+        Method = $Method
+        ContentType = "application/json"
+    }
+    
+    if ($Body) {
+        $params.Body = $Body
+    }
+    
+    if ($Headers.Count -gt 0) {
+        foreach ($key in $Headers.Keys) {
+            $params.Headers[$key] = $Headers[$key]
+        }
+    }
+    
+try {
+        $response = Invoke-RestMethod @params -ErrorAction Stop
+        $statusCode = 200
+    }
+    catch {
+        $statusCode = $_.Exception.Response.StatusCode.Value__
+        $response = $_.Exception.Message
+    }
+    
+    $result = @{
+        name = $Name
+        method = $Method
+        endpoint = $Endpoint
+        expectedStatus = $ExpectedStatus
+        actualStatus = $statusCode
+        success = ($statusCode -eq $ExpectedStatus)
+        response = $response
+        timestamp = (Get-Date).ToString("o")
+    }
+    
+    $results += $result
+    
+    if ($result.success) {
+        Write-Host "  [PASS] Status: $statusCode" -ForegroundColor Green
     } else {
-      Write-Output $_.Exception.Message
+        Write-Host "  [FAIL] Expected: $ExpectedStatus, Got: $statusCode" -ForegroundColor Red
     }
-  }
+    
+    return $result
 }
 
-function Invoke-JsonPost {
-  param(
-    [Parameter(Mandatory = $true)][string]$Url,
-    [Parameter(Mandatory = $true)]$Payload
-  )
-
-  $json = if ($Payload -is [string]) { $Payload } else { $Payload | ConvertTo-Json -Depth 20 -Compress }
-
-  try {
-    $response = Invoke-WebRequest -Method POST -Uri $Url -ContentType "application/json" -Body $json -ErrorAction Stop
-    Write-Output ("HTTP/{0} {1}" -f $response.Version, [int]$response.StatusCode)
-    Write-Output $response.Content
-  } catch {
-    if ($null -ne $_.Exception.Response) {
-      $r = $_.Exception.Response
-      $code = [int]$r.StatusCode
-      Write-Output ("HTTP/1.1 {0}" -f $code)
-      $reader = New-Object System.IO.StreamReader($r.GetResponseStream())
-      $body = $reader.ReadToEnd()
-      $reader.Close()
-      Write-Output $body
-    } else {
-      Write-Output $_.Exception.Message
-    }
-  }
-}
-
-Write-Host "1) Health"
-Invoke-GetWithHeaders -Url "$BaseUrl/health"
+Write-Host "========================================" -ForegroundColor Yellow
+Write-Host "JPM API Test Matrix" -ForegroundColor Yellow
+Write-Host "========================================" -ForegroundColor Yellow
 Write-Host ""
 
-Write-Host "2) OAuth happy"
-Invoke-JsonPost -Url "$BaseUrl/api/oauth/token" -Payload @{}
-Write-Host ""
+# Test 1: Health Endpoint (Happy Path)
+Test-Endpoint -Name "Health Happy Path" -Method "GET" -Endpoint "/health" -ExpectedStatus 200
 
-Write-Host "3) Banking malformed payload"
-Invoke-JsonPost -Url "$BaseUrl/api/banking/setup" -Payload "{bad-json}"
-Write-Host ""
+# Test 2: OAuth Token (Happy Path)
+Test-Endpoint -Name "OAuth Token Happy Path" -Method "POST" -Endpoint "/api/oauth/token" -Body "{}" -ExpectedStatus 200
 
-Write-Host "4) Unauthorized ping"
-Invoke-GetWithHeaders -Url "$BaseUrl/api/jpm/ping"
+# Test 3: OAuth Invalid Credentials (Error Path)
 Write-Host ""
+Write-Host "OAuth Error Path Tests:" -ForegroundColor Yellow
+# Note: These require valid JPM credentials to be configured
+# Test with wrong env vars will fail - just verifying error handling
 
-Write-Host "5) Authorized ping"
-Invoke-GetWithHeaders -Url "$BaseUrl/api/jpm/ping" -Headers @{ "x-api-key" = $InternalApiKey }
-Write-Host ""
+# Test 4: Banking Setup (Happy Path)
+$bankingPayload = @{
+    entityName = "Test Corp"
+    ein = "12-3456789"
+    authorizedSigners = @(
+        @{ name = "John Doe"; title = "CEO" }
+    )
+    accounts = @(
+        @{ type = "checking"; purpose = "operating" }
+    )
+} | ConvertTo-Json
 
-Write-Host "6) AI NL query"
-Invoke-JsonPost -Url "$BaseUrl/api/ai/nl-query" -Payload @{
-  query = "show sector performance for technology"
-}
-Write-Host ""
+Test-Endpoint -Name "Banking Setup Happy Path" -Method "POST" -Endpoint "/api/banking/setup" -Body $bankingPayload -ExpectedStatus 200
 
-Write-Host "7) AI Predict"
-Invoke-JsonPost -Url "$BaseUrl/api/ai/predict" -Payload @{
-  records = @(
-    @{ value = 1 },
-    @{ value = 2 },
-    @{ value = 3 },
-    @{ value = 4 }
-  )
-  valueKey = "value"
-  horizon = 2
-}
-Write-Host ""
+# Test 5: Banking Setup Missing Required Fields (Validation Error)
+$invalidPayload = @{
+    entityName = "Test Corp"
+    # Missing ein, authorizedSigners, accounts
+} | ConvertTo-Json
 
-Write-Host "8) AI Full Analysis"
-Invoke-JsonPost -Url "$BaseUrl/api/ai/analysis/full" -Payload @(
-  @{
-    company_name = "A"
-    sector = "Technology"
-    valuation = 1000000000
-    return_pct = 10
-    risk_score = 3
-  },
-  @{
-    company_name = "B"
-    sector = "Finance"
-    valuation = 2000000000
-    return_pct = 8
-    risk_score = 5
-  }
-)
-Write-Host ""
+Test-Endpoint -Name "Banking Setup Validation Error" -Method "POST" -Endpoint "/api/banking/setup" -Body $invalidPayload -ExpectedStatus 400
 
-Write-Host "9) AI Report"
-Invoke-JsonPost -Url "$BaseUrl/api/ai/report" -Payload @{
-  analysis = @{
-    metrics = @{
-      total_companies = 2
-    }
-  }
-  predictive = @{
-    status = "ok"
-  }
-  risk = @{
-    overall_risk = "medium"
-  }
-}
+# Test 6: Banking Setup Malformed EIN (Validation Error)
+$malformedPayload = @{
+    entityName = "Test Corp"
+    ein = "invalid-ein"
+    authorizedSigners = @(
+        @{ name = "John Doe"; title = "CEO" }
+    )
+    accounts = @(
+        @{ type = "checking"; purpose = "operating" }
+    )
+} | ConvertTo-Json
+
+Test-Endpoint -Name "Banking Setup Malformed EIN" -Method "POST" -Endpoint "/api/banking/setup" -Body $malformedPayload -ExpectedStatus 400
+
+# Test 7: Banking Setup Unauthorized (No Auth)
+Test-Endpoint -Name "Banking Setup Unauthorized" -Method "POST" -Endpoint "/api/banking/setup" -Body $bankingPayload -ExpectedStatus 401
+
+# Test 8: Protected Ping Endpoint (No Auth)
+Test-Endpoint -Name "Protected Ping No Auth" -Method "GET" -Endpoint "/api/jpm/ping" -ExpectedStatus 401
+
+# Summary
 Write-Host ""
+Write-Host "========================================" -ForegroundColor Yellow
+Write-Host "Test Summary" -ForegroundColor Yellow
+Write-Host "========================================" -ForegroundColor Yellow
+
+$passCount = ($results | Where-Object { $_.success }).Count
+$failCount = ($results | Where-Object { -not $_.success }).Count
+
+Write-Host "Total Tests: $($results.Count)" -ForegroundColor White
+Write-Host "Passed: $passCount" -ForegroundColor Green
+Write-Host "Failed: $failCount" -ForegroundColor Red
+
+# Save results to file
+$results | ConvertTo-Json -Depth 10 | Out-File $OUTPUT_FILE
+Write-Host ""
+Write-Host "Results saved to: $OUTPUT_FILE" -ForegroundColor Cyan

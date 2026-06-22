@@ -3,14 +3,17 @@ import { env } from '../config/env.js';
 
 const router = Router();
 
+/**
+ * GET /health
+ * Returns service health status
+ */
 router.get('/', (req, res) => {
   res.json({
-    ok: true,
+    status: 'ok',
     uptime: process.uptime(),
     environment: env.nodeEnv,
-    version: '1.0.0',
-    timestamp: new Date().toISOString(),
-    requestId: req.requestId
+    version: process.env.npm_package_version || '1.0.0',
+    timestamp: new Date().toISOString()
   });
 });
 
