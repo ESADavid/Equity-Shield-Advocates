@@ -58,3 +58,9 @@
 {"level":"info","message":"Permission revoked","permissionCode":"VIEW_ACCOUNTS","revokedBy":"admin-user-id","service":"permission-service","tenantId":"test-tenant-456","timestamp":"2026-06-22T05:30:50.119Z","userId":"test-user-123"}
 {"createdBy":"admin-user-id","level":"info","message":"Default permissions initialized","service":"permission-service","tenantId":"test-tenant-456","timestamp":"2026-06-22T05:30:50.122Z"}
 {"level":"info","message":"Permission check passed","permissionCode":"SYSTEM_ADMIN","service":"permission-service","tenantId":"test-tenant-456","timestamp":"2026-06-22T05:30:50.130Z","userId":"6a38c88909c1d0a986cdc9f7"}
+{"level":"info","message":"Permission check passed","permissionCode":"VIEW_ACCOUNTS","service":"permission-service","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:04:23.766Z","userId":"test-user-123"}
+{"level":"info","message":"Permission check passed","permissionCode":"SYSTEM_ADMIN","service":"permission-service","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:04:23.774Z","userId":"test-user-123"}
+{"grantedBy":"admin-user-id","level":"info","message":"Permission granted","permissionCode":"VIEW_ACCOUNTS","service":"permission-service","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:04:23.778Z","userId":"test-user-123"}
+{"level":"info","message":"Permission revoked","permissionCode":"VIEW_ACCOUNTS","revokedBy":"admin-user-id","service":"permission-service","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:04:23.787Z","userId":"test-user-123"}
+{"createdBy":"admin-user-id","level":"info","message":"Default permissions initialized","service":"permission-service","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:04:23.790Z"}
+{"level":"info","message":"Permission check passed","permissionCode":"SYSTEM_ADMIN","service":"permission-service","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:04:23.799Z","userId":"6a395d077abbd70b958a8146"}
