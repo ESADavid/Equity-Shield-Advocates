@@ -1,82 +1,28 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Oscar Broome Revenue System</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#3498db" />
     <style>
       body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 20px;
-        background-color: #f5f5f5;
-      }
-      .wealth-empire-banner {
-        background: linear-gradient(135deg, #1a1a2e, #16213e);
-        color: white;
-        padding: 30px;
-        text-align: center;
-        margin: -20px -20px 20px -20px;
-        border-bottom: 3px solid gold;
-      }
-      .wealth-empire-banner h1 {
-        margin: 0 0 20px 0;
-        font-size: 2.5em;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-      }
-      .wealth-display {
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        flex-wrap: wrap;
-      }
-      .wealth-total,
-      .wealth-annual {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 20px;
-        border-radius: 10px;
-        border: 2px solid gold;
-      }
-      .wealth-authority {
-        margin-top: 20px;
-        font-size: 1.2em;
-        font-weight: bold;
-      }
-      .label {
-        display: block;
-        font-size: 0.9em;
-        opacity: 0.9;
-        margin-bottom: 5px;
-      }
-      .value {
-        display: block;
-        font-size: 1.8em;
-        font-weight: bold;
-        color: gold;
-      }
-      .unit {
-        display: block;
-        font-size: 0.8em;
-        opacity: 0.8;
+        background: #f8f9fa;
       }
       .container {
         max-width: 1200px;
         margin: 0 auto;
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      h1 {
-        color: #2c3e50;
-        text-align: center;
       }
       .status {
-        text-align: center;
-        padding: 20px;
-        background: #e8f5e8;
-        border-radius: 4px;
-        margin: 20px 0;
+        background: #d4edda;
+        color: #155724;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
       }
       .api-links {
         display: grid;
@@ -124,14 +70,18 @@
 
       <h2>Dashboard Access</h2>
       <div class="api-links">
-        <a href="/override-dashboard.html" class="api-link"
-          >🎛️ Transaction Override Dashboard</a
-        >
+        <a href="/override-dashboard.html" class="api-link">🎛️ Transaction Override Dashboard</a>
       </div>
 
       <div style="margin-top: 40px; text-align: center; color: #666">
         <p>© 2025 Oscar Broome Revenue System - Enterprise Grade Solution</p>
       </div>
     </div>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+      }
+    </script>
   </body>
 </html>
