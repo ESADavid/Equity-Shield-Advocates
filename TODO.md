@@ -8,8 +8,7 @@
 - [x] Create `COMPANY_UPDATES_AND_INTEGRATIONS_PLAN.md` (consolidated)
 - [x] Update `AUM_REVENUE_UPDATE.md` with cross-reference to consolidated plan
 - [x] Update `jpm_integration_artifacts.md` with implementation status linkage
-- [x] Final consistency validation across account topology
-  and integration sequencing
+- [x] Validate account topology and integration sequencing
 - [x] Complete status matrix for all open checklist items (status_matrix.md)
 - [x] Validate JPM integration modules in runtime (src/)
 - [x] Execute OAuth + banking route test (scripts/test_api_matrix.ps1)

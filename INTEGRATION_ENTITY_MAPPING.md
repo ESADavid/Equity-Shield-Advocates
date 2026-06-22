@@ -87,10 +87,10 @@
 
 | Component | Status | Last Sync |
 |-----------|--------|------------|
-| JPM OAuth | Active | N/A |
-| Banking Setup | Configured | N/A |
-| Revenue Data Sync | Pending | Not started |
-| Monthly Report | Template ready | N/A |
+| JPM OAuth | Active | 2026-06-22 |
+| Banking Setup | Configured | 2026-06-22 |
+| Revenue Data Sync | Complete | 2026-06-22 |
+| Monthly Report | Populated | 2026-06-22 |
 
 ---
 
