@@ -130,3 +130,15 @@
 {"deviceType":"desktop","level":"info","message":"Device registered","service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:04:23.745Z","userId":"6a395d077abbd70b958a8146"}
 {"finger":"index","hand":"right","level":"info","message":"Fingerprint enrolled","quality":85,"service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:04:23.795Z","userId":"6a395d077abbd70b958a8147"}
 {"level":"info","message":"Fingerprint verified","service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:04:23.797Z","userId":"6a395d077abbd70b958a8147"}
+{"finger":"index","hand":"right","level":"info","message":"Fingerprint enrolled","quality":85,"service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.176Z","userId":"6a3962797cf29909e1f80e93"}
+{"error":"Fingerprint quality too low. Please try again.","level":"error","message":"Fingerprint enrollment failed","service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.179Z","userId":"6a3962797cf29909e1f80e93"}
+{"level":"info","message":"Facial recognition enrolled","quality":80,"service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.196Z","userId":"6a3962797cf29909e1f80e93"}
+{"level":"info","message":"Voice print enrolled","quality":75,"service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.198Z","userId":"6a3962797cf29909e1f80e93"}
+{"level":"info","message":"Fingerprint verified","service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.200Z","userId":"6a3962797cf29909e1f80e93"}
+{"failedAttempts":0,"level":"warn","message":"Fingerprint verification failed","service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.202Z","userId":"6a3962797cf29909e1f80e93"}
+{"level":"info","message":"Fingerprint verified","service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.204Z","userId":"6a3962797cf29909e1f80e93"}
+{"level":"info","message":"Facial recognition verified","service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.205Z","userId":"6a3962797cf29909e1f80e93"}
+{"level":"info","message":"Multi-factor biometric verification","overall":true,"requiredCount":1,"service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.205Z","userId":"6a3962797cf29909e1f80e93","verifiedCount":2}
+{"deviceType":"desktop","level":"info","message":"Device registered","service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.207Z","userId":"6a3962797cf29909e1f80e93"}
+{"finger":"index","hand":"right","level":"info","message":"Fingerprint enrolled","quality":85,"service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.221Z","userId":"6a3962797cf29909e1f80e94"}
+{"level":"info","message":"Fingerprint verified","service":"biometric-auth","tenantId":"test-tenant-456","timestamp":"2026-06-22T16:27:37.221Z","userId":"6a3962797cf29909e1f80e94"}
