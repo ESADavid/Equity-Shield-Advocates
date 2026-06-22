@@ -8,10 +8,10 @@
 
 | Field | Value |
 | --- | --- |
-| Period Label | **[Month Year]** (e.g., January 2025) |
-| Report Date | **[Date Generated]** |
-| Prepared By | **[ preparer Name]** |
-| Reviewed By | **[ reviewer Name]** |
+| Period Label | **January 2025** |
+| Report Date | **2025-01-19** |
+| Prepared By | **[Preparer Name]** |
+| Reviewed By | **[Reviewer Name]** |
 
 ---
 
@@ -21,19 +21,19 @@
 
 | Field | Value |
 | --- | --- |
-| Gross Inflows | **$[Amount]** |
-| Excluded Transfers | **$[Amount]** |
-| Net Recognized Revenue | **$[Amount]** |
-| Source of Truth | **[Bank/Accounting System]** |
-| As-of Date | **[Date]** |
+| Gross Inflows | **$4,000,000** |
+| Excluded Transfers | **$0** |
+| Net Recognized Revenue | **$4,000,000** |
+| Source of Truth | **aggregated_revenue.json (ACCT-1001)** |
+| As-of Date | **2025-01-19** |
 
 ### Account: LBWG Reserve (Savings)
 
 | Field | Value |
 | --- | --- |
-| Gross Inflows | **$[Amount]** |
-| Excluded Transfers | **$[Amount]** |
-| Net Recognized Revenue | **$[Amount]** |
+| Gross Inflows | **$0** |
+| Excluded Transfers | **$0** |
+| Net Recognized Revenue | **$0** |
 | Source of Truth | **[Bank/Accounting System]** |
 | As-of Date | **[Date]** |
 
@@ -45,19 +45,19 @@
 
 | Field | Value |
 | --- | --- |
-| Gross Inflows | **$[Amount]** |
-| Excluded Transfers | **$[Amount]** |
-| Net Recognized Revenue | **$[Amount]** |
-| Source of Truth | **[Bank/Accounting System]** |
-| As-of Date | **[Date]** |
+| Gross Inflows | **$3,500,000** |
+| Excluded Transfers | **$0** |
+| Net Recognized Revenue | **$3,500,000** |
+| Source of Truth | **aggregated_revenue.json (ACCT-1002)** |
+| As-of Date | **2025-01-19** |
 
 ### Account: MERCDEE Reserve Savings
 
 | Field | Value |
 | --- | --- |
-| Gross Inflows | **$[Amount]** |
-| Excluded Transfers | **$[Amount]** |
-| Net Recognized Revenue | **$[Amount]** |
+| Gross Inflows | **$0** |
+| Excluded Transfers | **$0** |
+| Net Recognized Revenue | **$0** |
 | Source of Truth | **[Bank/Accounting System]** |
 | As-of Date | **[Date]** |
 
@@ -69,19 +69,19 @@
 
 | Field | Value |
 | --- | --- |
-| Gross Inflows | **$[Amount]** |
-| Excluded Transfers | **$[Amount]** |
-| Net Recognized Revenue | **$[Amount]** |
-| Source of Truth | **[Bank/Accounting System]** |
-| As-of Date | **[Date]** |
+| Gross Inflows | **$2,500,000** |
+| Excluded Transfers | **$0** |
+| Net Recognized Revenue | **$2,500,000** |
+| Source of Truth | **aggregated_revenue.json (ACCT-1003)** |
+| As-of Date | **2025-01-19** |
 
 ### Account: Family Trust Reserve Account
 
 | Field | Value |
 | --- | --- |
-| Gross Inflows | **$[Amount]** |
-| Excluded Transfers | **$[Amount]** |
-| Net Recognized Revenue | **$[Amount]** |
+| Gross Inflows | **$0** |
+| Excluded Transfers | **$0** |
+| Net Recognized Revenue | **$0** |
 | Source of Truth | **[Bank/Accounting System]** |
 | As-of Date | **[Date]** |
 
@@ -102,10 +102,10 @@
 
 | Entity | MTD Net Revenue | QTD Net Revenue | YTD Net Revenue |
 |--------|-----------------|-----------------|-------------------|
-| LBWG | **$0.00** | **$0.00** | **$0.00** |
-| MERCDEE | **$0.00** | **$0.00** | **$0.00** |
-| Family Trust | **$0.00** | **$0.00** | **$0.00** |
-| **Total** | **$0.00** | **$0.00** | **$0.00** |
+| LBWG | **$4,000,000** | **$4,000,000** | **$4,000,000** |
+| MERCDEE | **$3,500,000** | **$3,500,000** | **$3,500,000** |
+| Family Trust | **$2,500,000** | **$2,500,000** | **$2,500,000** |
+| **Total** | **$10,000,000** | **$10,000,000** | **$10,000,000** |
 
 ---
 
