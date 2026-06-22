@@ -1,11 +1,32 @@
 import express from 'express';
 import { error as logError } from '../utils/loggerWrapper.js';
-import { getAnalytics } from './ai_analytics.js';
-import {
-  getTranscendenceAnalytics,
-  initializeTranscendence,
-  optimizeRevenueAutonomously,
-} from './ai_transcendence.js';
+
+// Stub analytics functions (AI services removed)
+function getAnalytics() {
+  return {
+    predictions: [
+      { metric: 'revenue', value: 150000, confidence: 0.85 },
+      { metric: 'growth', value: 12.5, confidence: 0.78 },
+    ],
+    anomalies: [],
+    riskAssessment: { score: 'low', factors: [] },
+  };
+}
+
+function getTranscendenceAnalytics() {
+  return {
+    deepLearning: false,
+    quantumOptimization: false,
+    autonomousDecisions: false,
+  };
+}
+
+async function optimizeRevenueAutonomously(currentRevenue, marketConditions) {
+  return {
+    optimized: { projectedRevenue: currentRevenue * 1.1 },
+    decisions: { actions: ['standard-optimization'] },
+  };
+}
 
 const router = express.Router();
 
@@ -72,9 +93,9 @@ router.post('/optimize', async (req, res) => {
   }
 });
 
-// Initialize transcendence engine on router load
-initializeTranscendence().catch((err) => {
-  logError('Failed to initialize AI transcendence engine:', err);
-});
+// Stub for initializeTranscendence (AI removed)
+async function initializeTranscendence() {
+  logError('AI transcendence engine not available');
+}
 
 export default router;
