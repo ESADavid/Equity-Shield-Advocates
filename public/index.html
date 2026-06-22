@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icon.png" />
+    <meta name="description" content="Enterprise revenue management platform with offline support" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Oscar Broome Revenue System</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 Oscar Broome Revenue System</h1>
+
+      <div class="status">
+        <h2>✅ System Status: OPERATIONAL</h2>
+        <p>
+          All systems are running perfectly. Production-ready enterprise revenue
+          management platform.
+        </p>
+      </div>
+
+      <h2>API Endpoints</h2>
+      <div class="api-links">
+        <a href="/api/status" class="api-link">📊 API Status</a>
+        <a href="/health" class="api-link">❤️ Health Check</a>
+        <a href="/api/analytics" class="api-link">📈 Analytics</a>
+        <a href="/api/payroll" class="api-link">💰 Payroll</a>
+        <a href="/api/merchant" class="api-link">🛒 Merchant Services</a>
+        <a href="/jpmorgan" class="api-link">🏦 JPMorgan Payments</a>
+        <a href="/api/notifications" class="api-link">🔔 Notifications</a>
+      </div>
+
+      <h2>Dashboard Access</h2>
+      <div class="api-links">
+        <a href="/override-dashboard.html" class="api-link"
+          >🎛️ Transaction Override Dashboard</a
+        >
+      </div>
+
+      <div class="footer">
+        <p>© 2025 Oscar Broome Revenue System - Enterprise Grade Solution</p>
+      </div>
+    </div>
+
+    <script>
+      // Register Service Worker for PWA support
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then((registration) => {
+            console.log('Service Worker registered:', registration.scope);
+          }).catch((error) => {
+            console.error('Service Worker registration failed:', error);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
