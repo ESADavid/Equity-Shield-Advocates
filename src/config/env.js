@@ -16,6 +16,10 @@ if (missing.length > 0) {
 export const env = {
   port: Number(process.env.PORT || 8080),
   nodeEnv: process.env.NODE_ENV || 'development',
+  internalApiKey: process.env.INTERNAL_API_KEY,
+  databaseUrl: process.env.DATABASE_URL,
+  stripeApiKey: process.env.STRIPE_API_KEY,
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
   oauthUrl: process.env.JPM_OAUTH_URL,
   clientId: process.env.JPM_CLIENT_ID,
   clientSecret: process.env.JPM_CLIENT_SECRET,

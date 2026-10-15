@@ -1,10 +1,12 @@
 import express from 'express';
 import { env } from './config/env.js';
+import { closeDatabasePool } from './config/database.js';
 import { requestIdMiddleware } from './middleware/requestId.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import healthRoutes from './routes/healthRoutes.js';
 import oauthRoutes from './routes/oauthRoutes.js';
 import bankingRoutes from './routes/bankingRoutes.js';
+import stripeConnectRoutes from './routes/stripeConnectRoutes.js';
 
 const app = express();
 
@@ -16,6 +18,7 @@ app.use(requestIdMiddleware);
 app.use('/health', healthRoutes);
 app.use('/api/oauth', oauthRoutes);
 app.use('/api/banking', bankingRoutes);
+app.use('/api/stripe/connect', stripeConnectRoutes);
 
 // Protected route example (would need additional auth setup)
 app.get('/api/jpm/ping', (req, res) => {
@@ -42,9 +45,18 @@ const server = app.listen(env.port, () => {
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    console.log('Server closed');
-    process.exit(0);
+  server.close(async () => {
+    try {
+      await closeDatabasePool();
+      console.log('Server closed');
+      process.exit(0);
+    } catch (error) {
+      console.error(JSON.stringify({
+        type: 'server_shutdown_error',
+        error: error.message
+      }));
+      process.exit(1);
+    }
   });
 });
 

@@ -1,0 +1,11 @@
+[submodule "Capetain-Cetriva"]
+	path = Capetain-Cetriva
+	url = https://github.com/OwlbanGroup/Capetain-Cetriva.git
+
+[submodule "Equity-Shield-Advocates"]
+	path = Equity-Shield-Advocates
+	url = https://github.com/OwlbanGroup/Equity-Shield-Advocates.git
+
+[submodule "owlban-group.github.io"]
+	path = owlban-group.github.io
+	url = https://github.com/OwlbanGroup/owlban-group.github.io.git
